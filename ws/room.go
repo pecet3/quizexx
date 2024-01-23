@@ -1,39 +1,61 @@
 package ws
 
 import (
+	"errors"
 	"log"
-	"sync"
-
-	"github.com/gorilla/websocket"
-	"github.com/pecet3/czatex/utils"
 )
 
+type QandA struct {
+	questions     []string
+	correctAnswer int
+}
 type room struct {
-	name string
-
+	name    string
+	events  map[string]EventHandler
 	clients map[*client]bool
 
-	join chan *client
-
+	join  chan *client
+	ready chan *client
 	leave chan *client
 
 	forward chan []byte
-	settings
+
+	body  []QandA
+	round chan int
+	play  chan bool
 }
 
 func NewRoom(name string) *room {
-	return &room{
+	body := []QandA{
+		{
+			questions:     []string{"a", "b", "c", "d"},
+			correctAnswer: 2,
+		},
+		{
+			questions:     []string{"a", "a", "c", "d"},
+			correctAnswer: 1,
+		},
+	}
+	r := &room{
 		name:    name,
 		clients: make(map[*client]bool),
 		join:    make(chan *client),
 		leave:   make(chan *client),
+		ready:   make(chan *client),
 		forward: make(chan []byte),
+		body:    body,
+		round:   make(chan int),
+		events:  make(map[string]EventHandler),
+		play:    make(chan bool),
 	}
+	r.setupEventHandlers()
+	return r
 }
 
 func (m *manager) GetRoom(name string) *room {
 	m.mutex.Lock()
 	defer m.mutex.Unlock()
+
 	return m.rooms[name]
 }
 
@@ -70,46 +92,8 @@ func (r *room) Run(m *manager) {
 		select {
 		case client := <-r.join:
 			r.clients[client] = true
-			var wg sync.WaitGroup
-			namesChan := make(chan []string)
-
-			wg.Add(1)
-			go createNamesArr(r.clients, &wg, namesChan)
-
-			namesArr := <-namesChan
-
-			close(namesChan)
-			serverMsg := client.name + " dołączył do pokoju"
-			jsonMessage, err := utils.MarshalJsonMessage("serwer", serverMsg, namesArr)
-
-			if err != nil {
-				return
-			}
-
-			for roomClient := range r.clients {
-				roomClient.conn.WriteMessage(websocket.TextMessage, jsonMessage)
-			}
 
 		case client := <-r.leave:
-			var wg sync.WaitGroup
-			namesChan := make(chan []string)
-
-			wg.Add(1)
-			delete(r.clients, client)
-			go createNamesArr(r.clients, &wg, namesChan)
-
-			namesArr := <-namesChan
-			close(namesChan)
-
-			serverMsg := client.name + " wyszedł z pokoju"
-			jsonMessage, err := utils.MarshalJsonMessage("serwer", serverMsg, namesArr)
-
-			if err == nil {
-				for roomClient := range r.clients {
-
-					roomClient.conn.WriteMessage(websocket.TextMessage, jsonMessage)
-				}
-			}
 
 			close(client.receive)
 
@@ -121,18 +105,32 @@ func (r *room) Run(m *manager) {
 			for client := range r.clients {
 				client.receive <- msg
 			}
+
+		case ready := <-r.ready:
+			if len(r.ready) == len(r.clients) {
+				r.round <- 1
+				ready.round <- 1
+				r.play <- true
+			}
 		}
 	}
 }
 
-func createNamesArr(clients map[*client]bool, wg *sync.WaitGroup, namesChan chan []string) {
-	defer wg.Done()
-	var names []string
+func (r *room) setupEventHandlers() {
+	r.events[EventSendMessage] = SendMessage
+}
 
-	for client := range clients {
-		names = append(names, client.name)
+func SendMessage(event Event, c *client) error {
+	return nil
+}
+
+func (r *room) routeEvent(event Event, c *client) error {
+	if handler, ok := r.events[event.Type]; ok {
+		if err := handler(event, c); err != nil {
+			return err
+		}
+		return nil
+	} else {
+		return errors.New("There is no such event type")
 	}
-
-	namesChan <- names
-
 }

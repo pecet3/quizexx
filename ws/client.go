@@ -14,6 +14,9 @@ type client struct {
 	conn    *websocket.Conn
 	receive chan []byte
 	room    *room
+	isReady bool
+	round   chan int
+	answer  chan int
 }
 
 func (c *client) read(m *manager) {
@@ -28,9 +31,11 @@ func (c *client) read(m *manager) {
 
 		if err := json.Unmarshal(payload, &request); err != nil {
 			log.Println("error marshaling json", err)
-			break
+			continue
 		}
-		c.room.forward <- payload
+
+		log.Println(request)
+		c.room.forward <- request.Payload
 	}
 }
 

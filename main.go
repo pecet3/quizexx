@@ -13,7 +13,7 @@ func main() {
 	http.Handle("/", index)
 	http.Handle("/ws", manager)
 
-	address := "0.0.0.0:8080"
+	address := "localhost:8080"
 
 	server := &http.Server{
 		Addr: address,
