@@ -18,6 +18,7 @@ type room struct {
 	leave chan *client
 
 	forward chan []byte
+	settings
 }
 
 func NewRoom(name string) *room {

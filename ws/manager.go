@@ -28,36 +28,9 @@ func checkOrigin(r *http.Request) bool {
 
 func NewManager() *manager {
 	m := &manager{
-		rooms:  make(map[string]*room),
-		events: make(map[string]EventHandler),
+		rooms: make(map[string]*room),
 	}
-	m.setupEventHandlers()
-	log.Println(m.events)
 	return m
-}
-func (m *manager) setupEventHandlers() {
-	m.events[EventSendMessage] = SendMessage
-	m.events[EventSendAnswer] = SendAnswer
-}
-
-func SendMessage(event Event, c *client) error {
-	log.Println(event)
-	return nil
-}
-func SendAnswer(event Event, c *client) error {
-	log.Println(event)
-	return nil
-}
-
-func (m *manager) routeEvent(event Event, c *client) error {
-	if handler, ok := m.events[event.Type]; ok {
-		if err := handler(event, c); err != nil {
-			return err
-		}
-		return nil
-	} else {
-		return nil
-	}
 }
 
 func (m *manager) ServeHTTP(w http.ResponseWriter, req *http.Request) {

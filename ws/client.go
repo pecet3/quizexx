@@ -30,11 +30,6 @@ func (c *client) read(m *manager) {
 			log.Println("error marshaling json", err)
 			break
 		}
-
-		if err := m.routeEvent(request, c); err != nil {
-			log.Println("error route event", err)
-			break
-		}
 		c.room.forward <- payload
 	}
 }
