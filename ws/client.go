@@ -34,7 +34,7 @@ func (c *client) read(m *manager) {
 			continue
 		}
 
-		log.Println(request)
+		log.Println(request.Type)
 		c.room.forward <- request.Payload
 	}
 }
@@ -50,8 +50,6 @@ func (c *client) write() {
 		namesChan := make(chan []string)
 
 		wg.Add(1)
-
-		go createNamesArr(c.room.clients, &wg, namesChan)
 
 		namesArr := <-namesChan
 		close(namesChan)
