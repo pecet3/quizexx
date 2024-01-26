@@ -9,12 +9,12 @@ const answerDElement = document.querySelector('.answerD');
 let conn;
 let userName = "tester"
 connectWs()
-
 let gameState = {
     isGame: false,
     category: "",
     round: 0,
     question: "",
+    answers: [""],
     players: [{ name: "", answer: null, points: 0 }],
     prevRoundWinner: [""]
 }
@@ -28,10 +28,10 @@ class Event {
 }
 
 function routeEvent(event) {
-    if (event.type === undefined) {
-        alert("no type field in the event")
-    }
-
+    // if (event.type === undefined) {
+    //     alert("no type field in the event")
+    // }
+    console.log(event)
     switch (event.type) {
         case "start_game":
             startTheGame(event)
@@ -68,8 +68,8 @@ function connectWs() {
         }
 
         conn.onmessage = (e) => {
-            console.log(e.data)
-            routeEvent(e)
+            const event = JSON.parse(e.data)
+            routeEvent(event)
         }
     } else {
         alert("your browser doesn't support websockets")
@@ -87,7 +87,7 @@ function addQuery(param, value) {
 ///////////////////// SERVER EVENT FUNCTIONS //////////////////////
 
 function startTheGame(event) {
-    console.log(event)
+    console.log(event.payload + "cc")
     if (event.payload.isGame === true) {
         gameState.isGame = true
         gameState.round = event.payload.round
@@ -100,7 +100,7 @@ function startTheGame(event) {
 }
 
 function startNewRound(event) {
-    console.log(event)
+    console.log(event + "a")
     const newRound = event.payload.round
     if (!isGame) return
     if ((newRound - 1) !== round) return
@@ -109,7 +109,7 @@ function startNewRound(event) {
 }
 
 function updatePlayers(event) {
-    console.log(event)
+    console.log(event + "b")
     const newPlayersState = event.payload
     gameState.players = newPlayersState
 }
@@ -127,7 +127,7 @@ function sendReadines() {
 
 function sendAnswer() {
     const payload = {
-        name,
+        userName,
         round,
         answer: 1,
     }

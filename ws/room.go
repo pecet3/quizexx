@@ -1,14 +1,10 @@
 package ws
 
 import (
+	"encoding/json"
 	"errors"
 	"log"
 )
-
-type QandA struct {
-	questions     []string
-	correctAnswer int
-}
 
 type room struct {
 	name    string
@@ -23,21 +19,20 @@ type room struct {
 	receiveAnswer chan []byte
 
 	body  []QandA
-	round chan int
-	play  chan bool
-}
-
-type GameState struct {
+	round int
+	play  bool
 }
 
 func NewRoom(name string) *room {
 	body := []QandA{
 		{
-			questions:     []string{"a", "b", "c", "d"},
+			question:      "test1",
+			answers:       []string{"a", "b", "c", "d"},
 			correctAnswer: 2,
 		},
 		{
-			questions:     []string{"a", "a", "c", "d"},
+			question:      "test",
+			answers:       []string{"a", "a", "c", "d"},
 			correctAnswer: 1,
 		},
 	}
@@ -49,9 +44,9 @@ func NewRoom(name string) *room {
 		ready:   make(chan *client),
 		forward: make(chan []byte),
 		body:    body,
-		round:   make(chan int),
+		round:   1,
 		events:  make(map[string]EventHandler),
-		play:    make(chan bool),
+		play:    false,
 	}
 	r.setupEventHandlers()
 	return r
@@ -115,14 +110,57 @@ func (r *room) Run(m *manager) {
 		case ready := <-r.ready:
 			ready.isReady = true
 			log.Println(ready)
-			if len(r.ready) == len(r.clients) {
-				r.round <- 1
-				ready.round <- 1
-				r.play <- true
+			state := r.GetGameState()
+			stateBytes, err := json.Marshal(state)
+			if err != nil {
+				log.Println("Error marshaling game state:", err)
+				return
 			}
+			event := Event{
+				Type:    "start_game",
+				Payload: stateBytes,
+			}
+			eventBytes, err := json.Marshal(event)
+			if err != nil {
+				log.Println("Error marshaling game state:", err)
+				return
+			}
+			log.Println(string(eventBytes))
+			for client := range r.clients {
+				client.receive <- eventBytes
+			}
+
 			log.Println("starty")
 		}
 	}
+}
+
+func (r *room) GetGameState() GameState {
+	players := r.GetPlayers()
+	state := GameState{
+		IsGame:          true,
+		Category:        "test",
+		Round:           r.round,
+		Question:        r.body[r.round-1].question,
+		Answers:         r.body[r.round-1].answers,
+		Players:         players,
+		PrevRoundWinner: []string{""},
+	}
+	return state
+}
+
+func (r *room) GetPlayers() []Player {
+	var players []Player
+
+	for client := range r.clients {
+		player := Player{
+			Name:   client.name,
+			Answer: client.answer,
+			Points: client.points,
+		}
+		players = append(players, player)
+	}
+	return players
 }
 
 func (r *room) setupEventHandlers() {

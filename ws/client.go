@@ -3,10 +3,8 @@ package ws
 import (
 	"encoding/json"
 	"log"
-	"sync"
 
 	"github.com/gorilla/websocket"
-	"github.com/pecet3/czatex/utils"
 )
 
 type client struct {
@@ -15,8 +13,9 @@ type client struct {
 	receive chan []byte
 	room    *room
 	isReady bool
-	round   chan int
-	answer  chan int
+	round   int
+	answer  int
+	points  int
 }
 
 func (c *client) read(m *manager) {
@@ -49,22 +48,11 @@ func (c *client) write() {
 	defer c.conn.Close()
 
 	for msg := range c.receive {
-
-		result, err := utils.DecodeMessage(msg)
-
-		var wg sync.WaitGroup
-		namesChan := make(chan []string)
-
-		wg.Add(1)
-
-		namesArr := <-namesChan
-		close(namesChan)
-
-		message, err := utils.MarshalJsonMessage(result.Name, result.Message, namesArr)
+		log.Println(msg, "aaaa")
 
 		log.Println("new message in room: ", c.room.name)
 
-		err = c.conn.WriteMessage(websocket.TextMessage, message)
+		err := c.conn.WriteMessage(websocket.TextMessage, msg)
 
 		if err != nil {
 			return

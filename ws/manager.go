@@ -64,10 +64,13 @@ func (m *manager) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 		receive: make(chan []byte),
 		room:    currentRoom,
 		name:    name,
+		round:   0,
+		answer:  -1,
+		points:  0,
+		isReady: false,
 	}
 
 	currentRoom.join <- client
-	log.Println(m.events)
 	defer func() { currentRoom.leave <- client }()
 	go client.write()
 	client.read(m)
