@@ -6,43 +6,39 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://cdn.tailwindcss.com"></script>
     <script defer src="script.js"></script>
-    <title>Czatex</title>
+    <title>Quizex</title>
 </head>
 
-<body class="bg-gray-800 flex flex-col justify-center items-center">
-    <header class="mt-4 mb-8 text-center">
-        <h1 class="text-2xl sm:text-6xl text-emerald-400 font-mono ">Quizex</h1>
-        <h2 class="text-lg sm:text-3xl text-pink-500"><a class="border-dashed border-b-2 border-sky-500">poquizuj se
-            </a><a>z kimś </a></h2>
-    </header>
-    <main class="flex justify-center">
-        <form class="flex flex-col gap-2 bg-gray-700 p-2 rounded-md" id="entryForm">
-            <input type="text" id="name" class="rounded-md bg-gray-900 text-white text-xl p-1.5"
-                placeholder="Twoja nazwa" />
-            <input type="text" id="room" class="rounded-md bg-gray-900 text-white text-xl p-1.5"
-                placeholder="Nazwa pokoju" />
-            <button type="sumit"
-                class="rounded-md hover:rounded-xl bg-emerald-400 hover:bg-emerald-500 duration-300 text-xl px-2 py-1 text-gray-800 font-bold">Dołącz</button>
-        </form>
-        <section class="hidden flex-col items-end" id="chatDashboard">
-            <div class="flex items-center gap-1  bg-emerald-400 py-1 px-1.5 font-mono  rounded-t-lg">
-                <p class="font-bold text-slate-700" id="roomDisplay"></p>
-                , Online: <p id="clientsDisplay" class="font-bold text-slate-700"></p>
-            </div>
+<body class="bg-gray-200 p-8">
 
-            <div class="bg-slate-950 rounded-b-lg rounded-l-lg p-1">
-                <ul id="messagesList" class="flex w-max- flex-col gap-1 h-[28rem] overflow-y-scroll">
-                </ul>
-                <form class="flex gap-2 bg-gray-700 p-1 mt-2 rounded-b-md " id="messageForm">
-                    <input id="message" class="rounded-md bg-gray-900 text-white text-xl p-1.5 w-full sm:w-[36rem]" />
-                    <button type="submit"
-                        class="rounded-md hover:rounded-xl bg-emerald-400 hover:bg-emerald-500 duration-300 justify-center text-xl px-2 py-1 text-gray-800 font-bold flex flex-col">
-                        <p class="text-xs">Wyślij</p>
-                    </button>
-                </form>
-        </section>
+    <div class="max-w-lg mx-auto bg-white p-6 rounded-md shadow-md">
+        <h1 class="text-2xl font-semibold mb-4" id="displayRound"></h1>
+
+        <div class="mb-6">
+            <p class="text-lg font-medium mb-2" id="displayQuestion"></p>
+            <form id="gameForm" class="grid grid-cols-2 gap-4">
+                <label class="flex items-center space-x-2 cursor-pointer">
+                    <input type="radio" name="q1" value="0" class="form-radio text-blue-500">
+                    <span>A. <p class="answerA"></p></span>
+                </label>
+                <label class="flex items-center space-x-2 cursor-pointer">
+                    <input type="radio" name="q1" value="1" class="form-radio text-blue-500">
+                    <span>B. <p class="answerB"></p></span>
+                </label>
+                <label class="flex items-center space-x-2 cursor-pointer">
+                    <input type="radio" name="q1" value="2" class="form-radio text-blue-500">
+                    <span>C. <p class="answerC"></p></span> </label>
+                <label class="flex items-center space-x-2 cursor-pointer">
+                    <input type="radio" name="q1" value="3" class="form-radio text-blue-500">
+                    <span>D. <p class="answerD"></p></span> </label>
+                </label>
+                <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600">Wyślij
+                    odpowiedź</button>
+
+            </form>
         </div>
-    </main>
+    </div>
+
 </body>
 
 </html>

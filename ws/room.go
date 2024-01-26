@@ -9,6 +9,7 @@ type QandA struct {
 	questions     []string
 	correctAnswer int
 }
+
 type room struct {
 	name    string
 	events  map[string]EventHandler
@@ -18,11 +19,15 @@ type room struct {
 	ready chan *client
 	leave chan *client
 
-	forward chan []byte
+	forward       chan []byte
+	receiveAnswer chan []byte
 
 	body  []QandA
 	round chan int
 	play  chan bool
+}
+
+type GameState struct {
 }
 
 func NewRoom(name string) *room {
@@ -105,13 +110,17 @@ func (r *room) Run(m *manager) {
 			for client := range r.clients {
 				client.receive <- msg
 			}
-
+		case answer := <-r.receiveAnswer:
+			log.Println(string(answer) + "aaa")
 		case ready := <-r.ready:
+			ready.isReady = true
+			log.Println(ready)
 			if len(r.ready) == len(r.clients) {
 				r.round <- 1
 				ready.round <- 1
 				r.play <- true
 			}
+			log.Println("starty")
 		}
 	}
 }

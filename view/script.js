@@ -1,57 +1,66 @@
-const entryForm = document.getElementById("entryForm")
-const userName = document.getElementById("name")
-const room = document.getElementById("room")
-const generateBtn = document.getElementById("generateBtn")
-const messageForm = document.getElementById("messageForm")
 
-let namesArr = [""]
-replaceInputRoom("room_1")
+const displayRoundElement = document.getElementById('displayRound');
+const displayQuestionElement = document.getElementById('displayQuestion');
+const gameFormElement = document.getElementById('gameForm');
+const answerAElement = document.querySelector('.answerA');
+const answerBElement = document.querySelector('.answerB');
+const answerCElement = document.querySelector('.answerC');
+const answerDElement = document.querySelector('.answerD');
+let conn;
+let userName = "tester"
+connectWs()
 
-// LISTENERS
+let gameState = {
+    isGame: false,
+    category: "",
+    round: 0,
+    question: "",
+    players: [{ name: "", answer: null, points: 0 }],
+    prevRoundWinner: [""]
+}
 
-generateBtn.addEventListener("click", () => {
-    room.value = generateRoomName(8)
 
-})
-
-entryForm.addEventListener("submit", (e) => {
-    e.preventDefault();
-
-    connectWs();
-})
-
-messageForm.addEventListener("submit", (e) => {
-    e.preventDefault();
-    handleMessage(e)
-})
-
-messageForm.addEventListener("keydown", (e) => {
-    if (e.key === 13) {
-        e.preventDefault();
-        handleMessage(e)
+class Event {
+    constructor(type, payload) {
+        this.type = type
+        this.payload = payload
     }
-});
+}
 
-///// WS
+function routeEvent(event) {
+    if (event.type === undefined) {
+        alert("no type field in the event")
+    }
+
+    switch (event.type) {
+        case "start_game":
+            startTheGame(event)
+            break;
+        case "new_round":
+            startNewRound(event)
+            break
+        case "update_players":
+            updatePlayers(event)
+            break
+        default:
+            alert("unsupporting message type")
+            break;
+    }
+}
+
+function sendEvent(eventName, payload) {
+    const event = new Event(eventName, payload)
+
+    conn.send(JSON.stringify(event))
+}
+
 
 function connectWs() {
-
-    if (userName.value === "" || room.value === "") {
-        return
-    }
-
     if (window.WebSocket) {
-        conn = new WebSocket(`ws://localhost:8080/ws?room=${room.value}&name=${userName.value}`)
+        conn = new WebSocket(`ws://localhost:8080/ws?room=room1&name=tester`)
         conn.onopen = (e) => {
-            showDashboardHiddeEntry()
-            writeRoomTitle()
-            addQuery("room", room.value)
-
-            const greetingsMsg = {
-                name: "klient",
-                message: "Wpisz /users, aby zobaczyć nazwy użytkowników w pokoju."
-            }
-            writeMessage(greetingsMsg)
+            addQuery("room", "room1")
+            sendReadines()
         }
 
         conn.onclose = (e) => {
@@ -59,143 +68,14 @@ function connectWs() {
         }
 
         conn.onmessage = (e) => {
-            const data = JSON.parse(e.data)
-            writeMessage(data)
-            writeClients(e)
-
-
+            console.log(e.data)
+            routeEvent(e)
         }
     } else {
         alert("your browser doesn't support websockets")
     }
 }
-
-
-//// DOM 
-function writeMessage(data) {
-    const messagesList = document.getElementById("messagesList")
-    console.log(userName.value, data.name)
-    const elementHTML = `
-      ${userName.value === data.name
-            ? `<li class="flex flex-row-reverse text-slate-200">`
-            : `<li class="flex text-slate-200 p-0.5">`}
-
-
-      ${userName.value === data.name
-            ? `<div class="p-1 flex flex-row-reverse bg-slate-700 rounded-md break-words max-w-64 sm:max-w-[38rem]">`
-            : `<div class="p-1 flex bg-slate-700 rounded-md max-w-64 sm:max-w-[38rem] break-words">`}
-
-        <div class="break-words flex flex-col justify-center items-center">
-
-        ${data.name === "serwer" || data.name === "klient"
-            ? `<a class="font-bold text-pink-500">[${data.name}] </a>`
-            : `<a class="font-bold text-pink-500">[${data.name}] </a>`}
-
-        ${typeof data.date !== 'undefined'
-            ? `<a class="font-mono text-[12px]">${data.date}</a>`
-            : ""}
-        </div>
-        
-        
-        <a class="">${data.message}</a>
-
-        </div>
-      </li>
-    `
-
-    messagesList.insertAdjacentHTML("beforeend", elementHTML)
-    return
-}
-
-
-function trackLastListElement() {
-
-}
-
-function showDashboardHiddeEntry() {
-    const chatDashboard = document.getElementById("chatDashboard")
-    entryForm.classList.add("hidden")
-
-    chatDashboard.classList.remove("hidden")
-    chatDashboard.classList.add("flex")
-    return
-}
-
-function writeRoomTitle() {
-    const roomDisplay = document.getElementById("roomDisplay")
-    roomDisplay.textContent = room.value
-    return
-}
-
-function writeClients(e) {
-    const clientsDisplay = document.getElementById("clientsDisplay")
-    const data = JSON.parse(e.data)
-
-    namesArr = data.clients
-
-    clientsDisplay.textContent = data.clients.length
-    return
-}
-
-//// HELPERS
-function handleMessage(e) {
-    const messageElement = e.target.elements.message
-
-    if (userName.value === "" || messageElement.value === "") {
-        return
-    }
-
-    const trimmedMsg = messageElement.value.trim()
-
-    if (trimmedMsg[0] === "/") {
-        handleUserCmd(trimmedMsg)
-        resetMessageInput(messageElement)
-        return
-    }
-
-    const date = getCurrentDateTimeString()
-    let data = {
-        "type": "aaaa",
-        "payload": "aaaa"
-    }
-
-
-    conn.send(JSON.stringify(data));
-    resetMessageInput(messageElement)
-    return
-}
-
-function resetMessageInput(messageElement) {
-    messageElement.value = ""
-    messageElement.focus()
-    return
-}
-
-function handleUserCmd(cmd) {
-    const data = {
-        name: "klient",
-        message: "na serwerze są: " + namesArr.toString(),
-    }
-
-    if (cmd === "/users") {
-        writeMessage(data)
-        return
-    }
-}
-
-function replaceInputRoom(value) {
-    const url = new URL(window.location.href)
-    const params = new URLSearchParams(url.search)
-    const queryRoom = params.get("room")
-
-    if (queryRoom === "" || queryRoom === null) {
-        room.value = value
-        return
-    }
-    room.value = queryRoom
-    return
-}
-
+//////////////////////////////////////////
 
 function addQuery(param, value) {
     const url = new URL(window.location.href)
@@ -204,30 +84,54 @@ function addQuery(param, value) {
     return
 }
 
-function generateRoomName(length) {
-    const characters = '0123456789ABCDE';
-    let randomId = '0x';
+///////////////////// SERVER EVENT FUNCTIONS //////////////////////
 
-    for (let i = 0; i < length; i++) {
-        const randomIndex = Math.floor(Math.random() * characters.length);
-        randomId += characters.charAt(randomIndex);
+function startTheGame(event) {
+    console.log(event)
+    if (event.payload.isGame === true) {
+        gameState.isGame = true
+        gameState.round = event.payload.round
     }
+    if (event.payload.isGame === false) {
+        gameState.isGame = false
+        gameState.round = 0
+    }
+    return
+}
 
-    return randomId;
+function startNewRound(event) {
+    console.log(event)
+    const newRound = event.payload.round
+    if (!isGame) return
+    if ((newRound - 1) !== round) return
+    round = newRound
+    return
+}
+
+function updatePlayers(event) {
+    console.log(event)
+    const newPlayersState = event.payload
+    gameState.players = newPlayersState
+}
+
+//////////////////// CLIENT EVENT FUNCTIONS ////////////////////
+
+function sendReadines() {
+    const payload = {
+        userName,
+        isReady: true,
+    }
+    console.log(conn)
+    conn.send(JSON.stringify({ type: "ready_player", payload }))
+}
+
+function sendAnswer() {
+    const payload = {
+        name,
+        round,
+        answer: 1,
+    }
+    conn.send(JSON.stringify({ type: "send_answer", payload }))
 }
 
 
-function getCurrentDateTimeString() {
-    const currentDate = new Date();
-
-    const year = currentDate.getFullYear();
-    const month = (currentDate.getMonth() + 1).toString().padStart(2, '0');
-    const day = currentDate.getDate().toString().padStart(2, '0');
-    const hours = currentDate.getHours().toString().padStart(2, '0');
-    const minutes = currentDate.getMinutes().toString().padStart(2, '0');
-
-
-    const dateTimeString = `${year}-${month}-${day} ${hours}:${minutes}`;
-
-    return dateTimeString;
-}

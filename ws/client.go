@@ -28,13 +28,19 @@ func (c *client) read(m *manager) {
 			return
 		}
 		var request Event
-
+		log.Println(string(payload))
+		log.Println(request)
 		if err := json.Unmarshal(payload, &request); err != nil {
 			log.Println("error marshaling json", err)
 			continue
 		}
-
-		log.Println(request.Type)
+		log.Println(request.Payload)
+		if request.Type == "ready_player" {
+			c.room.ready <- c
+		}
+		if request.Type == "send_answer" {
+			c.room.receiveAnswer <- request.Payload
+		}
 		c.room.forward <- request.Payload
 	}
 }
