@@ -13,13 +13,13 @@ type Player struct {
 }
 
 type GameState struct {
-	IsGame          bool     `json:"isGame"`
-	Category        string   `json:"category"`
-	Round           int      `json:"round"`
-	Question        string   `json:"question"`
-	Answers         []string `json:"answers"`
-	Players         []Player `json:"players"`
-	PrevRoundWinner []string `json:"prevRoundWinner"`
+	IsGame          bool      `json:"isGame"`
+	Category        string    `json:"category"`
+	Round           int       `json:"round"`
+	Question        string    `json:"question"`
+	Answers         []string  `json:"answers"`
+	Players         []*Player `json:"players"`
+	PrevRoundWinner []string  `json:"prevRoundWinner"`
 }
 
 type QandA struct {
@@ -41,10 +41,10 @@ func (r *room) GetGameState() *GameState {
 	return state
 }
 
-func (r *room) GetPlayers() []Player {
-	var players []Player
+func (r *room) GetPlayers() []*Player {
+	var players []*Player
 	for client := range r.clients {
-		player := Player{
+		player := &Player{
 			Name:   client.name,
 			Answer: client.answer,
 			Points: client.points,

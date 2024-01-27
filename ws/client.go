@@ -57,7 +57,14 @@ func (c *client) read(m *manager) {
 			c.room.ready <- c
 		}
 		if request.Type == "send_answer" {
-			log.Println(request.Payload)
+			var actionPlayer Player
+			err := json.Unmarshal(request.Payload, &actionPlayer)
+			if err != nil {
+				log.Println("Error marshaling game state:", err)
+				return
+			}
+
+			c.answer = actionPlayer.Answer
 			c.room.receiveAnswer <- request.Payload
 		}
 	}
@@ -80,9 +87,7 @@ func (c *client) write() {
 			}
 
 		case <-ticker.C:
-			log.Println("ping", len(c.room.clients))
-
-			// send ping to the client
+			log.Println(len(c.room.clients))
 
 			if err := c.conn.WriteMessage(websocket.PingMessage, []byte(``)); err != nil {
 				log.Println("write message error: ", err)
@@ -93,6 +98,5 @@ func (c *client) write() {
 }
 
 func (c *client) pongHandler(pongMsg string) error {
-	log.Println("Pong")
 	return c.conn.SetReadDeadline(time.Now().Add(pongWait))
 }

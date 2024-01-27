@@ -8,27 +8,40 @@ const answerCElement = document.querySelector('.answerC');
 const answerDElement = document.querySelector('.answerD');
 const readyButton = document.getElementById("readyButton");
 
-
 let conn;
-let userName = "tester"
+let userName = "tester";
+let ready = false;
 connectWs()
 
 gameFormElement.addEventListener("submit", (e) => {
-    e.preventDefault()
-    const answer = e.currentTarget.value
-    sendAnswer(answer)
-})
+    e.preventDefault();
+    if (!ready) return alert("you are not ready")
+    const formData = new FormData(gameFormElement);
+
+    const answerValue = formData.get('q1');
+    const answer = Number(answerValue)
+    if (answerValue !== null) {
+        console.log(answerValue);
+
+        // Tutaj możesz użyć wartości answerValue
+        sendAnswer((answer));
+    } else {
+        console.log("Nie wybrano odpowiedzi");
+    }
+});
+
 
 readyButton.addEventListener("click", (e) => {
     e.preventDefault()
     sendReadines()
+    ready = true
 })
 
 
 let gameState = {
     isGame: false,
     category: "",
-    round: 0,
+    round: 1,
     question: "",
     answers: [""],
     players: [{ name: "", answer: null, points: 0, round: 0 }],
@@ -147,7 +160,7 @@ function sendReadines() {
         isReady: true,
     }
     sendEvent("ready_player", payload)
-
+    return
 }
 
 
@@ -158,6 +171,7 @@ function sendAnswer(answer) {
         answer,
     }
     sendEvent("send_answer", payload)
+    return
 }
 
 

@@ -134,25 +134,30 @@ func (r *room) Run(m *manager) {
 			r.SendGameState()
 
 		case action := <-r.receiveAnswer:
-			var actionPlayer Player
+			var actionPlayer *Player
 			err := json.Unmarshal(action, &actionPlayer)
 			if err != nil {
 				log.Println("Error marshaling game state:", err)
 				return
 			}
 
-			r.playersActions = append(r.playersActions, actionPlayer)
 			offlineClients := 0
 			for client := range r.clients {
 				if r.clients[client] == false {
-					continue
+					break
 				}
 				if client.isReady == false {
 					offlineClients++
-					log.Println("offline")
 					continue
 				}
-				if client.name == actionPlayer.Name && client.round != r.round {
+				if client.answer >= 0 {
+					log.Println("Finish a round, won: ", client.name)
+					r.round++
+					client.round++
+				}
+				if client.name == actionPlayer.Name {
+					r.playersActions = append(r.playersActions, *actionPlayer)
+
 					log.Println(client, "a")
 					client.points = actionPlayer.Points
 					client.round = actionPlayer.Round
@@ -163,10 +168,6 @@ func (r *room) Run(m *manager) {
 						client.points = client.points + 10
 					}
 				}
-			}
-
-			if (len(r.clients) - offlineClients) == len(r.playersActions) {
-				r.round = r.round + 1
 			}
 			r.SendGameState()
 
