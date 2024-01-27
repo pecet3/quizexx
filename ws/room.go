@@ -34,7 +34,22 @@ func NewRoom(name string) *room {
 		{
 			question:      "test",
 			answers:       []string{"a", "a", "c", "d"},
-			correctAnswer: 1,
+			correctAnswer: 2,
+		},
+		{
+			question:      "test1",
+			answers:       []string{"a", "b", "c", "d"},
+			correctAnswer: 2,
+		},
+		{
+			question:      "test1",
+			answers:       []string{"a", "b", "c", "d"},
+			correctAnswer: 2,
+		},
+		{
+			question:      "test1",
+			answers:       []string{"a", "b", "c", "d"},
+			correctAnswer: 2,
 		},
 	}
 	r := &room{
@@ -102,9 +117,11 @@ func (r *room) Run(m *manager) {
 			r.clients[client] = true
 
 		case client := <-r.leave:
+			close(client.receive)
+			delete(r.clients, client)
+
 			if len(r.clients) == 0 {
 				log.Println("leaving")
-				close(client.receive)
 				m.RemoveRoom(r.name)
 				return
 			}
@@ -112,30 +129,43 @@ func (r *room) Run(m *manager) {
 			for client := range r.clients {
 				client.receive <- msg
 			}
-		case ready := <-r.ready:
-			ready.isReady = true
+		case client := <-r.ready:
+			client.isReady = true
 			r.SendGameState()
 
 		case action := <-r.receiveAnswer:
-			var player Player
-			err := json.Unmarshal(action, &player)
+			var actionPlayer Player
+			err := json.Unmarshal(action, &actionPlayer)
 			if err != nil {
 				log.Println("Error marshaling game state:", err)
 				return
 			}
 
-			r.playersActions = append(r.playersActions, player)
-			if player.Answer == r.body[r.round-1].correctAnswer {
-				for client := range r.clients {
-					if client == nil {
-						continue
-					}
-					if client.name == player.Name {
+			r.playersActions = append(r.playersActions, actionPlayer)
+			offlineClients := 0
+			for client := range r.clients {
+				if r.clients[client] == false {
+					continue
+				}
+				if client.isReady == false {
+					offlineClients++
+					log.Println("offline")
+					continue
+				}
+				if client.name == actionPlayer.Name && client.round != r.round {
+					log.Println(client, "a")
+					client.points = actionPlayer.Points
+					client.round = actionPlayer.Round
+					client.answer = actionPlayer.Answer
+					log.Println(client, "b")
+
+					if actionPlayer.Answer == r.body[r.round-1].correctAnswer {
 						client.points = client.points + 10
 					}
 				}
 			}
-			if len(r.clients) == len(r.playersActions) {
+
+			if (len(r.clients) - offlineClients) == len(r.playersActions) {
 				r.round = r.round + 1
 			}
 			r.SendGameState()

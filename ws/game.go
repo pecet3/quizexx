@@ -28,9 +28,9 @@ type QandA struct {
 	correctAnswer int
 }
 
-func (r *room) GetGameState() GameState {
+func (r *room) GetGameState() *GameState {
 	players := r.GetPlayers()
-	state := GameState{
+	state := &GameState{
 		IsGame:   true,
 		Category: "test",
 		Round:    r.round,

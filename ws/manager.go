@@ -64,7 +64,7 @@ func (m *manager) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 		receive: make(chan []byte),
 		room:    currentRoom,
 		name:    name,
-		round:   0,
+		round:   1,
 		answer:  -1,
 		points:  0,
 		isReady: false,

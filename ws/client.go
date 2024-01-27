@@ -25,7 +25,15 @@ type client struct {
 }
 
 func (c *client) read(m *manager) {
-	defer c.conn.Close()
+	defer func() {
+		c.conn.Close()
+	}()
+
+	if err := c.conn.SetReadDeadline(time.Now().Add(pongWait)); err != nil {
+
+		log.Println(err)
+		return
+	}
 
 	c.conn.SetReadLimit(512)
 
@@ -34,12 +42,16 @@ func (c *client) read(m *manager) {
 	for {
 		_, payload, err := c.conn.ReadMessage()
 		if err != nil {
+			if websocket.IsUnexpectedCloseError(err, websocket.CloseGoingAway, websocket.CloseAbnormalClosure) {
+				return
+			}
 			return
 		}
+
 		var request Event
 		if err := json.Unmarshal(payload, &request); err != nil {
 			log.Println("error marshaling json", err)
-			continue
+			break
 		}
 		if request.Type == "ready_player" {
 			c.room.ready <- c
@@ -52,14 +64,30 @@ func (c *client) read(m *manager) {
 }
 
 func (c *client) write() {
-	defer c.conn.Close()
+	defer func() {
+		c.conn.Close()
+	}()
+	ticker := time.NewTicker(pingInterval)
 
-	for msg := range c.receive {
+	for {
+		select {
+		case msg := <-c.receive:
 
-		err := c.conn.WriteMessage(websocket.TextMessage, msg)
+			err := c.conn.WriteMessage(websocket.TextMessage, msg)
 
-		if err != nil {
-			return
+			if err != nil {
+				return
+			}
+
+		case <-ticker.C:
+			log.Println("ping", len(c.room.clients))
+
+			// send ping to the client
+
+			if err := c.conn.WriteMessage(websocket.PingMessage, []byte(``)); err != nil {
+				log.Println("write message error: ", err)
+				return
+			}
 		}
 	}
 }
