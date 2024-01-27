@@ -18,9 +18,10 @@ type room struct {
 	forward       chan []byte
 	receiveAnswer chan []byte
 
-	body  []QandA
-	round int
-	play  bool
+	body           []QandA
+	round          int
+	playersActions []Player
+	play           bool
 }
 
 func NewRoom(name string) *room {
@@ -111,61 +112,37 @@ func (r *room) Run(m *manager) {
 			for client := range r.clients {
 				client.receive <- msg
 			}
-		case answer := <-r.receiveAnswer:
-			log.Println(string(answer) + "aaa")
 		case ready := <-r.ready:
 			ready.isReady = true
-			log.Println(ready, " READY")
-			state := r.GetGameState()
-			stateBytes, err := json.Marshal(state)
+			r.SendGameState()
+
+		case action := <-r.receiveAnswer:
+			var player Player
+			err := json.Unmarshal(action, &player)
 			if err != nil {
 				log.Println("Error marshaling game state:", err)
 				return
 			}
-			event := Event{
-				Type:    "start_game",
-				Payload: stateBytes,
-			}
-			eventBytes, err := json.Marshal(event)
-			if err != nil {
-				log.Println("Error marshaling game state:", err)
-				return
-			}
-			for client := range r.clients {
-				if client == nil {
-					continue
+
+			r.playersActions = append(r.playersActions, player)
+			if player.Answer == r.body[r.round-1].correctAnswer {
+				for client := range r.clients {
+					if client == nil {
+						continue
+					}
+					if client.name == player.Name {
+						client.points = client.points + 10
+					}
 				}
-				client.receive <- eventBytes
 			}
-		}
-	}
-}
+			if len(r.clients) == len(r.playersActions) {
+				r.round = r.round + 1
+			}
+			r.SendGameState()
 
-func (r *room) GetGameState() GameState {
-	players := r.GetPlayers()
-	state := GameState{
-		IsGame:   true,
-		Category: "test",
-		Round:    r.round,
-		Question: r.body[r.round-1].question,
-		Answers:  r.body[r.round-1].answers,
-		Players:  players,
-	}
-	return state
-}
-
-func (r *room) GetPlayers() []Player {
-	var players []Player
-	for client := range r.clients {
-		player := Player{
-			Name:   client.name,
-			Answer: client.answer,
-			Points: client.points,
-			Round:  client.round,
 		}
-		players = append(players, player)
+
 	}
-	return players
 }
 
 func (r *room) setupEventHandlers() {

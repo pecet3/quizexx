@@ -2,7 +2,6 @@ package ws
 
 import (
 	"encoding/json"
-	"time"
 )
 
 type Event struct {
@@ -18,12 +17,6 @@ const (
 )
 
 type SendMessageEvent struct {
-	UserName string `json:"user_name"`
+	UserName string `json:"userName"`
 	Message  string `json:"message"`
-}
-
-type SendAnswerEvent struct {
-	UserName string    `json:"user_name"`
-	AnswerId uint8     `json:"answer_id"`
-	Time     time.Time `json:"time"`
 }

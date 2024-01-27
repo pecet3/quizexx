@@ -55,9 +55,6 @@ func (c *client) write() {
 	defer c.conn.Close()
 
 	for msg := range c.receive {
-		log.Println(msg, "aaaa")
-
-		log.Println("new message in room: ", c.room.name)
 
 		err := c.conn.WriteMessage(websocket.TextMessage, msg)
 
