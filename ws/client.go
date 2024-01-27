@@ -57,7 +57,7 @@ func (c *client) read(m *manager) {
 			c.room.ready <- c
 		}
 		if request.Type == "send_answer" {
-			var actionPlayer Player
+			var actionPlayer *RoundAction
 			err := json.Unmarshal(request.Payload, &actionPlayer)
 			if err != nil {
 				log.Println("Error marshaling game state:", err)
