@@ -156,7 +156,7 @@ function updatePlayers(event) {
 
 function sendReadines() {
     const payload = {
-        userName,
+        name: userName,
         isReady: true,
     }
     sendEvent("ready_player", payload)
@@ -166,7 +166,7 @@ function sendReadines() {
 
 function sendAnswer(answer) {
     const payload = {
-        userName,
+        name: userName,
         round: gameState.round,
         answer,
     }

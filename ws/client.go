@@ -63,8 +63,7 @@ func (c *client) read(m *manager) {
 				log.Println("Error marshaling game state:", err)
 				return
 			}
-
-			c.answer = actionPlayer.Answer
+			log.Println("client", string(request.Payload))
 			c.room.receiveAnswer <- request.Payload
 		}
 	}

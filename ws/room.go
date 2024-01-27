@@ -2,14 +2,13 @@ package ws
 
 import (
 	"encoding/json"
-	"errors"
 	"log"
 )
 
 type room struct {
-	name    string
-	events  map[string]EventHandler
-	clients map[*client]bool
+	name     string
+	category string
+	clients  map[*client]bool
 
 	join  chan *client
 	ready chan *client
@@ -62,10 +61,9 @@ func NewRoom(name string) *room {
 		receiveAnswer: make(chan []byte),
 		body:          body,
 		round:         1,
-		events:        make(map[string]EventHandler),
 		play:          false,
 	}
-	r.setupEventHandlers()
+
 	return r
 }
 
@@ -131,6 +129,8 @@ func (r *room) Run(m *manager) {
 			}
 		case client := <-r.ready:
 			client.isReady = true
+			r.play = true
+			log.Println("ready is ", client.name)
 			r.SendGameState()
 
 		case action := <-r.receiveAnswer:
@@ -140,57 +140,38 @@ func (r *room) Run(m *manager) {
 				log.Println("Error marshaling game state:", err)
 				return
 			}
-
-			offlineClients := 0
+			playersInGame := 0
+			playersFinished := 0
+			log.Println("map", playersFinished, playersInGame)
 			for client := range r.clients {
-				if r.clients[client] == false {
-					break
+				log.Println(";ready: ", client.isReady)
+				if client.isReady == true {
+					playersInGame++
 				}
-				if client.isReady == false {
-					offlineClients++
-					continue
+				if client.isReady == true && actionPlayer.Answer >= 0 {
+					playersFinished++
 				}
-				if client.answer >= 0 {
-					log.Println("Finish a round, won: ", client.name)
-					r.round++
-					client.round++
-				}
-				if client.name == actionPlayer.Name {
-					r.playersActions = append(r.playersActions, *actionPlayer)
 
-					log.Println(client, "a")
-					client.points = actionPlayer.Points
+				log.Println("aadsfdsa", actionPlayer.Name)
+				if client.name == actionPlayer.Name {
+					log.Println("Matched")
 					client.round = actionPlayer.Round
 					client.answer = actionPlayer.Answer
-					log.Println(client, "b")
-
 					if actionPlayer.Answer == r.body[r.round-1].correctAnswer {
 						client.points = client.points + 10
 					}
 				}
+				if playersFinished >= playersInGame && playersInGame > 0 {
+					log.Println("Finish a round, won: ", client.name)
+					r.round++
+					client.round++
+				}
+				log.Println("map", playersFinished, playersInGame)
+
 			}
 			r.SendGameState()
 
 		}
 
-	}
-}
-
-func (r *room) setupEventHandlers() {
-	r.events[EventSendMessage] = SendMessage
-}
-
-func SendMessage(event Event, c *client) error {
-	return nil
-}
-
-func (r *room) routeEvent(event Event, c *client) error {
-	if handler, ok := r.events[event.Type]; ok {
-		if err := handler(event, c); err != nil {
-			return err
-		}
-		return nil
-	} else {
-		return errors.New("There is no such event type")
 	}
 }
