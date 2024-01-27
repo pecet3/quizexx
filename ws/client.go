@@ -3,8 +3,14 @@ package ws
 import (
 	"encoding/json"
 	"log"
+	"time"
 
 	"github.com/gorilla/websocket"
+)
+
+var (
+	pongWait     = 10 * time.Second
+	pingInterval = (pongWait * 9) / 10
 )
 
 type client struct {
@@ -21,26 +27,27 @@ type client struct {
 func (c *client) read(m *manager) {
 	defer c.conn.Close()
 
+	c.conn.SetReadLimit(512)
+
+	c.conn.SetPongHandler(c.pongHandler)
+
 	for {
 		_, payload, err := c.conn.ReadMessage()
 		if err != nil {
 			return
 		}
 		var request Event
-		log.Println(string(payload))
-		log.Println(request)
 		if err := json.Unmarshal(payload, &request); err != nil {
 			log.Println("error marshaling json", err)
 			continue
 		}
-		log.Println(request.Payload)
 		if request.Type == "ready_player" {
 			c.room.ready <- c
 		}
 		if request.Type == "send_answer" {
+			log.Println(request.Payload)
 			c.room.receiveAnswer <- request.Payload
 		}
-		c.room.forward <- request.Payload
 	}
 }
 
@@ -58,4 +65,9 @@ func (c *client) write() {
 			return
 		}
 	}
+}
+
+func (c *client) pongHandler(pongMsg string) error {
+	log.Println("Pong")
+	return c.conn.SetReadDeadline(time.Now().Add(pongWait))
 }

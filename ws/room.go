@@ -37,16 +37,17 @@ func NewRoom(name string) *room {
 		},
 	}
 	r := &room{
-		name:    name,
-		clients: make(map[*client]bool),
-		join:    make(chan *client),
-		leave:   make(chan *client),
-		ready:   make(chan *client),
-		forward: make(chan []byte),
-		body:    body,
-		round:   1,
-		events:  make(map[string]EventHandler),
-		play:    false,
+		name:          name,
+		clients:       make(map[*client]bool),
+		join:          make(chan *client),
+		leave:         make(chan *client),
+		ready:         make(chan *client),
+		forward:       make(chan []byte),
+		receiveAnswer: make(chan []byte),
+		body:          body,
+		round:         1,
+		events:        make(map[string]EventHandler),
+		play:          false,
 	}
 	r.setupEventHandlers()
 	return r
@@ -78,9 +79,15 @@ func (m *manager) RemoveRoom(name string) {
 	defer m.mutex.Unlock()
 
 	if room, ok := m.rooms[name]; ok {
+		for client := range room.clients {
+			room.leave <- client
+		}
 		close(room.join)
 		close(room.forward)
+		close(room.ready)
+		close(room.receiveAnswer)
 		close(room.leave)
+
 		delete(m.rooms, name)
 		log.Println("Closing a room with name:", room.name)
 		return
@@ -94,10 +101,9 @@ func (r *room) Run(m *manager) {
 			r.clients[client] = true
 
 		case client := <-r.leave:
-
-			close(client.receive)
-
 			if len(r.clients) == 0 {
+				log.Println("leaving")
+				close(client.receive)
 				m.RemoveRoom(r.name)
 				return
 			}
@@ -109,7 +115,7 @@ func (r *room) Run(m *manager) {
 			log.Println(string(answer) + "aaa")
 		case ready := <-r.ready:
 			ready.isReady = true
-			log.Println(ready)
+			log.Println(ready, " READY")
 			state := r.GetGameState()
 			stateBytes, err := json.Marshal(state)
 			if err != nil {
@@ -125,12 +131,12 @@ func (r *room) Run(m *manager) {
 				log.Println("Error marshaling game state:", err)
 				return
 			}
-			log.Println(string(eventBytes))
 			for client := range r.clients {
+				if client == nil {
+					continue
+				}
 				client.receive <- eventBytes
 			}
-
-			log.Println("starty")
 		}
 	}
 }
@@ -138,25 +144,24 @@ func (r *room) Run(m *manager) {
 func (r *room) GetGameState() GameState {
 	players := r.GetPlayers()
 	state := GameState{
-		IsGame:          true,
-		Category:        "test",
-		Round:           r.round,
-		Question:        r.body[r.round-1].question,
-		Answers:         r.body[r.round-1].answers,
-		Players:         players,
-		PrevRoundWinner: []string{""},
+		IsGame:   true,
+		Category: "test",
+		Round:    r.round,
+		Question: r.body[r.round-1].question,
+		Answers:  r.body[r.round-1].answers,
+		Players:  players,
 	}
 	return state
 }
 
 func (r *room) GetPlayers() []Player {
 	var players []Player
-
 	for client := range r.clients {
 		player := Player{
 			Name:   client.name,
 			Answer: client.answer,
 			Points: client.points,
+			Round:  client.round,
 		}
 		players = append(players, player)
 	}

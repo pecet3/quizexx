@@ -6,16 +6,32 @@ const answerAElement = document.querySelector('.answerA');
 const answerBElement = document.querySelector('.answerB');
 const answerCElement = document.querySelector('.answerC');
 const answerDElement = document.querySelector('.answerD');
+const readyButton = document.getElementById("readyButton");
+
+
 let conn;
 let userName = "tester"
 connectWs()
+
+gameFormElement.addEventListener("submit", (e) => {
+    e.preventDefault()
+    const answer = e.currentTarget.value
+    sendAnswer(answer)
+})
+
+readyButton.addEventListener("click", (e) => {
+    e.preventDefault()
+    sendReadines()
+})
+
+
 let gameState = {
     isGame: false,
     category: "",
     round: 0,
     question: "",
     answers: [""],
-    players: [{ name: "", answer: null, points: 0 }],
+    players: [{ name: "", answer: null, points: 0, round: 0 }],
     prevRoundWinner: [""]
 }
 
@@ -31,13 +47,12 @@ function routeEvent(event) {
     // if (event.type === undefined) {
     //     alert("no type field in the event")
     // }
-    console.log(event)
     switch (event.type) {
         case "start_game":
             startTheGame(event)
             break;
-        case "new_round":
-            startNewRound(event)
+        case "update_gamestate":
+            updateGameState(event)
             break
         case "update_players":
             updatePlayers(event)
@@ -60,7 +75,6 @@ function connectWs() {
         conn = new WebSocket(`ws://localhost:8080/ws?room=room1&name=tester`)
         conn.onopen = (e) => {
             addQuery("room", "room1")
-            sendReadines()
         }
 
         conn.onclose = (e) => {
@@ -68,6 +82,7 @@ function connectWs() {
         }
 
         conn.onmessage = (e) => {
+            console.log(e.data)
             const event = JSON.parse(e.data)
             routeEvent(event)
         }
@@ -84,13 +99,23 @@ function addQuery(param, value) {
     return
 }
 
+function updateDom() {
+    answerAElement.innerHTML = gameState.answers[0]
+    answerBElement.innerHTML = gameState.answers[1]
+    answerCElement.innerHTML = gameState.answers[2]
+    answerDElement.innerHTML = gameState.answers[3]
+
+    displayRoundElement.innerHTML = gameState.round
+    displayQuestionElement.innerHTML = gameState.question
+}
+
 ///////////////////// SERVER EVENT FUNCTIONS //////////////////////
 
 function startTheGame(event) {
-    console.log(event.payload + "cc")
+    console.log("start", event)
     if (event.payload.isGame === true) {
-        gameState.isGame = true
-        gameState.round = event.payload.round
+        gameState = event.payload
+        updateDom()
     }
     if (event.payload.isGame === false) {
         gameState.isGame = false
@@ -99,19 +124,19 @@ function startTheGame(event) {
     return
 }
 
-function startNewRound(event) {
-    console.log(event + "a")
-    const newRound = event.payload.round
-    if (!isGame) return
-    if ((newRound - 1) !== round) return
-    round = newRound
+function updateGameState(event) {
+    gameState = event.payload
+    console.log(gameState, "update")
+    updateDom()
     return
 }
 
 function updatePlayers(event) {
-    console.log(event + "b")
     const newPlayersState = event.payload
     gameState.players = newPlayersState
+    updateDom()
+
+    return
 }
 
 //////////////////// CLIENT EVENT FUNCTIONS ////////////////////
@@ -121,17 +146,18 @@ function sendReadines() {
         userName,
         isReady: true,
     }
-    console.log(conn)
-    conn.send(JSON.stringify({ type: "ready_player", payload }))
+    sendEvent("ready_player", payload)
+
 }
 
-function sendAnswer() {
+
+function sendAnswer(answer) {
     const payload = {
         userName,
-        round,
-        answer: 1,
+        round: gameState.round,
+        answer,
     }
-    conn.send(JSON.stringify({ type: "send_answer", payload }))
+    sendEvent("send_answer", payload)
 }
 
 
