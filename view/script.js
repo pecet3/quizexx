@@ -24,7 +24,7 @@ gameFormElement.addEventListener("submit", (e) => {
         console.log(answerValue);
 
         // Tutaj możesz użyć wartości answerValue
-        sendAnswer((answer));
+        sendAnswer(answer);
     } else {
         console.log("Nie wybrano odpowiedzi");
     }
@@ -44,8 +44,8 @@ let gameState = {
     round: 1,
     question: "",
     answers: [""],
-    players: [{ name: "", answer: null, points: 0, round: 0 }],
-    prevRoundWinner: [""]
+    actions: [{ name: "", answer: null, points: 0, round: 0 }],
+    actionsHistory: [{ name: "", answer: null, points: 0, round: 0 }]
 }
 
 

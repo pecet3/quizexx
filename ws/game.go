@@ -3,7 +3,25 @@ package ws
 import (
 	"encoding/json"
 	"log"
+	"sync"
 )
+
+type Game struct {
+	State    *GameState
+	Content  QandA
+	Category string
+	IsGame   bool
+	Players  map[*client]bool
+	mutex    sync.Mutex
+}
+
+type GameState struct {
+	Round          int           `json:"round"`
+	Question       string        `json:"question"`
+	Answers        []string      `json:"answers"`
+	Actions        []RoundAction `json:"actions"`
+	ActionsHistory []RoundAction `json:"actionsHistory"`
+}
 
 type RoundAction struct {
 	Name   string `json:"name"`
@@ -12,80 +30,85 @@ type RoundAction struct {
 	Round  int    `json:"round"`
 }
 
-type GameState struct {
-	IsGame         bool          `json:"isGame"`
-	Category       string        `json:"category"`
-	Round          int           `json:"round"`
-	Question       string        `json:"question"`
-	Answers        []string      `json:"answers"`
-	Actions        []RoundAction `json:"actions"`
-	ActionsHistory []RoundAction `json:"actionsHistory"`
-}
-
 type QandA struct {
 	Question      string   `json:"question"`
 	Answers       []string `json:"answers"`
 	CorrectAnswer int      `json:"correctAnswer"`
 }
 
-func (r *room) CreateGame() *GameState {
-	r.mutex.Lock()
-	defer r.mutex.Unlock()
+func (g *Game) CreateGame(category string) *Game {
+	g.mutex.Lock()
+	defer g.mutex.Unlock()
 
-	if r.play == false {
+	if g.IsGame == true {
 		return nil
 	}
-
-	newGame := &GameState{}
-	r.game = newGame
-	return newGame
-}
-
-func (r *room) GetGameState() *GameState {
-	actions := r.GetRoundActions()
-	state := &GameState{
-		IsGame:         r.play,
-		Category:       r.game.Category,
-		Round:          r.game.Round,
-		Question:       r.body[r.round-1].Question,
-		Answers:        r.body[r.round-1].Answers,
-		Actions:        actions,
-		ActionsHistory: actions,
+	state := g.CreateGameState()
+	game := &Game{
+		State:    state,
+		Content:  QandA{},
+		Category: category,
+		IsGame:   false,
+		Players:  make(map[*client]bool),
+		mutex:    sync.Mutex{},
 	}
-	return state
+
+	log.Println("new game: ", g.Category, game)
+	return game
 }
 
-func (r *room) GetRoundActions() []RoundAction {
+func (g *Game) CreateGameState() *GameState {
+	g.mutex.Lock()
+	defer g.mutex.Unlock()
+
+	return &GameState{
+		Round:          0,
+		Question:       "",
+		Answers:        []string{""},
+		Actions:        []RoundAction{},
+		ActionsHistory: []RoundAction{},
+	}
+}
+
+func (g *Game) GetGameState() *GameState {
+
+	return g.State
+}
+
+func (g *Game) GetRoundActions() []RoundAction {
+
 	var roundActions []RoundAction
-	for client := range r.clients {
+	for client := range g.Players {
 		action := RoundAction{
 			Name:   client.name,
 			Answer: client.answer,
 			Points: client.points,
 			Round:  client.round,
 		}
-		roundActions = append(roundActions, action)
+		roundActions = append(g.State.Actions, action)
 	}
 	return roundActions
 }
 
-func (r *room) GetActionsHistory() []RoundAction {
+func (g *Game) GetActionsHistory() []RoundAction {
+
 	var roundActions []RoundAction
-	for client := range r.clients {
+	for client := range g.Players {
 		action := RoundAction{
 			Name:   client.name,
 			Answer: client.answer,
 			Points: client.points,
 			Round:  client.round,
 		}
-		roundActions = append(roundActions, action)
+		roundActions = append(g.State.ActionsHistory, action)
 	}
 	return roundActions
 }
 
-func (r *room) SendGameState() error {
-	state := r.GetGameState()
+func (g *Game) SendGameState() error {
+	state := g.GetGameState()
 	stateBytes, err := json.Marshal(state)
+	log.Println("Send Game State to the client: ", g.State)
 	if err != nil {
 		log.Println("Error marshaling game state:", err)
 		return err
@@ -99,7 +122,7 @@ func (r *room) SendGameState() error {
 		log.Println("Error marshaling game state:", err)
 		return err
 	}
-	for client := range r.clients {
+	for client := range g.Players {
 		if client == nil {
 			return err
 		}

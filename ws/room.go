@@ -18,7 +18,7 @@ type room struct {
 	forward       chan []byte
 	receiveAnswer chan []byte
 
-	game         *GameState
+	game         *Game
 	body         []QandA
 	round        int
 	roundActions []RoundAction
@@ -110,7 +110,14 @@ func (m *manager) RemoveRoom(name string) {
 		return
 	}
 }
-
+func (r *room) CheckIfEveryoneIsReady() bool {
+	for c := range r.clients {
+		if c.isReady == false {
+			return false
+		}
+	}
+	return true
+}
 func (r *room) Run(m *manager) {
 	for {
 		select {
@@ -134,11 +141,16 @@ func (r *room) Run(m *manager) {
 		case client := <-r.ready:
 			client.isReady = true
 			r.play = true
-			r.SendGameState()
+			log.Println("Ready")
+			if ok := r.CheckIfEveryoneIsReady(); ok {
+				r.game = &Game{}
+				r.game.CreateGame("Jedzenie")
+			}
+			r.game.SendGameState()
 
 		case action := <-r.receiveAnswer:
-			var actionPlayer *RoundAction
-			err := json.Unmarshal(action, &actionPlayer)
+			var actionParsed *RoundAction
+			err := json.Unmarshal(action, &actionParsed)
 			if err != nil {
 				log.Println("Error marshaling game state:", err)
 				return
@@ -146,28 +158,38 @@ func (r *room) Run(m *manager) {
 			playersInGame := 0
 			playersFinished := 0
 			for client := range r.clients {
+				if client.isReady == false {
+					return
+				}
+				r.game.State.Actions = append(r.game.State.Actions, *actionParsed)
+				log.Println("added to actions: ", actionParsed)
+
+				r.game.State.ActionsHistory = append(r.game.State.ActionsHistory, *actionParsed)
+
+				log.Println("added to history: ", actionParsed)
 				if client.isReady == true {
 					playersInGame++
 				}
-				if client.isReady == true && actionPlayer.Answer >= 0 {
+				if client.isReady == true && actionParsed.Answer >= 0 {
 					playersFinished++
 				}
-				if client.name == actionPlayer.Name {
-					client.round = actionPlayer.Round
-					client.answer = actionPlayer.Answer
-					if actionPlayer.Answer == r.body[r.round-1].CorrectAnswer {
+
+				if client.name == actionParsed.Name {
+					client.round = actionParsed.Round
+					client.answer = actionParsed.Answer
+					if actionParsed.Answer == r.body[r.round-1].CorrectAnswer {
 						client.points = client.points + 10
 					}
 				}
 				if playersFinished >= playersInGame && playersInGame > 0 {
 					r.round++
 					client.round++
+					log.Println("Finished the round")
 				}
 
 			}
-			r.SendGameState()
+			r.game.SendGameState()
 
 		}
-
 	}
 }

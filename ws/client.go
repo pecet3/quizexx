@@ -43,10 +43,15 @@ func (c *client) read(m *manager) {
 		_, payload, err := c.conn.ReadMessage()
 		if err != nil {
 			if websocket.IsUnexpectedCloseError(err, websocket.CloseGoingAway, websocket.CloseAbnormalClosure) {
+				log.Println("ws err !!!!:", err)
 				return
 			}
-			return
+			log.Println("ws err !!!!:", err)
+
+			continue
 		}
+
+		log.Println(string(payload))
 
 		var request Event
 		if err := json.Unmarshal(payload, &request); err != nil {

@@ -9,8 +9,9 @@ import (
 )
 
 type manager struct {
-	rooms  map[string]*room
-	mutex  sync.Mutex
+	mutex sync.Mutex
+	rooms map[string]*room
+
 	events map[string]EventHandler
 }
 
