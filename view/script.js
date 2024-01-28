@@ -7,11 +7,20 @@ const answerBElement = document.querySelector('.answerB');
 const answerCElement = document.querySelector('.answerC');
 const answerDElement = document.querySelector('.answerD');
 const readyButton = document.getElementById("readyButton");
+const enterForm = document.getElementById("enterForm")
 
 let conn;
-let userName = "tester2";
+let userName;
+
 let ready = false;
 connectWs()
+
+enterForm.addEventListener("submit", () => {
+    const input = document.getElementById("nameInput")
+    userName = input.value
+    connectWs()
+
+})
 
 gameFormElement.addEventListener("submit", (e) => {
     e.preventDefault();
@@ -85,7 +94,7 @@ function sendEvent(eventName, payload) {
 
 function connectWs() {
     if (window.WebSocket) {
-        conn = new WebSocket(`ws://localhost:8080/ws?room=room1&name=tester`)
+        conn = new WebSocket(`ws://localhost:8080/ws?room=room1&name=${userName}`)
         conn.onopen = (e) => {
             addQuery("room", "room1")
         }
