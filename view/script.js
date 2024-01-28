@@ -9,7 +9,7 @@ const answerDElement = document.querySelector('.answerD');
 const readyButton = document.getElementById("readyButton");
 
 let conn;
-let userName = "tester";
+let userName = "tester2";
 let ready = false;
 connectWs()
 

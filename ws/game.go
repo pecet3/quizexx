@@ -62,28 +62,27 @@ func (r *room) CreateGame() *Game {
 		},
 	}
 
-	state := NewGameState()
 	newGame := &Game{
-		State:    state,
+		State:    &GameState{},
 		Content:  content,
 		Category: "",
 		IsGame:   false,
 		Players:  make(map[*client]bool),
 		mutex:    sync.Mutex{},
 	}
-
+	newGame.State = NewGameState(newGame)
 	r.game = newGame
 
 	log.Println("new game: ", newGame)
 	return newGame
 }
 
-func NewGameState() *GameState {
-
+func NewGameState(g *Game) *GameState {
+	round := 1
 	return &GameState{
-		Round:          0,
-		Question:       "",
-		Answers:        []string{""},
+		Round:          1,
+		Question:       g.Content[round-1].Question,
+		Answers:        g.Content[round-1].Answers,
 		Actions:        []RoundAction{},
 		ActionsHistory: []RoundAction{},
 	}

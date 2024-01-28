@@ -155,9 +155,8 @@ func (r *room) Run(m *manager) {
 					client.round++
 					log.Println("Finished the round")
 				}
-
+				r.game.SendGameState(r)
 			}
-			// r.game.SendGameState()
 
 		}
 	}
