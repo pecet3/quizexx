@@ -67,7 +67,7 @@ func (r *room) CreateGame() *Game {
 		State:    state,
 		Content:  content,
 		Category: "",
-		IsGame:   true,
+		IsGame:   false,
 		Players:  make(map[*client]bool),
 		mutex:    sync.Mutex{},
 	}
@@ -130,12 +130,12 @@ func (g *Game) GetActionsHistory() []RoundAction {
 	return roundActions
 }
 
-func (g *Game) SendGameState() error {
+func (g *Game) SendGameState(r *room) error {
 	log.Println(g.Category, "category send game")
 	g.mutex.Lock()
 	defer g.mutex.Unlock()
 
-	state := g.GetGameState()
+	state := g.State
 	stateBytes, err := json.Marshal(state)
 	log.Println("Send Game State to the client: ", g.State)
 	if err != nil {
@@ -151,7 +151,7 @@ func (g *Game) SendGameState() error {
 		log.Println("Error marshaling game state:", err)
 		return err
 	}
-	for client := range g.Players {
+	for client := range r.clients {
 		if client == nil {
 			return err
 		}

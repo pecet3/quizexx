@@ -109,9 +109,9 @@ func (r *room) Run(m *manager) {
 
 			if ok := r.CheckIfEveryoneIsReady(); ok {
 				r.game = &Game{}
-				r := r.CreateGame()
-				log.Println(r)
-				// r.game.SendGameState()
+				game := r.CreateGame()
+				log.Println(game)
+				game.SendGameState(r)
 
 			}
 
