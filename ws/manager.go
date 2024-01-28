@@ -28,10 +28,10 @@ func checkOrigin(r *http.Request) bool {
 }
 
 func NewManager() *manager {
-	m := &manager{
+	return &manager{
 		rooms: make(map[string]*room),
 	}
-	return m
+
 }
 
 func (m *manager) ServeHTTP(w http.ResponseWriter, req *http.Request) {

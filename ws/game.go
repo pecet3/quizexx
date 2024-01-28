@@ -8,7 +8,7 @@ import (
 
 type Game struct {
 	State    *GameState
-	Content  QandA
+	Content  []QandA
 	Category string
 	IsGame   bool
 	Players  map[*client]bool
@@ -36,30 +36,49 @@ type QandA struct {
 	CorrectAnswer int      `json:"correctAnswer"`
 }
 
-func (g *Game) CreateGame(category string) *Game {
-	g.mutex.Lock()
-	defer g.mutex.Unlock()
+func (r *room) CreateGame() *Game {
+	log.Println("creating a game")
 
-	if g.IsGame == true {
-		return nil
+	content := []QandA{
+		{
+			Question:      "test1",
+			Answers:       []string{"a", "b", "c", "d"},
+			CorrectAnswer: 2,
+		},
+		{
+			Question:      "test1",
+			Answers:       []string{"a", "b", "c", "d"},
+			CorrectAnswer: 2,
+		},
+		{
+			Question:      "test1",
+			Answers:       []string{"a", "b", "c", "d"},
+			CorrectAnswer: 2,
+		},
+		{
+			Question:      "test1",
+			Answers:       []string{"a", "b", "c", "d"},
+			CorrectAnswer: 2,
+		},
 	}
-	state := g.CreateGameState()
-	game := &Game{
+
+	state := NewGameState()
+	newGame := &Game{
 		State:    state,
-		Content:  QandA{},
-		Category: category,
-		IsGame:   false,
+		Content:  content,
+		Category: "",
+		IsGame:   true,
 		Players:  make(map[*client]bool),
 		mutex:    sync.Mutex{},
 	}
 
-	log.Println("new game: ", g.Category, game)
-	return game
+	r.game = newGame
+
+	log.Println("new game: ", newGame)
+	return newGame
 }
 
-func (g *Game) CreateGameState() *GameState {
-	g.mutex.Lock()
-	defer g.mutex.Unlock()
+func NewGameState() *GameState {
 
 	return &GameState{
 		Round:          0,
@@ -71,11 +90,15 @@ func (g *Game) CreateGameState() *GameState {
 }
 
 func (g *Game) GetGameState() *GameState {
+	g.mutex.Lock()
+	defer g.mutex.Unlock()
 
 	return g.State
 }
 
 func (g *Game) GetRoundActions() []RoundAction {
+	g.mutex.Lock()
+	defer g.mutex.Unlock()
 
 	var roundActions []RoundAction
 	for client := range g.Players {
@@ -91,6 +114,8 @@ func (g *Game) GetRoundActions() []RoundAction {
 }
 
 func (g *Game) GetActionsHistory() []RoundAction {
+	g.mutex.Lock()
+	defer g.mutex.Unlock()
 
 	var roundActions []RoundAction
 	for client := range g.Players {
@@ -106,6 +131,10 @@ func (g *Game) GetActionsHistory() []RoundAction {
 }
 
 func (g *Game) SendGameState() error {
+	log.Println(g.Category, "category send game")
+	g.mutex.Lock()
+	defer g.mutex.Unlock()
+
 	state := g.GetGameState()
 	stateBytes, err := json.Marshal(state)
 	log.Println("Send Game State to the client: ", g.State)

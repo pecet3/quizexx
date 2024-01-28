@@ -169,6 +169,7 @@ function sendAnswer(answer) {
         name: userName,
         round: gameState.round,
         answer,
+        points: 0,
     }
     sendEvent("send_answer", payload)
     return

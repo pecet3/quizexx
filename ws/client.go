@@ -48,7 +48,6 @@ func (c *client) read(m *manager) {
 			}
 			log.Println("ws err !!!!:", err)
 
-			continue
 		}
 
 		log.Println(string(payload))
