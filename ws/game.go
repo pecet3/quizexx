@@ -72,7 +72,7 @@ func (r *room) CreateGame() *Game {
 		Content:  content,
 		Category: "",
 		IsGame:   false,
-		Players:  make(map[*client]bool),
+		Players:  r.clients,
 		mutex:    sync.Mutex{},
 	}
 
@@ -86,7 +86,7 @@ func (g *Game) NewGameState() *GameState {
 	g.mutex.Lock()
 	defer g.mutex.Unlock()
 	return &GameState{
-		Round:          g.State.Round + 1,
+		Round:          g.State.Round,
 		Question:       g.Content[g.State.Round-1].Question,
 		Answers:        g.Content[g.State.Round-1].Answers,
 		Actions:        []RoundAction{},

@@ -95,6 +95,7 @@ func (r *room) Run(m *manager) {
 
 		case client := <-r.leave:
 			close(client.receive)
+			delete(r.game.Players, client)
 			delete(r.clients, client)
 
 			if len(r.clients) == 0 {
@@ -128,7 +129,8 @@ func (r *room) Run(m *manager) {
 			}
 			playersInGame := 0
 			playersFinished := 0
-			for client := range r.clients {
+			log.Println(playersFinished, playersInGame)
+			for client := range r.game.Players {
 				log.Println("action 2")
 				if client.isReady == false {
 					return
@@ -153,10 +155,10 @@ func (r *room) Run(m *manager) {
 						client.points = client.points + 10
 					}
 				}
-				if playersFinished >= playersInGame && playersInGame > 0 {
-					r.game.NewGameState()
+				if playersFinished >= playersInGame && playersInGame > 1 {
 					r.game.State.Round++
 					client.round++
+					r.game.NewGameState()
 
 					log.Println("Finished the round")
 				}
