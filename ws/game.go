@@ -46,17 +46,22 @@ func (r *room) CreateGame() *Game {
 			CorrectAnswer: 2,
 		},
 		{
-			Question:      "test1",
+			Question:      "test2",
 			Answers:       []string{"a", "b", "c", "d"},
 			CorrectAnswer: 2,
 		},
 		{
-			Question:      "test1",
+			Question:      "test3",
 			Answers:       []string{"a", "b", "c", "d"},
 			CorrectAnswer: 2,
 		},
 		{
-			Question:      "test1",
+			Question:      "test4",
+			Answers:       []string{"a", "b", "c", "d"},
+			CorrectAnswer: 2,
+		},
+		{
+			Question:      "test5",
 			Answers:       []string{"a", "b", "c", "d"},
 			CorrectAnswer: 2,
 		},
@@ -70,19 +75,20 @@ func (r *room) CreateGame() *Game {
 		Players:  make(map[*client]bool),
 		mutex:    sync.Mutex{},
 	}
-	newGame.State = NewGameState(newGame)
+	newGame.State = r.game.NewGameState()
 	r.game = newGame
 
 	log.Println("new game: ", newGame)
 	return newGame
 }
 
-func NewGameState(g *Game) *GameState {
-	round := 1
+func (g *Game) NewGameState() *GameState {
+	g.mutex.Lock()
+	defer g.mutex.Unlock()
 	return &GameState{
-		Round:          1,
-		Question:       g.Content[round-1].Question,
-		Answers:        g.Content[round-1].Answers,
+		Round:          g.State.Round + 1,
+		Question:       g.Content[g.State.Round-1].Question,
+		Answers:        g.Content[g.State.Round-1].Answers,
 		Actions:        []RoundAction{},
 		ActionsHistory: []RoundAction{},
 	}

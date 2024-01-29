@@ -146,13 +146,15 @@ func (r *room) Run(m *manager) {
 				if client.name == actionParsed.Name {
 					client.round = actionParsed.Round
 					client.answer = actionParsed.Answer
-					if actionParsed.Answer == r.game.Content[r.game.State.Round].CorrectAnswer {
+					if actionParsed.Answer == r.game.Content[r.game.State.Round-1].CorrectAnswer {
 						client.points = client.points + 10
 					}
 				}
 				if playersFinished >= playersInGame && playersInGame > 0 {
+					r.game.NewGameState()
 					r.game.State.Round++
 					client.round++
+
 					log.Println("Finished the round")
 				}
 				r.game.SendGameState(r)
