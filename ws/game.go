@@ -68,7 +68,7 @@ func (r *room) CreateGame() *Game {
 	}
 
 	newGame := &Game{
-		State:    &GameState{},
+		State:    &GameState{Round: 1},
 		Content:  content,
 		Category: "",
 		IsGame:   false,
@@ -76,16 +76,15 @@ func (r *room) CreateGame() *Game {
 		mutex:    sync.Mutex{},
 	}
 
-	log.Println("new game: ", newGame)
+	r.game = newGame
+
+	log.Println("new game: ", newGame.Content[0].Question)
 	return newGame
 }
 
 func (g *Game) NewGameState() *GameState {
 	g.mutex.Lock()
 	defer g.mutex.Unlock()
-	if g.State == nil {
-		return &GameState{}
-	}
 	return &GameState{
 		Round:          g.State.Round + 1,
 		Question:       g.Content[g.State.Round-1].Question,
