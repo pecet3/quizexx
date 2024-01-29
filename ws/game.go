@@ -75,8 +75,6 @@ func (r *room) CreateGame() *Game {
 		Players:  make(map[*client]bool),
 		mutex:    sync.Mutex{},
 	}
-	newGame.State = r.game.NewGameState()
-	r.game = newGame
 
 	log.Println("new game: ", newGame)
 	return newGame
@@ -85,6 +83,9 @@ func (r *room) CreateGame() *Game {
 func (g *Game) NewGameState() *GameState {
 	g.mutex.Lock()
 	defer g.mutex.Unlock()
+	if g.State == nil {
+		return &GameState{}
+	}
 	return &GameState{
 		Round:          g.State.Round + 1,
 		Question:       g.Content[g.State.Round-1].Question,

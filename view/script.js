@@ -94,7 +94,7 @@ function sendEvent(eventName, payload) {
 
 function connectWs() {
     if (window.WebSocket) {
-        conn = new WebSocket(`ws://0.0.0.0:8080/ws?room=room1&name=${userName}`)
+        conn = new WebSocket(`ws://localhost:8080/ws?room=room1&name=${userName}`)
         conn.onopen = (e) => {
             addQuery("room", "room1")
         }

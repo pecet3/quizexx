@@ -110,13 +110,15 @@ func (r *room) Run(m *manager) {
 			if ok := r.CheckIfEveryoneIsReady(); ok {
 				r.game = &Game{}
 				game := r.CreateGame()
+				game.State = r.game.NewGameState()
+				r.game = game
 				log.Println(game)
 				game.SendGameState(r)
 
 			}
 
 		case action := <-r.receiveAnswer:
-			log.Println("test")
+			log.Println("action")
 
 			var actionParsed *RoundAction
 			err := json.Unmarshal(action, &actionParsed)
@@ -127,6 +129,7 @@ func (r *room) Run(m *manager) {
 			playersInGame := 0
 			playersFinished := 0
 			for client := range r.clients {
+				log.Println("action 2")
 				if client.isReady == false {
 					return
 				}

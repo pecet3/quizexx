@@ -90,8 +90,6 @@ func (c *client) write() {
 			}
 
 		case <-ticker.C:
-			log.Println(len(c.room.clients))
-
 			if err := c.conn.WriteMessage(websocket.PingMessage, []byte(``)); err != nil {
 				log.Println("write message error: ", err)
 				return
