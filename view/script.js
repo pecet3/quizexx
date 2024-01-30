@@ -14,6 +14,16 @@ let userName;
 
 let ready = false;
 
+let gameState = {
+    isGame: false,
+    category: "",
+    round: 1,
+    question: "",
+    answers: [""],
+    actions: [{ name: "", answer: null, round: 0 }],
+    score: [{ name: "", points: 0, roundsWon: [] }]
+};
+
 enterForm.addEventListener("submit", (e) => {
     e.preventDefault()
     const input = document.getElementById("nameInput")
@@ -45,17 +55,6 @@ readyButton.addEventListener("click", (e) => {
     sendReadines()
     ready = true
 })
-
-
-let gameState = {
-    isGame: false,
-    category: "",
-    round: 1,
-    question: "",
-    answers: [""],
-    actions: [{ name: "", answer: null, points: 0, round: 0 }],
-    actionsHistory: [{ name: "", answer: null, points: 0, round: 0 }]
-}
 
 
 class Event {

@@ -46,29 +46,29 @@ func (r *room) CreateGame() *Game {
 
 	content := []QandA{
 		{
-			Question:      "test1",
-			Answers:       []string{"a", "b", "c", "d"},
-			CorrectAnswer: 2,
+			Question:      "Co oznacza skrót CPU?",
+			Answers:       []string{"Centralna Jednostka Przetwarzania", "Komputerowa Jednostka Przetwarzania", "Centralna Jednostka Procesora", "Komputerowa Jednostka Procesora"},
+			CorrectAnswer: 0,
 		},
 		{
-			Question:      "test2",
-			Answers:       []string{"a", "b", "c", "d"},
-			CorrectAnswer: 2,
+			Question:      "Jaki jest główny cel systemu operacyjnego?",
+			Answers:       []string{"Zarządzanie zasobami sprzętowymi", "Uruchamianie aplikacji", "Zakładanie łączności internetowej", "Przechowywanie danych"},
+			CorrectAnswer: 0,
 		},
 		{
-			Question:      "test3",
-			Answers:       []string{"a", "b", "c", "d"},
-			CorrectAnswer: 2,
+			Question:      "Co oznacza skrót HTML?",
+			Answers:       []string{"HyperText Markup Language", "HyperText Modeling Language", "High-Level Text Language", "Hyperlink and Text Markup Language"},
+			CorrectAnswer: 0,
 		},
 		{
-			Question:      "test4",
-			Answers:       []string{"a", "b", "c", "d"},
-			CorrectAnswer: 2,
+			Question:      "Jaka jest binarna reprezentacja liczby dziesięć?",
+			Answers:       []string{"1010", "1100", "1111", "1001"},
+			CorrectAnswer: 0,
 		},
 		{
-			Question:      "test5",
-			Answers:       []string{"a", "b", "c", "d"},
-			CorrectAnswer: 2,
+			Question:      "Który język programowania jest często używany do sztucznej inteligencji?",
+			Answers:       []string{"Java", "Python", "C++", "Ruby"},
+			CorrectAnswer: 1,
 		},
 	}
 

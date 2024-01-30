@@ -83,6 +83,7 @@ func (r *room) CheckIfEveryoneIsReady() bool {
 	}
 	return true
 }
+
 func (r *room) Run(m *manager) {
 	for {
 		select {
