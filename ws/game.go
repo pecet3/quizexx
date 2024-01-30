@@ -91,7 +91,7 @@ func (g *Game) NewGameState() *GameState {
 	g.mutex.Lock()
 	defer g.mutex.Unlock()
 	score := g.NewScore()
-
+	log.Println("g.Content[g.State.Round-1].Question", g.Content[g.State.Round-1].Question)
 	return &GameState{
 		Round:    g.State.Round,
 		Question: g.Content[g.State.Round-1].Question,

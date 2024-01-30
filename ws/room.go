@@ -206,8 +206,8 @@ func (r *room) Run(m *manager) {
 				if playersFinished >= playersInGame && playersInGame > 0 {
 					r.game.State.Round++
 					client.round++
-					r.game.NewGameState()
-
+					newState := r.game.NewGameState()
+					r.game.State = newState
 					log.Println("Finished the round")
 				}
 
