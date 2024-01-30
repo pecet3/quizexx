@@ -9,7 +9,7 @@ import (
 type room struct {
 	name     string
 	category string
-	clients  map[*client]bool
+	clients  map[*client]string
 	mutex    sync.Mutex
 	join     chan *client
 	ready    chan *client
@@ -33,7 +33,7 @@ type RoomMsg struct {
 func NewRoom(name string) *room {
 	r := &room{
 		name:          name,
-		clients:       make(map[*client]bool),
+		clients:       make(map[*client]string),
 		join:          make(chan *client),
 		leave:         make(chan *client),
 		ready:         make(chan *client),
@@ -141,7 +141,7 @@ func (r *room) Run(m *manager) {
 				client.receive <- msg
 			}
 		case client := <-r.join:
-			r.clients[client] = true
+			r.clients[client] = client.name
 			r.SendRoomMsg(client.name + "dołączył do gry")
 		case client := <-r.leave:
 			close(client.receive)
@@ -177,42 +177,35 @@ func (r *room) Run(m *manager) {
 				log.Println("Error marshaling game state:", err)
 				return
 			}
-			playersInGame := 0
-			playersFinished := 0
-			log.Println(playersFinished, playersInGame)
 			for client := range r.game.Players {
 				log.Println("action 2")
 				if client.isReady == false {
 					return
 				}
-				if client.isReady == true {
-					playersInGame++
-				}
-				if client.isReady == true && actionParsed.Answer >= 0 {
-					playersFinished++
-				}
 				log.Println(r.game.State.Round, "round")
 				if client.name == actionParsed.Name {
-					client.round = actionParsed.Round
 					client.answer = actionParsed.Answer
 					if actionParsed.Answer == r.game.Content[r.game.State.Round-1].CorrectAnswer {
 						client.points = client.points + 10
 						log.Println("Correct answer: ", client.name)
 					}
+					if actionParsed.Answer >= 0 {
+						r.game.State.PlayersFinished = append(r.game.State.PlayersFinished, client.name)
+					}
 				}
 				r.game.State.Actions = append(r.game.State.Actions, *actionParsed)
 				r.game.State.Score = r.game.NewScore()
-
-				if playersFinished >= playersInGame && playersInGame > 0 {
-					r.game.State.Round++
-					client.round++
-					newState := r.game.NewGameState()
-					r.game.State = newState
-					log.Println("Finished the round")
-				}
-
-				r.game.SendGameState(r)
 			}
+			playersInGame := len(r.game.Players)
+			playersFinished := len(r.game.State.PlayersFinished)
+			if playersFinished == playersInGame && playersInGame > 0 {
+				r.game.State.Round++
+				newState := r.game.NewGameState()
+				r.game.State = newState
+				log.Println("Finished the round")
+			}
+
+			r.game.SendGameState(r)
 
 		}
 	}

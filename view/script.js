@@ -1,11 +1,14 @@
 
 const displayRoundElement = document.getElementById('displayRound');
 const displayQuestionElement = document.getElementById('displayQuestion');
+
 const gameFormElement = document.getElementById('gameForm');
+
 const answerAElement = document.querySelector('.answerA');
 const answerBElement = document.querySelector('.answerB');
 const answerCElement = document.querySelector('.answerC');
 const answerDElement = document.querySelector('.answerD');
+
 const readyButton = document.getElementById("readyButton");
 const enterForm = document.getElementById("enterForm")
 
@@ -133,6 +136,31 @@ function updateDom() {
     displayQuestionElement.innerHTML = gameState.question
 }
 
+function updateTable(playerList) {
+    const tableBody = document.querySelector('#scoreTable tbody');
+
+    // Wyczyść istniejące wiersze w tabeli
+    tableBody.innerHTML = '';
+
+    // Iteruj przez listę graczy i aktualizuj tabelę
+    playerList.forEach(player => {
+        const row = document.createElement('tr');
+        const nameCell = document.createElement('td');
+        const pointsCell = document.createElement('td');
+
+        nameCell.textContent = player.name;
+        pointsCell.textContent = player.points;
+
+        row.appendChild(nameCell);
+        row.appendChild(pointsCell);
+        tableBody.appendChild(row);
+    });
+}
+
+// Wywołaj funkcję aktualizującą na początku
+updateTable(players);
+
+
 ///////////////////// SERVER EVENT FUNCTIONS //////////////////////
 
 function startTheGame(event) {
@@ -151,6 +179,8 @@ function startTheGame(event) {
 function updateGameState(event) {
     gameState = event.payload
     console.log(gameState, "update")
+
+    updateTable(gameState.score)
     updateDom()
     return
 }

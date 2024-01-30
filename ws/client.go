@@ -14,12 +14,12 @@ var (
 )
 
 type client struct {
-	name      string
-	conn      *websocket.Conn
-	receive   chan []byte
-	room      *room
-	isReady   bool
-	round     int
+	name    string
+	conn    *websocket.Conn
+	receive chan []byte
+	room    *room
+	isReady bool
+
 	answer    int
 	points    int
 	roundsWon []uint

@@ -11,16 +11,17 @@ type Game struct {
 	Content  []QandA
 	Category string
 	IsGame   bool
-	Players  map[*client]bool
+	Players  map[*client]string
 	mutex    sync.Mutex
 }
 
 type GameState struct {
-	Round    int           `json:"round"`
-	Question string        `json:"question"`
-	Answers  []string      `json:"answers"`
-	Actions  []RoundAction `json:"actions"`
-	Score    []PlayerScore `json:"score"`
+	Round           int           `json:"round"`
+	Question        string        `json:"question"`
+	Answers         []string      `json:"answers"`
+	Actions         []RoundAction `json:"actions"`
+	Score           []PlayerScore `json:"score"`
+	PlayersFinished []string      `json:"playersFinished"`
 }
 
 type RoundAction struct {

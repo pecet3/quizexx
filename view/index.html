@@ -18,7 +18,7 @@
             <input type="text" id="nameInput" />
             <button type="submit">submit</button>
         </form>
-        <div class="mb-6">
+        <div class="mb-6 flex flex-col items-center">
             <p class="text-lg font-medium mb-2" id="displayQuestion"></p>
             <form id="gameForm" class="grid grid-cols-2 gap-4">
                 <label class="flex items-center space-x-2 cursor-pointer">
@@ -40,6 +40,16 @@
                 <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600">Wyślij
                     odpowiedź</button>
             </form>
+            <table id="scoreTable" class="">
+                <thead>
+                    <tr class="border-b-2 border-gray-600 p-2 flex justify-between gap-24 font-thin">
+                        <th class=" m-auto">Imię</th>
+                        <th class=" m-auto">Punkty</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
         </div>
     </div>
 
