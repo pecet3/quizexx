@@ -78,6 +78,9 @@ function routeEvent(event) {
         case "update_players":
             updatePlayers(event)
             break
+        case "room_message":
+            console.log(event)
+            break
         default:
             alert("unsupporting message type")
             break;

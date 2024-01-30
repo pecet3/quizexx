@@ -20,6 +20,16 @@ type room struct {
 	game          *Game
 }
 
+type RoomClient struct {
+	Name    string `json:"name"`
+	IsReady bool   `json:"isReady"`
+}
+
+type RoomMsg struct {
+	Message string       `json:"message"`
+	Clients []RoomClient `json:"clients"`
+}
+
 func NewRoom(name string) *room {
 	r := &room{
 		name:          name,
@@ -84,6 +94,45 @@ func (r *room) CheckIfEveryoneIsReady() bool {
 	return true
 }
 
+func (r *room) SendRoomMsg(msg string) error {
+	var roomClients []RoomClient
+
+	for c := range r.clients {
+		roomClient := RoomClient{
+			Name:    c.name,
+			IsReady: c.isReady,
+		}
+		roomClients = append(roomClients, roomClient)
+	}
+
+	roomMsg := RoomMsg{
+		Message: msg,
+		Clients: roomClients,
+	}
+
+	roomMsgBytes, err := json.Marshal(roomMsg)
+	if err != nil {
+		log.Println("Error marshaling game state:", err)
+		return err
+	}
+	event := Event{
+		Type:    "room_message",
+		Payload: roomMsgBytes,
+	}
+	eventBytes, err := json.Marshal(event)
+	if err != nil {
+		log.Println("Error marshaling game state:", err)
+		return err
+	}
+	for client := range r.clients {
+		if client == nil {
+			return err
+		}
+		client.receive <- eventBytes
+	}
+	return nil
+}
+
 func (r *room) Run(m *manager) {
 	for {
 		select {
@@ -93,7 +142,7 @@ func (r *room) Run(m *manager) {
 			}
 		case client := <-r.join:
 			r.clients[client] = true
-
+			r.SendRoomMsg(client.name + "dołączył do gry")
 		case client := <-r.leave:
 			close(client.receive)
 			delete(r.game.Players, client)
