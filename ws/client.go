@@ -14,14 +14,15 @@ var (
 )
 
 type client struct {
-	name    string
-	conn    *websocket.Conn
-	receive chan []byte
-	room    *room
-	isReady bool
-	round   int
-	answer  int
-	points  int
+	name      string
+	conn      *websocket.Conn
+	receive   chan []byte
+	room      *room
+	isReady   bool
+	round     int
+	answer    int
+	points    int
+	roundsWon []uint
 }
 
 func (c *client) read(m *manager) {

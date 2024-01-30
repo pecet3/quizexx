@@ -16,18 +16,23 @@ type Game struct {
 }
 
 type GameState struct {
-	Round          int           `json:"round"`
-	Question       string        `json:"question"`
-	Answers        []string      `json:"answers"`
-	Actions        []RoundAction `json:"actions"`
-	ActionsHistory []RoundAction `json:"actionsHistory"`
+	Round    int           `json:"round"`
+	Question string        `json:"question"`
+	Answers  []string      `json:"answers"`
+	Actions  []RoundAction `json:"actions"`
+	Score    []PlayerScore `json:"score"`
 }
 
 type RoundAction struct {
 	Name   string `json:"name"`
 	Answer int    `json:"answer"`
-	Points int    `json:"points"`
 	Round  int    `json:"round"`
+}
+
+type PlayerScore struct {
+	Name      string `json:"name"`
+	Points    int    `json:"points"`
+	RoundsWon []uint `json:"roundsWon"`
 }
 
 type QandA struct {
@@ -85,13 +90,30 @@ func (r *room) CreateGame() *Game {
 func (g *Game) NewGameState() *GameState {
 	g.mutex.Lock()
 	defer g.mutex.Unlock()
+	score := g.NewScore()
+
 	return &GameState{
-		Round:          g.State.Round,
-		Question:       g.Content[g.State.Round-1].Question,
-		Answers:        g.Content[g.State.Round-1].Answers,
-		Actions:        []RoundAction{},
-		ActionsHistory: []RoundAction{},
+		Round:    g.State.Round,
+		Question: g.Content[g.State.Round-1].Question,
+		Answers:  g.Content[g.State.Round-1].Answers,
+		Actions:  []RoundAction{},
+		Score:    score,
 	}
+}
+
+func (g *Game) NewScore() []PlayerScore {
+	var score []PlayerScore
+
+	for p := range g.Players {
+		playerScore := PlayerScore{
+			Name:      p.name,
+			Points:    p.points,
+			RoundsWon: p.roundsWon,
+		}
+		score = append(score, playerScore)
+	}
+
+	return score
 }
 
 func (g *Game) GetGameState() *GameState {
@@ -99,40 +121,6 @@ func (g *Game) GetGameState() *GameState {
 	defer g.mutex.Unlock()
 
 	return g.State
-}
-
-func (g *Game) GetRoundActions() []RoundAction {
-	g.mutex.Lock()
-	defer g.mutex.Unlock()
-
-	var roundActions []RoundAction
-	for client := range g.Players {
-		action := RoundAction{
-			Name:   client.name,
-			Answer: client.answer,
-			Points: client.points,
-			Round:  client.round,
-		}
-		roundActions = append(g.State.Actions, action)
-	}
-	return roundActions
-}
-
-func (g *Game) GetActionsHistory() []RoundAction {
-	g.mutex.Lock()
-	defer g.mutex.Unlock()
-
-	var roundActions []RoundAction
-	for client := range g.Players {
-		action := RoundAction{
-			Name:   client.name,
-			Answer: client.answer,
-			Points: client.points,
-			Round:  client.round,
-		}
-		roundActions = append(g.State.ActionsHistory, action)
-	}
-	return roundActions
 }
 
 func (g *Game) SendGameState(r *room) error {

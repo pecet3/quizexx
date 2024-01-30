@@ -150,19 +150,17 @@ func (r *room) Run(m *manager) {
 						log.Println("Correct answer: ", client.name)
 					}
 				}
-				if playersFinished >= playersInGame && playersInGame > 1 {
+				r.game.State.Actions = append(r.game.State.Actions, *actionParsed)
+				r.game.State.Score = r.game.NewScore()
+
+				if playersFinished >= playersInGame && playersInGame > 0 {
 					r.game.State.Round++
 					client.round++
 					r.game.NewGameState()
 
 					log.Println("Finished the round")
 				}
-				r.game.State.Actions = append(r.game.State.Actions, *actionParsed)
-				log.Println("added to actions: ", actionParsed)
 
-				r.game.State.ActionsHistory = append(r.game.State.ActionsHistory, *actionParsed)
-
-				log.Println("added to history: ", actionParsed)
 				r.game.SendGameState(r)
 			}
 
