@@ -135,12 +135,6 @@ func (r *room) Run(m *manager) {
 				if client.isReady == false {
 					return
 				}
-				r.game.State.Actions = append(r.game.State.Actions, *actionParsed)
-				log.Println("added to actions: ", actionParsed)
-
-				r.game.State.ActionsHistory = append(r.game.State.ActionsHistory, *actionParsed)
-
-				log.Println("added to history: ", actionParsed)
 				if client.isReady == true {
 					playersInGame++
 				}
@@ -153,6 +147,7 @@ func (r *room) Run(m *manager) {
 					client.answer = actionParsed.Answer
 					if actionParsed.Answer == r.game.Content[r.game.State.Round-1].CorrectAnswer {
 						client.points = client.points + 10
+						log.Println("Correct answer: ", client.name)
 					}
 				}
 				if playersFinished >= playersInGame && playersInGame > 1 {
@@ -162,6 +157,12 @@ func (r *room) Run(m *manager) {
 
 					log.Println("Finished the round")
 				}
+				r.game.State.Actions = append(r.game.State.Actions, *actionParsed)
+				log.Println("added to actions: ", actionParsed)
+
+				r.game.State.ActionsHistory = append(r.game.State.ActionsHistory, *actionParsed)
+
+				log.Println("added to history: ", actionParsed)
 				r.game.SendGameState(r)
 			}
 
