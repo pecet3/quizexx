@@ -22,22 +22,22 @@
             <p class="text-lg font-medium mb-2" id="displayQuestion"></p>
             <form id="gameForm" class="grid grid-cols-2 gap-4">
                 <label class="flex items-center space-x-2 cursor-pointer">
-                    <input type="radio" name="q1" value="0" class="form-radio text-blue-500">
-                    <span>A. <p class="answerA"></p></span>
+                    <input type="radio" name="q1" value="0" class="form-radio opacity-0 text-blue-500">
+                    <span>A. <p class="answerA">Lorem ipsum</p></span>
                 </label>
-                <label class="flex items-center space-x-2 cursor-pointer">
-                    <input type="radio" name="q1" value="1" class="form-radio text-blue-500">
-                    <span>B. <p class="answerB"></p></span>
+                <label class="flex items-center space-x-2 cursor-pointer bg-blue-500 focus:bg-blue-600">
+                    <input type="radio" name="q1" value="1" class="form-radio text-blue-500 focused:bg-slate-200">
+                    <span>B. <p class="answerB">Lorem ipsum</p></span>
                 </label>
                 <label class="flex items-center space-x-2 cursor-pointer">
                     <input type="radio" name="q1" value="2" class="form-radio text-blue-500">
-                    <span>C. <p class="answerC"></p></span>
+                    <span>C. <p class="answerC">Lorem ipsum</p></span>
                 </label>
                 <label class="flex items-center space-x-2 cursor-pointer">
                     <input type="radio" name="q1" value="3" class="form-radio text-blue-500">
-                    <span>D. <p class="answerD"></p></span>
+                    <span>D. <p class="answerD">Lorem ipsum</p></span>
                 </label>
-                <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600">Wyślij
+                <button type="submit" class="bg-blue-500 col-span-2 text-white px-4 py-2 rounded-md hover:bg-blue-600">Wyślij
                     odpowiedź</button>
             </form>
             <table id="scoreTable" class="">
