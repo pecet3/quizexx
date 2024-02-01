@@ -156,33 +156,26 @@ func (r *room) Run(m *manager) {
 
 		case client := <-r.ready:
 			client.isReady = true
-			log.Println("Ready")
-
 			if ok := r.CheckIfEveryoneIsReady(); ok {
 				r.game = &Game{}
 				game := r.CreateGame()
 				game.State = r.game.NewGameState()
 				r.game = game
-				log.Println(game)
-				game.SendGameState(r)
-
+				game.SendGameState()
 			}
 
 		case action := <-r.receiveAnswer:
 			log.Println("action")
 
 			var actionParsed *RoundAction
-			err := json.Unmarshal(action, &actionParsed)
-			if err != nil {
+			if err := json.Unmarshal(action, &actionParsed); err != nil {
 				log.Println("Error marshaling game state:", err)
 				return
 			}
 			for client := range r.game.Players {
-				log.Println("action 2")
 				if client.isReady == false {
 					return
 				}
-				log.Println(r.game.State.Round, "round")
 				if client.name == actionParsed.Name {
 					client.answer = actionParsed.Answer
 					if actionParsed.Answer == r.game.Content[r.game.State.Round-1].CorrectAnswer {
@@ -196,16 +189,8 @@ func (r *room) Run(m *manager) {
 				r.game.State.Actions = append(r.game.State.Actions, *actionParsed)
 				r.game.State.Score = r.game.NewScore()
 			}
-			playersInGame := len(r.game.Players)
-			playersFinished := len(r.game.State.PlayersFinished)
-			if playersFinished == playersInGame && playersInGame > 0 {
-				r.game.State.Round++
-				newState := r.game.NewGameState()
-				r.game.State = newState
-				log.Println("Finished the round")
-			}
-
-			r.game.SendGameState(r)
+			r.game.CheckIfShouldBeNextRound()
+			r.game.SendGameState()
 
 		}
 	}
