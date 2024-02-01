@@ -7,6 +7,7 @@ import (
 )
 
 type Game struct {
+	Room     *room
 	State    *GameState
 	Content  []QandA
 	Category string
@@ -74,6 +75,7 @@ func (r *room) CreateGame() *Game {
 	}
 
 	newGame := &Game{
+		Room:     r,
 		State:    &GameState{Round: 1},
 		Content:  content,
 		Category: "",
@@ -117,14 +119,17 @@ func (g *Game) NewScore() []PlayerScore {
 	return score
 }
 
-func (g *Game) GetGameState() *GameState {
-	g.mutex.Lock()
-	defer g.mutex.Unlock()
-
-	return g.State
+func (g *Game) CheckIfShouldBeNextRound() {
+	playersInGame := len(g.Players)
+	playersFinished := len(g.State.PlayersFinished)
+	if playersFinished == playersInGame && playersInGame > 0 {
+		g.State.Round++
+		newState := g.NewGameState()
+		g.State = newState
+	}
 }
 
-func (g *Game) SendGameState(r *room) error {
+func (g *Game) SendGameState() error {
 	log.Println(g.Category, "category send game")
 	g.mutex.Lock()
 	defer g.mutex.Unlock()
@@ -145,7 +150,7 @@ func (g *Game) SendGameState(r *room) error {
 		log.Println("Error marshaling game state:", err)
 		return err
 	}
-	for client := range r.clients {
+	for client := range g.Room.clients {
 		if client == nil {
 			return err
 		}
