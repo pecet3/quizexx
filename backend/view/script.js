@@ -15,21 +15,29 @@ const enterForm = document.getElementById("enterForm")
 let conn;
 let userName;
 
-let ready = false;
+let ready = true;
 
 let gameState = {
-    isGame: false,
+    isGame: true,
     category: "",
     round: 1,
-    question: "",
-    answers: [""],
+    question: "Test",
+    answers: ["Lorem ipsum", "Lorem ipsum", "Lorem ipsum" , "Lorem ipsum"],
     actions: [{ name: "", answer: null, round: 0 }],
-    score: [{ name: "", points: 0, roundsWon: [] }]
+    score: [{ name: "kuba", points: 10, roundsWon: [] }]
 };
 
+startTheGame()
+updateDom()
+
+gameFormElement.addEventListener("change", (e) => {
+    console.log(e.currentTarget.value)
+
+})
 enterForm.addEventListener("submit", (e) => {
     e.preventDefault()
     const input = document.getElementById("nameInput")
+    input.classList.add("bg-slate-900")
     userName = input.value
     connectWs()
 
