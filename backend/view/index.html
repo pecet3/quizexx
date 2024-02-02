@@ -10,36 +10,46 @@
 </head>
 
 <body class="bg-gray-900 p-8">
-
-    <div class="max-w-lg mx-auto bg-white p-6 rounded-md shadow-md">
+    <div id="entry">
         <button class="bg-green-500" id="readyButton">I am Ready</button>
         <h1 class="text-2xl font-semibold mb-4" id="displayRound"></h1>
         <form id="enterForm">
             <input type="text" id="nameInput" />
             <button type="submit">submit</button>
         </form>
-        <div class="mb-6 flex flex-col items-center">
+    </div>
+    <div id="game" class="max-w-xl text-lg mx-auto bg-white p-6 rounded-md shadow-md">
+
+        <div class="flex flex-col gap-6 items-center">
             <p class="text-lg font-medium mb-2" id="displayQuestion"></p>
-            <form id="gameForm" class="grid grid-cols-2 gap-4">
-                <label class="flex items-center space-x-2 cursor-pointer">
-                    <input type="radio" name="q1" value="0" class="form-radio opacity-0 text-blue-500">
-                    <span>A. <p class="answerA">Lorem ipsum</p></span>
-                </label>
-                <label class="flex items-center space-x-2 cursor-pointer bg-blue-500 focus:bg-blue-600">
-                    <input type="radio" name="q1" value="1" class="form-radio text-blue-500 focused:bg-slate-200">
-                    <span>B. <p class="answerB">Lorem ipsum</p></span>
-                </label>
-                <label class="flex items-center space-x-2 cursor-pointer">
-                    <input type="radio" name="q1" value="2" class="form-radio text-blue-500">
-                    <span>C. <p class="answerC">Lorem ipsum</p></span>
-                </label>
-                <label class="flex items-center space-x-2 cursor-pointer">
-                    <input type="radio" name="q1" value="3" class="form-radio text-blue-500">
-                    <span>D. <p class="answerD">Lorem ipsum</p></span>
-                </label>
-                <button type="submit" class="bg-blue-500 col-span-2 text-white px-4 py-2 rounded-md hover:bg-blue-600">Wyślij
-                    odpowiedź</button>
+            <form id="gameForm" class="flex flex-col gap-6 w-full">
+
+                <div class="grid grid-cols-2 gap-4 text-lg font-medium p-2">
+                    <label class="cursor-pointer flex justify-center items-center bg-lime-300 rounded-lg p-1">
+                        <input type="radio" name="q1" value="0" class="opacity-0 ">
+                        <p class="answerA">Lorem ipsum</p>
+                    </label>
+                    <label class="cursor-pointer flex justify-center items-center bg-teal-300 rounded-lg p-1">
+                        <input type="radio" name="q1" value="1" class="opacity-0">
+                        <p class="answerB">Lorem ipsum</p>
+                    </label>
+                    <label class="cursor-pointer flex justify-center items-center bg-pink-300 rounded-lg p-1">
+                        <input type="radio" name="q1" value="2" class="opacity-0">
+                        <p class="answerC">Lorem ipsum</p>
+                    </label>
+                    <label class="cursor-pointer flex justify-center items-center bg-yellow-300 rounded-lg p-1">
+                        <input type="radio" name="q1" value="3" class="opacity-0">
+                        <p class="answerD">Lorem ipsum</p>
+                    </label>
+
+                </div>
+                <button type="submit"
+                    class="bg-purple-500 col-span-2 text-white px-4 py-2 rounded-md hover:bg-purple-600">
+                    Wyślij
+                    odpowiedź
+                </button>
             </form>
+
             <table id="scoreTable" class="">
                 <thead>
                     <tr class="border-b-2 border-gray-600 p-2 flex justify-between gap-24 font-thin">

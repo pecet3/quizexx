@@ -22,27 +22,16 @@ let gameState = {
     category: "",
     round: 1,
     question: "Test",
-    answers: ["Lorem ipsum", "Lorem ipsum", "Lorem ipsum" , "Lorem ipsum"],
+    answers: ["Lorem ipsum", "Lorem ipsum", "Lorem ipsum", "Lorem ipsum"],
     actions: [{ name: "", answer: null, round: 0 }],
     score: [{ name: "kuba", points: 10, roundsWon: [] }]
 };
 
-startTheGame()
-updateDom()
-
 gameFormElement.addEventListener("change", (e) => {
-    console.log(e.currentTarget.value)
+
+    console.log(e.target.value)
 
 })
-enterForm.addEventListener("submit", (e) => {
-    e.preventDefault()
-    const input = document.getElementById("nameInput")
-    input.classList.add("bg-slate-900")
-    userName = input.value
-    connectWs()
-
-})
-
 gameFormElement.addEventListener("submit", (e) => {
     e.preventDefault();
     if (!ready) return alert("you are not ready")
@@ -51,15 +40,19 @@ gameFormElement.addEventListener("submit", (e) => {
     const answerValue = formData.get('q1');
     const answer = Number(answerValue)
     if (answerValue !== null) {
-        console.log(answerValue);
-
-        // Tutaj możesz użyć wartości answerValue
         sendAnswer(answer);
     } else {
         console.log("Nie wybrano odpowiedzi");
     }
 });
+enterForm.addEventListener("submit", (e) => {
+    e.preventDefault()
+    const input = document.getElementById("nameInput")
+    input.classList.add("bg-slate-900")
+    userName = input.value
+    connectWs()
 
+})
 
 readyButton.addEventListener("click", (e) => {
     e.preventDefault()
@@ -165,9 +158,6 @@ function updateTable(playerList) {
     });
 }
 
-// Wywołaj funkcję aktualizującą na początku
-updateTable(players);
-
 
 ///////////////////// SERVER EVENT FUNCTIONS //////////////////////
 
@@ -176,10 +166,6 @@ function startTheGame(event) {
     if (event.payload.isGame === true) {
         gameState = event.payload
         updateDom()
-    }
-    if (event.payload.isGame === false) {
-        gameState.isGame = false
-        gameState.round = 0
     }
     return
 }
