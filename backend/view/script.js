@@ -1,16 +1,13 @@
 
 const displayRoundElement = document.getElementById('displayRound');
+const displayCategoryElement = document.getElementById('displayCategory');
 const displayQuestionElement = document.getElementById('displayQuestion');
 
 const gameFormElement = document.getElementById('gameForm');
 
-const answerAElement = document.querySelector('.answerA');
-const answerBElement = document.querySelector('.answerB');
-const answerCElement = document.querySelector('.answerC');
-const answerDElement = document.querySelector('.answerD');
-
 const readyButton = document.getElementById("readyButton");
 const enterForm = document.getElementById("enterForm")
+
 
 let conn;
 let userName;
@@ -27,11 +24,7 @@ let gameState = {
     score: [{ name: "kuba", points: 10, roundsWon: [] }]
 };
 
-gameFormElement.addEventListener("change", (e) => {
 
-    console.log(e.target.value)
-
-})
 gameFormElement.addEventListener("submit", (e) => {
     e.preventDefault();
     if (!ready) return alert("you are not ready")

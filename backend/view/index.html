@@ -18,26 +18,33 @@
             <button type="submit">submit</button>
         </form>
     </div> -->
-    <div id="game" class="max-w-2xl text-lg mx-auto bg-white p-6 rounded-md shadow-md">
+    <div id="gameDashboard" class="max-w-2xl text-lg mx-auto bg-slate-200 p-2 rounded-md shadow-md">
+        <div class="flex justify-between">
+            <h2 class="text-xl">Runda: <span id="displayRound"></span></h2>
+            <h2 class="text-xl ">Kategoria: <span id="displayCategory"></span></h2>
+        </div>
 
         <div class="flex flex-col gap-6 items-center">
-            <p class="text-lg font-medium mb-2" id="displayQuestion"></p>
             <form id="gameForm" class="flex flex-col gap-6 w-full">
 
-                <div class="grid grid-cols-2 gap-4 text-lg font-medium p-2">
-                    <label class="cursor-pointer flex justify-center items-center bg-lime-300 rounded-md p-1">
+                <div class="grid grid-cols-2 gap-4 text-lg font-medium p-2 ">
+                    <label id="a1" class="has-[:checked]:ring-2 ring-black has-[:checked]:scale-105 duration-300
+                        cursor-pointer flex justify-center items-center bg-lime-300 rounded-md p-1">
                         <input type="radio" name="q1" value="0" class="hidden ">
                         <p class="answerA">Lorem ipsum</p>
                     </label>
-                    <label class="cursor-pointer flex justify-center items-center bg-teal-300 rounded-md p-1">
+                    <label id="a2" class="has-[:checked]:ring-2 ring-black has-[:checked]:scale-105 duration-300
+                         cursor-pointer flex justify-center items-center bg-teal-300 rounded-md p-1">
                         <input type="radio" name="q1" value="1" class="hidden">
                         <p class="answerB">Lorem ipsum</p>
                     </label>
-                    <label class="cursor-pointer flex justify-center items-center bg-pink-300 rounded-md p-1">
+                    <label id="a3" class="has-[:checked]:ring-2 ring-black has-[:checked]:scale-105  duration-300
+                        cursor-pointer flex justify-center items-center bg-pink-300 rounded-md p-1">
                         <input type="radio" name="q1" value="2" class="hidden">
                         <p class="answerC">Lorem ipsum</p>
                     </label>
-                    <label class="cursor-pointer flex justify-center items-center bg-yellow-300 rounded-md p-1">
+                    <label id="a4" class="has-[:checked]:ring-2 ring-black has-[:checked]:scale-105 duration-300 
+                        cursor-pointer flex justify-center items-center bg-yellow-300 rounded-md p-1">
                         <input type="radio" name="q1" value="3" class="hidden">
                         <p class="answerD">Lorem ipsum</p>
                     </label>
