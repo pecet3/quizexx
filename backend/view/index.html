@@ -9,42 +9,42 @@
     <title>Quizex</title>
 </head>
 
-<body class="bg-gray-900 p-8">
-    <div id="entry">
+<body class="bg-gray-900 p-2 pt-8 sm:pt-24">
+    <!-- <div id="entry">
         <button class="bg-green-500" id="readyButton">I am Ready</button>
         <h1 class="text-2xl font-semibold mb-4" id="displayRound"></h1>
         <form id="enterForm">
             <input type="text" id="nameInput" />
             <button type="submit">submit</button>
         </form>
-    </div>
-    <div id="game" class="max-w-xl text-lg mx-auto bg-white p-6 rounded-md shadow-md">
+    </div> -->
+    <div id="game" class="max-w-2xl text-lg mx-auto bg-white p-6 rounded-md shadow-md">
 
         <div class="flex flex-col gap-6 items-center">
             <p class="text-lg font-medium mb-2" id="displayQuestion"></p>
             <form id="gameForm" class="flex flex-col gap-6 w-full">
 
                 <div class="grid grid-cols-2 gap-4 text-lg font-medium p-2">
-                    <label class="cursor-pointer flex justify-center items-center bg-lime-300 rounded-lg p-1">
-                        <input type="radio" name="q1" value="0" class="opacity-0 ">
+                    <label class="cursor-pointer flex justify-center items-center bg-lime-300 rounded-md p-1">
+                        <input type="radio" name="q1" value="0" class="hidden ">
                         <p class="answerA">Lorem ipsum</p>
                     </label>
-                    <label class="cursor-pointer flex justify-center items-center bg-teal-300 rounded-lg p-1">
-                        <input type="radio" name="q1" value="1" class="opacity-0">
+                    <label class="cursor-pointer flex justify-center items-center bg-teal-300 rounded-md p-1">
+                        <input type="radio" name="q1" value="1" class="hidden">
                         <p class="answerB">Lorem ipsum</p>
                     </label>
-                    <label class="cursor-pointer flex justify-center items-center bg-pink-300 rounded-lg p-1">
-                        <input type="radio" name="q1" value="2" class="opacity-0">
+                    <label class="cursor-pointer flex justify-center items-center bg-pink-300 rounded-md p-1">
+                        <input type="radio" name="q1" value="2" class="hidden">
                         <p class="answerC">Lorem ipsum</p>
                     </label>
-                    <label class="cursor-pointer flex justify-center items-center bg-yellow-300 rounded-lg p-1">
-                        <input type="radio" name="q1" value="3" class="opacity-0">
+                    <label class="cursor-pointer flex justify-center items-center bg-yellow-300 rounded-md p-1">
+                        <input type="radio" name="q1" value="3" class="hidden">
                         <p class="answerD">Lorem ipsum</p>
                     </label>
 
                 </div>
                 <button type="submit"
-                    class="bg-purple-500 col-span-2 text-white px-4 py-2 rounded-md hover:bg-purple-600">
+                    class="bg-purple-600 m-auto ring-1 ring-black text-white px-4 py-2 rounded-lg text-2xl hover:bg-purple-700">
                     Wyślij
                     odpowiedź
                 </button>
