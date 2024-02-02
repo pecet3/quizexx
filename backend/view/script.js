@@ -6,19 +6,17 @@ const displayQuestionElement = document.getElementById('displayQuestion');
 const gameFormElement = document.getElementById('gameForm');
 
 const readyButton = document.getElementById("readyButton");
-const enterForm = document.getElementById("enterForm")
+const enterButton = document.getElementById("enterButton")
 
+const gameDashboard = document.getElementById("gameDashboard")
+const entryDashboard = document.getElementById("entryDashboard")
+const roomDashboard = document.getElementById("roomDashboard")
 
 let conn;
 let userName;
 
 let ready = true;
 let isAnswerSent = false;
-
-let render = {
-    displayRoomDashboard: false,
-    displayGameDashboard: gameState.isGame
-}
 
 let gameState = {
     isGame: false,
@@ -29,6 +27,11 @@ let gameState = {
     actions: [{ name: "", answer: null, round: 0 }],
     score: [{ name: "kuba", points: 10, roundsWon: [] }]
 };
+
+let render = {
+    displayRoomDashboard: false,
+    displayGameDashboard: gameState.isGame ?? false
+}
 
 
 gameFormElement.addEventListener("submit", (e) => {
@@ -44,13 +47,14 @@ gameFormElement.addEventListener("submit", (e) => {
         console.log("Nie wybrano odpowiedzi");
     }
 });
-enterForm.addEventListener("submit", (e) => {
+enterButton.addEventListener("click", (e) => {
     e.preventDefault()
+    console.log(e)
     const input = document.getElementById("nameInput")
     input.classList.add("bg-slate-900")
     userName = input.value
     connectWs()
-
+    return false;
 })
 
 readyButton.addEventListener("click", (e) => {
@@ -98,8 +102,13 @@ function sendEvent(eventName, payload) {
 
 function checkWhatRender() {
     switch (render) {
-        case (render.displayGameDashboard):
-            game
+        case (render.displayGameDashboard == true):
+            gameDashboard.classList.remove("hidden")
+        case (render.displayRoomDashboard == true):
+            console.log(render.displayRoomDashboard)
+            roomDashboard.classList.remove("hidden")
+        default:
+            entryDashboard.classList.remove("hidden")
     }
 
 }
@@ -110,6 +119,9 @@ function connectWs() {
         conn.onopen = (e) => {
             addQuery("room", "room1")
             displayRoomDashboard = true
+            checkWhatRender()
+            roomDashboard.classList.remove("hidden")
+
         }
 
         conn.onclose = (e) => {
