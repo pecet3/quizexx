@@ -13,9 +13,15 @@ let conn;
 let userName;
 
 let ready = true;
+let isAnswerSent = false;
+
+let render = {
+    displayRoomDashboard: false,
+    displayGameDashboard: gameState.isGame
+}
 
 let gameState = {
-    isGame: true,
+    isGame: false,
     category: "",
     round: 1,
     question: "Test",
@@ -90,12 +96,20 @@ function sendEvent(eventName, payload) {
     conn.send(JSON.stringify(event))
 }
 
+function checkWhatRender() {
+    switch (render) {
+        case (render.displayGameDashboard):
+            game
+    }
+
+}
 
 function connectWs() {
     if (window.WebSocket) {
         conn = new WebSocket(`ws://localhost:8080/ws?room=room1&name=${userName}`)
         conn.onopen = (e) => {
             addQuery("room", "room1")
+            displayRoomDashboard = true
         }
 
         conn.onclose = (e) => {
