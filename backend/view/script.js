@@ -12,6 +12,11 @@ const gameDashboard = document.getElementById("gameDashboard")
 const entryDashboard = document.getElementById("entryDashboard")
 const roomDashboard = document.getElementById("roomDashboard")
 
+const answerAElement = document.getElementById('answerA');
+const answerBElement = document.getElementById('answerB');
+const answerCElement = document.getElementById('answerC');
+const answerDElement = document.getElementById('answerD');
+
 let conn;
 let userName;
 
@@ -28,11 +33,6 @@ let gameState = {
     score: [{ name: "kuba", points: 10, roundsWon: [] }]
 };
 
-let render = {
-    displayRoomDashboard: false,
-    displayGameDashboard: gameState.isGame ?? false
-}
-
 
 gameFormElement.addEventListener("submit", (e) => {
     e.preventDefault();
@@ -47,6 +47,7 @@ gameFormElement.addEventListener("submit", (e) => {
         console.log("Nie wybrano odpowiedzi");
     }
 });
+
 enterButton.addEventListener("click", (e) => {
     e.preventDefault()
     console.log(e)
@@ -63,6 +64,7 @@ readyButton.addEventListener("click", (e) => {
     ready = true
 })
 
+//////////////////////////////////////////////////////////////////////////////
 
 class Event {
     constructor(type, payload) {
@@ -70,13 +72,13 @@ class Event {
         this.payload = payload
     }
 }
-
 function routeEvent(event) {
-    // if (event.type === undefined) {
-    //     alert("no type field in the event")
-    // }
+    if (event.type === undefined) {
+        alert("no type field in the event")
+    }
     switch (event.type) {
         case "start_game":
+            roomDashboard.classList.remove("hidden")
             startTheGame(event)
             break;
         case "update_gamestate":
@@ -94,34 +96,13 @@ function routeEvent(event) {
     }
 }
 
-function sendEvent(eventName, payload) {
-    const event = new Event(eventName, payload)
-
-    conn.send(JSON.stringify(event))
-}
-
-function checkWhatRender() {
-    switch (render) {
-        case (render.displayGameDashboard == true):
-            gameDashboard.classList.remove("hidden")
-        case (render.displayRoomDashboard == true):
-            console.log(render.displayRoomDashboard)
-            roomDashboard.classList.remove("hidden")
-        default:
-            entryDashboard.classList.remove("hidden")
-    }
-
-}
-
 function connectWs() {
     if (window.WebSocket) {
         conn = new WebSocket(`ws://localhost:8080/ws?room=room1&name=${userName}`)
         conn.onopen = (e) => {
             addQuery("room", "room1")
-            displayRoomDashboard = true
-            checkWhatRender()
-            roomDashboard.classList.remove("hidden")
-
+            entryDashboard.classList.add("hidden")
+            gameDashboard.classList.remove("hidden")
         }
 
         conn.onclose = (e) => {
@@ -138,6 +119,12 @@ function connectWs() {
     }
 }
 //////////////////////////////////////////
+
+function sendEvent(eventName, payload) {
+    const event = new Event(eventName, payload)
+
+    conn.send(JSON.stringify(event))
+}
 
 function addQuery(param, value) {
     const url = new URL(window.location.href)
@@ -157,12 +144,10 @@ function updateDom() {
 }
 
 function updateTable(playerList) {
-    const tableBody = document.querySelector('#scoreTable tbody');
+    const tableBody = document.getElementById('#scoreTable tbody');
 
-    // Wyczyść istniejące wiersze w tabeli
     tableBody.innerHTML = '';
 
-    // Iteruj przez listę graczy i aktualizuj tabelę
     playerList.forEach(player => {
         const row = document.createElement('tr');
         const nameCell = document.createElement('td');
@@ -184,7 +169,9 @@ function startTheGame(event) {
     console.log("start", event)
     if (event.payload.isGame === true) {
         gameState = event.payload
+        gameDashboard.classList.remove("hidden")
         updateDom()
+
     }
     return
 }

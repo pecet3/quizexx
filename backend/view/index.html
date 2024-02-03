@@ -16,10 +16,10 @@
         <button id="enterButton">submit</button>
 
     </div>
-    <div id="roomDashboard" class="hidden max-w-2xl text-lg mx-auto bg-slate-200 p-2 rounded-md shadow-md">
-        <button class="bg-green-500" id="readyButton">I am Ready</button>
-    </div>
     <div id="gameDashboard" class="hidden max-w-2xl text-lg mx-auto bg-slate-200 p-2 rounded-md shadow-md">
+        <div id="roomDashboard" class="hidden max-w-2xl text-lg mx-auto bg-slate-200 p-2 rounded-md shadow-md">
+            <button class="bg-green-500" id="readyButton">I am Ready</button>
+        </div>
         <div class="flex justify-between">
             <h2 class="text-xl">Runda: <span id="displayRound"></span></h2>
             <h2 class="text-xl ">Kategoria: <span id="displayCategory"></span></h2>
@@ -32,22 +32,22 @@
                     <label id="a1" class="has-[:checked]:ring-2 ring-black has-[:checked]:scale-105 duration-300
                         cursor-pointer flex justify-center items-center bg-lime-300 rounded-md p-1">
                         <input type="radio" name="q1" value="0" class="hidden ">
-                        <p class="answerA">Lorem ipsum</p>
+                        <p id="answerA">Lorem ipsum</p>
                     </label>
                     <label id="a2" class="has-[:checked]:ring-2 ring-black has-[:checked]:scale-105 duration-300
                          cursor-pointer flex justify-center items-center bg-teal-300 rounded-md p-1">
                         <input type="radio" name="q1" value="1" class="hidden">
-                        <p class="answerB">Lorem ipsum</p>
+                        <p id="answerB">Lorem ipsum</p>
                     </label>
                     <label id="a3" class="has-[:checked]:ring-2 ring-black has-[:checked]:scale-105  duration-300
                         cursor-pointer flex justify-center items-center bg-pink-300 rounded-md p-1">
                         <input type="radio" name="q1" value="2" class="hidden">
-                        <p class="answerC">Lorem ipsum</p>
+                        <p id="answerC">Lorem ipsum</p>
                     </label>
                     <label id="a4" class="has-[:checked]:ring-2 ring-black has-[:checked]:scale-105 duration-300 
                         cursor-pointer flex justify-center items-center bg-yellow-300 rounded-md p-1">
                         <input type="radio" name="q1" value="3" class="hidden">
-                        <p class="answerD">Lorem ipsum</p>
+                        <p id="answerD">Lorem ipsum</p>
                     </label>
 
                 </div>
