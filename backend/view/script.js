@@ -50,12 +50,10 @@ gameFormElement.addEventListener("submit", (e) => {
 
 enterButton.addEventListener("click", (e) => {
     e.preventDefault()
-    console.log(e)
     const input = document.getElementById("nameInput")
-    input.classList.add("bg-slate-900")
     userName = input.value
     connectWs()
-    return false;
+    return
 })
 
 readyButton.addEventListener("click", (e) => {
@@ -144,7 +142,7 @@ function updateDom() {
 }
 
 function updateTable(playerList) {
-    const tableBody = document.getElementById('#scoreTable tbody');
+    const tableBody = document.getElementById('scoreTableBody');
 
     tableBody.innerHTML = '';
 
