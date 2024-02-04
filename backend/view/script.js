@@ -76,7 +76,6 @@ function routeEvent(event) {
     }
     switch (event.type) {
         case "start_game":
-            roomDashboard.classList.remove("hidden")
             startTheGame(event)
             break;
         case "update_gamestate":
@@ -167,6 +166,7 @@ function startTheGame(event) {
     console.log("start", event)
     if (event.payload.isGame === true) {
         gameState = event.payload
+        roomDashboard.classList.add("hidden")
         gameDashboard.classList.remove("hidden")
         updateDom()
 
