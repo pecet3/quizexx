@@ -11,10 +11,10 @@
 </head>
 
 <body class="bg-gray-900 p-2 py-6 text=center m-auto">
-    <header class="p-1 my-4 ">
+    <header class="p-1 my-4 relative">
         <h1
-            class="text-8xl font-black	 text-center text-purple-600 font-mono underline decoration-dotted decoration-6 decoration-emerald-500 ">
-            <span class="text-4xl pb-2">🎲</span>Quizex<span class="text-4xl pb-2">🏆</span>
+            class="text-8xl font-black	flex justify-center items-end text-center text-purple-600 font-mono underline decoration-dotted decoration-6 decoration-emerald-500 ">
+            <span class="text-4xl absolute -top-1 right-1/2 mr-2">🎲</span>Quizex<span class="text-4xl"></span>
         </h1>
     </header>
     <div id="entryDashboard"
@@ -50,30 +50,44 @@
                 <option value="hard" class="text-center">Trudny</option>x
             </select>
             <button type="submit"
-                class="bg-purple-600 shadow-md shadow-gray-800 hover:shadow-none hover:rounded-xl hover:bg-purple-700 font-sans mt-4 px-4 text-white text-3xl duration-300 rounded-lg m-auto py-2"
+                class="bg-purple-600 shadow-md shadow-gray-800 hover:shadow-none hover:rounded-xl 
+                hover:bg-purple-700 font-sans mt-4 px-4 text-white hover:ring-2 ring-black
+                text-3xl duration-300 rounded-lg m-auto py-2"
                 id="createRoom">Utwórz
                 pokój</button>
         </form>
     </div>
 
     </div>
-    <div id="gameDashboard" class="m-auto max-w-4xl text-lg bg-pattern p-2 rounded-md shadow-md">
-        <div id="roomDashboard" class="max-w-2xl text-lg mx-auto bg-slate-200 p-2 rounded-md shadow-md">
-            <button class="bg-green-500" id="readyButton">I am Ready</button>
+    <div id="gameDashboard" class="m-auto max-w-4xl text-lg bg-pattern h-screen p-2 rounded-md shadow-md">
+        <div id="roomDashboard" class="my-10">
+            <button class="bg-green-500 px-2 p-1 text-2xl rounded-md hover:rounded-lg
+             duration-300 hover:shadow-md shadow-lg shadow-gray-700" id="readyButton">Jestem gotowy</button>
         </div>
-        <div class="flex justify-evenly gap-4">
-            <h2 class="text-xl font-bold font-mono bg-slate-400 rounded-t-md p-1 px-2">
+        <div class="flex justify-between gap-4">
+            <div class="text-xl font-bold font-mono bg-gray-400 rounded-t-md p-1 px-2">
                 Kategoria: <span id="displayCategory" class="font-sans font-medium text-purple-800 italic">Komputery</span>
-            </h2>
-            <h2 class="text-xl font-bold font-mono bg-slate-400 rounded-t-md p-1 px-2">
-                Runda: <span id="displayRound" class="font-sans font-black ">1</span>
-            </h2>
+            </div>
+            <div class="text-2xl flex items-center gap-2 font-black font-mono bg-gray-400 rounded-t-md p-1 px-2">
+              <div class="flex items-start m-auto gap-1">
+               <p>Runda: </p><span id="displayRound" class="font-sans  text-blue-800">1</span>
+            </div>
+                <div class="flex justify-center items-center gap-1
+                 border-l-2 bg-slate-900 px-2 py-0.5 rounded-lg border-gray-800">
+                    <img src="./assets/userIcon.svg" class="h-6 w-6" />
+                    <span id="playersLengthDisplay"  
+                    class="font-sans text-green-400 text-xl">4</span>
+                </div>
+            </div>
         </div>
 
         <div class="flex flex-col gap-6 items-center">
             <form id="gameForm" class="flex flex-col gap-6 w-full ">
 
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-gray-300 shadow-md shadow-gray-700 p-4 rounded-xl text-lg font-medium p-2 ">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-gray-200
+                 shadow-md shadow-gray-700 p-4 rounded-b-xl text-lg font-medium p-2 ">
+                   
+                   
                     <h3 id="displayQuestion" class="sm:col-span-2 text-center font-bold text-2xl">Ile ważny kilogram?</h3>
                     <label id="a1" class="shadow-md hover:shadow-sm shadow-gray-800 has-[:checked]:shadow-none has-[:checked]:rounded-lg has-[:checked]:scale-[0.98]
                     duration-300 has-[:checked]:bg-purple-600 has-[:checked]:ring-4 ring-emerald-500 has-[:checked]:text-white
@@ -102,8 +116,9 @@
 
                 </div>
                 <button type="submit"
-                    class="bg-purple-600 shadow-md shadow-gray-800 hover:shadow-none hover:rounded-xl hover:bg-purple-700 
-                    font-sans px-4 text-white text-3xl duration-300 rounded-lg m-auto py-2">
+                    class="bg-purple-600 shadow-md shadow-gray-800 
+                    hover:shadow-none hover:rounded-xl hover:bg-purple-700 hover:scale-[0.995]
+                    font-mono px-4 text-white text-3xl duration-300 rounded-lg m-auto py-2">
                     Wyślij
                     odpowiedź
                 </button>
