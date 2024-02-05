@@ -10,10 +10,23 @@
 </head>
 
 <body class="bg-gray-900 p-2 pt-8 sm:pt-24">
-    <div id="entryDashboard" class=" max-w-2xl text-lg mx-auto bg-slate-200 p-2 rounded-md shadow-md">
+    <div id="entryDashboard"
+        class=" max-w-2xl text-lg mx-auto bg-slate-200 p-2 rounded-md shadow-md flex flex-col items-center">
 
-        <input type="text" id="nameInput" />
-        <button id="enterButton">submit</button>
+        <div class="flex justify-center flex-col text-white text-xl gap-4 border-2">
+            <input type="text" id="nameInput" class="p-1 rounded-md m-auto bg-slate-500 " placeholder="Twoje imię"
+                required="true" />
+
+            <input id="joinRoomInput" class="p-1 rounded-md m-0 bg-slate-500 " placeholder="Nazwa pokoju" />
+            <button class="bg-blue-600 hover:bg-blue-700 duration-300 rounded-lg m-0 p-1">Dołącz</button>
+            <p class="text-black text-center font-bold">lub...</p>
+            <button class="bg-purple-600 hover:bg-purple-700 duration-300 rounded-lg m-auto p-1" id="createRoom">Utwórz
+                pokój</button>
+        </div>
+
+        <form id="roomSettings">
+            <input </form>
+    </div>
 
     </div>
     <div id="gameDashboard" class="hidden max-w-2xl text-lg mx-auto bg-slate-200 p-2 rounded-md shadow-md">
