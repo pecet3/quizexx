@@ -7,10 +7,16 @@ const gameFormElement = document.getElementById('gameForm');
 
 const readyButton = document.getElementById("readyButton");
 const enterButton = document.getElementById("enterButton")
+const connectButton = document.getElementById("connectButton")
+const createRoomButton = document.getElementById("createRoomButton")
 
+const entry = document.getElementById("entry")
 const gameDashboard = document.getElementById("gameDashboard")
 const entryDashboard = document.getElementById("entryDashboard")
+const roomSettignsDashboard = document.getElementById("roomSettignsDashboard")
 const roomDashboard = document.getElementById("roomDashboard")
+
+const nameInput = document.getElementById("nameInput")
 
 const answerAElement = document.getElementById('answerA');
 const answerBElement = document.getElementById('answerB');
@@ -19,6 +25,16 @@ const answerDElement = document.getElementById('answerD');
 
 let conn;
 let userName;
+
+//room
+let roomName;
+
+let roomSettings = {
+    roomName,
+    difficulty: "łatwy",
+    maxRound: 5,
+    category: ""
+}
 
 let ready = true;
 let isAnswerSent = false;
@@ -33,7 +49,15 @@ let gameState = {
     score: [{ name: "kuba", points: 10, roundsWon: [] }]
 };
 
+nameInput.addEventListener("change", (e) => {
+    console.log(e.target.value)
+    userName = e.target.value
+})
 
+createRoomButton.addEventListener("click", (e) => {
+    console.log("test")
+    roomSettignsDashboard.classList.remove("hidden")
+})
 gameFormElement.addEventListener("submit", (e) => {
     e.preventDefault();
     if (!ready) return alert("you are not ready")
@@ -48,13 +72,13 @@ gameFormElement.addEventListener("submit", (e) => {
     }
 });
 
-enterButton.addEventListener("click", (e) => {
-    e.preventDefault()
-    const input = document.getElementById("nameInput")
-    userName = input.value
-    connectWs()
-    return
-})
+// enterButton.addEventListener("click", (e) => {
+//     e.preventDefault()
+//     const input = document.getElementById("nameInput")
+//     userName = input.value
+//     connectWs()
+//     return
+// })
 
 readyButton.addEventListener("click", (e) => {
     e.preventDefault()
@@ -215,3 +239,6 @@ function sendAnswer(answer) {
 }
 
 
+document.addEventListener("DOMContentLoaded", function () {
+    // Cały twój kod JavaScript tutaj
+});
