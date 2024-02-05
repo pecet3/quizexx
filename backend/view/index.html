@@ -10,9 +10,14 @@
     <title>Quizex</title>
 </head>
 
-<body class="bg-gray-900 p-2 pt-8 sm:pt-24">
+<body class="bg-gray-900 p-2 py-6 text=center m-auto">
+    <header class="py-1">
+        <h1
+            class="text-8xl font- text-center text-purple-600 font-mono underline decoration-dotted decoration-6 decoration-emerald-400 ">
+            Quizex</h1>
+    </header>
     <div id="entryDashboard"
-        class="bg-pattern max-w-md text-lg mx-auto ring-4 ring-emerald-600 bg-slate-200 p-4 rounded-lg shadow-gray-600 shadow-md flex flex-col items-center">
+        class="hidden bg-pattern max-w-md text-lg mx-auto ring-8 ring-black bg-slate-200 p-4 rounded-lg shadow-gray-600 shadow-md flex flex-col items-center">
 
         <div class="hidden flex justify-center flex-col text-white text-xl gap-4 border-2">
             <input type="text" id="nameInput" class="p-1 rounded-md m-auto bg-slate-500 " placeholder="Twoje imię"
@@ -25,32 +30,33 @@
                 pokój</button>
         </div>
 
-        <form id="roomSettings" class="flex flex-col gap-4 items-center text-xl font-mono">
+        <form id="roomSettings" class="flex flex-col gap-4 items-center text-xl font-serif">
             <input type="text" id="categoryInput"
-                class="p-1 text-2xl rounded-md m-auto bg-slate-500 placeholder:text-gray-300"
+                class="p-1 text-2xl rounded-md m-auto bg-slate-500 placeholder:text-gray-300 placeholder:text-center text-white text-center"
                 placeholder="Nazwa pokoju" />
             <input type="text" id="categoryInput"
-                class="p-1 text-2xl rounded-md m-auto bg-slate-500 placeholder:text-gray-300"
+                class="p-1 text-2xl rounded-md m-auto bg-slate-500 placeholder:text-gray-300 placeholder:text-center text-white text-center"
                 placeholder="Kategoria Pytań" />
             <label for="maxRounds" class="rounded-lg font-sans font-bold underline">Liczba round:</label>
             <input type="number" id="maxRounds" min="0" max="10" value="5"
-                class="text-2xl bg-slate-500 text-white p-1 rounded-lg" />
+                class="text-2xl bg-slate-500 text-white p-1 rounded-lg text-center" />
             <label for="difficulty" class="rounded-lg  font-sans font-bold underline">Wybierz poziom
                 trudności:</label>
-            <select id="difficulty" name="difficulty" class="text-2xl bg-slate-500 text-white p-1 rounded-lg">
-                <option value="easy">Łatwy</option>
-                <option value="medium">Średni</option>
-                <option value="hard">Trudny</option>
+            <select id="difficulty" name="difficulty"
+                class="text-2xl bg-slate-500 text-white p-1 rounded-lg text-center">
+                <option value="easy" class="text-center">Łatwy</option>
+                <option value="medium" class="text-center">Średni</option>
+                <option value="hard" class="text-center">Trudny</option>x
             </select>
             <button type="submit"
-                class="bg-purple-600 shadow-lg shadow-gray-800 hover:shadow-none font-sans mt-4 px-4 text-white hover:rounded-xl hover:bg-purple-700 text-3xl duration-300 rounded-lg m-auto py-2"
+                class="bg-purple-600 shadow-md shadow-gray-800 hover:shadow-none hover:rounded-xl hover:bg-purple-700 font-sans mt-4 px-4 text-white text-3xl duration-300 rounded-lg m-auto py-2"
                 id="createRoom">Utwórz
                 pokój</button>
         </form>
     </div>
 
     </div>
-    <div id="gameDashboard" class="hidden max-w-2xl text-lg mx-auto bg-slate-200 p-2 rounded-md shadow-md">
+    <div id="gameDashboard" class="m-auto max-w-4xl text-lg bg-pattern p-2 rounded-md shadow-md">
         <div id="roomDashboard" class="max-w-2xl text-lg mx-auto bg-slate-200 p-2 rounded-md shadow-md">
             <button class="bg-green-500" id="readyButton">I am Ready</button>
         </div>
@@ -63,22 +69,26 @@
             <form id="gameForm" class="flex flex-col gap-6 w-full">
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-lg font-medium p-2 ">
-                    <label id="a1" class="has-[:checked]:ring-2 ring-black has-[:checked]:scale-105 duration-300
+                    <label id="a1" class="shadow-md shadow-gray-800 has-[:checked]:shadow-none has-[:checked]:rounded-lg has-[:checked]:scale-[1.02]
+                    duration-300 has-[:checked]:bg-lime-500 has-[:checked]:ring-2 ring-black
                         cursor-pointer flex justify-center items-center bg-lime-300 rounded-md p-1">
                         <input type="radio" name="q1" value="0" class="hidden ">
                         <p id="answerA">Lorem ipsum</p>
                     </label>
-                    <label id="a2" class="has-[:checked]:ring-2 ring-black has-[:checked]:scale-105 duration-300
-                         cursor-pointer flex justify-center items-center bg-teal-300 rounded-md p-1">
+                    <label id="a2" class="shadow-md shadow-gray-800 has-[:checked]:shadow-none has-[:checked]:rounded-lg has-[:checked]:scale-[1.02]
+                    duration-300 has-[:checked]:bg-blue-500 has-[:checked]:ring-2 ring-black
+                        cursor-pointer flex justify-center items-center bg-blue-300 rounded-md p-1">
                         <input type="radio" name="q1" value="1" class="hidden">
                         <p id="answerB">Lorem ipsum</p>
                     </label>
-                    <label id="a3" class="has-[:checked]:ring-2 ring-black has-[:checked]:scale-105  duration-300
+                    <label id="a3" class="shadow-md shadow-gray-800 has-[:checked]:shadow-none has-[:checked]:rounded-lg has-[:checked]:scale-[1.02]
+                    duration-300 has-[:checked]:bg-pink-500 has-[:checked]:ring-2 ring-black
                         cursor-pointer flex justify-center items-center bg-pink-300 rounded-md p-1">
                         <input type="radio" name="q1" value="2" class="hidden">
                         <p id="answerC">Lorem ipsum</p>
                     </label>
-                    <label id="a4" class="has-[:checked]:ring-2 ring-black has-[:checked]:scale-105 duration-300 
+                    <label id="a4" class="shadow-md shadow-gray-800 has-[:checked]:shadow-none has-[:checked]:rounded-lg has-[:checked]:scale-[1.02]
+                    duration-300 has-[:checked]:bg-yellow-500 has-[:checked]:ring-2 ring-black
                         cursor-pointer flex justify-center items-center bg-yellow-300 rounded-md p-1">
                         <input type="radio" name="q1" value="3" class="hidden">
                         <p id="answerD">Lorem ipsum</p>
