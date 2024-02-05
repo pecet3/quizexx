@@ -57,7 +57,8 @@
     </div>
 
     </div>
-    <div id="gameDashboard" class="m-auto max-w-4xl text-lg bg-pattern h-screen p-2 pl-8 sm:pl-12 rounded-r-xl shadow-md relative">
+    <div id="gameDashboard"
+        class="m-auto max-w-4xl text-lg bg-pattern h-screen p-2 pl-8 sm:pl-12 rounded-r-xl shadow-md relative">
         <p class="absolute top-1/4 left-0 ml-1 sm:ml-2 text-5xl text-gray-900">●</p>
         <p class="absolute top-3/4 left-0 ml-1 sm:ml-2 text-5xl text-gray-900">●</p>
 
@@ -126,24 +127,28 @@
                     </label>
 
                 </div>
-                <button type="submit" class="bg-white shadow-md shadow-gray-600 
+                <div class="grid grid-cols-2 gap-2">
+                    <table id="scoreTable" class="">
+                        <thead>
+                            <tr class="border-b-2 border-gray-600 p-2 flex justify-between gap-24 font-thin">
+                                <th class=" m-auto">Imię</th>
+                                <th class=" m-auto">Punkty</th>
+                            </tr>
+                        </thead>
+                        <tbody id="scoreTableBody">
+                        </tbody>
+                    </table>
+                    <button type="submit" class=" bg-white shadow-md shadow-gray-600 
                     hover:shadow-none hover:rounded-xl border-2 border-black hover:scale-[0.995]
                     font-mono px-4 text-3xl duration-300 rounded-lg m-auto py-2">
-                    Wyślij
-                    odpowiedź
-                </button>
+                        Wyślij
+                        odpowiedź
+                    </button>
+
+                </div>
             </form>
 
-            <table id="scoreTable" class="">
-                <thead>
-                    <tr class="border-b-2 border-gray-600 p-2 flex justify-between gap-24 font-thin">
-                        <th class=" m-auto">Imię</th>
-                        <th class=" m-auto">Punkty</th>
-                    </tr>
-                </thead>
-                <tbody id="scoreTableBody">
-                </tbody>
-            </table>
+
         </div>
     </div>
 
