@@ -18,7 +18,7 @@
         </h1>
     </header>
     <div id="entryDashboard"
-        class="hidden bg-pattern max-w-md text-lg mx-auto ring-8 ring-emerald-500 bg-slate-200 p-4 rounded-lg shadow-gray-600 shadow-md flex flex-col items-center">
+        class="hidden bg-pattern max-w-md text-lg mx-auto ring-8 ring-emerald-500 bg-slate-200 p-4 rounded-lg shadow-gray-400 shadow-md flex flex-col items-center">
 
         <div class="hidden flex justify-center flex-col text-white text-xl gap-4 border-2">
             <input type="text" id="nameInput" class="p-1 rounded-md m-auto bg-slate-500 " placeholder="Twoje imię"
@@ -49,7 +49,7 @@
                 <option value="medium" class="text-center">Średni</option>
                 <option value="hard" class="text-center">Trudny</option>x
             </select>
-            <button type="submit" class="bg-purple-600 shadow-md shadow-gray-600 hover:shadow-none hover:rounded-xl 
+            <button type="submit" class="bg-purple-600 shadow-md shadow-gray-400 hover:shadow-none hover:rounded-xl 
                 hover:bg-purple-700 font-sans mt-4 px-4 text-white hover:ring-2 ring-black
                 text-3xl duration-300 rounded-lg m-auto py-2" id="createRoom">Utwórz
                 pokój</button>
@@ -63,8 +63,9 @@
         <p class="absolute top-3/4 left-0 ml-1 sm:ml-2 text-5xl text-gray-900">●</p>
 
         <div id="roomDashboard" class="my-10">
-            <button class="bg-green-500 px-2 p-1 text-2xl rounded-md hover:rounded-lg
-             duration-300 hover:shadow-md shadow-lg shadow-gray-700" id="readyButton">Jestem gotowy</button>
+            <button class="bg-white shadow-md shadow-gray-400 
+            hover:shadow-none hover:rounded-xl border-2 border-emerald-500 hover:scale-[0.995]
+            font-mono px-4 text-3xl duration-300 text-emerald-500 rounded-lg m-auto py-2" id="readyButton">Jestem gotowy</button>
         </div>
         <div class="flex justify-between gap-4">
             <div class="text-xl font-bold font-mono bg-gray-400 rounded-t-md p-1 px-2 border-2 border-black border-b-0">
@@ -93,7 +94,7 @@
 
                     <h3 id="displayQuestion" class="sm:col-span-2 text-center font-bold text-2xl">Ile ważny kilogram?
                     </h3>
-                    <label id="a1" class="shadow-md hover:shadow-sm shadow-gray-600 has-[:checked]:shadow-none has-[:checked]:rounded-lg has-[:checked]:scale-[0.98]
+                    <label id="a1" class="shadow-md hover:shadow-sm shadow-gray-400 has-[:checked]:shadow-none has-[:checked]:rounded-lg has-[:checked]:scale-[0.98]
                     duration-300 has-[:checked]:bg-black has-[:checked]:ring-2 ring-slate-600 has-[:checked]:text-white
                         cursor-pointer flex justify-center items-center bg-stone-300 rounded-md p-1
                         border border-black
@@ -101,7 +102,7 @@
                         <input type="radio" name="q1" value="0" class="hidden ">
                         <p id="answerA">Lorem ipsum</p>
                     </label>
-                    <label id="a2" class="shadow-md hover:shadow-sm shadow-gray-600 has-[:checked]:shadow-none has-[:checked]:rounded-lg has-[:checked]:scale-[0.98]
+                    <label id="a2" class="shadow-md hover:shadow-sm shadow-gray-400 has-[:checked]:shadow-none has-[:checked]:rounded-lg has-[:checked]:scale-[0.98]
                     duration-300 has-[:checked]:bg-black has-[:checked]:ring-2 ring-slate-600 has-[:checked]:text-white
                      cursor-pointer flex justify-center items-center bg-slate-300 rounded-md p-1
                      border border-black
@@ -109,7 +110,7 @@
                         <input type="radio" name="q1" value="1" class="hidden">
                         <p id="answerB">Lorem ipsum</p>
                     </label>
-                    <label id="a3" class="shadow-md hover:shadow-sm shadow-gray-600 has-[:checked]:shadow-none has-[:checked]:rounded-lg has-[:checked]:scale-[0.98]
+                    <label id="a3" class="shadow-md hover:shadow-sm shadow-gray-400 has-[:checked]:shadow-none has-[:checked]:rounded-lg has-[:checked]:scale-[0.98]
                     duration-300 has-[:checked]:bg-black has-[:checked]:ring-2 ring-slate-600 has-[:checked]:text-white
                      cursor-pointer flex justify-center items-center bg-slate-400 rounded-md p-1
                      border border-black
@@ -117,7 +118,7 @@
                         <input type="radio" name="q1" value="2" class="hidden">
                         <p id="answerC">Lorem ipsum</p>
                     </label>
-                    <label id="a4" class="shadow-md hover:shadow-sm shadow-gray-600 has-[:checked]:shadow-none has-[:checked]:rounded-lg has-[:checked]:scale-[0.98]
+                    <label id="a4" class="shadow-md hover:shadow-sm shadow-gray-400 has-[:checked]:shadow-none has-[:checked]:rounded-lg has-[:checked]:scale-[0.98]
                     duration-300 has-[:checked]:bg-black has-[:checked]:ring-2 ring-slate-600 has-[:checked]:text-white
                      cursor-pointer flex justify-center items-center bg-gray-400 rounded-md p-1
                      border border-black
@@ -138,7 +139,7 @@
                         <tbody id="scoreTableBody">
                         </tbody>
                     </table>
-                    <button type="submit" class=" bg-white shadow-md shadow-gray-600 
+                    <button type="submit" class=" bg-white shadow-md shadow-gray-400 
                     hover:shadow-none hover:rounded-xl border-2 border-black hover:scale-[0.995]
                     font-mono px-4 text-3xl duration-300 rounded-lg m-auto py-2">
                         Wyślij
