@@ -65,21 +65,22 @@
         <div id="roomDashboard" class="my-10">
             <button class="bg-white shadow-md shadow-gray-400 
             hover:shadow-none hover:rounded-xl border-2 border-emerald-500 hover:scale-[0.995]
-            font-mono px-4 text-3xl duration-300 text-emerald-500 rounded-lg m-auto py-2" id="readyButton">Jestem gotowy</button>
+            font-mono px-4 text-3xl duration-300 text-emerald-500 rounded-lg m-auto py-2" id="readyButton">Jestem
+                gotowy</button>
         </div>
-        <div class="flex justify-between gap-4">
+        <div class="flex justify-between gap-2 sm:gap-4">
             <div class="text-xl font-bold font-mono bg-gray-400 rounded-t-md p-1 px-2 border-2 border-black border-b-0">
-                Kategoria: <span id="displayCategory"
-                    class="font-sans font-medium text-blue-800 italic">Komputery</span>
+                <span> Kategoria:</span>
+                <span id="displayCategory" class="font-sans font-medium text-blue-800 italic">Komputery</span>
             </div>
             <div
-                class="text-2xl flex items-center gap-2 font-black font-mono bg-gray-400 rounded-t-md p-1 px-2 border-2 border-black border-b-0">
+                class="text-2xl flex-col sm:flex-row flex items-center gap-1 sm:gap-2 font-black font-mono bg-gray-400 rounded-t-md p-0.5 sm:p-1 px-1 sm:px-2 border-2 border-black border-b-0">
                 <div class="flex items-start m-auto gap-1">
                     <p>Runda: </p><span id="displayRound" class="font-sans  text-blue-800">1</span>
                 </div>
                 <div class="flex justify-center items-center gap-1
-                 border-l-2 bg-slate-900 px-2 py-0.5 rounded-lg border-gray-800">
-                    <img src="./assets/userIcon.svg" class="h-6 w-6" />
+                 border-l-2 bg-slate-900 px-1 py-0.5 rounded-lg border-gray-800">
+                    <img src="./assets/userIcon.svg" class="sm:h-6 h-4 w-auto" />
                     <span id="playersLengthDisplay" class="font-sans text-green-400 text-xl">4</span>
                 </div>
             </div>
@@ -128,15 +129,21 @@
                     </label>
 
                 </div>
-                <div class="grid grid-cols-2 gap-2">
-                    <table id="scoreTable" class="">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    <table id="scoreTable"
+                        class="text-xl table-fixed sm:order-none order-last bg-white bg-opacity-50 rounded-md">
                         <thead>
-                            <tr class="border-b-2 border-gray-600 p-2 flex justify-between gap-24 font-thin">
+                            <tr class="flex justify-center border-b border-black font-mono font-black">
                                 <th class=" m-auto">Imię</th>
                                 <th class=" m-auto">Punkty</th>
                             </tr>
                         </thead>
                         <tbody id="scoreTableBody">
+                            <tr class="flex justify-center">
+                                <td class="m-auto">kuba</td>
+                                <td class="m-auto">2323</td>
+                            </tr>
+
                         </tbody>
                     </table>
                     <button type="submit" class=" bg-white shadow-md shadow-gray-400 
