@@ -49,34 +49,32 @@
                 <option value="medium" class="text-center">Średni</option>
                 <option value="hard" class="text-center">Trudny</option>x
             </select>
-            <button type="submit"
-                class="bg-purple-600 shadow-md shadow-gray-800 hover:shadow-none hover:rounded-xl 
+            <button type="submit" class="bg-purple-600 shadow-md shadow-gray-800 hover:shadow-none hover:rounded-xl 
                 hover:bg-purple-700 font-sans mt-4 px-4 text-white hover:ring-2 ring-black
-                text-3xl duration-300 rounded-lg m-auto py-2"
-                id="createRoom">Utwórz
+                text-3xl duration-300 rounded-lg m-auto py-2" id="createRoom">Utwórz
                 pokój</button>
         </form>
     </div>
 
     </div>
-    <div id="gameDashboard" class="m-auto max-w-4xl text-lg bg-pattern h-screen p-2 rounded-md shadow-md">
+    <div id="gameDashboard" class="m-auto max-w-4xl text-lg bg-pattern h-screen p-2 rounded-r-md shadow-md">
         <div id="roomDashboard" class="my-10">
             <button class="bg-green-500 px-2 p-1 text-2xl rounded-md hover:rounded-lg
              duration-300 hover:shadow-md shadow-lg shadow-gray-700" id="readyButton">Jestem gotowy</button>
         </div>
         <div class="flex justify-between gap-4">
             <div class="text-xl font-bold font-mono bg-gray-400 rounded-t-md p-1 px-2">
-                Kategoria: <span id="displayCategory" class="font-sans font-medium text-purple-800 italic">Komputery</span>
+                Kategoria: <span id="displayCategory"
+                    class="font-sans font-medium text-purple-800 italic">Komputery</span>
             </div>
             <div class="text-2xl flex items-center gap-2 font-black font-mono bg-gray-400 rounded-t-md p-1 px-2">
-              <div class="flex items-start m-auto gap-1">
-               <p>Runda: </p><span id="displayRound" class="font-sans  text-blue-800">1</span>
-            </div>
+                <div class="flex items-start m-auto gap-1">
+                    <p>Runda: </p><span id="displayRound" class="font-sans  text-blue-800">1</span>
+                </div>
                 <div class="flex justify-center items-center gap-1
                  border-l-2 bg-slate-900 px-2 py-0.5 rounded-lg border-gray-800">
                     <img src="./assets/userIcon.svg" class="h-6 w-6" />
-                    <span id="playersLengthDisplay"  
-                    class="font-sans text-green-400 text-xl">4</span>
+                    <span id="playersLengthDisplay" class="font-sans text-green-400 text-xl">4</span>
                 </div>
             </div>
         </div>
@@ -84,41 +82,41 @@
         <div class="flex flex-col gap-6 items-center">
             <form id="gameForm" class="flex flex-col gap-6 w-full ">
 
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-gray-200
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-gray-200 border-2 border-black
                  shadow-md shadow-gray-700 p-4 rounded-b-xl text-lg font-medium p-2 ">
-                   
-                   
-                    <h3 id="displayQuestion" class="sm:col-span-2 text-center font-bold text-2xl">Ile ważny kilogram?</h3>
+
+
+                    <h3 id="displayQuestion" class="sm:col-span-2 text-center font-bold text-2xl">Ile ważny kilogram?
+                    </h3>
                     <label id="a1" class="shadow-md hover:shadow-sm shadow-gray-800 has-[:checked]:shadow-none has-[:checked]:rounded-lg has-[:checked]:scale-[0.98]
-                    duration-300 has-[:checked]:bg-purple-600 has-[:checked]:ring-4 ring-emerald-500 has-[:checked]:text-white
-                        cursor-pointer flex justify-center items-center bg-lime-300 rounded-md p-1">
+                    duration-300 has-[:checked]:bg-black has-[:checked]:ring-4 ring-blue-800 has-[:checked]:text-white
+                        cursor-pointer flex justify-center items-center bg-stone-300 rounded-md p-1">
                         <input type="radio" name="q1" value="0" class="hidden ">
                         <p id="answerA">Lorem ipsum</p>
                     </label>
                     <label id="a2" class="shadow-md hover:shadow-sm shadow-gray-800 has-[:checked]:shadow-none has-[:checked]:rounded-lg has-[:checked]:scale-[0.98]
-                    duration-300 has-[:checked]:bg-purple-600 has-[:checked]:ring-4 ring-emerald-500 has-[:checked]:text-white
-                        cursor-pointer flex justify-center items-center bg-blue-300 rounded-md p-1">
+                    duration-300 has-[:checked]:bg-black has-[:checked]:ring-4 ring-blue-800 has-[:checked]:text-white
+                     cursor-pointer flex justify-center items-center bg-slate-300 rounded-md p-1">
                         <input type="radio" name="q1" value="1" class="hidden">
                         <p id="answerB">Lorem ipsum</p>
                     </label>
                     <label id="a3" class="shadow-md hover:shadow-sm shadow-gray-800 has-[:checked]:shadow-none has-[:checked]:rounded-lg has-[:checked]:scale-[0.98]
-                    duration-300 has-[:checked]:bg-purple-600 has-[:checked]:ring-4 ring-emerald-500 has-[:checked]:text-white
-                        cursor-pointer flex justify-center items-center bg-pink-300 rounded-md p-1">
+                    duration-300 has-[:checked]:bg-black has-[:checked]:ring-4 ring-blue-800 has-[:checked]:text-white
+                     cursor-pointer flex justify-center items-center bg-slate-400 rounded-md p-1">
                         <input type="radio" name="q1" value="2" class="hidden">
                         <p id="answerC">Lorem ipsum</p>
                     </label>
                     <label id="a4" class="shadow-md hover:shadow-sm shadow-gray-800 has-[:checked]:shadow-none has-[:checked]:rounded-lg has-[:checked]:scale-[0.98]
-                    duration-300 has-[:checked]:bg-purple-600 has-[:checked]:ring-4 ring-emerald-500 has-[:checked]:text-white
-                        cursor-pointer flex justify-center items-center bg-yellow-300 rounded-md p-1">
+                    duration-300 has-[:checked]:bg-black has-[:checked]:ring-4 ring-blue-800 has-[:checked]:text-white
+                     cursor-pointer flex justify-center items-center bg-gray-400 rounded-md p-1">
                         <input type="radio" name="q1" value="3" class="hidden">
                         <p id="answerD">Lorem ipsum</p>
                     </label>
 
                 </div>
-                <button type="submit"
-                    class="bg-purple-600 shadow-md shadow-gray-800 
-                    hover:shadow-none hover:rounded-xl hover:bg-purple-700 hover:scale-[0.995]
-                    font-mono px-4 text-white text-3xl duration-300 rounded-lg m-auto py-2">
+                <button type="submit" class="bg-white shadow-md shadow-gray-800 
+                    hover:shadow-none hover:rounded-xl border-2 border-black hover:scale-[0.995]
+                    font-mono px-4 text-3xl duration-300 rounded-lg m-auto py-2">
                     Wyślij
                     odpowiedź
                 </button>
