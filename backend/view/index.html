@@ -13,7 +13,7 @@
 <body class="bg-gray-900 p-2 py-6 text=center m-auto">
     <header class="p-1 my-4 ">
         <h1
-            class="text-8xl font- text-center text-purple-600 font-mono underline decoration-dotted decoration-6 decoration-emerald-500 ">
+            class="text-8xl font-black	 text-center text-purple-600 font-mono underline decoration-dotted decoration-6 decoration-emerald-500 ">
             <span class="text-4xl pb-2">🎲</span>Quizex<span class="text-4xl pb-2">🏆</span>
         </h1>
     </header>
@@ -62,15 +62,19 @@
             <button class="bg-green-500" id="readyButton">I am Ready</button>
         </div>
         <div class="flex justify-evenly gap-4">
-            <h2 class="text-xl font-bold font-mono bg-slate-400 rounded-t-md p-1">Kategoria: <span id="displayCategory">Komputery</span></h2>
-            <h2 class="text-xl font-bold font-mono bg-slate-400 rounded-t-md p-1">Runda: <span id="displayRound">1</span></h2>
+            <h2 class="text-xl font-bold font-mono bg-slate-400 rounded-t-md p-1 px-2">
+                Kategoria: <span id="displayCategory" class="font-sans font-medium text-purple-800 italic">Komputery</span>
+            </h2>
+            <h2 class="text-xl font-bold font-mono bg-slate-400 rounded-t-md p-1 px-2">
+                Runda: <span id="displayRound" class="font-sans font-black ">1</span>
+            </h2>
         </div>
 
         <div class="flex flex-col gap-6 items-center">
             <form id="gameForm" class="flex flex-col gap-6 w-full ">
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-gray-300 shadow-md shadow-gray-700 p-4 rounded-xl text-lg font-medium p-2 ">
-                    <h3 id="displayQuestion" class="col-span-2 text-center font-bold text-2xl">Ile ważny kilogram?</h3>
+                    <h3 id="displayQuestion" class="sm:col-span-2 text-center font-bold text-2xl">Ile ważny kilogram?</h3>
                     <label id="a1" class="shadow-md hover:shadow-sm shadow-gray-800 has-[:checked]:shadow-none has-[:checked]:rounded-lg has-[:checked]:scale-[0.98]
                     duration-300 has-[:checked]:bg-purple-600 has-[:checked]:ring-4 ring-emerald-500 has-[:checked]:text-white
                         cursor-pointer flex justify-center items-center bg-lime-300 rounded-md p-1">
@@ -99,7 +103,7 @@
                 </div>
                 <button type="submit"
                     class="bg-purple-600 shadow-md shadow-gray-800 hover:shadow-none hover:rounded-xl hover:bg-purple-700 
-                    font-sans mt-4 px-4 text-white text-3xl duration-300 rounded-lg m-auto py-2">
+                    font-sans px-4 text-white text-3xl duration-300 rounded-lg m-auto py-2">
                     Wyślij
                     odpowiedź
                 </button>
