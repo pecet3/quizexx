@@ -79,7 +79,7 @@ func (r *room) CreateGame() *Game {
 		State:    &GameState{Round: 1},
 		Content:  content,
 		Category: "",
-		IsGame:   false,
+		IsGame:   true,
 		Players:  r.clients,
 		mutex:    sync.Mutex{},
 	}
