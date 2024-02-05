@@ -11,7 +11,12 @@
 </head>
 
 <body class="bg-gray-900 p-0.5 pr-2 sm:p-2 py-2 sm:py-4 text=center m-auto">
-   
+    <header class="p-1 my-4 relative">
+        <h1
+            class="text-8xl font-black	flex justify-center items-end text-center text-purple-600 font-mono underline decoration-wavy decoration-4 decoration-emerald-400 ">
+            <span class="text-4xl absolute -top-1 right-1/2 mr-2">🎲</span>Quizex<span class="text-4xl"></span>
+        </h1>
+    </header>
     <div id="entryDashboard"
         class="hidden bg-pattern max-w-md text-lg mx-auto ring-8 ring-emerald-500 bg-slate-200 p-4 rounded-lg shadow-gray-400 shadow-md flex flex-col items-center">
 
@@ -56,12 +61,6 @@
         class="m-auto max-w-4xl text-lg bg-pattern h-screen p-2 pl-8 sm:pl-12 rounded-r-xl shadow-md relative">
         <p class="absolute top-1/4 left-0 ml-1 sm:ml-2 text-5xl text-gray-900">●</p>
         <p class="absolute top-3/4 left-0 ml-1 sm:ml-2 text-5xl text-gray-900">●</p>
-        <header class="p-1 my-4 relative">
-            <h1
-                class="text-8xl font-black	flex justify-center items-end text-center text-purple-600 font-mono underline decoration-wavy decoration-4 decoration-emerald-400 ">
-                <span class="text-4xl absolute -top-1 right-1/2 mr-2">🎲</span>Quizex<span class="text-4xl"></span>
-            </h1>
-        </header>
 
         <div id="roomDashboard" class="hidden m-auto flex flex-col max-w-lg
         justify-center items-center gap-2 bg-gray-200 p-2 rounded-lg
@@ -168,9 +167,9 @@
                             <p id="displayReadyCount" class="text-xl font-sans font-bold">2/4</p>
                             <span class="text-lg font-sans font-bold">]</span>
                         </div>
-                        <button type="submit" class=" bg-white shadow-md shadow-gray-400 
-                    hover:shadow-none hover:rounded-xl border-2 border-black hover:scale-[0.995]
-                    font-mono px-4 text-3xl duration-300 rounded-lg m-auto py-2">
+                        <button type="submit" class=" bg-black shadow-lg shadow-gray-600
+                    hover:shadow-none hover:rounded-xl border-2 border-white hover:scale-[0.995]
+                    font-mono px-4 text-3xl duration-300 rounded-lg text-white m-auto py-2">
                             Wyślij
                             odpowiedź
                         </button>
