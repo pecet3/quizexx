@@ -142,7 +142,8 @@ func (r *room) Run(m *manager) {
 			}
 		case client := <-r.join:
 			r.clients[client] = client.name
-			r.SendRoomMsg(client.name + "dołączył do gry")
+			r.SendRoomMsg(client.name + " dołączył do gry")
+
 		case client := <-r.leave:
 			close(client.receive)
 			delete(r.game.Players, client)
@@ -165,18 +166,23 @@ func (r *room) Run(m *manager) {
 			}
 
 		case action := <-r.receiveAnswer:
-			log.Println("action")
+
+			if r.game.IsGame == false {
+				return
+			}
 
 			var actionParsed *RoundAction
 			if err := json.Unmarshal(action, &actionParsed); err != nil {
 				log.Println("Error marshaling game state:", err)
 				return
 			}
+
 			for client := range r.game.Players {
 				if client.isReady == false {
 					return
 				}
 				if client.name == actionParsed.Name {
+
 					client.answer = actionParsed.Answer
 					if actionParsed.Answer == r.game.Content[r.game.State.Round-1].CorrectAnswer {
 						client.points = client.points + 10
@@ -186,6 +192,7 @@ func (r *room) Run(m *manager) {
 						r.game.State.PlayersFinished = append(r.game.State.PlayersFinished, client.name)
 					}
 				}
+
 				r.game.State.Actions = append(r.game.State.Actions, *actionParsed)
 				r.game.State.Score = r.game.NewScore()
 			}
