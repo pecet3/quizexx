@@ -5,15 +5,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="styles.css">
     <script defer src="script.js"></script>
     <title>Quizex</title>
 </head>
 
 <body class="bg-gray-900 p-2 pt-8 sm:pt-24">
     <div id="entryDashboard"
-        class=" max-w-2xl text-lg mx-auto bg-slate-200 p-2 rounded-md shadow-md flex flex-col items-center">
+        class="bg-pattern max-w-md text-lg mx-auto ring-4 ring-emerald-600 bg-slate-200 p-4 rounded-lg shadow-gray-600 shadow-md flex flex-col items-center">
 
-        <div class="flex justify-center flex-col text-white text-xl gap-4 border-2">
+        <div class="hidden flex justify-center flex-col text-white text-xl gap-4 border-2">
             <input type="text" id="nameInput" class="p-1 rounded-md m-auto bg-slate-500 " placeholder="Twoje imię"
                 required="true" />
 
@@ -24,8 +25,28 @@
                 pokój</button>
         </div>
 
-        <form id="roomSettings">
-            <input </form>
+        <form id="roomSettings" class="flex flex-col gap-4 items-center text-xl font-mono">
+            <input type="text" id="categoryInput"
+                class="p-1 text-2xl rounded-md m-auto bg-slate-500 placeholder:text-gray-300"
+                placeholder="Nazwa pokoju" />
+            <input type="text" id="categoryInput"
+                class="p-1 text-2xl rounded-md m-auto bg-slate-500 placeholder:text-gray-300"
+                placeholder="Kategoria Pytań" />
+            <label for="maxRounds" class="rounded-lg font-sans font-bold underline">Liczba round:</label>
+            <input type="number" id="maxRounds" min="0" max="10" value="5"
+                class="text-2xl bg-slate-500 text-white p-1 rounded-lg" />
+            <label for="difficulty" class="rounded-lg  font-sans font-bold underline">Wybierz poziom
+                trudności:</label>
+            <select id="difficulty" name="difficulty" class="text-2xl bg-slate-500 text-white p-1 rounded-lg">
+                <option value="easy">Łatwy</option>
+                <option value="medium">Średni</option>
+                <option value="hard">Trudny</option>
+            </select>
+            <button type="submit"
+                class="bg-purple-600 shadow-lg shadow-gray-800 hover:shadow-none font-sans mt-4 px-4 text-white hover:rounded-xl hover:bg-purple-700 text-3xl duration-300 rounded-lg m-auto py-2"
+                id="createRoom">Utwórz
+                pokój</button>
+        </form>
     </div>
 
     </div>
