@@ -6,6 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://cdn.tailwindcss.com"></script>
     <script defer src="script.js"></script>
+    <script defer src="../script.js"></script>
+
     <title>🎲Quizex🏆</title>
 </head>
 <style>
@@ -17,11 +19,17 @@
 </style>
 
 <body class="bg-gray-900 p-0.5 pr-2 sm:p-2 py-2 sm:py-4 text=center m-auto">
+    <header class="p-1 my-4 relative">
+        <h1
+            class="text-8xl font-black	flex justify-center items-end text-center text-purple-600 font-mono underline decoration-wavy decoration-4 decoration-emerald-400 ">
+            <span class="text-4xl absolute -top-1 right-1/2 mr-2">🎲</span>Quizex<span class="text-4xl"></span>
+        </h1>
+    </header>
+
     <div id="entryDashboard"
         class=" bg-pattern max-w-md text-lg mx-auto ring-8 ring-emerald-500 bg-slate-200 p-4 rounded-lg shadow-gray-400 shadow-md flex flex-col items-center">
-
-        <form id="roomSettingsDashboard" class="flex flex-col gap-4 items-center text-xl font-serif">
-            <input type="text" id="categoryInput"
+        <form id="settingsForm" class="flex flex-col gap-4 items-center text-xl font-serif">
+            <input type="text" id="nameInput"
                 class="p-1 text-2xl rounded-md m-auto bg-slate-500 placeholder:text-gray-300 placeholder:text-center text-white text-center"
                 placeholder="Nazwa pokoju" />
             <input type="text" id="categoryInput"

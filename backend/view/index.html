@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="styles.css">
+    <script defer src="script.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Comic+Neue&family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap"
+        rel="stylesheet">
+    <style>
+        html {
+            font-family: 'Comic Neue', cursive, 'Lato', sans-serif;
+        }
+
+        body {
+            background-color: #121212;
+            padding: 0.5rem;
+            padding-right: 2rem;
+            font-family: inherit;
+        }
+
+        .bg-pattern {
+            background-color: #c7c7c7;
+            background-image: linear-gradient(#9093ce 1px, transparent 1px), linear-gradient(to right, #787cd3 1px, #f4f4f7 1px);
+            background-size: 20px 20px;
+        }
+    </style>
+    <title>🎲Quizex🏆</title>
+</head>
+
+<body class="text-center m-auto">
+    <header class="p-1 my-4 relative">
+        <h1
+            class="text-8xl font-black flex justify-center items-end text-center text-purple-600 font-mono underline decoration-wavy decoration-4 decoration-emerald-400">
+            <span class="text-4xl absolute -top-1 right-1/2 mr-2">🎲</span>Quizex<span class="text-4xl"></span>
+        </h1>
+    </header>
+
+    <div id="gameDashboard" class="m-auto max-w-lg text-lg bg-pattern p-2 rounded-xl shadow-md relative">
+        <div id="entry" class="flex justify-center flex-col text-white text-xl gap-4">
+            <input id="joinRoomInput" class="p-1 rounded-md m-0 bg-slate-500 " placeholder="Nazwa pokoju" />
+            <button id="connectButton"
+                class="bg-blue-600 hover:bg-blue-700 duration-300 rounded-lg m-0 p-1">Dołącz</button>
+            <p class="text-black text-center font-bold">lub...</p>
+            <a href="/create" class="bg-purple-600 hover:bg-purple-700 duration-300 rounded-lg m-auto p-1">Utwórz
+                pokój</a>
+        </div>
+
+    </div>
+</body>
+
+</html>

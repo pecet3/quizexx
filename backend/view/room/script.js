@@ -5,17 +5,6 @@ const displayQuestionElement = document.getElementById('displayQuestion');
 
 const gameFormElement = document.getElementById('gameForm');
 
-const readyButton = document.getElementById("readyButton");
-const enterButton = document.getElementById("enterButton")
-const connectButton = document.getElementById("connectButton")
-const createRoomButton = document.getElementById("createRoomButton")
-
-const entry = document.getElementById("entry")
-const gameDashboard = document.getElementById("gameDashboard")
-const entryDashboard = document.getElementById("entryDashboard")
-const roomSettignsDashboard = document.getElementById("roomSettignsDashboard")
-const roomDashboard = document.getElementById("roomDashboard")
-
 const nameInput = document.getElementById("nameInput")
 
 const answerAElement = document.getElementById('answerA');
@@ -23,69 +12,8 @@ const answerBElement = document.getElementById('answerB');
 const answerCElement = document.getElementById('answerC');
 const answerDElement = document.getElementById('answerD');
 
-let conn;
-let userName;
 
-//room
-let roomName;
-
-let roomSettings = {
-    roomName,
-    difficulty: "łatwy",
-    maxRound: 5,
-    category: ""
-}
-
-let ready = true;
-let isAnswerSent = false;
-
-let gameState = {
-    isGame: false,
-    category: "",
-    round: 1,
-    question: "Test",
-    answers: ["Lorem ipsum", "Lorem ipsum", "Lorem ipsum", "Lorem ipsum"],
-    actions: [{ name: "", answer: null, round: 0 }],
-    score: [{ name: "kuba", points: 10, roundsWon: [] }]
-};
-
-nameInput.addEventListener("change", (e) => {
-    console.log(e.target.value)
-    userName = e.target.value
-})
-
-createRoomButton.addEventListener("click", (e) => {
-    console.log("test")
-    roomSettignsDashboard.classList.remove("hidden")
-})
-gameFormElement.addEventListener("submit", (e) => {
-    e.preventDefault();
-    if (!ready) return alert("you are not ready")
-    const formData = new FormData(gameFormElement);
-
-    const answerValue = formData.get('q1');
-    const answer = Number(answerValue)
-    if (answerValue !== null) {
-        sendAnswer(answer);
-    } else {
-        console.log("Nie wybrano odpowiedzi");
-    }
-});
-
-// enterButton.addEventListener("click", (e) => {
-//     e.preventDefault()
-//     const input = document.getElementById("nameInput")
-//     userName = input.value
-//     connectWs()
-//     return
-// })
-
-readyButton.addEventListener("click", (e) => {
-    e.preventDefault()
-    sendReadines()
-    ready = true
-})
-
+console.log(roomSettings)
 //////////////////////////////////////////////////////////////////////////////
 
 class Event {
