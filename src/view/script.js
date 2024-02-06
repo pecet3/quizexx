@@ -1,24 +1,11 @@
-let conn;
-let userName;
+const connectButton = document.getElementById("connectButton")
 
-let roomName;
+connectButton.addEventListener("click", () => {
+    const roomName = document.getElementById('joinRoomInput')
 
-let roomSettings = {
-    roomName,
-    difficulty: "łatwy",
-    maxRound: 5,
-    category: ""
-}
+    const room = roomName.value
 
-let ready = true;
-let isAnswerSent = false;
+    const link = '/room/?roomName=' + encodeURIComponent(room)
 
-let gameState = {
-    isGame: false,
-    category: "",
-    round: 1,
-    question: "Test",
-    answers: ["Lorem ipsum", "Lorem ipsum", "Lorem ipsum", "Lorem ipsum"],
-    actions: [{ name: "", answer: null, round: 0 }],
-    score: [{ name: "kuba", points: 10, roundsWon: [] }]
-};
+    window.location.href = link;
+})

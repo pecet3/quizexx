@@ -5,7 +5,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="styles.css">
     <script defer src="script.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -43,7 +42,7 @@
 
     <div id="gameDashboard" class="m-auto max-w-lg text-lg bg-pattern p-2 rounded-xl shadow-md relative">
         <div id="entry" class="flex justify-center flex-col text-white text-xl gap-4">
-            <input id="joinRoomInput" class="p-1 rounded-md m-0 bg-slate-500 " placeholder="Nazwa pokoju" />
+            <input type="text" id="joinRoomInput" class="p-1 rounded-md m-0 bg-slate-500 " placeholder="Nazwa pokoju" />
             <button id="connectButton"
                 class="bg-blue-600 hover:bg-blue-700 duration-300 rounded-lg m-0 p-1">Dołącz</button>
             <p class="text-black text-center font-bold">lub...</p>
