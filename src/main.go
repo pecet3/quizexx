@@ -9,23 +9,19 @@ import (
 
 func main() {
 	manager := ws.NewManager()
-	http.HandleFunc("/create", serveFile("view/create"))
-	http.HandleFunc("/room", serveFile("view/room"))
-	http.HandleFunc("/", serveFile("view"))
+
+	mux := http.NewServeMux()
+
+	mux.Handle("/ws", manager)
+
+	mux.Handle("/", http.FileServer(http.Dir("view")))
 
 	address := "localhost:8080"
 	log.Println("Server is running: ", address)
-	http.Handle("/ws", manager)
-
 	server := &http.Server{
-		Addr: address,
+		Addr:    address,
+		Handler: mux,
 	}
 
 	log.Fatal(server.ListenAndServe())
-}
-
-func serveFile(directory string) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		http.ServeFile(w, r, directory+r.URL.Path)
-	}
 }
