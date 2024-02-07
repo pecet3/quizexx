@@ -18,7 +18,7 @@ let userName = "";
 
 
 connectButton.addEventListener("click", (e) => {
-    const nameInput = document.getElementById("nameInput")
+    const nameInput = document.getElementById("userNameInput")
     const name = nameInput.value
     userName = name
 
@@ -60,11 +60,9 @@ function routeEvent(event) {
 function connectWs() {
     if (window.WebSocket) {
         const wsLink = getWsLink()
-        conn = new WebSocket(`ws://localhost:8080/ws?room=room1&name=${userName}`)
+        conn = new WebSocket(wsLink)
         conn.onopen = (e) => {
-            addQuery("room", "room1")
-            entryDashboard.classList.add("hidden")
-            gameDashboard.classList.remove("hidden")
+
         }
 
         conn.onclose = (e) => {
@@ -95,28 +93,20 @@ function getRoomName() {
 }
 
 function getWsLink() {
-    const gameSettings = getGameSettings();
-
-    if (gameSettings) {
-        return `ws://localhost:8080/ws?room=${roomName}&name=${userName}&difficulty=${gameSettings.difficulty}&maxRounds=${gameSettings.maxRounds}&category=${gameSettings.category}               `
-    } else {
-        return `ws://localhost:8080/ws?room=${roomName}&name=${userName}`
-    }
-}
-
-function getGameSettings() {
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);
     const isNewGame = urlParams.get('newGame') === 'true';
 
     if (isNewGame) {
-        return {
+        const gameSettings = {
             difficulty: urlParams.get('difficulty') || '',
-            maxRounds: parseInt(urlParams.get('maxRounds')) || 0,
+            maxRounds: urlParams.get('maxRounds') || '',
             category: urlParams.get('category') || '',
-        };
+        }
+
+        return `ws://localhost:8080/ws?room=${roomName}&name=${userName}&difficulty=${gameSettings.difficulty}&maxRounds=${gameSettings.maxRounds}&category=${gameSettings.category}               `
     } else {
-        return false;
+        return `ws://localhost:8080/ws?room=${roomName}&name=${userName}`
     }
 }
 
