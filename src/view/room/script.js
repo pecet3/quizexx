@@ -59,10 +59,10 @@ function routeEvent(event) {
 
 function connectWs() {
     if (window.WebSocket) {
-        const wsLink = getWsLink()
-        conn = new WebSocket(wsLink)
+        const wsUrl = getWsUrl()
+        conn = new WebSocket(wsUrl)
         conn.onopen = (e) => {
-
+            console.log("ok")
         }
 
         conn.onclose = (e) => {
@@ -92,7 +92,8 @@ function getRoomName() {
     return urlParams.get('roomName') || '';
 }
 
-function getWsLink() {
+function getWsUrl() {
+    const baseUrl = "ws://localhost:8080/ws"
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);
     const isNewGame = urlParams.get('newGame') === 'true';
@@ -104,9 +105,9 @@ function getWsLink() {
             category: urlParams.get('category') || '',
         }
 
-        return `ws://localhost:8080/ws?room=${roomName}&name=${userName}&difficulty=${gameSettings.difficulty}&maxRounds=${gameSettings.maxRounds}&category=${gameSettings.category}               `
+        return `${baseUrl}?room=${roomName}&name=${userName}&difficulty=${gameSettings.difficulty}&maxRounds=${gameSettings.maxRounds}&category=${gameSettings.category}               `
     } else {
-        return `ws://localhost:8080/ws?room=${roomName}&name=${userName}`
+        return `${baseUrl}?room=${roomName}&name=${userName}`
     }
 }
 
