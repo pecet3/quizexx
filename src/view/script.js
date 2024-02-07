@@ -5,7 +5,7 @@ connectButton.addEventListener("click", () => {
 
     const room = roomName.value
 
-    const link = '/room/?roomName=' + encodeURIComponent(room)
+    const link = '/room?roomName=' + encodeURIComponent(room)
 
     window.location.href = link;
 })

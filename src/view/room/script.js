@@ -6,14 +6,26 @@ const displayQuestionElement = document.getElementById('displayQuestion');
 const gameFormElement = document.getElementById('gameForm');
 
 const nameInput = document.getElementById("nameInput")
+const connectButton = document.getElementById("connectButton")
 
 const answerAElement = document.getElementById('answerA');
 const answerBElement = document.getElementById('answerB');
 const answerCElement = document.getElementById('answerC');
 const answerDElement = document.getElementById('answerD');
 
+const roomName = getRoomName();
+let userName = "";
 
-console.log(roomSettings)
+
+connectButton.addEventListener("click", (e) => {
+    const nameInput = document.getElementById("nameInput")
+    const name = nameInput.value
+    userName = name
+
+    if (name !== "" && roomName !== "") {
+        connectWs()
+    }
+})
 //////////////////////////////////////////////////////////////////////////////
 
 class Event {
@@ -47,6 +59,7 @@ function routeEvent(event) {
 
 function connectWs() {
     if (window.WebSocket) {
+        const wsLink = getWsLink()
         conn = new WebSocket(`ws://localhost:8080/ws?room=room1&name=${userName}`)
         conn.onopen = (e) => {
             addQuery("room", "room1")
@@ -75,11 +88,36 @@ function sendEvent(eventName, payload) {
     conn.send(JSON.stringify(event))
 }
 
-function addQuery(param, value) {
-    const url = new URL(window.location.href)
-    url.searchParams.set(param, value)
-    history.replaceState(null, null, url.href)
-    return
+function getRoomName() {
+    const queryString = window.location.search;
+    const urlParams = new URLSearchParams(queryString);
+    return urlParams.get('roomName') || '';
+}
+
+function getWsLink() {
+    const gameSettings = getGameSettings();
+
+    if (gameSettings) {
+        return `ws://localhost:8080/ws?room=${roomName}&name=${userName}&difficulty=${gameSettings.difficulty}&maxRounds=${gameSettings.maxRounds}&category=${gameSettings.category}               `
+    } else {
+        return `ws://localhost:8080/ws?room=${roomName}&name=${userName}`
+    }
+}
+
+function getGameSettings() {
+    const queryString = window.location.search;
+    const urlParams = new URLSearchParams(queryString);
+    const isNewGame = urlParams.get('newGame') === 'true';
+
+    if (isNewGame) {
+        return {
+            difficulty: urlParams.get('difficulty') || '',
+            maxRounds: parseInt(urlParams.get('maxRounds')) || 0,
+            category: urlParams.get('category') || '',
+        };
+    } else {
+        return false;
+    }
 }
 
 function updateDom() {
@@ -165,8 +203,3 @@ function sendAnswer(answer) {
     sendEvent("send_answer", payload)
     return
 }
-
-
-document.addEventListener("DOMContentLoaded", function () {
-    // Cały twój kod JavaScript tutaj
-});

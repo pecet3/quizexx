@@ -5,7 +5,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="styles.css">
     <script defer src="script.js"></script>
     <title>🎲Quizex🏆</title>
 </head>
@@ -15,39 +14,80 @@
         background-image: linear-gradient(#9093ce 1px, transparent 1px), linear-gradient(to right, #787cd3 1px, #f4f4f7 1px);
         background-size: 20px 20px;
     }
+
+    .paper {
+        height: 200px;
+        margin: 2em auto;
+        background: #fff;
+        box-shadow: 4px 4px 0 #00486B;
+        background-image:
+            linear-gradient(90deg,
+                #fff 12px, 0,
+                #00486B 15px, 0,
+                #1373A9 20px, 0,
+                #fff 100%),
+            radial-gradient(circle closest-side,
+                rgba(255, 255, 255, 0) 88%,
+                #fff 100%),
+            radial-gradient(circle at 22px 8px,
+                #1373A9 40%,
+                #00486B 40%,
+                #00486B 100%);
+        background-size: 32px 8px, 32px 16px, 32px 16px;
+        background-repeat: space no-repeat;
+        background-position: center top, center 6px, center 6px;
+
+        &--alt {
+            background-image: linear-gradient(90deg, #fff 12px, 0, #00486B 15px, 0, #1373A9 20px, 0, #fff 100%), radial-gradient(circle closest-side, rgba(255, 255, 255, 0) 88%, #fff 100%), radial-gradient(circle at 22px 8px, #1373A9 40%, #00486B 40%, #00486B 100%);
+            background-image: url("data:image/svg+xml,%3Csvg fill='none' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 21'%3E%3Cpath d='M20 0h-7v6.9a7.5 7.5 0 107 0V0z' fill='%231373A9'/%3E%3Cpath d='M13 0h3v6.9a7.5 7.5 0 002 14 7.5 7.5 0 01-9-7.4c0-2.9 1.6-5.4 4-6.6V0z' fill='%2300486B'/%3E%3C/svg%3E");
+            background-size: 2em 1.3125em;
+        }
+    }
 </style>
 
 <body class="bg-gray-500 pl-0 pr-2 sm:p-8 py-2 sm:py-10 text=center m-auto">
 
+    <div id="entryDashboard" class=" m-auto flex flex-col max-w-lg
+    justify-center items-center gap-2 bg-yellow-200 p-2 
+   ">
+        <input id="userNameInput" type="text" class="p-1 font-mono text-xl border border-black"
+            placeholder="Podaj swój nick" />
+        <button class="bg-white shadow-md shadow-gray-400 
+        hover:shadow-none hover:rounded-xl border-2 border-black hover:scale-[0.995]
+        font-mono px-4 text-3xl duration-300 text-black rounded-lg m-auto py-2" id="connectButton">Dołącz</button>
+    </div>
+
+    <div id="waitingRoomDashboard" class=" m-auto flex flex-col max-w-lg
+    justify-center items-center gap-2 bg-yellow-200 p-2 
+   ">
+        <ul class="grid grid-cols-2 text-xl" id="readyUsersList">
+            <li class="text-black font-bold">Jakub ✔</li>
+            <li class="text-black font-bold">Krystian1229 ✔</li>
+            <li class="text-black font-bold">Jakub ❌</li>
+            <li class="text-black font-bold">Maciek ❌</li>
+        </ul>
+        <div class="flex gap-0.5">
+            <span class="text-2xl font-sans font-bold">[</span>
+            <p id="displayReadyCount" class="text-2xl font-sans font-bold">2/4</p>
+            <span class="text-2xl font-sans font-bold">]</span>
+        </div>
+        <button class="bg-white shadow-md shadow-gray-400 
+        hover:shadow-none hover:rounded-xl border-2 border-black hover:scale-[0.995]
+        font-mono px-4 text-3xl duration-300 text-black rounded-lg m-auto py-2" id="readyButton">Jestem
+            gotowy</button>
+    </div>
+
     <div id="gameDashboard"
-        class=" m-auto max-w-3xl text-lg shadow-xl shadow-slate-700 bg-pattern h-screen p-2 pl-2 sm:pl-12 rounded-r-2xl shadow-md relative">
+        class="hidden m-auto max-w-3xl text-lg shadow-xl shadow-slate-700 bg-pattern h-screen p-2 pl-2 sm:pl-12 rounded-r-2xl shadow-md relative">
         <p class="hidden sm:block absolute top-1/4 left-0 ml-1 sm:ml-2 text-5xl text-gray-600">●</p>
         <p class="hidden sm:block absolute top-3/4 left-0 ml-1 sm:ml-2 text-5xl text-gray-600">●</p>
         <header class="p-1 my-4 relative">
             <h1
                 class="text-8xl font-black	flex justify-center items-end text-center text-black font-mono underline decoration-wavy decoration-4 decoration-teal-500 ">
-                <span class="text-3xl absolute -top-0.5 right-1/2 mr-2">🎲</span>Quizex<span class="text-4xl"></span>
+                Quizex
             </h1>
         </header>
-        <div id="roomDashboard" class="hidden m-auto flex flex-col max-w-lg
-        justify-center items-center gap-2 bg-gray-200 p-2 rounded-lg
-        border-2 border-black">
-            <ul class="grid grid-cols-2 text-xl" id="readyUsersList">
-                <li class="text-black font-bold">Jakub ✔</li>
-                <li class="text-black font-bold">Krystian1229 ✔</li>
-                <li class="text-black font-bold">Jakub ❌</li>
-                <li class="text-black font-bold">Maciek ❌</li>
-            </ul>
-            <div class="flex gap-0.5">
-                <span class="text-2xl font-sans font-bold">[</span>
-                <p id="displayReadyCount" class="text-2xl font-sans font-bold">2/4</p>
-                <span class="text-2xl font-sans font-bold">]</span>
-            </div>
-            <button class="bg-white shadow-md shadow-gray-400 
-            hover:shadow-none hover:rounded-xl border-2 border-teal-500 hover:scale-[0.995]
-            font-mono px-4 text-3xl duration-300 text-teal-500 rounded-lg m-auto py-2" id="readyButton">Jestem
-                gotowy</button>
-        </div>
+
 
         <div class="flex justify-between gap-2">
             <div

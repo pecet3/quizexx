@@ -14,11 +14,13 @@ settingsForm.addEventListener('submit', function (event) {
 
     const queryParams = new URLSearchParams();
     queryParams.set('roomName', nameValue);
+    queryParams.set('newGame', true);
+
     queryParams.set('difficulty', difficultyValue);
-    queryParams.set('maxRound', maxRoundsValue);
+    queryParams.set('maxRounds', maxRoundsValue);
     queryParams.set('category', categoryValue);
 
-    const redirectURL = `/room/?${queryParams.toString()}`;
+    const redirectURL = `/room?${queryParams.toString()}`;
 
     window.location.href = redirectURL;
 });
