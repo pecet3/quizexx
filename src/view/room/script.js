@@ -1,23 +1,32 @@
 
-const displayRoundElement = document.getElementById('displayRound');
-const displayCategoryElement = document.getElementById('displayCategory');
-const displayQuestionElement = document.getElementById('displayQuestion');
-
-const gameFormElement = document.getElementById('gameForm');
-
-const nameInput = document.getElementById("nameInput")
+const gameForm = document.getElementById('gameForm');
 const connectButton = document.getElementById("connectButton")
-
-const answerAElement = document.getElementById('answerA');
-const answerBElement = document.getElementById('answerB');
-const answerCElement = document.getElementById('answerC');
-const answerDElement = document.getElementById('answerD');
 
 const roomName = getRoomName();
 let userName = "";
 
+let ready = true;
+let isAnswerSent = false;
 
-connectButton.addEventListener("click", (e) => {
+let gameState = {
+    isGame: false,
+    category: "",
+    round: 1,
+    question: "Test",
+    answers: ["Lorem ipsum", "Lorem ipsum", "Lorem ipsum", "Lorem ipsum"],
+    actions: [{ name: "", answer: null, round: 0 }],
+    score: [{ name: "kuba", points: 10, roundsWon: [] }]
+};
+
+const virtualDom = {
+    entryDashboard: true,
+    waitingRoomDashboard: false,
+    gameDashboard: false,
+}
+
+//////////////// Listeners /////////
+
+connectButton.addEventListener("click", () => {
     const nameInput = document.getElementById("userNameInput")
     const name = nameInput.value
     userName = name
@@ -26,6 +35,21 @@ connectButton.addEventListener("click", (e) => {
         connectWs()
     }
 })
+
+gameForm.addEventListener("submit", (e) => {
+    e.preventDefault();
+    if (!ready) return alert("you are not ready")
+    const formData = new FormData(gameFormElement);
+
+    const answerValue = formData.get('q1');
+    const answer = Number(answerValue)
+    if (answerValue !== null) {
+        sendAnswer(answer);
+    } else {
+        console.log("Nie wybrano odpowiedzi");
+    }
+});
+
 //////////////////////////////////////////////////////////////////////////////
 
 class Event {
@@ -57,6 +81,12 @@ function routeEvent(event) {
     }
 }
 
+function sendEvent(eventName, payload) {
+    const event = new Event(eventName, payload)
+
+    conn.send(JSON.stringify(event))
+}
+
 function connectWs() {
     if (window.WebSocket) {
         const wsUrl = getWsUrl()
@@ -79,12 +109,6 @@ function connectWs() {
     }
 }
 //////////////////////////////////////////
-
-function sendEvent(eventName, payload) {
-    const event = new Event(eventName, payload)
-
-    conn.send(JSON.stringify(event))
-}
 
 function getRoomName() {
     const queryString = window.location.search;
@@ -111,17 +135,29 @@ function getWsUrl() {
     }
 }
 
-function updateDom() {
+/////////// DOM /////////
+
+function updateDomGameState() {
+    const answerAElement = document.getElementById('answerA');
+    const answerBElement = document.getElementById('answerB');
+    const answerCElement = document.getElementById('answerC');
+    const answerDElement = document.getElementById('answerD');
+
     answerAElement.innerHTML = gameState.answers[0]
     answerBElement.innerHTML = gameState.answers[1]
     answerCElement.innerHTML = gameState.answers[2]
     answerDElement.innerHTML = gameState.answers[3]
 
+
+    const displayRoundElement = document.getElementById('displayRound');
+    const displayCategoryElement = document.getElementById('displayCategory');
+    const displayQuestionElement = document.getElementById('displayQuestion');
+
     displayRoundElement.innerHTML = gameState.round
     displayQuestionElement.innerHTML = gameState.question
 }
 
-function updateTable(playerList) {
+function updateDomScore(playerList) {
     const tableBody = document.getElementById('scoreTableBody');
 
     tableBody.innerHTML = '';
@@ -149,7 +185,7 @@ function startTheGame(event) {
         gameState = event.payload
         roomDashboard.classList.add("hidden")
         gameDashboard.classList.remove("hidden")
-        updateDom()
+        updateDomGameState()
 
     }
     return
@@ -159,15 +195,15 @@ function updateGameState(event) {
     gameState = event.payload
     console.log(gameState, "update")
 
-    updateTable(gameState.score)
-    updateDom()
+    updateDomScore(gameState.score)
+    updateDomGameState()
     return
 }
 
 function updatePlayers(event) {
     const newPlayersState = event.payload
     gameState.players = newPlayersState
-    updateDom()
+    updateDomGameState()
 
     return
 }
