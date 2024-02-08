@@ -17,37 +17,42 @@
     }
 </style>
 
-<body class="bg-gray-900 p-0.5 pr-2 sm:p-2 py-2 sm:py-4 text=center m-auto">
+<body class="bg-gray-400 p-0.5 pr-2 sm:p-2 py-2 sm:py-4 text=center m-auto">
     <header class="p-1 my-4 relative">
         <h1
-            class="text-8xl font-black	flex justify-center items-end text-center text-purple-600 font-mono underline decoration-wavy decoration-4 decoration-emerald-400 ">
-            <span class="text-4xl absolute -top-1 right-1/2 mr-2">🎲</span>Quizex<span class="text-4xl"></span>
+            class="text-8xl font-black	flex justify-center items-end text-center text-black font-mono 
+            underline decoration-wavy decoration-4 decoration-teal-400 ">
+            <span class="text-3xl absolute -top-0.5 right-1/2 mr-2">🎲</span>Quizex<span class="text-3xl"></span>
         </h1>
     </header>
 
     <div id="entryDashboard"
-        class=" bg-pattern max-w-md text-lg mx-auto ring-8 ring-emerald-500 bg-slate-200 p-4 rounded-lg shadow-gray-400 shadow-md flex flex-col items-center">
-        <form id="settingsForm" class="flex flex-col gap-4 items-center text-xl font-serif">
+        class=" bg-pattern max-w-md text-lg m-auto border-2 border-black bg-slate-200 p-4 rounded-lg shadow-md flex flex-col items-center">
+        <form id="settingsForm" class="flex flex-col gap-4 items-center text-xl">
             <input type="text" id="nameInput"
-                class="p-1 text-2xl rounded-md m-auto bg-slate-500 placeholder:text-gray-300 placeholder:text-center text-white text-center"
+                class="p-0.5 text-2xl rounded-sm font m-auto border border-black
+                bg-white placeholder:text-gray-400 placeholder:text-center text-black text-center"
                 placeholder="Nazwa pokoju" />
             <input type="text" id="categoryInput"
-                class="p-1 text-2xl rounded-md m-auto bg-slate-500 placeholder:text-gray-300 placeholder:text-center text-white text-center"
+                class="p-0.5 text-2xl rounded-sm font m-auto border border-black
+                bg-white placeholder:text-gray-400 placeholder:text-center text-black text-center"
                 placeholder="Kategoria Pytań" />
             <label for="maxRounds" class="rounded-lg font-sans font-bold underline">Liczba round:</label>
             <input type="number" id="maxRounds" min="0" max="10" value="5"
-                class="text-2xl bg-slate-500 text-white p-1 rounded-lg text-center" />
-            <label for="difficulty" class="rounded-lg  font-sans font-bold underline">Wybierz poziom
-                trudności:</label>
+                class="p-0.5 text-2xl rounded-sm font m-auto border border-black
+                bg-white placeholder:text-gray-400 placeholder:text-center text-black text-center" />
+            <label for="difficulty" class="rounded-lg  font-sans font-bold underline">Poziom trudności:
+                </label>
             <select id="difficulty" name="difficulty"
-                class="text-2xl bg-slate-500 text-white p-1 rounded-lg text-center">
+                class="p-0.5 text-2xl rounded-sm font m-auto border border-black
+                bg-white placeholder:text-gray-400 placeholder:text-center text-black text-center">
                 <option value="easy" class="text-center">Łatwy</option>
                 <option value="medium" class="text-center">Średni</option>
                 <option value="hard" class="text-center">Trudny</option>x
             </select>
-            <button type="submit" class="bg-purple-600 shadow-md shadow-gray-400 hover:shadow-none hover:rounded-xl 
-            hover:bg-purple-700 font-sans mt-4 px-4 text-white hover:ring-2 ring-black
-            text-3xl duration-300 rounded-lg m-auto py-2" id="createRoom">Utwórz
+            <button type="submit" class="bg-teal-300 my-4 font-thin
+            hover:shadow-none hover:rounded-xl border border-black hover:scale-[0.995]
+            font-mono font-semibold px-4 text-2xl duration-300 text-black rounded-lg m-auto py-2" id="readyButton" id="createRoom">Utwórz
                 pokój</button>
         </form>
     </div>

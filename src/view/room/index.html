@@ -14,51 +14,23 @@
         background-image: linear-gradient(#9093ce 1px, transparent 1px), linear-gradient(to right, #787cd3 1px, #f4f4f7 1px);
         background-size: 20px 20px;
     }
-
-    .paper {
-        height: 200px;
-        margin: 2em auto;
-        background: #fff;
-        box-shadow: 4px 4px 0 #00486B;
-        background-image:
-            linear-gradient(90deg,
-                #fff 12px, 0,
-                #00486B 15px, 0,
-                #1373A9 20px, 0,
-                #fff 100%),
-            radial-gradient(circle closest-side,
-                rgba(255, 255, 255, 0) 88%,
-                #fff 100%),
-            radial-gradient(circle at 22px 8px,
-                #1373A9 40%,
-                #00486B 40%,
-                #00486B 100%);
-        background-size: 32px 8px, 32px 16px, 32px 16px;
-        background-repeat: space no-repeat;
-        background-position: center top, center 6px, center 6px;
-
-        &--alt {
-            background-image: linear-gradient(90deg, #fff 12px, 0, #00486B 15px, 0, #1373A9 20px, 0, #fff 100%), radial-gradient(circle closest-side, rgba(255, 255, 255, 0) 88%, #fff 100%), radial-gradient(circle at 22px 8px, #1373A9 40%, #00486B 40%, #00486B 100%);
-            background-image: url("data:image/svg+xml,%3Csvg fill='none' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 21'%3E%3Cpath d='M20 0h-7v6.9a7.5 7.5 0 107 0V0z' fill='%231373A9'/%3E%3Cpath d='M13 0h3v6.9a7.5 7.5 0 002 14 7.5 7.5 0 01-9-7.4c0-2.9 1.6-5.4 4-6.6V0z' fill='%2300486B'/%3E%3C/svg%3E");
-            background-size: 2em 1.3125em;
-        }
-    }
 </style>
 
-<body class="bg-gray-500 pl-0 pr-2 sm:p-8 py-2 sm:py-10 text=center m-auto">
+<body class="bg-gray-400 pl-0 pr-2 sm:p-8 py-2 sm:py-10 text=center m-auto">
 
-    <div id="entryDashboard" class=" m-auto flex flex-col max-w-lg
-    justify-center items-center gap-2 bg-yellow-200 p-2 
+    <div id="entryDashboard" class=" bg-pattern max-w-md text-lg m-auto 
+    border-2 border-black bg-slate-200 p-4 rounded-lg shadow-md flex flex-col gap-2 items-center
    ">
-        <input id="userNameInput" type="text" class="p-1 font-mono text-xl border border-black"
+        <input id="userNameInput" type="text" class="p-0.5 text-2xl rounded-sm font m-auto border border-black
+        bg-white placeholder:text-gray-400 placeholder:text-center text-black text-center"
             placeholder="Podaj swój nick" />
-        <button class="bg-white shadow-md shadow-gray-400 
-        hover:shadow-none hover:rounded-xl border-2 border-black hover:scale-[0.995]
-        font-mono px-4 text-3xl duration-300 text-black rounded-lg m-auto py-2" id="connectButton">Dołącz</button>
+        <button class="bg-purple-300 
+        hover:shadow-none hover:rounded-xl border border-black hover:scale-[0.995]
+        font-mono px-4 text-2xl duration-300 text-black rounded-lg m-auto py-1.5" id="connectButton">Dołącz</button>
     </div>
 
-    <div id="waitingRoomDashboard" class=" m-auto flex flex-col max-w-lg
-    justify-center items-center gap-2 bg-yellow-200 p-2 
+    <div id="waitingRoomDashboard" class=" bg-pattern max-w-md text-lg m-auto border-2 
+    border-black bg-slate-200 p-4 rounded-lg shadow-md flex flex-col items-center
    ">
         <ul class="grid grid-cols-2 text-xl" id="readyUsersList">
             <li class="text-black font-bold">Jakub ✔</li>
@@ -71,9 +43,9 @@
             <p id="displayReadyCount" class="text-2xl font-sans font-bold">2/4</p>
             <span class="text-2xl font-sans font-bold">]</span>
         </div>
-        <button class="bg-white shadow-md shadow-gray-400 
-        hover:shadow-none hover:rounded-xl border-2 border-black hover:scale-[0.995]
-        font-mono px-4 text-3xl duration-300 text-black rounded-lg m-auto py-2" id="readyButton">Jestem
+        <button class="bg-teal-300 
+        hover:shadow-none hover:rounded-xl border border-black hover:scale-[0.995]
+        font-mono px-4 text-2xl duration-300 text-black rounded-lg m-auto py-2" id="readyButton">Jestem
             gotowy</button>
     </div>
 
@@ -92,16 +64,16 @@
 
         <div class="flex justify-between gap-2 z-10">
             <div
-                class="text-xl flex sm:flex-row flex-col items-center font-bold font-mono bg-gray-400 rounded-t-md p-1 border-2 border-black border-b-0">
-                <span> Kategoria:</span>
-                <span id="displayCategory" class="font-sans font-medium text-teal-600 italic">Komputery</span>
+                class="text-2xl flex sm:flex-row flex-col items-center font-bold font-mono bg-gray-400 rounded-t-md p-1 border-2 border-black border-b-0">
+                <span class="hidden sm:block"> Kategoria:</span>
+                <span id="displayCategory" class="text-blue-800 italic">Komputery</span>
             </div>
             <div
                 class="text-2xl flex-col sm:flex-row flex items-center gap-1 sm:gap-2 font-black font-mono bg-gray-400 rounded-t-md p-0.5 sm:p-1 px-1 sm:px-2 border-2 border-black border-b-0">
                 <div class="flex items-start m-auto gap-1">
-                    <p>Runda: </p><span id="displayRound" class="font-sans  text-teal-600">1</span>
+                    <p>Runda: </p><p id="displayRound" class="text-blue-800">1</p>
                 </div>
-                <div class="flex justify-center items-center gap-1
+                <div class="hidden sm:flex justify-center items-center gap-1
                  border-l-2 bg-slate-900 px-1 py-0.5 rounded-lg border-gray-800">
                     <img src="userIcon.svg" class="sm:h-6 h-4 w-auto" />
                     <span id="playersLengthDisplay" class="font-sans text-green-400 text-xl">4</span>
@@ -119,33 +91,33 @@
                     <h3 id="displayQuestion" class="sm:col-span-2 text-center font-bold text-2xl">Ile waży kilogram
                         powietrza?
                     </h3>
-                    <label id="a1" class="shadow-md hover:shadow-sm shadow-gray-400 has-[:checked]:shadow-none has-[:checked]:rounded-lg has-[:checked]:scale-[1.01]
-                    duration-300 has-[:checked]:bg-gray-700 has-[:checked]:ring-2 ring-teal-500 has-[:checked]:text-white
-                        cursor-pointer flex justify-center items-center bg-stone-300 rounded-md p-1
-                        border border-black
+                    <label id="a1" class=" has-[:checked]:rounded-lg has-[:checked]:scale-[1.01] bg-blue-200
+                    duration-300 has-[:checked]:bg-gray-700 has-[:checked]:ring ring-teal-500 has-[:checked]:text-white
+                     cursor-pointer flex justify-center items-center rounded-md hover:rounded-lg p-1
+                     border border-black
                         ">
                         <input type="radio" name="q1" value="0" class="hidden ">
                         <p id="answerA">1kg</p>
                     </label>
-                    <label id="a2" class="shadow-md hover:shadow-sm shadow-gray-400 has-[:checked]:shadow-none has-[:checked]:rounded-lg has-[:checked]:scale-[1.01]
-                    duration-300 has-[:checked]:bg-gray-700 has-[:checked]:ring-2 ring-teal-500 has-[:checked]:text-white
-                     cursor-pointer flex justify-center items-center bg-slate-300 rounded-md p-1
+                    <label id="a2" class=" has-[:checked]:rounded-lg has-[:checked]:scale-[1.01] bg-red-200
+                    duration-300 has-[:checked]:bg-gray-700 has-[:checked]:ring ring-teal-500 has-[:checked]:text-white
+                     cursor-pointer flex justify-center items-center rounded-md hover:rounded-lg p-1
                      border border-black
                      ">
                         <input type="radio" name="q1" value="1" class="hidden">
                         <p id="answerB">1000g</p>
                     </label>
-                    <label id="a3" class="shadow-md hover:shadow-sm shadow-gray-400 has-[:checked]:shadow-none has-[:checked]:rounded-lg has-[:checked]:scale-[1.01]
-                    duration-300 has-[:checked]:bg-gray-700 has-[:checked]:ring-2 ring-teal-500 has-[:checked]:text-white
-                     cursor-pointer flex justify-center items-center bg-slate-400 rounded-md p-1
+                    <label id="a3" class=" has-[:checked]:rounded-lg has-[:checked]:scale-[1.01] bg-green-200
+                    duration-300 has-[:checked]:bg-gray-700 has-[:checked]:ring ring-teal-500 has-[:checked]:text-white
+                     cursor-pointer flex justify-center items-center rounded-md hover:rounded-lg p-1
                      border border-black
                      ">
                         <input type="radio" name="q1" value="2" class="hidden">
                         <p id="answerC">100dg</p>
                     </label>
-                    <label id="a4" class="shadow-md hover:shadow-sm shadow-gray-400 has-[:checked]:shadow-none has-[:checked]:rounded-lg has-[:checked]:scale-[1.01]
-                    duration-300 has-[:checked]:bg-gray-700 has-[:checked]:ring-2 ring-teal-500 has-[:checked]:text-white
-                     cursor-pointer flex justify-center items-center bg-gray-400 rounded-md p-1
+                    <label id="a4" class=" has-[:checked]:rounded-lg has-[:checked]:scale-[1.01] bg-purple-200
+                    duration-300 has-[:checked]:bg-gray-700 has-[:checked]:ring ring-teal-500 has-[:checked]:text-white
+                     cursor-pointer flex justify-center items-center rounded-md hover:rounded-lg p-1
                      border border-black
                      ">
                         <input type="radio" name="q1" value="3" class="hidden">
@@ -171,15 +143,17 @@
                         </tbody>
                     </table>
                     <div class="flex flex-col items-center justify-center gap-0.5">
+                        <button class="bg-teal-300 font-medium
+                         hover:rounded-xl border-2 border-black
+                        font-mono font-semibold px-4 text-3xl duration-300 text-black rounded-lg m-auto py-2"
+                            id="readyButton">
+                            Wyślij Odpowiedź
+                        </button>
                         <div class="flex gap-0.5">
                             <span class="text-lg font-sans font-bold">[</span>
                             <p id="displayReadyCount" class="text-xl font-sans font-bold">2/4</p>
                             <span class="text-lg font-sans font-bold">]</span>
                         </div>
-                        <button class="bg-white shadow-md shadow-gray-500 font-medium
-                        hover:shadow-none hover:rounded-xl border-2 border-teal-500 hover:scale-[0.995]
-                        font-mono font-semibold px-4 text-3xl duration-300 text-teal-500 rounded-lg m-auto py-2"
-                            id="readyButton">Wyślij Odpowiedź</button>
                     </div>
 
                 </div>

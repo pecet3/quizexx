@@ -32,21 +32,29 @@
     <title>🎲Quizex🏆</title>
 </head>
 
-<body class="text-center m-auto">
+<body class="text-center m-auto bg-gray-400">
     <header class="p-1 my-4 relative">
         <h1
-            class="text-8xl font-black flex justify-center items-end text-center text-purple-600 font-mono underline decoration-wavy decoration-4 decoration-emerald-400">
-            <span class="text-4xl absolute -top-1 right-1/2 mr-2">🎲</span>Quizex<span class="text-4xl"></span>
+            class="text-8xl font-black	flex justify-center items-end text-center text-black font-mono 
+            underline decoration-wavy decoration-4 decoration-teal-400 ">
+            <span class="text-3xl absolute -top-0.5 right-1/2 mr-2">🎲</span>Quizex<span class="text-3xl"></span>
         </h1>
     </header>
+    
 
-    <div id="gameDashboard" class="m-auto max-w-lg text-lg bg-pattern p-2 rounded-xl shadow-md relative">
+    <div class="bg-pattern max-w-md text-lg m-auto border-2 border-black 
+    bg-slate-200 p-4 rounded-lg shadow-md flex flex-col items-center">
         <div id="entry" class="flex justify-center flex-col text-white text-xl gap-4">
-            <input type="text" id="joinRoomInput" class="p-1 rounded-md m-0 bg-slate-500 " placeholder="Nazwa pokoju" />
+            <input type="text" id="joinRoomInput" class="p-0.5 text-2xl rounded-sm font m-auto border border-black
+            bg-white placeholder:text-gray-400 placeholder:text-center text-black text-center" placeholder="Nazwa pokoju" />
             <button id="connectButton"
-                class="bg-blue-600 hover:bg-blue-700 duration-300 rounded-lg m-0 p-1">Dołącz</button>
+                class="bg-purple-300 font-thin
+                hover:shadow-none hover:rounded-xl border border-black hover:scale-[0.995]
+                font-mono font-semibold px-4 text-2xl duration-300 text-black rounded-lg m-auto py-2">Dołącz</button>
             <p class="text-black text-center font-bold">lub...</p>
-            <a href="/create" class="bg-purple-600 hover:bg-purple-700 duration-300 rounded-lg m-auto p-1">Utwórz
+            <a href="/create" class="bg-blue-300 font-thin
+            hover:shadow-none hover:rounded-xl border border-black hover:scale-[0.995]
+            font-mono font-semibold px-4 text-2xl duration-300 text-black rounded-lg m-auto py-2">Utwórz
                 pokój</a>
         </div>
 
