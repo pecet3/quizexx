@@ -45,14 +45,14 @@ func NewRoom(name string) *room {
 	return r
 }
 
-func (m *manager) GetRoom(name string) *room {
+func (m *Manager) GetRoom(name string) *room {
 	m.mutex.Lock()
 	defer m.mutex.Unlock()
 
 	return m.rooms[name]
 }
 
-func (m *manager) CreateRoom(name string) *room {
+func (m *Manager) CreateRoom(name string) *room {
 	m.mutex.Lock()
 	defer m.mutex.Unlock()
 
@@ -66,7 +66,7 @@ func (m *manager) CreateRoom(name string) *room {
 	return newRoom
 }
 
-func (m *manager) RemoveRoom(name string) {
+func (m *Manager) RemoveRoom(name string) {
 	m.mutex.Lock()
 	defer m.mutex.Unlock()
 
@@ -133,7 +133,7 @@ func (r *room) SendRoomMsg(msg string) error {
 	return nil
 }
 
-func (r *room) Run(m *manager) {
+func (r *room) Run(m *Manager) {
 	for {
 		select {
 		case msg := <-r.forward:

@@ -8,7 +8,7 @@ import (
 	"github.com/gorilla/websocket"
 )
 
-type manager struct {
+type Manager struct {
 	mutex sync.Mutex
 	rooms map[string]*room
 
@@ -27,14 +27,27 @@ func checkOrigin(r *http.Request) bool {
 	return true
 }
 
-func NewManager() *manager {
-	return &manager{
+func NewManager() *Manager {
+	return &Manager{
 		rooms: make(map[string]*room),
 	}
 
 }
 
-func (m *manager) ServeHTTP(w http.ResponseWriter, req *http.Request) {
+func (m *Manager) GetRoomNamesList() []string {
+	m.mutex.Lock()
+	defer m.mutex.Unlock()
+
+	var names []string
+
+	for roomName := range m.rooms {
+		names = append(names, roomName)
+	}
+
+	return names
+}
+
+func (m *Manager) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 
 	conn, err := upgrader.Upgrade(w, req, nil)
 	if err != nil {
@@ -50,12 +63,13 @@ func (m *manager) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	if name == "" || name == "serwer" || name == "klient" {
 		return
 	}
+	isNewRoom := req.URL.Query().Get("new")
 
 	log.Printf("New connection: %v connected to room: %v", name, room)
 
 	currentRoom := m.GetRoom(room)
 
-	if currentRoom == nil {
+	if currentRoom == nil && isNewRoom == "true" {
 		currentRoom = m.CreateRoom(room)
 		go currentRoom.Run(m)
 	}

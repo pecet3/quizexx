@@ -25,7 +25,7 @@ type client struct {
 	roundsWon []uint
 }
 
-func (c *client) read(m *manager) {
+func (c *client) read(m *Manager) {
 	defer func() {
 		c.conn.Close()
 	}()
