@@ -19,12 +19,17 @@ let gameState = {
     score: [{ name: "kuba", points: 10, roundsWon: [] }]
 };
 
-const virtualDom = {
+const entryDashboard = document.getElementById("entryDashboard")
+const waitingRoomDashboard = document.getElementById("waitingRoomDashboard")
+const gameDashboard = document.getElementById("gameDashboard")
+
+let virtualDom = {
     entryDashboard: true,
     waitingRoomDashboard: false,
     gameDashboard: false,
 }
 
+handleVirtualDom()
 //////////////// Listeners /////////
 
 connectButton.addEventListener("click", () => {
@@ -48,10 +53,14 @@ gameForm.addEventListener("submit", (e) => {
     if (!ready) return alert("you are not ready")
     const formData = new FormData(gameForm);
 
-    const answerValue = formData.get('q1');
+    //// to fix reset value in the future
+
+    let answerValue = formData.get('q1');
     const answer = Number(answerValue)
     if (answerValue !== null) {
         sendAnswer(answer);
+        formData = null
+        return
     } else {
         console.log("Nie wybrano odpowiedzi");
     }
@@ -70,9 +79,6 @@ function routeEvent(event) {
         alert("no type field in the event")
     }
     switch (event.type) {
-        case "start_game":
-            startTheGame(event)
-            break;
         case "update_gamestate":
             updateGameState(event)
             break
@@ -100,6 +106,11 @@ function connectWs() {
         conn = new WebSocket(wsUrl)
         conn.onopen = (e) => {
             console.log("ok")
+            updateVirtualDom({
+                entryDashboard: false,
+                waitingRoomDashboard: true,
+                gameDashboard: false,
+            })
         }
 
         conn.onclose = (e) => {
@@ -144,6 +155,28 @@ function getWsUrl() {
 
 /////////// DOM /////////
 
+function updateVirtualDom(newVirtualDom) {
+    virtualDom = newVirtualDom
+    console.log(virtualDom)
+    handleVirtualDom()
+}
+
+function handleVirtualDom() {
+    entryDashboard.classList.remove("hidden");
+    waitingRoomDashboard.classList.remove("hidden");
+    gameDashboard.classList.remove("hidden");
+    if (virtualDom.entryDashboard) {
+        waitingRoomDashboard.classList.add("hidden");
+        gameDashboard.classList.add("hidden");
+    } else if (virtualDom.waitingRoomDashboard) {
+        entryDashboard.classList.add("hidden");
+        gameDashboard.classList.add("hidden");
+    } else if (virtualDom.gameDashboard) {
+        entryDashboard.classList.add("hidden");
+        waitingRoomDashboard.classList.add("hidden");
+    }
+}
+
 function updateDomGameState() {
     const answerAElement = document.getElementById('answerA');
     const answerBElement = document.getElementById('answerB');
@@ -186,19 +219,14 @@ function updateDomScore(playerList) {
 
 ///////////////////// SERVER EVENT FUNCTIONS //////////////////////
 
-function startTheGame(event) {
-    console.log("start", event)
-    if (event.payload.isGame === true) {
-        gameState = event.payload
-        roomDashboard.classList.add("hidden")
-        gameDashboard.classList.remove("hidden")
-        updateDomGameState()
-
-    }
-    return
-}
-
 function updateGameState(event) {
+    if (gameState.isGame === false) {
+        updateVirtualDom({
+            entryDashboard: false,
+            waitingRoomDashboard: false,
+            gameDashboard: true,
+        })
+    }
     gameState = event.payload
     console.log(gameState, "update")
 
