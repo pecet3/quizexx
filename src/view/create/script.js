@@ -24,3 +24,11 @@ settingsForm.addEventListener('submit', function (event) {
 
     window.location.href = redirectURL;
 });
+
+function getRoomNames() {
+    try {
+        const res = fetch("")
+    } catch {
+        console.error("error fetch room names")
+    }
+}
