@@ -1,12 +1,13 @@
 
 const gameForm = document.getElementById('gameForm');
 const connectButton = document.getElementById("connectButton")
-
+const readyButton = document.getElementById("readyButton")
 const roomName = getRoomName();
 let userName = "";
 
 let ready = true;
 let isAnswerSent = false;
+let isPlayerReady = false;
 
 let gameState = {
     isGame: false,
@@ -34,6 +35,12 @@ connectButton.addEventListener("click", () => {
     if (name !== "" && roomName !== "") {
         connectWs()
     }
+})
+readyButton.addEventListener("click", () => {
+    if (isPlayerReady === true) return
+    sendReadines()
+    readyButton.disabled = true
+    return
 })
 
 gameForm.addEventListener("submit", (e) => {
