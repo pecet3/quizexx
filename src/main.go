@@ -4,6 +4,7 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/pecet3/quizex/handlers"
 	"github.com/pecet3/quizex/ws"
 )
 
@@ -15,6 +16,8 @@ func main() {
 	mux.Handle("/ws", manager)
 
 	mux.Handle("/", http.FileServer(http.Dir("view")))
+
+	mux.HandleFunc("/api/rooms", handlers.GetRoomsHandler(manager))
 
 	address := "localhost:8080"
 	log.Println("Server is running: ", address)
