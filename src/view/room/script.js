@@ -46,7 +46,7 @@ readyButton.addEventListener("click", () => {
 gameForm.addEventListener("submit", (e) => {
     e.preventDefault();
     if (!ready) return alert("you are not ready")
-    const formData = new FormData(gameFormElement);
+    const formData = new FormData(gameForm);
 
     const answerValue = formData.get('q1');
     const answer = Number(answerValue)
