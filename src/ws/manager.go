@@ -55,8 +55,8 @@ func (m *Manager) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	room := req.URL.Query().Get("room")
-	if room == "" {
+	roomName := req.URL.Query().Get("room")
+	if roomName == "" {
 		return
 	}
 	name := req.URL.Query().Get("name")
@@ -65,13 +65,18 @@ func (m *Manager) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	}
 	isNewRoom := req.URL.Query().Get("new")
 
-	log.Printf("New connection: %v connected to room: %v", name, room)
+	log.Printf("New connection: %v connected to room: %v", name, roomName)
 
-	currentRoom := m.GetRoom(room)
+	currentRoom := m.GetRoom(roomName)
 
-	if currentRoom == nil && isNewRoom == "true" {
-		currentRoom = m.CreateRoom(room)
+	if isNewRoom != "true" && currentRoom == nil {
+		return
+	}
+
+	if currentRoom == nil {
+		currentRoom = m.CreateRoom(roomName)
 		go currentRoom.Run(m)
+
 	}
 
 	client := &client{
