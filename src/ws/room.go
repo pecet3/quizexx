@@ -119,6 +119,7 @@ func (r *room) Run(m *Manager) {
 
 		case client := <-r.ready:
 			client.isReady = true
+			r.SendMsgAndInfo(client.name + " jest gotowy")
 			if ok := r.CheckIfEveryoneIsReady(); ok {
 				r.game = &Game{}
 				game := r.CreateGame()

@@ -31,7 +31,6 @@ func NewManager() *Manager {
 	return &Manager{
 		rooms: make(map[string]*room),
 	}
-
 }
 
 func (m *Manager) GetRoomNamesList() []string {
@@ -74,7 +73,6 @@ func (m *Manager) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 			currentRoom = m.CreateRoom(roomName)
 			go currentRoom.Run(m)
 		} else {
-			log.Println("No new room in query")
 			conn.Close()
 			return
 		}

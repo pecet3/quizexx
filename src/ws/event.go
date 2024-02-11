@@ -39,7 +39,7 @@ func (r *room) SendMsgAndInfo(msg string) error {
 		Category: r.game.Category,
 	}
 
-	eventBytes, err := MarshalEventToBytes[RoomMsgAndInfo](roomMsg)
+	eventBytes, err := MarshalEventToBytes[RoomMsgAndInfo](roomMsg, "room_msgAndInfo")
 	if err != nil {
 		return err
 	}
@@ -57,7 +57,7 @@ func (g *Game) SendGameState() error {
 	g.mutex.Lock()
 	defer g.mutex.Unlock()
 
-	eventBytes, err := MarshalEventToBytes[GameState](*g.State)
+	eventBytes, err := MarshalEventToBytes[GameState](*g.State, "update_gamestate")
 	if err != nil {
 		return err
 	}
@@ -70,7 +70,7 @@ func (g *Game) SendGameState() error {
 	return nil
 }
 
-func MarshalEventToBytes[T any](payload T) ([]byte, error) {
+func MarshalEventToBytes[T any](payload T, eventType string) ([]byte, error) {
 	p := payload
 	stateBytes, err := json.Marshal(p)
 	log.Println("Send Game State to the client: ", p)
@@ -79,7 +79,7 @@ func MarshalEventToBytes[T any](payload T) ([]byte, error) {
 		return nil, err
 	}
 	event := Event{
-		Type:    "update_gamestate",
+		Type:    eventType,
 		Payload: stateBytes,
 	}
 	eventBytes, err := json.Marshal(event)
