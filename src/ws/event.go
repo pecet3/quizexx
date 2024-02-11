@@ -22,7 +22,7 @@ type SendMessageEvent struct {
 	Message  string `json:"message"`
 }
 
-func (r *room) SendRoomMsg(msg string) error {
+func (r *room) SendMsgAndInfo(msg string) error {
 	var roomClients []RoomClient
 
 	for c := range r.clients {
@@ -34,14 +34,12 @@ func (r *room) SendRoomMsg(msg string) error {
 	}
 
 	roomMsg := RoomMsg{
-		Message: msg,
-		Clients: roomClients,
+		Message:  msg,
+		Clients:  roomClients,
+		Category: r.game.Category,
 	}
 
 	eventBytes, err := MarshalEventToBytes[RoomMsg](roomMsg)
-	if err != nil {
-		return err
-	}
 	if err != nil {
 		return err
 	}

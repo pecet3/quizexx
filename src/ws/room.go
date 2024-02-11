@@ -26,8 +26,9 @@ type RoomClient struct {
 }
 
 type RoomMsg struct {
-	Message string       `json:"message"`
-	Clients []RoomClient `json:"clients"`
+	Message  string       `json:"message"`
+	Clients  []RoomClient `json:"clients"`
+	Category string       `json:"category"`
 }
 
 func NewRoom(name string) *room {
@@ -103,7 +104,7 @@ func (r *room) Run(m *Manager) {
 			}
 		case client := <-r.join:
 			r.clients[client] = client.name
-			r.SendRoomMsg(client.name + " dołączył do gry")
+			r.SendMsgAndInfo(client.name + " dołączył do gry")
 
 		case client := <-r.leave:
 			close(client.receive)
