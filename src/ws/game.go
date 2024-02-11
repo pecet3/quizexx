@@ -1,7 +1,6 @@
 package ws
 
 import (
-	"encoding/json"
 	"log"
 	"sync"
 )
@@ -127,34 +126,4 @@ func (g *Game) CheckIfShouldBeNextRound() {
 		newState := g.NewGameState()
 		g.State = newState
 	}
-}
-
-func (g *Game) SendGameState() error {
-	log.Println(g.Category, "category send game")
-	g.mutex.Lock()
-	defer g.mutex.Unlock()
-
-	state := g.State
-	stateBytes, err := json.Marshal(state)
-	log.Println("Send Game State to the client: ", g.State)
-	if err != nil {
-		log.Println("Error marshaling game state:", err)
-		return err
-	}
-	event := Event{
-		Type:    "update_gamestate",
-		Payload: stateBytes,
-	}
-	eventBytes, err := json.Marshal(event)
-	if err != nil {
-		log.Println("Error marshaling game state:", err)
-		return err
-	}
-	for client := range g.Room.clients {
-		if client == nil {
-			return err
-		}
-		client.receive <- eventBytes
-	}
-	return nil
 }
