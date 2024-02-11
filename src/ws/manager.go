@@ -69,13 +69,15 @@ func (m *Manager) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 
 	currentRoom := m.GetRoom(roomName)
 
-	if isNewRoom != "true" && currentRoom == nil {
-		return
-	}
-
 	if currentRoom == nil {
-		currentRoom = m.CreateRoom(roomName)
-		go currentRoom.Run(m)
+		if isNewRoom == "true" {
+			currentRoom = m.CreateRoom(roomName)
+			go currentRoom.Run(m)
+		} else {
+			log.Println("No new room in query")
+			conn.Close()
+			return
+		}
 
 	}
 
