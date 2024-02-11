@@ -38,18 +38,11 @@ func (r *room) SendRoomMsg(msg string) error {
 		Clients: roomClients,
 	}
 
-	roomMsgBytes, err := json.Marshal(roomMsg)
+	eventBytes, err := MarshalEventToBytes[RoomMsg](roomMsg)
 	if err != nil {
-		log.Println("Error marshaling game state:", err)
 		return err
 	}
-	event := Event{
-		Type:    "room_message",
-		Payload: roomMsgBytes,
-	}
-	eventBytes, err := json.Marshal(event)
 	if err != nil {
-		log.Println("Error marshaling game state:", err)
 		return err
 	}
 	for client := range r.clients {
@@ -66,20 +59,8 @@ func (g *Game) SendGameState() error {
 	g.mutex.Lock()
 	defer g.mutex.Unlock()
 
-	state := g.State
-	stateBytes, err := json.Marshal(state)
-	log.Println("Send Game State to the client: ", g.State)
+	eventBytes, err := MarshalEventToBytes[GameState](*g.State)
 	if err != nil {
-		log.Println("Error marshaling game state:", err)
-		return err
-	}
-	event := Event{
-		Type:    "update_gamestate",
-		Payload: stateBytes,
-	}
-	eventBytes, err := json.Marshal(event)
-	if err != nil {
-		log.Println("Error marshaling game state:", err)
 		return err
 	}
 	for client := range g.Room.clients {
@@ -89,4 +70,24 @@ func (g *Game) SendGameState() error {
 		client.receive <- eventBytes
 	}
 	return nil
+}
+
+func MarshalEventToBytes[T any](payload T) ([]byte, error) {
+	p := payload
+	stateBytes, err := json.Marshal(p)
+	log.Println("Send Game State to the client: ", p)
+	if err != nil {
+		log.Println("Error marshaling game state:", err)
+		return nil, err
+	}
+	event := Event{
+		Type:    "update_gamestate",
+		Payload: stateBytes,
+	}
+	eventBytes, err := json.Marshal(event)
+	if err != nil {
+		log.Println("Error marshaling game state:", err)
+		return nil, err
+	}
+	return eventBytes, nil
 }
