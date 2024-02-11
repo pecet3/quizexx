@@ -25,7 +25,7 @@ type RoomClient struct {
 	IsReady bool   `json:"isReady"`
 }
 
-type RoomMsg struct {
+type RoomMsgAndInfo struct {
 	Message  string       `json:"message"`
 	Clients  []RoomClient `json:"clients"`
 	Category string       `json:"category"`

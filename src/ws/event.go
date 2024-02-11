@@ -33,13 +33,13 @@ func (r *room) SendMsgAndInfo(msg string) error {
 		roomClients = append(roomClients, roomClient)
 	}
 
-	roomMsg := RoomMsg{
+	roomMsg := RoomMsgAndInfo{
 		Message:  msg,
 		Clients:  roomClients,
 		Category: r.game.Category,
 	}
 
-	eventBytes, err := MarshalEventToBytes[RoomMsg](roomMsg)
+	eventBytes, err := MarshalEventToBytes[RoomMsgAndInfo](roomMsg)
 	if err != nil {
 		return err
 	}
