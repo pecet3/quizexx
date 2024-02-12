@@ -9,6 +9,11 @@ let ready = true;
 let isAnswerSent = false;
 let isPlayerReady = false;
 
+let gameInfo = {
+    clients: [""],
+    category: "",
+}
+
 let gameState = {
     isGame: false,
     category: "",
@@ -16,7 +21,7 @@ let gameState = {
     question: "Test",
     answers: ["Lorem ipsum", "Lorem ipsum", "Lorem ipsum", "Lorem ipsum"],
     actions: [{ name: "", answer: null, round: 0 }],
-    score: [{ name: "kuba", points: 10, roundsWon: [] }]
+    score: [{ name: "kuba", points: 10, roundsWon: [] }],
 };
 
 const entryDashboard = document.getElementById("entryDashboard")
@@ -85,7 +90,7 @@ function routeEvent(event) {
         case "update_players":
             updatePlayers(event)
             break
-        case "room_message":
+        case "room_msgAndInfo":
             console.log(event)
             break
         default:
