@@ -6,21 +6,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://cdn.tailwindcss.com"></script>
     <script defer src="script.js"></script>
-
+    <link rel="stylesheet" href="../styles.css">
     <title>🎲Quizex🏆</title>
 </head>
-<style>
-    .bg-pattern {
-        background-color: #c7c7c7;
-        background-image: linear-gradient(#9093ce 1px, transparent 1px), linear-gradient(to right, #787cd3 1px, #f4f4f7 1px);
-        background-size: 20px 20px;
-    }
-</style>
+
 
 <body class="bg-gray-400 p-0.5 pr-2 sm:p-2 py-2 sm:py-4 text=center m-auto">
     <header class="p-1 my-4 relative">
-        <h1
-            class="text-8xl font-black	flex justify-center items-end text-center text-black font-mono 
+        <h1 class="text-8xl font-black	flex justify-center items-end text-center text-black font-mono 
             underline decoration-wavy decoration-4 decoration-teal-400 ">
             <span class="text-3xl absolute -top-0.5 right-1/2 mr-2">🎲</span>Quizex<span class="text-3xl"></span>
         </h1>
@@ -29,22 +22,18 @@
     <div id="entryDashboard"
         class=" bg-pattern max-w-md text-lg m-auto border-2 border-black bg-slate-200 p-4 rounded-lg shadow-md flex flex-col items-center">
         <form id="settingsForm" class="flex flex-col gap-4 items-center text-xl">
-            <input type="text" id="nameInput"
-                class="p-0.5 text-2xl rounded-sm font m-auto border border-black
+            <input type="text" id="nameInput" class="p-0.5 text-2xl rounded-sm font m-auto border border-black
                 bg-white placeholder:text-gray-400 placeholder:text-center text-black text-center"
                 placeholder="Nazwa pokoju" />
-            <input type="text" id="categoryInput"
-                class="p-0.5 text-2xl rounded-sm font m-auto border border-black
+            <input type="text" id="categoryInput" class="p-0.5 text-2xl rounded-sm font m-auto border border-black
                 bg-white placeholder:text-gray-400 placeholder:text-center text-black text-center"
                 placeholder="Kategoria Pytań" />
             <label for="maxRounds" class="rounded-lg font-mono text-xl font-bold underline">Liczba round:</label>
-            <input type="number" id="maxRounds" min="0" max="10" value="5"
-                class="p-0.5 text-2xl rounded-sm font m-auto border border-black
+            <input type="number" id="maxRounds" min="0" max="10" value="5" class="p-0.5 text-2xl rounded-sm font m-auto border border-black
                 bg-white placeholder:text-gray-400 placeholder:text-center text-black text-center" />
             <label for="difficulty" class="rounded-lg  font-mono text-xl font-bold underline">Poziom trudności:
-                </label>
-            <select id="difficulty" name="difficulty"
-                class="p-0.5 text-2xl rounded-sm font m-auto border border-black
+            </label>
+            <select id="difficulty" name="difficulty" class="p-0.5 text-2xl rounded-sm font m-auto border border-black
                 bg-white placeholder:text-gray-400 placeholder:text-center text-black text-center">
                 <option value="easy" class="text-center">Łatwy</option>
                 <option value="medium" class="text-center">Średni</option>
@@ -52,7 +41,8 @@
             </select>
             <button type="submit" class="bg-teal-300 my-4 font-thin
             hover:shadow-none hover:rounded-xl border border-black hover:scale-[0.995]
-            font-mono font-semibold px-2 text-2xl duration-300 text-black rounded-lg m-auto py-1" id="readyButton" id="createRoom">Utwórz
+            font-mono font-semibold px-2 text-2xl duration-300 text-black rounded-lg m-auto py-1" id="readyButton"
+                id="createRoom">Utwórz
                 pokój</button>
         </form>
     </div>

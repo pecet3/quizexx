@@ -6,49 +6,29 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://cdn.tailwindcss.com"></script>
     <script defer src="script.js"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="styles.css">
     <link
         href="https://fonts.googleapis.com/css2?family=Comic+Neue&family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap"
         rel="stylesheet">
-    <style>
-        html {
-            font-family: 'Comic Neue', cursive, 'Lato', sans-serif;
-        }
-
-        body {
-            background-color: #121212;
-            padding: 0.5rem;
-            padding-right: 2rem;
-            font-family: inherit;
-        }
-
-        .bg-pattern {
-            background-color: #c7c7c7;
-            background-image: linear-gradient(#9093ce 1px, transparent 1px), linear-gradient(to right, #787cd3 1px, #f4f4f7 1px);
-            background-size: 20px 20px;
-        }
-    </style>
     <title>🎲Quizex🏆</title>
 </head>
 
 <body class="text-center m-auto bg-gray-400">
     <header class="p-1 my-4 relative">
-        <h1
-            class="text-8xl font-black	flex justify-center items-end text-center text-black font-mono 
+        <h1 class="text-8xl font-black	flex justify-center items-end text-center text-black font-mono 
             underline decoration-wavy decoration-4 decoration-teal-400 ">
             <span class="text-3xl absolute -top-0.5 right-1/2 mr-2">🎲</span>Quizex<span class="text-3xl"></span>
         </h1>
     </header>
-    
+
 
     <div class="bg-pattern max-w-md text-lg m-auto border-2 border-black 
     bg-slate-200 p-4 rounded-lg shadow-md flex flex-col items-center">
         <div id="entry" class="flex justify-center flex-col text-white text-xl gap-4">
             <input type="text" id="joinRoomInput" class="p-0.5 text-2xl rounded-sm font m-auto border border-black
-            bg-white placeholder:text-gray-400 placeholder:text-center text-black text-center" placeholder="Nazwa pokoju" />
-            <button id="connectButton"
-                class="bg-purple-300 font-thin
+            bg-white placeholder:text-gray-400 placeholder:text-center text-black text-center"
+                placeholder="Nazwa pokoju" />
+            <button id="connectButton" class="bg-purple-300 font-thin
                 hover:shadow-none hover:rounded-xl border border-black hover:scale-[0.995]
                 font-mono font-semibold px-2 text-2xl duration-300 text-black rounded-lg m-auto py-1">Dołącz</button>
             <p class="text-black text-center font-bold">lub...</p>
