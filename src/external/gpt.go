@@ -20,7 +20,7 @@ func FetchGPT() {
 		fmt.Println("error env")
 	}
 
-	apiKey := os.Getenv("KEY")
+	apiKey := os.Getenv("GPT_KEY")
 
 	client := resty.New()
 
