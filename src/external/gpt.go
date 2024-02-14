@@ -24,7 +24,7 @@ func FetchGPT() {
 
 	client := resty.New()
 
-	prompt := "hej, odpowiedz"
+	prompt := "return json for quiz game with 5 questions with fields:questions4x asks, index of correct answer. category: computers, diffucult:easy"
 	userInput := ""
 
 	response, err := client.R().
@@ -33,7 +33,7 @@ func FetchGPT() {
 		SetBody(map[string]interface{}{
 			"model":      "gpt-3.5-turbo",
 			"messages":   []interface{}{map[string]interface{}{"role": "system", "content": prompt + userInput}},
-			"max_tokens": 50,
+			"max_tokens": 400,
 		}).
 		Post(apiEndpoint)
 
