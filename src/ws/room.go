@@ -141,21 +141,8 @@ func (r *room) Run(m *Manager) {
 			}
 
 			for client := range r.game.Players {
-				if client.isReady == false {
-					return
-				}
-				if client.name == actionParsed.Name {
 
-					client.answer = actionParsed.Answer
-					if actionParsed.Answer == r.game.Content[r.game.State.Round-1].CorrectAnswer {
-						client.points = client.points + 10
-						log.Println("Correct answer: ", client.name)
-					}
-					if actionParsed.Answer >= 0 {
-						r.game.State.PlayersFinished = append(r.game.State.PlayersFinished, client.name)
-					}
-				}
-
+				client.addPoints(*actionParsed)
 				r.game.State.Actions = append(r.game.State.Actions, *actionParsed)
 				r.game.State.Score = r.game.NewScore()
 			}

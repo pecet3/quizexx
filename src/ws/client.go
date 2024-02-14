@@ -25,6 +25,22 @@ type client struct {
 	roundsWon []uint
 }
 
+func (client *client) addPoints(action RoundAction) {
+	if client.isReady == false {
+		return
+	}
+	if client.name == action.Name {
+
+		client.answer = action.Answer
+		if action.Answer == client.room.game.Content[client.room.game.State.Round-1].CorrectAnswer {
+			client.points = client.points + 10
+			log.Println("Correct answer: ", client.name)
+		}
+		if action.Answer >= 0 {
+			client.room.game.State.PlayersFinished = append(client.room.game.State.PlayersFinished, client.name)
+		}
+	}
+}
 func (c *client) read(m *Manager) {
 	defer func() {
 		c.conn.Close()
