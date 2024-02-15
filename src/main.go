@@ -19,7 +19,7 @@ func main() {
 	mux.Handle("/", http.FileServer(http.Dir("view")))
 
 	mux.HandleFunc("/api/rooms", handlers.GetRoomsHandler(manager))
-	external.FetchGPT()
+	external.FetchBodyFromGPT("rock music", "easy")
 	address := "localhost:8080"
 	log.Println("Server is running: ", address)
 	server := &http.Server{

@@ -13,7 +13,7 @@ const (
 	apiEndpoint = "https://api.openai.com/v1/chat/completions"
 )
 
-func FetchGPT() {
+func FetchBodyFromGPT(category string, difficulity string) {
 	err := godotenv.Load(".env")
 
 	if err != nil {
@@ -23,16 +23,16 @@ func FetchGPT() {
 	apiKey := os.Getenv("GPT_KEY")
 
 	client := resty.New()
-
-	prompt := "return json for quiz game with 5 questions with fields:questions4x asks, index of correct answer. category: computers, diffucult:easy"
-	userInput := ""
+	language := "polish"
+	options := "category: " + category + ", diffuculty:" + difficulity + ", content language: " + language
+	prompt := "return json for quiz game with 5 questions with fields:{ questions, 4x answers, correct answer(index)} " + options
 
 	response, err := client.R().
 		SetAuthToken(apiKey).
 		SetHeader("Content-Type", "application/json").
 		SetBody(map[string]interface{}{
 			"model":      "gpt-3.5-turbo",
-			"messages":   []interface{}{map[string]interface{}{"role": "system", "content": prompt + userInput}},
+			"messages":   []interface{}{map[string]interface{}{"role": "system", "content": prompt}},
 			"max_tokens": 400,
 		}).
 		Post(apiEndpoint)
