@@ -13,7 +13,19 @@ const (
 	apiEndpoint = "https://api.openai.com/v1/chat/completions"
 )
 
-func FetchBodyFromGPT(category string, difficulity string) {
+type Response struct {
+	Category   string     `json:"category"`
+	Difficulty string     `json:"difficulty"`
+	Language   string     `json:"language"`
+	Questions  []Question `json:"questions"`
+}
+type Question struct {
+	Question      string   `json:"question"`
+	Answers       []string `json:"answers"`
+	CorrectAnswer int      `json:"correctAnswer"`
+}
+
+func FetchBodyFromGPT(category string, difficulity string) Response {
 	err := godotenv.Load(".env")
 
 	if err != nil {
@@ -47,9 +59,16 @@ func FetchBodyFromGPT(category string, difficulity string) {
 	err = json.Unmarshal(body, &data)
 	if err != nil {
 		fmt.Println("Error while decoding JSON response:", err)
-		return
+		return Response{}
 	}
 
 	content := data["choices"].([]interface{})[0].(map[string]interface{})["message"].(map[string]interface{})["content"].(string)
-	fmt.Println(content)
+
+	var parsedContent Response
+	err = json.Unmarshal([]byte(content), &parsedContent)
+	if err != nil {
+		fmt.Println("Error while decoding JSON response:", err)
+		return Response{}
+	}
+	return parsedContent
 }
