@@ -3,6 +3,7 @@ package external
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"os"
 
 	"github.com/go-resty/resty/v2"
@@ -13,19 +14,7 @@ const (
 	apiEndpoint = "https://api.openai.com/v1/chat/completions"
 )
 
-type Response struct {
-	Category   string     `json:"category"`
-	Difficulty string     `json:"difficulty"`
-	Language   string     `json:"language"`
-	Questions  []Question `json:"questions"`
-}
-type Question struct {
-	Question      string   `json:"question"`
-	Answers       []string `json:"answers"`
-	CorrectAnswer int      `json:"correctAnswer"`
-}
-
-func FetchBodyFromGPT(category string, difficulity string) (*Response, error) {
+func FetchBodyFromGPT(category string, difficulity string) (string, error) {
 	err := godotenv.Load(".env")
 
 	if err != nil {
@@ -51,6 +40,7 @@ func FetchBodyFromGPT(category string, difficulity string) (*Response, error) {
 
 	if err != nil {
 		fmt.Println("connecting with api error")
+		return "", err
 	}
 
 	body := response.Body()
@@ -58,15 +48,11 @@ func FetchBodyFromGPT(category string, difficulity string) (*Response, error) {
 
 	err = json.Unmarshal(body, &data)
 	if err != nil {
-		return nil, err
+		return "", err
 	}
 
 	content := data["choices"].([]interface{})[0].(map[string]interface{})["message"].(map[string]interface{})["content"].(string)
 
-	var parsedContent Response
-	err = json.Unmarshal([]byte(content), &parsedContent)
-	if err != nil {
-		return nil, err
-	}
-	return &parsedContent, nil
+	log.Println(content)
+	return content, nil
 }
