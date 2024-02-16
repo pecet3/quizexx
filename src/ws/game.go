@@ -8,7 +8,7 @@ import (
 type Game struct {
 	Room     *room
 	State    *GameState
-	Content  []QandA
+	Content  []RoundQuestion
 	Category string
 	IsGame   bool
 	Players  map[*client]string
@@ -36,7 +36,7 @@ type PlayerScore struct {
 	RoundsWon []uint `json:"roundsWon"`
 }
 
-type QandA struct {
+type RoundQuestion struct {
 	Question      string   `json:"question"`
 	Answers       []string `json:"answers"`
 	CorrectAnswer int      `json:"correctAnswer"`
@@ -45,7 +45,7 @@ type QandA struct {
 func (r *room) CreateGame() *Game {
 	log.Println("creating a game")
 
-	content := []QandA{
+	content := []RoundQuestion{
 		{
 			Question:      "Co oznacza skrót CPU?",
 			Answers:       []string{"Centralna Jednostka Przetwarzania", "Komputerowa Jednostka Przetwarzania", "Centralna Jednostka Procesora", "Komputerowa Jednostka Procesora"},
