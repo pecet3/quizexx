@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"log"
 	"sync"
+
+	"github.com/pecet3/quizex/external"
 )
 
 type room struct {
@@ -29,6 +31,13 @@ type RoomMsgAndInfo struct {
 	Message  string       `json:"message"`
 	Clients  []RoomClient `json:"clients"`
 	Category string       `json:"category"`
+}
+
+type response struct {
+	Category   string        `json:"category"`
+	Difficulty string        `json:"difficulty"`
+	Language   string        `json:"language"`
+	Questions  RoundQuestion `json:"questions"`
 }
 
 func NewRoom(name string) *room {
@@ -119,9 +128,21 @@ func (r *room) Run(m *Manager) {
 
 		case client := <-r.ready:
 			client.isReady = true
+			response, err := external.FetchBodyFromGPT(r.game.Category, "easy")
+			if err != nil {
+				log.Println(err)
+			}
+
+			var roundQuestions []response
+
+			err = json.Unmarshal([]byte(response), &roundQuestions)
+			if err != nil {
+				log.Println("error with unmarshal data")
+			}
 			r.SendMsgAndInfo(client.name + " jest gotowy")
 			if ok := r.CheckIfEveryoneIsReady(); ok {
 				r.game = &Game{}
+
 				game := r.CreateGame()
 				game.State = r.game.NewGameState()
 				r.game = game
