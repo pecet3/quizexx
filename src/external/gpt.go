@@ -25,7 +25,7 @@ type Question struct {
 	CorrectAnswer int      `json:"correctAnswer"`
 }
 
-func FetchBodyFromGPT(category string, difficulity string) Response {
+func FetchBodyFromGPT(category string, difficulity string) (*Response, error) {
 	err := godotenv.Load(".env")
 
 	if err != nil {
@@ -58,8 +58,7 @@ func FetchBodyFromGPT(category string, difficulity string) Response {
 
 	err = json.Unmarshal(body, &data)
 	if err != nil {
-		fmt.Println("Error while decoding JSON response:", err)
-		return Response{}
+		return nil, err
 	}
 
 	content := data["choices"].([]interface{})[0].(map[string]interface{})["message"].(map[string]interface{})["content"].(string)
@@ -67,8 +66,7 @@ func FetchBodyFromGPT(category string, difficulity string) Response {
 	var parsedContent Response
 	err = json.Unmarshal([]byte(content), &parsedContent)
 	if err != nil {
-		fmt.Println("Error while decoding JSON response:", err)
-		return Response{}
+		return nil, err
 	}
-	return parsedContent
+	return &parsedContent, nil
 }
