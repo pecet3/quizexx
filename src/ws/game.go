@@ -1,8 +1,11 @@
 package ws
 
 import (
+	"encoding/json"
 	"log"
 	"sync"
+
+	"github.com/pecet3/quizex/external"
 )
 
 type Game struct {
@@ -45,38 +48,22 @@ type RoundQuestion struct {
 func (r *room) CreateGame() *Game {
 	log.Println("creating a game")
 
-	content := []RoundQuestion{
-		{
-			Question:      "Co oznacza skrót CPU?",
-			Answers:       []string{"Centralna Jednostka Przetwarzania", "Komputerowa Jednostka Przetwarzania", "Centralna Jednostka Procesora", "Komputerowa Jednostka Procesora"},
-			CorrectAnswer: 0,
-		},
-		{
-			Question:      "Jaki jest główny cel systemu operacyjnego?",
-			Answers:       []string{"Zarządzanie zasobami sprzętowymi", "Uruchamianie aplikacji", "Zakładanie łączności internetowej", "Przechowywanie danych"},
-			CorrectAnswer: 0,
-		},
-		{
-			Question:      "Co oznacza skrót HTML?",
-			Answers:       []string{"HyperText Markup Language", "HyperText Modeling Language", "High-Level Text Language", "Hyperlink and Text Markup Language"},
-			CorrectAnswer: 0,
-		},
-		{
-			Question:      "Jaka jest binarna reprezentacja liczby dziesięć?",
-			Answers:       []string{"1010", "1100", "1111", "1001"},
-			CorrectAnswer: 0,
-		},
-		{
-			Question:      "Który język programowania jest często używany do sztucznej inteligencji?",
-			Answers:       []string{"Java", "Python", "C++", "Ruby"},
-			CorrectAnswer: 1,
-		},
+	response, err := external.FetchBodyFromGPT(r.game.Category, "easy", 5)
+	if err != nil {
+		log.Println(err)
+	}
+
+	content := ResponseGTP{}
+
+	err = json.Unmarshal([]byte(response), &content)
+	if err != nil {
+		log.Println("error with unmarshal data")
 	}
 
 	newGame := &Game{
 		Room:     r,
 		State:    &GameState{Round: 1},
-		Content:  content,
+		Content:  content.Questions,
 		Category: "",
 		IsGame:   true,
 		Players:  r.clients,
