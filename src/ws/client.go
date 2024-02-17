@@ -26,7 +26,7 @@ type client struct {
 }
 
 func (client *client) addPoints(action RoundAction) {
-	if client.isReady == false {
+	if !client.isReady {
 		return
 	}
 	if client.name == action.Name {
