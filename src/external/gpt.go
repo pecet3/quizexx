@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strconv"
 
 	"github.com/go-resty/resty/v2"
 	"github.com/joho/godotenv"
@@ -14,7 +15,7 @@ const (
 	apiEndpoint = "https://api.openai.com/v1/chat/completions"
 )
 
-func FetchBodyFromGPT(category string, difficulity string) (string, error) {
+func FetchBodyFromGPT(category string, difficulity string, maxRounds int) (string, error) {
 	err := godotenv.Load(".env")
 
 	if err != nil {
@@ -22,11 +23,11 @@ func FetchBodyFromGPT(category string, difficulity string) (string, error) {
 	}
 
 	apiKey := os.Getenv("GPT_KEY")
-
+	maxQuestions := strconv.Itoa(maxRounds)
 	client := resty.New()
 	language := "polish"
 	options := "category: " + category + ", diffuculty:" + difficulity + ", content language: " + language
-	prompt := "return json for quiz game with 5 questions with fields:{ questions, 4x answers, correct answer(index)} " + options
+	prompt := "return json for quiz game with" + maxQuestions + "questions with fields:{ questions, 4x answers, correct answer(index)} " + options
 
 	response, err := client.R().
 		SetAuthToken(apiKey).
