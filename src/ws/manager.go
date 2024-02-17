@@ -63,14 +63,27 @@ func (m *Manager) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 	isNewRoom := req.URL.Query().Get("new")
+	name := req.URL.Query().Get("difficulity")
+	maxRounds := req.URL.Query().Get("")
+	var settings settingsGPT
 
+	settings.name = roomName
+	settings.difficulity =
+
+	
 	log.Printf("New connection: %v connected to room: %v", name, roomName)
 
 	currentRoom := m.GetRoom(roomName)
 
 	if currentRoom == nil {
+		settingsGPT := settingsGPT{
+			name         :name,
+			gameCategory: 
+			difficulity  string
+			maxRounds    string
+		}
 		if isNewRoom == "true" {
-			currentRoom = m.CreateRoom(roomName)
+			currentRoom = m.CreateRoom(settingsGPT)
 			go currentRoom.Run(m)
 		} else {
 			conn.Close()

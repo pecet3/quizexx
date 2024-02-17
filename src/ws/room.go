@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"log"
 	"sync"
+
+	"github.com/pecet3/quizex/external"
 )
 
 type room struct {
@@ -31,16 +33,16 @@ type RoomMsgAndInfo struct {
 	Category string       `json:"category"`
 }
 
-type ResponseGTP struct {
-	Category   string          `json:"category"`
-	Difficulty string          `json:"difficulty"`
-	Language   string          `json:"language"`
-	Questions  []RoundQuestion `json:"questions"`
+type settingsGPT struct {
+	name         string
+	gameCategory string
+	difficulity  string
+	maxRounds    string
 }
 
-func NewRoom(name string) *room {
+func NewRoom(settings settingsGPT) *room {
 	r := &room{
-		name:          name,
+		name:          settings.name,
 		clients:       make(map[*client]string),
 		join:          make(chan *client),
 		leave:         make(chan *client),
@@ -60,17 +62,26 @@ func (m *Manager) GetRoom(name string) *room {
 	return m.rooms[name]
 }
 
-func (m *Manager) CreateRoom(name string) *room {
+func (m *Manager) CreateRoom(settings settingsGPT) *room {
 	m.mutex.Lock()
 	defer m.mutex.Unlock()
 
-	if existingRoom, ok := m.rooms[name]; ok {
+	if existingRoom, ok := m.rooms[settings.name]; ok {
 		return existingRoom
 	}
 
-	newRoom := NewRoom(name)
-	m.rooms[name] = newRoom
-	log.Println("Created a room with name:", name)
+	newRoom := NewRoom()
+
+	response, err := external.FetchBodyFromGPT("rock music", "easy", string(5))
+	if err != nil {
+		log.Println("issue during get response from GPT")
+	}
+	content := []RoundQuestion{}
+
+	err = json.Unmarshal([]byte(response), &content)
+
+	m.rooms[settings.name].game.Content = content
+	log.Println("Created a room with name:")
 	return newRoom
 }
 
@@ -128,9 +139,6 @@ func (r *room) Run(m *Manager) {
 			client.isReady = true
 			r.SendMsgAndInfo(client.name + " jest gotowy")
 			if ok := r.CheckIfEveryoneIsReady(); ok {
-				r.game = &Game{}
-
-				game := r.CreateGame()
 				game.State = r.game.NewGameState()
 				r.game = game
 				game.SendGameState()
