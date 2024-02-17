@@ -18,7 +18,7 @@ func main() {
 	mux.Handle("/", http.FileServer(http.Dir("view")))
 
 	mux.HandleFunc("/api/rooms", handlers.GetRoomsHandler(manager))
-	address := "localhost:8080"
+	address := "localhost:8090"
 	log.Println("Server is running: ", address)
 	server := &http.Server{
 		Addr:    address,
