@@ -11,8 +11,6 @@ import (
 type Manager struct {
 	mutex sync.Mutex
 	rooms map[string]*room
-
-	events map[string]EventHandler
 }
 
 var (
@@ -63,24 +61,20 @@ func (m *Manager) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 	isNewRoom := req.URL.Query().Get("new")
-	name := req.URL.Query().Get("difficulity")
-	maxRounds := req.URL.Query().Get("")
-	var settings settingsGPT
-
-	settings.name = roomName
-	settings.difficulity =
-
-	
+	difficulty := req.URL.Query().Get("difficulty")
+	maxRounds := req.URL.Query().Get("maxRounds")
+	category := req.URL.Query().Get("category")
+	log.Println(category, maxRounds, difficulty)
 	log.Printf("New connection: %v connected to room: %v", name, roomName)
 
 	currentRoom := m.GetRoom(roomName)
 
 	if currentRoom == nil {
-		settingsGPT := settingsGPT{
-			name         :name,
-			gameCategory: 
-			difficulity  string
-			maxRounds    string
+		settingsGPT := SettingsGPT{
+			name:         name,
+			gameCategory: category,
+			difficulty:   difficulty,
+			maxRounds:    maxRounds,
 		}
 		if isNewRoom == "true" {
 			currentRoom = m.CreateRoom(settingsGPT)

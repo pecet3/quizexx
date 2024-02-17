@@ -4,8 +4,6 @@ import (
 	"encoding/json"
 	"log"
 	"sync"
-
-	"github.com/pecet3/quizex/external"
 )
 
 type room struct {
@@ -33,14 +31,14 @@ type RoomMsgAndInfo struct {
 	Category string       `json:"category"`
 }
 
-type settingsGPT struct {
+type SettingsGPT struct {
 	name         string
 	gameCategory string
-	difficulity  string
+	difficulty   string
 	maxRounds    string
 }
 
-func NewRoom(settings settingsGPT) *room {
+func NewRoom(settings SettingsGPT) *room {
 	r := &room{
 		name:          settings.name,
 		clients:       make(map[*client]string),
@@ -62,7 +60,7 @@ func (m *Manager) GetRoom(name string) *room {
 	return m.rooms[name]
 }
 
-func (m *Manager) CreateRoom(settings settingsGPT) *room {
+func (m *Manager) CreateRoom(settings SettingsGPT) *room {
 	m.mutex.Lock()
 	defer m.mutex.Unlock()
 
@@ -70,17 +68,9 @@ func (m *Manager) CreateRoom(settings settingsGPT) *room {
 		return existingRoom
 	}
 
-	newRoom := NewRoom()
-
-	response, err := external.FetchBodyFromGPT("rock music", "easy", string(5))
-	if err != nil {
-		log.Println("issue during get response from GPT")
-	}
-	content := []RoundQuestion{}
-
-	err = json.Unmarshal([]byte(response), &content)
-
-	m.rooms[settings.name].game.Content = content
+	newRoom := NewRoom(settings)
+	newRoom.game = newRoom.CreateGame(settings)
+	m.rooms[settings.name] = newRoom
 	log.Println("Created a room with name:")
 	return newRoom
 }
@@ -106,7 +96,7 @@ func (m *Manager) RemoveRoom(name string) {
 }
 func (r *room) CheckIfEveryoneIsReady() bool {
 	for c := range r.clients {
-		if c.isReady == false {
+		if !c.isReady {
 			return false
 		}
 	}
@@ -139,14 +129,14 @@ func (r *room) Run(m *Manager) {
 			client.isReady = true
 			r.SendMsgAndInfo(client.name + " jest gotowy")
 			if ok := r.CheckIfEveryoneIsReady(); ok {
-				game.State = r.game.NewGameState()
-				r.game = game
-				game.SendGameState()
+				r.game.State = r.game.NewGameState()
+				r.game.IsGame = true
+				r.game.SendGameState()
 			}
 
 		case action := <-r.receiveAnswer:
 
-			if r.game.IsGame == false {
+			if !r.game.IsGame {
 				return
 			}
 

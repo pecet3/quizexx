@@ -9,15 +9,15 @@ import (
 )
 
 type Game struct {
-	Room        *room
-	State       *GameState
-	IsGame      bool
-	Players     map[*client]string
-	mutex       sync.Mutex
-	Category    string
-	Difficulity string
-	MaxRounds   string
-	Content     []RoundQuestion
+	Room       *room
+	State      *GameState
+	IsGame     bool
+	Players    map[*client]string
+	mutex      sync.Mutex
+	Category   string
+	Difficulty string
+	MaxRounds  string
+	Content    []RoundQuestion
 }
 
 type GameState struct {
@@ -54,15 +54,15 @@ type ResponseGPT struct {
 	Questions   []RoundQuestion `json:"questions"`
 }
 
-func (r *room) CreateGame(settings settingsGPT) *Game {
+func (r *room) CreateGame(settings SettingsGPT) *Game {
 	log.Println("creating a game")
 
-	response, err := external.FetchBodyFromGPT(settings.gameCategory, "easy", settings.gameCategory)
+	response, err := external.FetchBodyFromGPT(settings.gameCategory, settings.difficulty, settings.gameCategory)
 	if err != nil {
 		log.Println(err)
 	}
-
-	data := ResponseGPT{}
+	log.Println(response)
+	var data ResponseGPT
 
 	err = json.Unmarshal([]byte(response), &data)
 	if err != nil {
@@ -70,15 +70,15 @@ func (r *room) CreateGame(settings settingsGPT) *Game {
 	}
 
 	newGame := &Game{
-		Room:        r,
-		State:       &GameState{Round: 1},
-		IsGame:      false,
-		Players:     r.clients,
-		mutex:       sync.Mutex{},
-		Category:    data.Category,
-		Difficulity: data.Difficulity,
-		MaxRounds:   settings.maxRounds,
-		Content:     data.Questions,
+		Room:       r,
+		State:      &GameState{Round: 1},
+		IsGame:     false,
+		Players:    r.clients,
+		mutex:      sync.Mutex{},
+		Category:   settings.gameCategory,
+		Difficulty: settings.difficulty,
+		MaxRounds:  settings.maxRounds,
+		Content:    data.Questions,
 	}
 
 	r.game = newGame
