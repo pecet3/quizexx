@@ -9,13 +9,15 @@ import (
 )
 
 type Game struct {
-	Room     *room
-	State    *GameState
-	Content  []RoundQuestion
-	Category string
-	IsGame   bool
-	Players  map[*client]string
-	mutex    sync.Mutex
+	Room        *room
+	State       *GameState
+	IsGame      bool
+	Players     map[*client]string
+	mutex       sync.Mutex
+	Category    string
+	Difficulity string
+	MaxRounds   string
+	Content     []RoundQuestion
 }
 
 type GameState struct {
@@ -45,29 +47,38 @@ type RoundQuestion struct {
 	CorrectAnswer int      `json:"correctAnswer"`
 }
 
-func (r *room) CreateGame() *Game {
+type ResponseGPT struct {
+	Category    string          `json:"category"`
+	Difficulity string          `json:"difficulity"`
+	Language    string          `json:"language"`
+	Questions   []RoundQuestion `json:"questions"`
+}
+
+func (r *room) CreateGame(settings settingsGPT) *Game {
 	log.Println("creating a game")
 
-	response, err := external.FetchBodyFromGPT(r.game.Category, "easy", 5)
+	response, err := external.FetchBodyFromGPT(settings.gameCategory, "easy", settings.gameCategory)
 	if err != nil {
 		log.Println(err)
 	}
 
-	content := ResponseGTP{}
+	data := ResponseGPT{}
 
-	err = json.Unmarshal([]byte(response), &content)
+	err = json.Unmarshal([]byte(response), &data)
 	if err != nil {
 		log.Println("error with unmarshal data")
 	}
 
 	newGame := &Game{
-		Room:     r,
-		State:    &GameState{Round: 1},
-		Content:  content.Questions,
-		Category: "",
-		IsGame:   true,
-		Players:  r.clients,
-		mutex:    sync.Mutex{},
+		Room:        r,
+		State:       &GameState{Round: 1},
+		IsGame:      false,
+		Players:     r.clients,
+		mutex:       sync.Mutex{},
+		Category:    data.Category,
+		Difficulity: data.Difficulity,
+		MaxRounds:   settings.maxRounds,
+		Content:     data.Questions,
 	}
 
 	r.game = newGame
