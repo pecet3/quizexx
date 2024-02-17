@@ -49,7 +49,6 @@ func NewRoom(settings SettingsGPT) *room {
 		receiveAnswer: make(chan []byte),
 		game:          &Game{},
 	}
-	log.Println(r.game)
 	return r
 }
 
