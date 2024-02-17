@@ -140,7 +140,7 @@ function getRoomName() {
 }
 
 function getWsUrl() {
-    const baseUrl = "ws://localhost:8080/ws"
+    const baseUrl = "ws://localhost:8090/ws"
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);
     const isNewGame = urlParams.get('newGame') === 'true';
@@ -151,7 +151,7 @@ function getWsUrl() {
             maxRounds: urlParams.get('maxRounds') || '',
             category: urlParams.get('category') || '',
         }
-
+        console.log(gameSettings)
         return `${baseUrl}?new=true&room=${roomName}&name=${userName}&difficulty=${gameSettings.difficulty}&maxRounds=${gameSettings.maxRounds}&category=${gameSettings.category}`
     } else {
         return `${baseUrl}?room=${roomName}&name=${userName}`
