@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"log"
 	"strconv"
-	"sync"
 
 	"github.com/pecet3/quizex/external"
 )
@@ -14,7 +13,6 @@ type Game struct {
 	State      *GameState
 	IsGame     bool
 	Players    map[*client]string
-	mutex      sync.Mutex
 	Category   string
 	Difficulty string
 	MaxRounds  int
@@ -79,7 +77,6 @@ func (r *room) CreateGame(settings SettingsGPT) *Game {
 		State:      &GameState{Round: 1},
 		IsGame:     false,
 		Players:    r.clients,
-		mutex:      sync.Mutex{},
 		Category:   settings.gameCategory,
 		Difficulty: settings.difficulty,
 		MaxRounds:  maxRounds,
@@ -96,8 +93,7 @@ func (g *Game) NewGameState() *GameState {
 	if g.State.Round == g.MaxRounds {
 		return &GameState{}
 	}
-	g.mutex.Lock()
-	defer g.mutex.Unlock()
+
 	score := g.NewScore()
 	log.Println("g.Content[g.State.Round-1].Question", g.Content[g.State.Round-1].Question)
 	return &GameState{
