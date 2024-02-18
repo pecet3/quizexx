@@ -3,13 +3,11 @@ package ws
 import (
 	"encoding/json"
 	"log"
-	"sync"
 )
 
 type room struct {
 	name    string
 	clients map[*client]string
-	mutex   sync.Mutex
 	join    chan *client
 	ready   chan *client
 	leave   chan *client
