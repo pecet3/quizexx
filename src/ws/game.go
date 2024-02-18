@@ -3,6 +3,7 @@ package ws
 import (
 	"encoding/json"
 	"log"
+	"strconv"
 	"sync"
 
 	"github.com/pecet3/quizex/external"
@@ -16,7 +17,7 @@ type Game struct {
 	mutex      sync.Mutex
 	Category   string
 	Difficulty string
-	MaxRounds  string
+	MaxRounds  int
 	Content    []RoundQuestion
 }
 
@@ -68,7 +69,11 @@ func (r *room) CreateGame(settings SettingsGPT) *Game {
 	if err != nil {
 		log.Println("error with unmarshal data")
 	}
+	maxRounds, err := strconv.Atoi(settings.maxRounds)
 
+	if err != nil {
+		maxRounds = 5
+	}
 	newGame := &Game{
 		Room:       r,
 		State:      &GameState{Round: 1},
@@ -77,7 +82,7 @@ func (r *room) CreateGame(settings SettingsGPT) *Game {
 		mutex:      sync.Mutex{},
 		Category:   settings.gameCategory,
 		Difficulty: settings.difficulty,
-		MaxRounds:  settings.maxRounds,
+		MaxRounds:  maxRounds,
 		Content:    data.Questions,
 	}
 
@@ -88,6 +93,9 @@ func (r *room) CreateGame(settings SettingsGPT) *Game {
 }
 
 func (g *Game) NewGameState() *GameState {
+	if g.State.Round == g.MaxRounds {
+		return &GameState{}
+	}
 	g.mutex.Lock()
 	defer g.mutex.Unlock()
 	score := g.NewScore()
