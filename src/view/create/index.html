@@ -20,14 +20,21 @@
     </header>
 
     <div id="entryDashboard"
-        class=" bg-pattern max-w-md text-lg m-auto border-2 border-black bg-slate-200 p-4 rounded-lg shadow-md flex flex-col items-center">
+        class="py-8 px-12 bg-blue-300 max-w-lg text-lg m-auto border-t-2 border-l-2 border-r border-b border-black rounded-r-xl bookCoverPaper flex items-center">
         <form id="settingsForm" class="flex flex-col gap-4 items-center text-xl">
             <input type="text" id="nameInput" class="p-0.5 text-2xl rounded-sm font m-auto border border-black
                 bg-white placeholder:text-gray-400 placeholder:text-center text-black text-center"
                 placeholder="Nazwa pokoju" />
-            <input type="text" id="categoryInput" class="p-0.5 text-2xl rounded-sm font m-auto border border-black
-                bg-white placeholder:text-gray-400 placeholder:text-center text-black text-center"
-                placeholder="Kategoria Pytań" />
+            <div class="italic p-2 w-80 flex flex-col items-center">
+                <input type="text" id="categoryInput" class="p-0.5 text-2xl rounded-sm font m-auto border border-black
+            bg-white placeholder:text-gray-400 placeholder:text-center text-black text-center"
+                    placeholder="Kategoria Pytań" />
+                <p class="font-mono text-lg">Kategoria może być dowolona, <b class="font-bold underline"> Quizex jest
+                        połączony z
+                        AI</b>. Na podstawie
+                    dostarczonej
+                    kategorii, są przygotowywane pytania.</p>
+            </div>
             <label for="maxRounds" class="rounded-lg font-mono text-xl font-bold underline">Liczba round:</label>
             <input type="number" id="maxRounds" min="0" max="10" value="5" class="p-0.5 text-2xl rounded-sm font m-auto border border-black
                 bg-white placeholder:text-gray-400 placeholder:text-center text-black text-center" />
@@ -45,6 +52,7 @@
                 id="createRoom">Utwórz
                 pokój</button>
         </form>
+
     </div>
 
 </body>
