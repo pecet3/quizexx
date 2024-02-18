@@ -54,8 +54,6 @@ func (r *room) SendMsgAndInfo(msg string) error {
 
 func (g *Game) SendGameState() error {
 	log.Println(g.Category, "category send game")
-	g.mutex.Lock()
-	defer g.mutex.Unlock()
 
 	eventBytes, err := MarshalEventToBytes[GameState](*g.State, "update_gamestate")
 	if err != nil {
