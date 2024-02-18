@@ -34,7 +34,7 @@ func FetchBodyFromGPT(category string, difficulity string, maxRounds string) (st
 		SetBody(map[string]interface{}{
 			"model":      "gpt-3.5-turbo",
 			"messages":   []interface{}{map[string]interface{}{"role": "system", "content": prompt}},
-			"max_tokens": 400,
+			"max_tokens": 1200,
 		}).
 		Post(apiEndpoint)
 
