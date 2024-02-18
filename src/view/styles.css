@@ -50,6 +50,12 @@ body {
     --transparent: rgba(213, 224, 249, 0);
 }
 
+.bookCoverPaper {
+    -webkit-box-shadow: 4px 4px 0px -2px rgb(255, 255, 255);
+    -moz-box-shadow: 4px 4px 0px -2px rgb(255, 255, 255);
+    box-shadow: 8px 4px 0px -2px rgb(255, 255, 255);
+}
+
 .paper {
     position: relative;
     background: linear-gradient(to bottom right,
@@ -64,7 +70,7 @@ body {
     justify-content: center;
     font-size: 2rem;
     margin: auto;
-    margin-top: 50px;
+
 }
 
 .tape-section {
@@ -130,7 +136,7 @@ body {
 .big-paper {
     width: 80vw;
     height: 200px;
-    margin: 2em auto;
+
     background: #fff;
     box-shadow: 4px 4px 0 #00486B;
     background-image:
