@@ -64,6 +64,9 @@ func (m *Manager) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	difficulty := req.URL.Query().Get("difficulty")
 	maxRounds := req.URL.Query().Get("maxRounds")
 	category := req.URL.Query().Get("category")
+	if len(category) >= 32 {
+		return
+	}
 	log.Println(category, maxRounds, difficulty)
 	log.Printf("New connection: %v connected to room: %v", name, roomName)
 
