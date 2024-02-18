@@ -2,6 +2,17 @@
 const gameForm = document.getElementById('gameForm');
 const connectButton = document.getElementById("connectButton")
 const readyButton = document.getElementById("readyButton")
+
+const answerAElement = document.getElementById('answerA');
+const answerBElement = document.getElementById('answerB');
+const answerCElement = document.getElementById('answerC');
+const answerDElement = document.getElementById('answerD');
+
+
+const displayRoundElement = document.getElementById('displayRound');
+const displayCategoryElement = document.getElementById('displayCategory');
+const displayQuestionElement = document.getElementById('displayQuestion');
+
 const roomName = getRoomName();
 let userName = "";
 
@@ -91,12 +102,23 @@ function routeEvent(event) {
             updatePlayers(event)
             break
         case "room_msgAndInfo":
+            updateAlerts(event)
             console.log(event)
             break
         default:
             alert("unsupporting message type")
             break;
     }
+}
+
+function updateAlerts(event) {
+    console.log(event.type)
+    const data = event.payload
+    console.log(data.clients + "sssssssss")
+    // <li class="text-black font-bold">Jakub ✔</li>
+    // <li class="text-black font-bold">Krystian1229 ✔</li>
+    // <li class="text-black font-bold">Jakub ❌</li>
+    // <li class="text-black font-bold">Maciek ❌</li>
 }
 
 function sendEvent(eventName, payload) {
@@ -183,20 +205,11 @@ function handleVirtualDom() {
 }
 
 function updateDomGameState() {
-    const answerAElement = document.getElementById('answerA');
-    const answerBElement = document.getElementById('answerB');
-    const answerCElement = document.getElementById('answerC');
-    const answerDElement = document.getElementById('answerD');
 
     answerAElement.innerHTML = gameState.answers[0]
     answerBElement.innerHTML = gameState.answers[1]
     answerCElement.innerHTML = gameState.answers[2]
     answerDElement.innerHTML = gameState.answers[3]
-
-
-    const displayRoundElement = document.getElementById('displayRound');
-    const displayCategoryElement = document.getElementById('displayCategory');
-    const displayQuestionElement = document.getElementById('displayQuestion');
 
     displayRoundElement.innerHTML = gameState.round
     displayQuestionElement.innerHTML = gameState.question
@@ -225,7 +238,7 @@ function updateDomScore(playerList) {
 ///////////////////// SERVER EVENT FUNCTIONS //////////////////////
 
 function updateGameState(event) {
-    if (gameState.isGame === false) {
+    if (gameState.isGame === true) {
         updateVirtualDom({
             entryDashboard: false,
             waitingRoomDashboard: false,
