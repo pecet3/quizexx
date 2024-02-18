@@ -14,8 +14,14 @@ body {
     flex-direction: column;
 }
 
+.bg-pattern {
+    background-color: #c7c7c7;
+    background-image: linear-gradient(#9093ce 1px, transparent 1px), linear-gradient(to right, #787cd3 1px, #f4f4f7 1px);
+    background-size: 20px 20px;
+}
 
-///////////////////// f o n t s///////////////////////////////////////////
+
+///////////////////// f o n t s /////////////////////////
 .ibm-regular {
     font-family: "IBM Plex Mono", monospace;
     font-weight: 400;
@@ -29,7 +35,7 @@ body {
 }
 
 
-
+////////////////// 
 .pink {
     --paper-color: var(--pink);
     --paper-dark: var(--pink-dark);
@@ -120,20 +126,33 @@ body {
     bottom: 0;
 }
 
-body {
-    background-color: #121212;
-    padding: 0.5rem;
-    padding-right: 2rem;
-    font-family: inherit;
-}
+/////////////////////////////////
+.big-paper {
+    width: 80vw;
+    height: 200px;
+    margin: 2em auto;
+    background: #fff;
+    box-shadow: 4px 4px 0 #00486B;
+    background-image:
+        linear-gradient(90deg,
+            #fff 12px, 0,
+            #00486B 15px, 0,
+            #1373A9 20px, 0,
+            #fff 100%),
+        radial-gradient(circle closest-side,
+            rgba(255, 255, 255, 0) 88%,
+            #fff 100%),
+        radial-gradient(circle at 22px 8px,
+            #1373A9 40%,
+            #00486B 40%,
+            #00486B 100%);
+    background-size: 32px 8px, 32px 16px, 32px 16px;
+    background-repeat: space no-repeat;
+    background-position: center top, center 6px, center 6px;
 
-.bg-pattern {
-    background-color: #c7c7c7;
-    background-image: linear-gradient(#9093ce 1px, transparent 1px), linear-gradient(to right, #787cd3 1px, #f4f4f7 1px);
-    background-size: 20px 20px;
-}
-
-.rounded-square {
-    border-radius: 0;
-
+    &--alt {
+        background-image: linear-gradient(90deg, #fff 12px, 0, #00486B 15px, 0, #1373A9 20px, 0, #fff 100%), radial-gradient(circle closest-side, rgba(255, 255, 255, 0) 88%, #fff 100%), radial-gradient(circle at 22px 8px, #1373A9 40%, #00486B 40%, #00486B 100%);
+        background-image: url("data:image/svg+xml,%3Csvg fill='none' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 21'%3E%3Cpath d='M20 0h-7v6.9a7.5 7.5 0 107 0V0z' fill='%231373A9'/%3E%3Cpath d='M13 0h3v6.9a7.5 7.5 0 002 14 7.5 7.5 0 01-9-7.4c0-2.9 1.6-5.4 4-6.6V0z' fill='%2300486B'/%3E%3C/svg%3E");
+        background-size: 2em 1.3125em;
+    }
 }
