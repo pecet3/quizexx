@@ -2,7 +2,7 @@
 const gameForm = document.getElementById('gameForm');
 const connectButton = document.getElementById("connectButton")
 const readyButton = document.getElementById("readyButton")
-
+const readyUsersList = document.getElementById('readyUsersList')
 const answerAElement = document.getElementById('answerA');
 const answerBElement = document.getElementById('answerB');
 const answerCElement = document.getElementById('answerC');
