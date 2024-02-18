@@ -7,13 +7,12 @@ import (
 )
 
 type room struct {
-	name     string
-	category string
-	clients  map[*client]string
-	mutex    sync.Mutex
-	join     chan *client
-	ready    chan *client
-	leave    chan *client
+	name    string
+	clients map[*client]string
+	mutex   sync.Mutex
+	join    chan *client
+	ready   chan *client
+	leave   chan *client
 
 	forward       chan []byte
 	receiveAnswer chan []byte
