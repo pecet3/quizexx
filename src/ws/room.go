@@ -18,17 +18,6 @@ type room struct {
 	settings      Settings
 }
 
-type RoomClient struct {
-	Name    string `json:"name"`
-	IsReady bool   `json:"isReady"`
-}
-
-type RoomMsgAndInfo struct {
-	Message  string       `json:"message"`
-	Clients  []RoomClient `json:"clients"`
-	Category string       `json:"category"`
-}
-
 type Settings struct {
 	name         string
 	gameCategory string
@@ -109,7 +98,7 @@ func (r *room) Run(m *Manager) {
 			}
 		case client := <-r.join:
 			r.clients[client] = client.name
-			r.SendMsgAndInfo(client.name + " dołączył do gry")
+			r.SendServerMessage(client.name + " dołączył do gry")
 
 		case client := <-r.leave:
 			close(client.receive)
@@ -124,7 +113,8 @@ func (r *room) Run(m *Manager) {
 
 		case client := <-r.ready:
 			client.isReady = true
-			r.SendMsgAndInfo(client.name + " jest gotowy")
+			r.SendServerMessage(client.name + " jest gotowy")
+			r.SendReadyStatus()
 			if ok := r.CheckIfEveryoneIsReady(); ok {
 				game := r.CreateGame()
 				r.game = game

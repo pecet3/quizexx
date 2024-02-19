@@ -14,25 +14,34 @@ type SendMessageEvent struct {
 	UserName string `json:"userName"`
 	Message  string `json:"message"`
 }
+type ReadyClient struct {
+	Name    string `json:"name"`
+	IsReady bool   `json:"isReady"`
+}
+type ReadyStatus struct {
+	Clients []ReadyClient `json:"clients"`
+}
 
-func (r *room) SendReadyStatus(msg string) error {
-	var roomClients []RoomClient
+type ServerMessage struct {
+	Message string `json:"message"`
+}
+
+func (r *room) SendReadyStatus() error {
+	var readyClients []ReadyClient
 
 	for c := range r.clients {
-		roomClient := RoomClient{
+		roomClient := ReadyClient{
 			Name:    c.name,
 			IsReady: c.isReady,
 		}
-		roomClients = append(roomClients, roomClient)
+		readyClients = append(readyClients, roomClient)
 	}
 
-	roomMsg := RoomMsgAndInfo{
-		Message:  msg,
-		Clients:  roomClients,
-		Category: r.game.Category,
+	roomMsg := ReadyStatus{
+		Clients: readyClients,
 	}
 
-	eventBytes, err := MarshalEventToBytes[RoomMsgAndInfo](roomMsg, "room_msgAndInfo")
+	eventBytes, err := MarshalEventToBytes[ReadyStatus](roomMsg, "ready_status")
 	if err != nil {
 		return err
 	}
@@ -44,24 +53,12 @@ func (r *room) SendReadyStatus(msg string) error {
 	}
 	return nil
 }
-func (r *room) SendMsgAndInfo(msg string) error {
-	var roomClients []RoomClient
-
-	for c := range r.clients {
-		roomClient := RoomClient{
-			Name:    c.name,
-			IsReady: c.isReady,
-		}
-		roomClients = append(roomClients, roomClient)
+func (r *room) SendServerMessage(msg string) error {
+	serverMsg := ServerMessage{
+		Message: msg,
 	}
 
-	roomMsg := RoomMsgAndInfo{
-		Message:  msg,
-		Clients:  roomClients,
-		Category: r.game.Category,
-	}
-
-	eventBytes, err := MarshalEventToBytes[RoomMsgAndInfo](roomMsg, "room_msgAndInfo")
+	eventBytes, err := MarshalEventToBytes[ServerMessage](serverMsg, "server_message")
 	if err != nil {
 		return err
 	}
