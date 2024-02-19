@@ -14,7 +14,7 @@ const (
 	apiEndpoint = "https://api.openai.com/v1/chat/completions"
 )
 
-func FetchBodyFromGPT(category string, difficulity string, maxRounds string) (string, error) {
+func FetchBodyFromGPT(category string, difficulty string, maxRounds string) (string, error) {
 	err := godotenv.Load(".env")
 
 	if err != nil {
@@ -25,7 +25,7 @@ func FetchBodyFromGPT(category string, difficulity string, maxRounds string) (st
 
 	client := resty.New()
 	language := "polish"
-	options := "category: " + category + ", diffuculty:" + difficulity + ", content language: " + language
+	options := "category: " + category + ", diffuculty:" + difficulty + ", content language: " + language
 	prompt := "return json for quiz game with" + maxRounds + "questions with fields:{ questions, 4x answers, correct answer(index)} " + options
 
 	response, err := client.R().
