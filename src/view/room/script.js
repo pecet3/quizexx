@@ -147,6 +147,7 @@ function connectWs() {
         conn.onmessage = (e) => {
             console.log(e.data)
             const event = JSON.parse(e.data)
+            console.log(event)
             routeEvent(event)
         }
     } else {
@@ -205,7 +206,11 @@ function handleVirtualDom() {
 }
 
 function updateDomGameState() {
-
+    updateVirtualDom({
+        entryDashboard: false,
+        waitingRoomDashboard: false,
+        gameDashboard: true,
+    })
     answerAElement.innerHTML = gameState.answers[0]
     answerBElement.innerHTML = gameState.answers[1]
     answerCElement.innerHTML = gameState.answers[2]

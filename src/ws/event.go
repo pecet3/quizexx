@@ -10,18 +10,40 @@ type Event struct {
 	Payload json.RawMessage `json:"payload"`
 }
 
-type EventHandler func(event Event, c *client) error
-
-const (
-	EventSendMessage = "send_message"
-	EventSendAnswer  = "send_answer"
-)
-
 type SendMessageEvent struct {
 	UserName string `json:"userName"`
 	Message  string `json:"message"`
 }
 
+func (r *room) SendReadyStatus(msg string) error {
+	var roomClients []RoomClient
+
+	for c := range r.clients {
+		roomClient := RoomClient{
+			Name:    c.name,
+			IsReady: c.isReady,
+		}
+		roomClients = append(roomClients, roomClient)
+	}
+
+	roomMsg := RoomMsgAndInfo{
+		Message:  msg,
+		Clients:  roomClients,
+		Category: r.game.Category,
+	}
+
+	eventBytes, err := MarshalEventToBytes[RoomMsgAndInfo](roomMsg, "room_msgAndInfo")
+	if err != nil {
+		return err
+	}
+	for client := range r.clients {
+		if client == nil {
+			return err
+		}
+		client.receive <- eventBytes
+	}
+	return nil
+}
 func (r *room) SendMsgAndInfo(msg string) error {
 	var roomClients []RoomClient
 

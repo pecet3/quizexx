@@ -73,14 +73,14 @@ func (m *Manager) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	currentRoom := m.GetRoom(roomName)
 
 	if currentRoom == nil {
-		settingsGPT := SettingsGPT{
+		settings := Settings{
 			name:         name,
 			gameCategory: category,
 			difficulty:   difficulty,
 			maxRounds:    maxRounds,
 		}
 		if isNewRoom == "true" {
-			currentRoom = m.CreateRoom(settingsGPT)
+			currentRoom = m.CreateRoom(settings)
 			go currentRoom.Run(m)
 		} else {
 			conn.Close()

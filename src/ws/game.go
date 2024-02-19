@@ -53,10 +53,10 @@ type ResponseGPT struct {
 	Questions   []RoundQuestion `json:"questions"`
 }
 
-func (r *room) CreateGame(settings SettingsGPT) *Game {
+func (r *room) CreateGame() *Game {
 	log.Println("creating a game")
 
-	response, err := external.FetchBodyFromGPT(settings.gameCategory, settings.difficulty, settings.gameCategory)
+	response, err := external.FetchBodyFromGPT(r.settings.gameCategory, r.settings.difficulty, r.settings.gameCategory)
 	if err != nil {
 		log.Println(err)
 	}
@@ -67,7 +67,7 @@ func (r *room) CreateGame(settings SettingsGPT) *Game {
 	if err != nil {
 		log.Println("error with unmarshal data")
 	}
-	maxRounds, err := strconv.Atoi(settings.maxRounds)
+	maxRounds, err := strconv.Atoi(r.settings.maxRounds)
 
 	if err != nil {
 		maxRounds = 5
@@ -77,8 +77,8 @@ func (r *room) CreateGame(settings SettingsGPT) *Game {
 		State:      &GameState{Round: 1},
 		IsGame:     false,
 		Players:    r.clients,
-		Category:   settings.gameCategory,
-		Difficulty: settings.difficulty,
+		Category:   r.settings.gameCategory,
+		Difficulty: r.settings.difficulty,
 		MaxRounds:  maxRounds,
 		Content:    data.Questions,
 	}
