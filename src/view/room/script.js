@@ -32,7 +32,7 @@ let gameState = {
     question: "Test",
     answers: ["Lorem ipsum", "Lorem ipsum", "Lorem ipsum", "Lorem ipsum"],
     actions: [{ name: "", answer: null, round: 0 }],
-    score: [{ name: "kuba", points: 10, roundsWon: [] }],
+    score: [{ name: "", points: 0, roundsWon: [] }],
 };
 
 const entryDashboard = document.getElementById("entryDashboard")
@@ -101,10 +101,11 @@ function routeEvent(event) {
         case "update_players":
             updatePlayers(event)
             break
-        case "room_msgAndInfo":
+        case "server_message":
             updateAlerts(event)
             console.log(event)
             break
+        case "ready_status":
         default:
             alert("unsupporting message type")
             break;
