@@ -81,9 +81,6 @@ func (r *room) CreateGame() *Game {
 }
 
 func (g *Game) NewGameState() *GameState {
-	if g.State.Round == g.MaxRounds {
-		return &GameState{}
-	}
 
 	score := g.NewScore()
 	log.Println(score)
@@ -119,4 +116,8 @@ func (g *Game) CheckIfShouldBeNextRound() bool {
 		return true
 	}
 	return false
+}
+
+func (g *Game) CheckIfIsEndGame() bool {
+	return g.State.Round >= g.MaxRounds
 }

@@ -131,6 +131,12 @@ func (r *room) Run(m *Manager) {
 			if !r.game.IsGame {
 				return
 			}
+			isEndGame := r.game.CheckIfIsEndGame()
+			if isEndGame {
+				r.game = &Game{}
+				_ = r.SendServerMessage("Koniec gry")
+				return
+			}
 
 			var actionParsed *RoundAction
 			if err := json.Unmarshal(action, &actionParsed); err != nil {
