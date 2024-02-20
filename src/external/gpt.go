@@ -26,7 +26,7 @@ func FetchBodyFromGPT(category string, difficulty string, maxRounds string) (str
 	client := resty.New()
 	language := "polish"
 	options := "category: " + category + ", diffuculty:" + difficulty + ", content language: " + language
-	prompt := "return json for quiz game with" + maxRounds + "questions with fields:{ questions, 4x answers, correct answer(index)} " + options
+	prompt := "return json for quiz game with " + maxRounds + " questions. struct => [{ question, 4x answers, correctAnswer(index)}] " + options
 
 	response, err := client.R().
 		SetAuthToken(apiKey).
