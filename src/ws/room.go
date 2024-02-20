@@ -99,6 +99,9 @@ func (r *room) Run(m *Manager) {
 		case client := <-r.join:
 			r.clients[client] = client.name
 			r.SendServerMessage(client.name + " dołączył do gry")
+			if !r.game.IsGame {
+				r.SendReadyStatus()
+			}
 
 		case client := <-r.leave:
 			close(client.receive)
@@ -121,10 +124,10 @@ func (r *room) Run(m *Manager) {
 				r.game.State = r.game.NewGameState()
 				r.game.IsGame = true
 				r.game.SendGameState()
+
 			}
 
 		case action := <-r.receiveAnswer:
-
 			if !r.game.IsGame {
 				return
 			}
@@ -136,12 +139,16 @@ func (r *room) Run(m *Manager) {
 			}
 
 			for client := range r.game.Players {
-
 				client.addPoints(*actionParsed)
 				r.game.State.Actions = append(r.game.State.Actions, *actionParsed)
 				r.game.State.Score = r.game.NewScore()
 			}
-			r.game.CheckIfShouldBeNextRound()
+			isNextRound := r.game.CheckIfShouldBeNextRound()
+			if isNextRound {
+				r.game.State.Round++
+				newState := r.game.NewGameState()
+				r.game.State = newState
+			}
 			r.game.SendGameState()
 
 		}
