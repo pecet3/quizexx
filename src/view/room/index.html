@@ -34,10 +34,7 @@
     border-black bg-slate-200 p-4 rounded-lg shadow-md flex flex-col items-center
    ">
         <ul class="grid grid-cols-2 text-xl" id="readyUsersList">
-            <li class="text-black font-bold">Jakub ✔</li>
-            <li class="text-black font-bold">Krystian1229 ✔</li>
-            <li class="text-black font-bold">Jakub ❌</li>
-            <li class="text-black font-bold">Maciek ❌</li>
+
         </ul>
         <div class="flex gap-0.5">
             <span class="text-2xl font-sans font-bold">[</span>
@@ -51,23 +48,25 @@
     </div>
 
     <div id="gameDashboard"
-        class="m-auto max-w-3xl text-lg shadow-xl shadow-slate-700 bg-pattern h-screen p-2 pl-2 sm:pl-12 rounded-r-2xl shadow-md relative">
+        class="m-0 sm:m-auto max-w-3xl text-lg shadow-xl shadow-slate-700 bg-pattern h-screen p-2 pr-2 sm:pr-4 pl-2 sm:pl-12 rounded-r-2xl shadow-md relative">
+
         <p class="hidden sm:block absolute top-1/4 left-0 ml-1 sm:ml-2 text-5xl text-gray-600">●</p>
         <p class="hidden sm:block absolute top-3/4 left-0 ml-1 sm:ml-2 text-5xl text-gray-600">●</p>
+
         <!-- <p class="absolute h-full border-r-2 border-red-500 top-0 z-0"></p> -->
         <header class="p-1 my-4 relative">
-            <h1
-                class="text-8xl font-black	flex justify-center items-end text-center text-black font-mono underline decoration-wavy decoration-4 decoration-teal-500 ">
+            <h1 class="text-8xl font-black	flex justify-center items-end text-center text-black 
+                font-mono underline decoration-wavy decoration-4 decoration-teal-500 ">
                 Quizex
             </h1>
         </header>
 
 
         <div class="flex justify-between gap-2 z-10">
-            <div
-                class="text-2xl flex sm:flex-row flex-col items-center font-bold font-mono bg-gray-400 rounded-t-md p-1 border-2 border-black border-b-0">
-                <span class="hidden sm:block"> Kategoria:</span>
-                <span id="displayCategory" class="text-blue-800 italic">Komputery</span>
+            <div class="text-2xl flex sm:flex-row flex-col items-center font-bold font-mono bg-gray-400 
+                rounded-t-md p-1 border-2 border-black border-b-0">
+                <span class="hidden sm:block">Kategoria:</span>
+                <span id="displayCategory" class="text-blue-800 italic">-</span>
             </div>
             <div
                 class="text-2xl flex-col sm:flex-row flex items-center gap-1 sm:gap-2 font-black font-mono bg-gray-400 rounded-t-md p-0.5 sm:p-1 px-1 sm:px-2 border-2 border-black border-b-0">
@@ -78,20 +77,19 @@
                 <div class="hidden sm:flex justify-center items-center gap-1
                  border-l-2 bg-slate-900 px-1 py-0.5 rounded-lg border-gray-800">
                     <img src="userIcon.svg" class="sm:h-6 h-4 w-auto" />
-                    <span id="playersLengthDisplay" class="font-sans text-green-400 text-xl">4</span>
+                    <span id="displayPlayersInGame" class="font-sans text-green-400 text-xl">4</span>
                 </div>
             </div>
         </div>
 
         <div class="flex flex-col gap-6 items-center">
-            <form id="gameForm" class="flex flex-col gap-6 w-full ">
+            <form id="gameForm" class="flex flex-col gap-6 w-full md:w-[44rem] h-64">
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-gray-200 border-2 border-black
                  shadow-sm shadow-gray-500 p-4 rounded-b-xl text-lg font-medium p-2 ">
 
 
-                    <h3 id="displayQuestion" class="sm:col-span-2 text-center font-bold text-2xl">Ile waży kilogram
-                        powietrza?
+                    <h3 id="displayQuestion" class="sm:col-span-2 text-center font-bold text-2xl">
                     </h3>
                     <label id="a1" class=" has-[:checked]:rounded-lg has-[:checked]:scale-[1.01] bg-blue-200
                     duration-300 has-[:checked]:bg-gray-700 has-[:checked]:ring ring-teal-500 has-[:checked]:text-white
@@ -99,7 +97,7 @@
                      border border-black
                         ">
                         <input type="radio" name="q1" value="0" class="hidden ">
-                        <p id="answerA">1kg</p>
+                        <p id="answerA"></p>
                     </label>
                     <label id="a2" class=" has-[:checked]:rounded-lg has-[:checked]:scale-[1.01] bg-red-200
                     duration-300 has-[:checked]:bg-gray-700 has-[:checked]:ring ring-teal-500 has-[:checked]:text-white
@@ -107,7 +105,7 @@
                      border border-black
                      ">
                         <input type="radio" name="q1" value="1" class="hidden">
-                        <p id="answerB">1000g</p>
+                        <p id="answerB"></p>
                     </label>
                     <label id="a3" class=" has-[:checked]:rounded-lg has-[:checked]:scale-[1.01] bg-green-200
                     duration-300 has-[:checked]:bg-gray-700 has-[:checked]:ring ring-teal-500 has-[:checked]:text-white
@@ -115,7 +113,7 @@
                      border border-black
                      ">
                         <input type="radio" name="q1" value="2" class="hidden">
-                        <p id="answerC">100dg</p>
+                        <p id="answerC"></p>
                     </label>
                     <label id="a4" class=" has-[:checked]:rounded-lg has-[:checked]:scale-[1.01] bg-purple-200
                     duration-300 has-[:checked]:bg-gray-700 has-[:checked]:ring ring-teal-500 has-[:checked]:text-white
@@ -123,23 +121,28 @@
                      border border-black
                      ">
                         <input type="radio" name="q1" value="3" class="hidden">
-                        <p id="answerD">0.001 tony</p>
+                        <p id="answerD"></p>
                     </label>
 
                 </div>
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 ">
                     <table id="scoreTable"
                         class="text-xl table-fixed sm:order-none order-last bg-white bg-yellow-200 shadow-md shadow-gray-600">
-                        <thead>
+                        <thead class="m-auto">
                             <tr class="flex justify-center border-b border-black font-mono font-black">
                                 <th class=" m-auto">Imię</th>
                                 <th class=" m-auto">Punkty</th>
                             </tr>
                         </thead>
-                        <tbody id="scoreTableBody">
-                            <tr class="flex justify-center">
-                                <td class="m-auto">kuba</td>
-                                <td class="m-auto">2323</td>
+                        <tbody id="scoreTableBody"
+                            class="flex flex-col [&_tr]:py-2 [&_tr]:gap-4 [&_tr]:flex [&_tr]:justify-between [&_td]:m-auto ">
+                            <tr class="">
+                                <td class="">kuba</td>
+                                <td class="">2323</td>
+                            </tr>
+                            <tr class="">
+                                <td class="">kuba</td>
+                                <td class="">2323</td>
                             </tr>
 
                         </tbody>

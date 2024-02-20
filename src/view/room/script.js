@@ -12,7 +12,7 @@ const answerDElement = document.getElementById('answerD');
 const displayRoundElement = document.getElementById('displayRound');
 const displayCategoryElement = document.getElementById('displayCategory');
 const displayQuestionElement = document.getElementById('displayQuestion');
-
+const displayPlayers = document.getElementById('displayPlayersInGame')
 const roomName = getRoomName();
 let userName = "";
 
@@ -102,17 +102,23 @@ function routeEvent(event) {
             updatePlayers(event)
             break
         case "server_message":
-            updateAlerts(event)
+            updateServerMessage(event)
             console.log(event)
             break
         case "ready_status":
+            updateReadyStatus(event)
+            console.log(event)
+            break
+        case "finish_game":
+            gameState = {}
+            break
         default:
             alert("unsupporting message type")
             break;
     }
 }
 
-function updateAlerts(event) {
+function updateServerMessage(event) {
     console.log(event.type)
     const data = event.payload
     console.log(data.clients + "sssssssss")
@@ -233,11 +239,37 @@ function updateDomScore(playerList) {
 
         nameCell.textContent = player.name;
         pointsCell.textContent = player.points;
-
         row.appendChild(nameCell);
         row.appendChild(pointsCell);
         tableBody.appendChild(row);
     });
+}
+
+function updateDomReadyStatus(playerList) {
+    playerList.forEach(player => {
+        const elementHTML = `
+        <li id="${player.name + true}" class="text-black font-bold">
+        ${player.name}
+        ${player.isReady
+                ? `✔`
+                : `❌`}
+        </li>
+        
+      `
+        readyUsersList.insertAdjacentHTML("beforeend", elementHTML)
+
+
+        if (player.isReady) {
+            const prevPlayer = document.getElementById(player.name + true)
+            prevPlayer.classList.add("hidden")
+        }
+        if (!player.isReady) {
+            const prevPlayer = document.getElementById(player.name + true)
+            prevPlayer.classList.remove("hidden")
+        }
+
+    });
+
 }
 
 
@@ -265,6 +297,11 @@ function updatePlayers(event) {
     updateDomGameState()
 
     return
+}
+
+function updateReadyStatus(event) {
+    const players = event.payload.clients
+    updateDomReadyStatus(players)
 }
 
 //////////////////// CLIENT EVENT FUNCTIONS ////////////////////
