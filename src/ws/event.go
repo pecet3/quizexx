@@ -26,6 +26,20 @@ type ServerMessage struct {
 	Message string `json:"message"`
 }
 
+func (r *room) SendIsFinish() error {
+
+	eventBytes, err := MarshalEventToBytes[bool](true, "finish_game")
+	if err != nil {
+		return err
+	}
+	for client := range r.clients {
+		if client == nil {
+			return err
+		}
+		client.receive <- eventBytes
+	}
+	return nil
+}
 func (r *room) SendReadyStatus() error {
 	var readyClients []ReadyClient
 
