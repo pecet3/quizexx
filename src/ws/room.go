@@ -44,6 +44,7 @@ func (m *Manager) GetRoom(name string) *room {
 	m.mutex.Lock()
 	defer m.mutex.Unlock()
 
+	log.Println(m.rooms[name], " name ", name)
 	return m.rooms[name]
 }
 
@@ -52,12 +53,14 @@ func (m *Manager) CreateRoom(settings Settings) *room {
 	defer m.mutex.Unlock()
 
 	if existingRoom, ok := m.rooms[settings.name]; ok {
+		log.Println("existingRoom", existingRoom)
 		return existingRoom
 	}
 
 	newRoom := NewRoom(settings)
 	m.rooms[settings.name] = newRoom
-	log.Println("Created a room with name:")
+
+	log.Println("Created a room with name:", m.rooms, settings.name)
 	return newRoom
 }
 

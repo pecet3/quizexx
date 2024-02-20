@@ -60,33 +60,28 @@ func (m *Manager) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	if name == "" || name == "serwer" || name == "klient" {
 		return
 	}
-	isNewRoom := req.URL.Query().Get("new")
 	difficulty := req.URL.Query().Get("difficulty")
 	maxRounds := req.URL.Query().Get("maxRounds")
 	category := req.URL.Query().Get("category")
+
 	if len(category) >= 32 {
 		return
 	}
 	log.Println(category, maxRounds, difficulty)
-	log.Printf("New connection: %v connected to room: %v", name, roomName)
+	log.Printf("New connection, userName: %v connected to room: %v", name, roomName)
 
+	settings := Settings{
+		name:         roomName,
+		gameCategory: category,
+		difficulty:   difficulty,
+		maxRounds:    maxRounds,
+	}
+	log.Println(settings.name)
 	currentRoom := m.GetRoom(roomName)
 
 	if currentRoom == nil {
-		settings := Settings{
-			name:         name,
-			gameCategory: category,
-			difficulty:   difficulty,
-			maxRounds:    maxRounds,
-		}
-		if isNewRoom == "true" {
-			currentRoom = m.CreateRoom(settings)
-			go currentRoom.Run(m)
-		} else {
-			conn.Close()
-			return
-		}
-
+		currentRoom = m.CreateRoom(settings)
+		go currentRoom.Run(m)
 	}
 
 	client := &client{

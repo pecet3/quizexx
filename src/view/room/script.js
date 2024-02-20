@@ -112,20 +112,23 @@ function routeEvent(event) {
         case "finish_game":
             gameState = {}
             break
+        case "room_settings":
+            console.log(event.data)
+            break
         default:
             alert("unsupporting message type")
             break;
     }
 }
 
+function updateDomRoomSettings(event) {
+
+}
+
 function updateServerMessage(event) {
     console.log(event.type)
     const data = event.payload
     console.log(data.clients + "sssssssss")
-    // <li class="text-black font-bold">Jakub ✔</li>
-    // <li class="text-black font-bold">Krystian1229 ✔</li>
-    // <li class="text-black font-bold">Jakub ❌</li>
-    // <li class="text-black font-bold">Maciek ❌</li>
 }
 
 function sendEvent(eventName, payload) {
@@ -225,6 +228,7 @@ function updateDomGameState() {
 
     displayRoundElement.innerHTML = gameState.round
     displayQuestionElement.innerHTML = gameState.question
+    displayCategoryElement.innerHTML = gameState.category
 }
 
 function updateDomScore(playerList) {
@@ -246,6 +250,10 @@ function updateDomScore(playerList) {
 }
 
 function updateDomReadyStatus(playerList) {
+    let readyCounter = 0;
+
+    readyUsersList.innerHTML = '';
+
     playerList.forEach(player => {
         const elementHTML = `
         <li id="${player.name + true}" class="text-black font-bold">
@@ -254,21 +262,17 @@ function updateDomReadyStatus(playerList) {
                 ? `✔`
                 : `❌`}
         </li>
-        
       `
         readyUsersList.insertAdjacentHTML("beforeend", elementHTML)
 
-
         if (player.isReady) {
-            const prevPlayer = document.getElementById(player.name + true)
-            prevPlayer.classList.add("hidden")
-        }
-        if (!player.isReady) {
-            const prevPlayer = document.getElementById(player.name + true)
-            prevPlayer.classList.remove("hidden")
+
+            readyCounter++
         }
 
     });
+
+
 
 }
 

@@ -14,10 +14,12 @@ type SendMessageEvent struct {
 	UserName string `json:"userName"`
 	Message  string `json:"message"`
 }
+
 type ReadyClient struct {
 	Name    string `json:"name"`
 	IsReady bool   `json:"isReady"`
 }
+
 type ReadyStatus struct {
 	Clients []ReadyClient `json:"clients"`
 }
@@ -27,7 +29,6 @@ type ServerMessage struct {
 }
 
 func (r *room) SendIsFinish() error {
-
 	eventBytes, err := MarshalEventToBytes[bool](true, "finish_game")
 	if err != nil {
 		return err
@@ -40,6 +41,21 @@ func (r *room) SendIsFinish() error {
 	}
 	return nil
 }
+
+func (r *room) SendSettings() error {
+	eventBytes, err := MarshalEventToBytes[Settings](r.settings, "room_settings")
+	if err != nil {
+		return err
+	}
+	for client := range r.clients {
+		if client == nil {
+			return err
+		}
+		client.receive <- eventBytes
+	}
+	return nil
+}
+
 func (r *room) SendReadyStatus() error {
 	var readyClients []ReadyClient
 
