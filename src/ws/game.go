@@ -46,13 +46,6 @@ type RoundQuestion struct {
 	CorrectAnswer int      `json:"correctAnswer"`
 }
 
-type ResponseGPT struct {
-	Category    string          `json:"category"`
-	Difficulity string          `json:"difficulity"`
-	Language    string          `json:"language"`
-	Questions   []RoundQuestion `json:"questions"`
-}
-
 func (r *room) CreateGame() *Game {
 	log.Println("creating a game")
 
@@ -61,7 +54,7 @@ func (r *room) CreateGame() *Game {
 		log.Println(err)
 	}
 	log.Println(response)
-	var data ResponseGPT
+	var data []RoundQuestion
 
 	err = json.Unmarshal([]byte(response), &data)
 	if err != nil {
@@ -80,10 +73,8 @@ func (r *room) CreateGame() *Game {
 		Category:   r.settings.gameCategory,
 		Difficulty: r.settings.difficulty,
 		MaxRounds:  maxRounds,
-		Content:    data.Questions,
+		Content:    data,
 	}
-
-	r.game = newGame
 
 	log.Println("new game: ", newGame.Content[0].Question)
 	return newGame
@@ -95,7 +86,8 @@ func (g *Game) NewGameState() *GameState {
 	}
 
 	score := g.NewScore()
-	log.Println("g.Content[g.State.Round-1].Question", g.Content[g.State.Round-1].Question)
+	log.Println(score)
+
 	return &GameState{
 		Round:    g.State.Round,
 		Question: g.Content[g.State.Round-1].Question,
@@ -120,12 +112,11 @@ func (g *Game) NewScore() []PlayerScore {
 	return score
 }
 
-func (g *Game) CheckIfShouldBeNextRound() {
+func (g *Game) CheckIfShouldBeNextRound() bool {
 	playersInGame := len(g.Players)
 	playersFinished := len(g.State.PlayersFinished)
 	if playersFinished == playersInGame && playersInGame > 0 {
-		g.State.Round++
-		newState := g.NewGameState()
-		g.State = newState
+		return true
 	}
+	return false
 }
