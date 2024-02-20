@@ -25,8 +25,8 @@ func FetchBodyFromGPT(category string, difficulty string, maxRounds string) (str
 
 	client := resty.New()
 	language := "polish"
-	options := "category: " + category + ", diffuculty:" + difficulty + ", content language: " + language
-	prompt := "return json for quiz game with " + maxRounds + " questions. struct => [{ question, 4x answers, correctAnswer(index)}] " + options
+	options := "This is Options for this quiz: category: " + category + ", diffuculty:" + difficulty + ", content language: " + language
+	prompt := "return json for quiz game with " + maxRounds + " questions." + options + " You have to return correct struct. This is just array of objects. Nothing more, start struct: [{ question, 4x answers, correctAnswer(index)}] "
 
 	response, err := client.R().
 		SetAuthToken(apiKey).
