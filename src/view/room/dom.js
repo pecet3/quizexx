@@ -12,7 +12,7 @@ const displayRoundElement = document.getElementById('displayRound');
 const displayCategoryElement = document.getElementById('displayCategory');
 const displayQuestionElement = document.getElementById('displayQuestion');
 const displayPlayers = document.getElementById('displayPlayersInGame')
-const displayPlayersInGame = document.getElementById('displayPlayersInGame')
+// const displayPlayersInGame = document.getElementById('displayPlayersInGame')
 const displayReadyCount = document.getElementById('displayReadyCount')
 const displayServerMessageWaiting = document.getElementById('displayServerMessageWaiting')
 const displayServerMessageDashboard = document.getElementById('displayServerMessageDashboard')
@@ -67,7 +67,7 @@ function updateDomGameState() {
     displayRoundElement.innerHTML = gameState.round
     displayQuestionElement.innerHTML = gameState.question
     displayCategoryElement.innerHTML = gameState.category
-    displayPlayersInGame.innerHTML = gameState.actions.length
+    // displayPlayersInGame.innerHTML = gameState.actions.length
 }
 
 function updateDomScore(playerList) {
@@ -116,6 +116,7 @@ function updateDomReadyStatus(playerList) {
 
 
 function updateDomSettings(roomSettings) {
+    console.log(roomSettings + "   a")
     displayCategoryElement.innerHTML = roomSettings.category
 }
 

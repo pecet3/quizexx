@@ -1,4 +1,3 @@
-handleVirtualDom()
 
 
 const roomName = getRoomName();
@@ -7,6 +6,13 @@ let userName = "";
 let ready = true;
 let isAnswerSent = false;
 let isPlayerReady = false;
+
+let settings = {
+    category: "",
+    difficulty: "",
+    maxRounds: "",
+    name: ""
+}
 
 let gameState = {
     isGame: false,
@@ -22,7 +28,14 @@ let virtualDom = {
     waitingRoomDashboard: false,
     gameDashboard: false,
 }
-
+if (gameState.isGame) {
+    virtualDom = {
+        entryDashboard: true,
+        waitingRoomDashboard: false,
+        gameDashboard: false,
+    }
+}
+handleVirtualDom()
 
 //////////////// Listeners ///////////////////////////////////////////
 
@@ -51,7 +64,7 @@ gameForm.addEventListener("submit", (e) => {
 
     let answerValue = formData.get('q1');
     const answer = Number(answerValue)
-    if (answerValue !== null) {
+    if (answerValue !== null && !isAnswerSent) {
         sendAnswer(answer);
         formData = null
         return

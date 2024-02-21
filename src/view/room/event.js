@@ -74,6 +74,7 @@ function updateReadyStatus(event) {
 function updateRoomSettings(event) {
     const data = event.payload
     console.log(data)
+    roomSettings = data
     updateDomSettings(data)
 }
 
