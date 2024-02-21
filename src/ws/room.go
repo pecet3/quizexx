@@ -102,12 +102,21 @@ func (r *room) Run(m *Manager) {
 		case client := <-r.join:
 			r.clients[client] = client.name
 
-			err := r.SendServerMessage(client.name + " dołączył do gry")
-			if err != nil {
-				return
+			if r.game.IsGame && client.isSpectator {
+				err := r.SendServerMessage(client.name + " dołączył jako widz")
+				if err != nil {
+					return
+				}
+			} else {
+				err := r.SendServerMessage(client.name + " dołączył do pokoju")
+				if err != nil {
+					return
+				}
 			}
-			err = r.SendSettings()
+
+			err := r.SendSettings()
 			if err != nil {
+				log.Println("run err send settings")
 				return
 			}
 			if r.game.IsGame {
@@ -137,12 +146,19 @@ func (r *room) Run(m *Manager) {
 			if r.game.IsGame && client.isSpectator {
 				r.SendServerMessage(client.name + "dołącza jako widz")
 			}
+
 			client.isReady = true
 			r.SendServerMessage(client.name + " jest gotowy")
 			r.SendReadyStatus()
 			if ok := r.CheckIfEveryoneIsReady(); ok {
 				err := r.SendServerMessage("⏳Tworzenie gry🎲, prosimy o cierpliwość...")
 				if err != nil {
+					log.Println("run err send server msg")
+					return
+				}
+				err = r.SendSettings()
+				if err != nil {
+					log.Println("run err send settings")
 					return
 				}
 				game := r.CreateGame()
