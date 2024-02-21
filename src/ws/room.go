@@ -110,12 +110,15 @@ func (r *room) Run(m *Manager) {
 			if err != nil {
 				return
 			}
+			if r.game.IsGame {
+				_ = r.game.SendGameState()
+			}
 			eventBytes, err := MarshalEventToBytes[Settings](r.settings, "room_settings")
 			if err != nil {
 				return
 			}
 			client.receive <- eventBytes
-			if !r.game.IsGame {
+			if !r.game.IsGame && !client.isSpectator {
 				r.SendReadyStatus()
 			}
 
@@ -131,10 +134,17 @@ func (r *room) Run(m *Manager) {
 			}
 
 		case client := <-r.ready:
+			if r.game.IsGame && client.isSpectator {
+				r.SendServerMessage(client.name + "dołącza jako widz")
+			}
 			client.isReady = true
 			r.SendServerMessage(client.name + " jest gotowy")
 			r.SendReadyStatus()
 			if ok := r.CheckIfEveryoneIsReady(); ok {
+				err := r.SendServerMessage("⏳Tworzenie gry🎲, prosimy o cierpliwość...")
+				if err != nil {
+					return
+				}
 				game := r.CreateGame()
 				r.game = game
 				r.game.State = r.game.NewGameState()
