@@ -63,12 +63,11 @@ func (m *Manager) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	difficulty := req.URL.Query().Get("difficulty")
 	maxRounds := req.URL.Query().Get("maxRounds")
 	category := req.URL.Query().Get("category")
+	newRoom := req.URL.Query().Get("new")
 
 	if len(category) >= 32 {
 		return
 	}
-	log.Println(category, maxRounds, difficulty)
-	log.Printf("New connection, userName: %v connected to room: %v", name, roomName)
 
 	settings := Settings{
 		name:         roomName,
@@ -76,12 +75,23 @@ func (m *Manager) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 		difficulty:   difficulty,
 		maxRounds:    maxRounds,
 	}
-	log.Println(settings.name)
 	currentRoom := m.GetRoom(roomName)
+	log.Println(newRoom)
+	if currentRoom != nil {
+		if newRoom == "true" {
+			conn.Close()
+			return
+		}
 
+	}
 	if currentRoom == nil {
-		currentRoom = m.CreateRoom(settings)
-		go currentRoom.Run(m)
+		if newRoom == "true" {
+			currentRoom = m.CreateRoom(settings)
+			go currentRoom.Run(m)
+		} else {
+			conn.Close()
+			return
+		}
 	}
 
 	client := &client{
@@ -94,6 +104,7 @@ func (m *Manager) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 		isReady: false,
 	}
 
+	log.Printf("New connection, userName: %v connected to room: %v", name, roomName)
 	currentRoom.join <- client
 	defer func() { currentRoom.leave <- client }()
 	go client.write()
