@@ -12,9 +12,9 @@
 
 <body class="bg-gray-400 pl-0 pr-2 p-0 sm:p-8 py-2 sm:py-10 text=center m-auto">
 
-    <div id="entryDashboard" class="paper max-w-md text-lg m-auto 
-    border-2 border-black bg-slate-200 p-4 rounded-lg shadow-md flex flex-col gap-2 items-center
+    <div id="entryDashboard" class="paper paper-yellow p-4 pt-8 shadow-md flex flex-col gap-2 items-center
    ">
+        <div class="top-tape"></div>
         <input id="userNameInput" type="text" class="p-0.5 text-2xl rounded-sm font m-auto border border-black
         bg-white placeholder:text-gray-400 placeholder:text-center text-black text-center"
             placeholder="Podaj swój nick" />
@@ -31,9 +31,11 @@
         </ul>
         <div class="flex gap-0.5">
             <span class="text-2xl font-sans font-bold">[</span>
-            <p id="displayReadyCount" class="text-2xl font-sans font-bold">2/4</p>
+            <p id="displayReadyCount" class="text-2xl font-sans font-bold"></p>
             <span class="text-2xl font-sans font-bold">]</span>
         </div>
+        <p id="displayServerMessage" class="font mono text-sm font-thin"></p>
+
         <button class="bg-teal-300 
         hover:shadow-none hover:rounded-xl border border-black hover:scale-[0.995]
         font-mono px-4 text-2xl duration-300 text-black rounded-lg m-auto py-2" id="readyButton">Jestem
@@ -79,7 +81,7 @@
             <form id="gameForm" class="flex flex-col gap-6 w-full md:w-[44rem] h-64">
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-gray-200 border-2 border-black
-                 shadow-sm shadow-gray-500 p-4 rounded-b-xl text-lg font-medium p-2 ">
+                  p-2 sm:p-4 rounded-b-xl text-lg font-medium">
 
 
                     <h3 id="displayQuestion" class="sm:col-span-2 text-center font-bold text-2xl">
@@ -118,6 +120,7 @@
                     </label>
 
                 </div>
+                <p id="displayServerMessage" class="font mono text-xl font-bold"></p>
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 ">
                     <table id="scoreTable"
                         class="text-xl table-fixed sm:order-none order-last bg-white bg-yellow-200 shadow-md shadow-gray-600">
