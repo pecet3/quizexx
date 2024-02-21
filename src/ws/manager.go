@@ -76,7 +76,7 @@ func (m *Manager) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 		MaxRounds:    maxRounds,
 	}
 	currentRoom := m.GetRoom(roomName)
-	log.Println(newRoom)
+
 	if currentRoom != nil {
 		if newRoom == "true" {
 			conn.Close()
