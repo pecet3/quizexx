@@ -49,7 +49,7 @@ type RoundQuestion struct {
 func (r *room) CreateGame() *Game {
 	log.Println("creating a game")
 
-	response, err := external.FetchBodyFromGPT(r.settings.gameCategory, r.settings.difficulty, r.settings.gameCategory)
+	response, err := external.FetchBodyFromGPT(r.settings.GameCategory, r.settings.Difficulty, r.settings.GameCategory)
 	if err != nil {
 		log.Println(err)
 	}
@@ -60,7 +60,7 @@ func (r *room) CreateGame() *Game {
 	if err != nil {
 		log.Println("error with unmarshal data")
 	}
-	maxRounds, err := strconv.Atoi(r.settings.maxRounds)
+	maxRounds, err := strconv.Atoi(r.settings.MaxRounds)
 
 	if err != nil {
 		maxRounds = 5
@@ -70,8 +70,8 @@ func (r *room) CreateGame() *Game {
 		State:      &GameState{Round: 1},
 		IsGame:     false,
 		Players:    r.clients,
-		Category:   r.settings.gameCategory,
-		Difficulty: r.settings.difficulty,
+		Category:   r.settings.GameCategory,
+		Difficulty: r.settings.Difficulty,
 		MaxRounds:  maxRounds,
 		Content:    data,
 	}

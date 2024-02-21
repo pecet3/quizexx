@@ -70,10 +70,10 @@ func (m *Manager) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	}
 
 	settings := Settings{
-		name:         roomName,
-		gameCategory: category,
-		difficulty:   difficulty,
-		maxRounds:    maxRounds,
+		Name:         roomName,
+		GameCategory: category,
+		Difficulty:   difficulty,
+		MaxRounds:    maxRounds,
 	}
 	currentRoom := m.GetRoom(roomName)
 	log.Println(newRoom)

@@ -19,15 +19,15 @@ type room struct {
 }
 
 type Settings struct {
-	name         string
-	gameCategory string
-	difficulty   string
-	maxRounds    string
+	Name         string `json:"name"`
+	GameCategory string `json:"category"`
+	Difficulty   string `json:"difficulty"`
+	MaxRounds    string `json:"maxRounds"`
 }
 
 func NewRoom(settings Settings) *room {
 	r := &room{
-		name:          settings.name,
+		name:          settings.Name,
 		clients:       make(map[*client]string),
 		join:          make(chan *client),
 		leave:         make(chan *client),
@@ -52,15 +52,15 @@ func (m *Manager) CreateRoom(settings Settings) *room {
 	m.mutex.Lock()
 	defer m.mutex.Unlock()
 
-	if existingRoom, ok := m.rooms[settings.name]; ok {
+	if existingRoom, ok := m.rooms[settings.Name]; ok {
 		log.Println("existingRoom", existingRoom)
 		return existingRoom
 	}
 
 	newRoom := NewRoom(settings)
-	m.rooms[settings.name] = newRoom
+	m.rooms[settings.Name] = newRoom
 
-	log.Println("Created a room with name:", m.rooms, settings.name)
+	log.Println("Created a room with name:", m.rooms, settings.Name)
 	return newRoom
 }
 
