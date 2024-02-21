@@ -43,7 +43,7 @@ body {
     --transparent: rgba(236, 178, 186, 0);
 }
 
-.blue {
+.paper-yellow {
     --paper-color: #faeb99;
     --paper-dark: #ffe869;
     --shadow-size: 3px;
