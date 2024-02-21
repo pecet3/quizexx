@@ -101,7 +101,20 @@ func (r *room) Run(m *Manager) {
 			}
 		case client := <-r.join:
 			r.clients[client] = client.name
-			r.SendServerMessage(client.name + " dołączył do gry")
+
+			err := r.SendServerMessage(client.name + " dołączył do gry")
+			if err != nil {
+				return
+			}
+			err = r.SendSettings()
+			if err != nil {
+				return
+			}
+			eventBytes, err := MarshalEventToBytes[Settings](r.settings, "room_settings")
+			if err != nil {
+				return
+			}
+			client.receive <- eventBytes
 			if !r.game.IsGame {
 				r.SendReadyStatus()
 			}
@@ -127,7 +140,6 @@ func (r *room) Run(m *Manager) {
 				r.game.State = r.game.NewGameState()
 				r.game.IsGame = true
 				r.game.SendGameState()
-
 			}
 
 		case action := <-r.receiveAnswer:
