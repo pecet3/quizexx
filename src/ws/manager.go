@@ -94,14 +94,21 @@ func (m *Manager) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 		}
 	}
 
+	isSpectator := false
+
+	if currentRoom.game.IsGame {
+		isSpectator = true
+	}
+
 	client := &client{
-		conn:    conn,
-		receive: make(chan []byte),
-		room:    currentRoom,
-		name:    name,
-		answer:  -1,
-		points:  0,
-		isReady: false,
+		conn:        conn,
+		receive:     make(chan []byte),
+		room:        currentRoom,
+		name:        name,
+		answer:      -1,
+		points:      0,
+		isReady:     false,
+		isSpectator: isSpectator,
 	}
 
 	log.Printf("New connection, userName: %v connected to room: %v", name, roomName)
