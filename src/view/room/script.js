@@ -13,6 +13,9 @@ const displayRoundElement = document.getElementById('displayRound');
 const displayCategoryElement = document.getElementById('displayCategory');
 const displayQuestionElement = document.getElementById('displayQuestion');
 const displayPlayers = document.getElementById('displayPlayersInGame')
+const displayReadyCount = document.getElementById('displayReadyCount')
+const displayServerMessage = document.getElementById('displayServerMessage')
+
 const roomName = getRoomName();
 let userName = "";
 
@@ -20,14 +23,8 @@ let ready = true;
 let isAnswerSent = false;
 let isPlayerReady = false;
 
-let gameInfo = {
-    clients: [""],
-    category: "",
-}
-
 let gameState = {
     isGame: false,
-    category: "",
     round: 1,
     question: "Test",
     answers: ["Lorem ipsum", "Lorem ipsum", "Lorem ipsum", "Lorem ipsum"],
@@ -67,7 +64,7 @@ readyButton.addEventListener("click", () => {
 gameForm.addEventListener("submit", (e) => {
     e.preventDefault();
     if (!ready) return alert("you are not ready")
-    const formData = new FormData(gameForm);
+    let formData = new FormData(gameForm);
 
     //// to fix reset value in the future
 
@@ -91,6 +88,7 @@ class Event {
     }
 }
 function routeEvent(event) {
+    console.log(event.type)
     if (event.type === undefined) {
         alert("no type field in the event")
     }
@@ -103,17 +101,21 @@ function routeEvent(event) {
             break
         case "server_message":
             updateServerMessage(event)
-            console.log(event)
             break
         case "ready_status":
             updateReadyStatus(event)
-            console.log(event)
             break
         case "finish_game":
             gameState = {}
+            updateVirtualDom({
+                entryDashboard: true,
+                waitingRoomDashboard: false,
+                gameDashboard: false,
+            })
             break
         case "room_settings":
-            console.log(event.data)
+            console.log(event)
+            updateRoomSettings(event)
             break
         default:
             alert("unsupporting message type")
@@ -121,14 +123,16 @@ function routeEvent(event) {
     }
 }
 
-function updateDomRoomSettings(event) {
-
+function updateRoomSettings(event) {
+    const data = event.payload
+    console.log(data)
+    updateDomSettings(data)
 }
 
 function updateServerMessage(event) {
-    console.log(event.type)
-    const data = event.payload
-    console.log(data.clients + "sssssssss")
+    const data = event.payload.message
+
+    updateDomServerMessage(data)
 }
 
 function sendEvent(eventName, payload) {
@@ -155,9 +159,7 @@ function connectWs() {
         }
 
         conn.onmessage = (e) => {
-            console.log(e.data)
             const event = JSON.parse(e.data)
-            console.log(event)
             routeEvent(event)
         }
     } else {
@@ -214,7 +216,9 @@ function handleVirtualDom() {
         waitingRoomDashboard.classList.add("hidden");
     }
 }
-
+function updateDomServerMessage(message) {
+    displayServerMessage.innerHTML = message
+}
 function updateDomGameState() {
     updateVirtualDom({
         entryDashboard: false,
@@ -272,10 +276,13 @@ function updateDomReadyStatus(playerList) {
 
     });
 
-
-
+    displayReadyCount.innerHTML = `${readyCounter}/${playerList.length}`
 }
 
+
+function updateDomSettings(roomSettings) {
+    displayCategoryElement.innerHTML = roomSettings.category
+}
 
 ///////////////////// SERVER EVENT FUNCTIONS //////////////////////
 
