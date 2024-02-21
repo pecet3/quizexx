@@ -14,15 +14,15 @@ var (
 )
 
 type client struct {
-	name    string
-	conn    *websocket.Conn
-	receive chan []byte
-	room    *room
-	isReady bool
-
-	answer    int
-	points    int
-	roundsWon []uint
+	name        string
+	conn        *websocket.Conn
+	receive     chan []byte
+	room        *room
+	isReady     bool
+	isSpectator bool
+	answer      int
+	points      int
+	roundsWon   []uint
 }
 
 func (client *client) addPoints(action RoundAction) {
@@ -34,6 +34,7 @@ func (client *client) addPoints(action RoundAction) {
 		client.answer = action.Answer
 		if action.Answer == client.room.game.Content[client.room.game.State.Round-1].CorrectAnswer {
 			client.points = client.points + 10
+			client.room.SendServerMessage(client.name + " odpowiedział dobrze")
 			log.Println("Correct answer: ", client.name)
 		}
 		if action.Answer >= 0 {
