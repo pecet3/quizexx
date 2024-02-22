@@ -28,6 +28,26 @@ type ServerMessage struct {
 	Message string `json:"message"`
 }
 
+type Settings struct {
+	Name         string `json:"name"`
+	GameCategory string `json:"category"`
+	Difficulty   string `json:"difficulty"`
+	MaxRounds    string `json:"maxRounds"`
+}
+
+func (r *room) SendIsSpectator() error {
+	eventBytes, err := MarshalEventToBytes[bool](true, "")
+	if err != nil {
+		return err
+	}
+	for client := range r.clients {
+		if client == nil {
+			return err
+		}
+		client.receive <- eventBytes
+	}
+	return nil
+}
 func (r *room) SendIsFinish() error {
 	eventBytes, err := MarshalEventToBytes[bool](true, "finish_game")
 	if err != nil {
