@@ -28,12 +28,7 @@ type ServerMessage struct {
 	Message string `json:"message"`
 }
 
-type Settings struct {
-	Name         string `json:"name"`
-	GameCategory string `json:"category"`
-	Difficulty   string `json:"difficulty"`
-	MaxRounds    string `json:"maxRounds"`
-}
+
 
 func (r *room) SendIsSpectator() error {
 	eventBytes, err := MarshalEventToBytes[bool](true, "")
