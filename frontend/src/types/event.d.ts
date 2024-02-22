@@ -1,6 +1,6 @@
 interface IEvent {
     type: "ready_status" | "room_settings" | "update_gamestate" | "server_message" | "finish_game";
-    payload: any;
+    payload: TReadyStatus | TRoomSettings | TGameState | TServerMessage | TFinishGame;
 };
 
 type TReadyStatus = {
@@ -10,7 +10,7 @@ type TReadyClient = {
     name: string;
     isReady: boolean;
 };
-type TSettings = {
+type TRoomSettings = {
     name: string;
     category: string;
     difficulty: string;
@@ -49,4 +49,4 @@ type TFinishGame = bool
 //     userName: string;
 //     message: string;
 // };
-/////// 
+/////// D
