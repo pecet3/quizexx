@@ -28,8 +28,6 @@ type ServerMessage struct {
 	Message string `json:"message"`
 }
 
-
-
 func (r *room) SendIsSpectator() error {
 	eventBytes, err := MarshalEventToBytes[bool](true, "")
 	if err != nil {
