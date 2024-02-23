@@ -1,8 +1,10 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { TRoomSettings } from "../../types/event";
-import { IAppStateProps, TAppState } from "../../App";
+import { useAppStateContext } from "../../custom-hooks/useAppContext";
 
-export function CreateRoom({ appState, setAppState }: IAppStateProps) {
+export function CreateRoom() {
+  const { appState, setAppState } = useAppStateContext();
+
   const settings = appState.settings
   const [roomSettings, setRoomSettings] = useState<TRoomSettings>({
     name: settings.name,
@@ -14,26 +16,21 @@ export function CreateRoom({ appState, setAppState }: IAppStateProps) {
   const handleFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    setRoomSettings({
-      name: (event.currentTarget.elements.namedItem("nameInput") as HTMLInputElement).value,
-      category: (event.currentTarget.elements.namedItem("categoryInput") as HTMLInputElement).value,
-      maxRounds: (event.currentTarget.elements.namedItem("maxRounds") as HTMLInputElement).value,
-      difficulty: (event.currentTarget.elements.namedItem("difficulty") as HTMLSelectElement).value,
-    });
+    setAppState((prev) => ({
+      ...prev,
+      settings: {
+        name: roomSettings.name,
+        category: roomSettings.category,
+        maxRounds: roomSettings.maxRounds,
+        difficulty: roomSettings.difficulty,
+      }
+    }))
 
-    setAppState({
-      name: (event.currentTarget.elements.namedItem("nameInput") as HTMLInputElement).value,
-      category: (event.currentTarget.elements.namedItem("categoryInput") as HTMLInputElement).value,
-      maxRounds: (event.currentTarget.elements.namedItem("maxRounds") as HTMLInputElement).value,
-      difficulty: (event.currentTarget.elements.namedItem("difficulty") as HTMLSelectElement).value,
-    });
   };
 
 
-  useEffect(() => {
-    console.log(roomSettings)
-    console
-  }, [roomSettings])
+
+
   return (
     <section
       className="bg-blue-300 w-[22rem] sm:w-[26rem]   text-sm sm:text-lg
@@ -54,6 +51,8 @@ export function CreateRoom({ appState, setAppState }: IAppStateProps) {
                 bg-white placeholder:text-gray-400 placeholder:text-center text-black text-center"
           placeholder="Nazwa pokoju"
           required
+          onChange={(e) => setRoomSettings((prev) => ({ ...prev, name: e.target.value }))}
+
         />
         <div className="italic p-2 w-80 flex flex-col items-center">
           <input
@@ -63,6 +62,7 @@ export function CreateRoom({ appState, setAppState }: IAppStateProps) {
             bg-white placeholder:text-gray-400 placeholder:text-center text-black text-center"
             placeholder="Kategoria Pytań"
             required
+            onChange={(e) => setRoomSettings((prev) => ({ ...prev, category: e.target.value }))}
           />
           <p className="font-mono text-lg">
             Kategoria może być dowolona,
@@ -83,9 +83,10 @@ export function CreateRoom({ appState, setAppState }: IAppStateProps) {
           name="maxRounds"
           min="0"
           max="10"
-          value="5"
+          value={roomSettings.maxRounds}
           className="p-0.5 text-2xl rounded-sm font m-auto border border-black
                 bg-white placeholder:text-gray-400 placeholder:text-center text-black text-center"
+          onChange={(e) => setRoomSettings((prev) => ({ ...prev, maxRounds: e.target.value }))}
         />
         <label
           className="rounded-lg  font-mono text-xl font-bold underline"
@@ -93,7 +94,8 @@ export function CreateRoom({ appState, setAppState }: IAppStateProps) {
           Poziom trudności:
         </label>
         <select
-          id="difficulty"
+          onChange={(e) => setRoomSettings((prev) => ({ ...prev, difficulty: e.target.value }))}
+          value={roomSettings.difficulty}
           name="difficulty"
           className="p-0.5 text-2xl rounded-sm font m-auto border border-black
                 bg-white placeholder:text-gray-400 placeholder:text-center text-black text-center"

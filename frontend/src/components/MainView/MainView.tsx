@@ -1,13 +1,13 @@
-import { useState } from "react";
-import { IAppStateProps, TAppState } from "../../App";
+
+import { useAppStateContext } from "../../custom-hooks/useAppContext";
 
 
-export function MainView({ appState, setAppState }: IAppStateProps) {
+export function MainView() {
+  const { appState } = useAppStateContext();
 
-  const [roomName, setRoomName] = useState(""); // State to store the input value
 
   const handleJoinRoom = () => {
-    console.log("Room Name:", roomName);
+    console.log("Room Name:", appState.settings.name);
     console.log(appState)
   };
 
@@ -20,7 +20,7 @@ export function MainView({ appState, setAppState }: IAppStateProps) {
       <div className="paper paper-yellow p-4 pt-8 shadow-md shadow-gray-700">
         <div className="top-tape"></div>
         <form
-          id="entry"
+          onSubmit={handleJoinRoom}
           className="flex justify-center flex-col text-white text-xl gap-4"
         >
           <input
