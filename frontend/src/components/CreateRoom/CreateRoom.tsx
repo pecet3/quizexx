@@ -1,12 +1,14 @@
 import { useEffect, useState } from "react";
 import { TRoomSettings } from "../../types/event";
+import { IAppStateProps, TAppState } from "../../App";
 
-export function CreateRoom() {
+export function CreateRoom({ appState, setAppState }: IAppStateProps) {
+  const settings = appState.settings
   const [roomSettings, setRoomSettings] = useState<TRoomSettings>({
-    name: "",
-    category: "",
-    difficulty: "",
-    maxRounds: "",
+    name: settings.name,
+    category: settings.category,
+    difficulty: settings.difficulty,
+    maxRounds: settings.maxRounds,
   })
 
   const handleFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
@@ -18,11 +20,19 @@ export function CreateRoom() {
       maxRounds: (event.currentTarget.elements.namedItem("maxRounds") as HTMLInputElement).value,
       difficulty: (event.currentTarget.elements.namedItem("difficulty") as HTMLSelectElement).value,
     });
+
+    setAppState({
+      name: (event.currentTarget.elements.namedItem("nameInput") as HTMLInputElement).value,
+      category: (event.currentTarget.elements.namedItem("categoryInput") as HTMLInputElement).value,
+      maxRounds: (event.currentTarget.elements.namedItem("maxRounds") as HTMLInputElement).value,
+      difficulty: (event.currentTarget.elements.namedItem("difficulty") as HTMLSelectElement).value,
+    });
   };
 
 
   useEffect(() => {
     console.log(roomSettings)
+    console
   }, [roomSettings])
   return (
     <section

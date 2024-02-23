@@ -3,25 +3,25 @@ interface IEvent {
     payload: TReadyStatus | TRoomSettings | TGameState | TServerMessage | TFinishGame;
 };
 
-type TReadyStatus = {
+export type TReadyStatus = {
     clients: ReadyClient[];
 };
-type TReadyClient = {
+export type TReadyClient = {
     name: string;
     isReady: boolean;
 };
-type TRoomSettings = {
+export type TRoomSettings = {
     name: string;
     category: string;
     difficulty: string;
     maxRounds: string;
 };
 
-type TServerMessage = {
+export export type TServerMessage = {
     message: string;
 };
 
-type TGameState = {
+export type TGameState = {
     round: number;
     question: string;
     answers: string[];
@@ -29,19 +29,19 @@ type TGameState = {
     score: PlayerScore[];
     playersFinished: string[];
 };
-type TRoundAction = {
+export type TRoundAction = {
     name: string;
     answer: number;
     round: number;
 };
-type TPlayerScore = {
+export type TPlayerScore = {
     name: string;
     points: number;
     roundsWon: number[];
 };
 
 
-type TFinishGame = bool
+export type TFinishGame = bool
 
 
 // in the future we will use it
