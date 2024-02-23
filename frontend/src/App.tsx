@@ -1,12 +1,16 @@
-import './App.css'
+import "./App.css";
+import { CreateRoom } from "./components/CreateRoom/CreateRoom";
+import { MainView } from "./components/MainView/MainView";
+import { Room } from "./components/Room/Room";
 
 function App() {
-
   return (
     <>
-     <h1>Hello world</h1>
+      <MainView />
+      <CreateRoom />
+      <Room />
     </>
-  )
+  );
 }
 
-export default App
+export default App;
