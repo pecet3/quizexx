@@ -1,13 +1,14 @@
-import './App.css'
-import { MainView } from './components/MainView/MainView'
+import "./App.css";
+import { CreateRoom } from "./components/CreateRoom/CreateRoom";
+import { MainView } from "./components/MainView/MainView";
 
 function App() {
-
   return (
     <>
-       <MainView/>
+      <MainView />
+      <CreateRoom />
     </>
-  )
+  );
 }
 
-export default App
+export default App;
