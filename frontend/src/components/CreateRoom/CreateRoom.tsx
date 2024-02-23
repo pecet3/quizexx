@@ -1,7 +1,8 @@
 export function CreateRoom() {
   return (
     <>
-      <body className="bg-gray-400 p-0.5 pr-2 sm:p-2 py-2 sm:py-4 m-auto">
+      <body className="bg-gray-400 p-0.5 pr-2 sm:p-2 py-2 sm:py-4 m-auto my-10">
+        {/* my for development */}
         <header className="p-1 my-4 relative">
           <h1
             className="text-8xl font-black	flex justify-center items-end text-center text-black font-mono 
@@ -13,7 +14,6 @@ export function CreateRoom() {
             Quizex<span className="text-3xl"></span>
           </h1>
         </header>
-
         <div
           id="entryDashboard"
           className="bg-blue-300 max-w-sm sm:max-w-lg text-sm sm:text-lg
