@@ -1,8 +1,18 @@
 import { useEffect, useState } from "react";
-import { TRoomSettings } from "../types/event";
-import { TUser } from "./useAppContext";
 
-export const useWebSocket = ({ settings, user }: { settings: TRoomSettings, user: TUser }) => {
+import { TAppState, TUser, useAppStateContext } from "./useAppContext";
+import { TRoomSettings } from "../types/event";
+
+export interface IWSSettings {
+    settings: TRoomSettings,
+    user: TUser
+}
+export const useWebSocket = () => {
+    const { appState } = useAppStateContext();
+
+    const settings = appState.settings
+    const user = appState.user
+    console.log("ws hook: ", appState)
     let isNewGame = false;
     if (settings.name === "") {
         isNewGame = true
@@ -12,14 +22,18 @@ export const useWebSocket = ({ settings, user }: { settings: TRoomSettings, user
     console.log(urlNewGame, urlNotNewGame)
     const [socket, setSocket] = useState<WebSocket | null>(null);
 
-    useEffect(() => {
-        const ws = new WebSocket(settings.name);
-        setSocket(ws);
+    let url = urlNotNewGame
+    if (isNewGame) {
+        url = urlNewGame
+    }
+    // useEffect(() => {
+    //     const ws = new WebSocket(settings.name);
+    //     setSocket(ws);
 
-        return () => {
-            ws.close();
-        };
-    }, []);
+    //     return () => {
+    //         ws.close();
+    //     };
+    // }, []);
 
     return socket;
 };

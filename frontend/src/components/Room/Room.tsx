@@ -7,11 +7,11 @@ import { WaitingRoom } from "./WaitingRoom";
 export function Room() {
   const { appState } = useAppStateContext();
 
-  // const socket = useWebSocket(appState.settings)
+  const socket = useWebSocket()
 
-  // console.log(socket)
+  console.log(socket, "<-socket")
   return (
-    <div className="text-center m-auto">
+    <div className="text-center m-auto flex flex-col items-center">
       <EntryDashboard />
       <WaitingRoom />
 

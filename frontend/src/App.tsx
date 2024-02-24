@@ -12,11 +12,12 @@ function App() {
 
   return (
     <>
-      <AppStateProvider>     <Header />
-        <MainView />
-
-        <CreateRoom />
-        <Room /></AppStateProvider>
+      <AppStateProvider>
+        <Header />
+        {/* <MainView /> */}
+        {/* <CreateRoom /> */}
+        <Room />
+      </AppStateProvider>
 
     </>
   );

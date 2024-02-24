@@ -1,36 +1,37 @@
+import { useAppStateContext } from "../../custom-hooks/useAppContext";
+import { Header } from "../Header"
 
 
 export const GameDashboard = () => {
+    const { appState } = useAppStateContext();
+
+    const settings = appState.settings
+    const gameState = appState.gameState
     return (
         <div
-            id="gameDashboard"
-            className="m-0 sm:m-auto max-w-3xl text-lg shadow-xl shadow-slate-700 bg-pattern h-screen p-2 pr-0 sm:pr-4 pl-0 sm:pl-12 rounded-r-2xl relative"
+            className="h-screen my-4 bg-pattern flex flex-col p-2 sm:pl-10 shadow-lg shadow-gray-600  rounded-none sm:rounded-r-2xl relative"
         >
-            <p className="hidden sm:block absolute top-1/4 left-0 ml-1 sm:ml-2 text-5xl text-gray-600">
+            <p className="hidden sm:block absolute top-1/4 left-0 ml-1 sm:ml-2 text-5xl text-gray-300">
                 ●
             </p>
-            <p className="hidden sm:block absolute top-3/4 left-0 ml-1 sm:ml-2 text-5xl text-gray-600">
+            <p className="hidden sm:block absolute top-3/4 left-0 ml-1 sm:ml-2 text-5xl text-gray-300">
                 ●
             </p>
 
-            <header className="p-1 my-4 relative">
-                <h1 className="text-8xl font-black flex justify-center items-end text-center text-black font-mono underline decoration-wavy decoration-4 decoration-teal-500 ">
-                    Quizex
-                </h1>
-            </header>
-
+            <Header />
             <div className="flex justify-between gap-2 z-10">
                 <div className="text-2xl flex sm:flex-row flex-col items-center font-bold font-mono bg-gray-400 rounded-t-md p-1 border-2 border-black border-b-0">
                     <span className="hidden sm:block">Kategoria:</span>
-                    <span id="displayCategory" className="text-blue-800 italic">
-                        -
+                    <span className="text-blue-800 italic">
+                        {settings.category}
                     </span>
                 </div>
-                <div className="text-2xl flex-col sm:flex-row flex items-center gap-1 sm:gap-2 font-black font-mono bg-gray-400 rounded-t-md p-0.5 sm:p-1 px-1 sm:px-2 border-2 border-black border-b-0">
+                <div className="text-2xl flex-col sm:flex-row flex items-center gap-1 sm:gap-2 font-black font-mono bg-gray-400 
+                rounded-t-md p-0.5 sm:p-1 px-1 sm:px-2 border-2 border-black border-b-0">
                     <div className="flex items-start m-auto gap-1">
                         <p>Runda: </p>
                         <p id="displayRound" className="text-blue-800">
-                            1
+                            {gameState.round}
                         </p>
                     </div>
                 </div>
@@ -39,7 +40,7 @@ export const GameDashboard = () => {
             <div className="flex flex-col gap-6 items-center">
                 <form
                     id="gameForm"
-                    className="flex flex-col gap-6 w-full md:w-[44rem] h-64"
+                    className="flex flex-col gap-6 w-full sm:h-auto h-64"
                 >
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-gray-200 border-2 border-black p-2 sm:p-4 rounded-b-xl text-lg font-medium">
                         <h3

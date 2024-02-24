@@ -33,7 +33,7 @@ export function CreateRoom() {
 
   return (
     <section
-      className="bg-blue-300 w-[22rem] sm:w-[26rem]   text-sm sm:text-lg
+      className="bg-blue-300 w-auto sm:w-[28rem] text-sm sm:text-lg
      m-auto  border-r-4 border-b-4 border-r-white
      border-b-white outline outline-1 rounded-r-xl
         "

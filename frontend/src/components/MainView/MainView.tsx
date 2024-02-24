@@ -15,7 +15,7 @@ export function MainView() {
 
   return (
 
-    <div className="text-center m-auto bg-gray-400  w-[20rem] ">
+    <div className="text-center m-auto bg-gray-400  w-auto sm:w-[20rem] ">
 
       <div className="paper paper-yellow p-4 pt-8 shadow-md shadow-gray-700">
         <div className="top-tape"></div>
