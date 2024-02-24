@@ -7,6 +7,7 @@ export const GameDashboard = () => {
 
     const settings = appState.settings
     const gameState = appState.gameState
+
     return (
         <div
             className="h-screen my-4 bg-pattern flex flex-col p-2 sm:pl-10 shadow-lg shadow-gray-600  rounded-none sm:rounded-r-2xl relative"
