@@ -13,7 +13,8 @@ export function EntryDashboard() {
                 placeholder="Podaj swój nick"
             />
             <button
-                className="bg-purple-300 hover:shadow-none hover:rounded-xl border border-black hover:scale-[0.995] font-mono px-4 text-2xl duration-300 text-black rounded-lg m-auto py-1.5"
+                className="bg-purple-300 hover:shadow-none hover:rounded-xl border
+                 border-black hover:scale-[0.995] font-mono px-4 text-2xl duration-300 text-black rounded-lg m-auto py-1.5"
                 id="connectButton"
             >
                 Dołącz

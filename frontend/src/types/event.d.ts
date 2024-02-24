@@ -17,7 +17,7 @@ export type TRoomSettings = {
     maxRounds: string;
 };
 
-export export type TServerMessage = {
+export  type TServerMessage = {
     message: string;
 };
 
