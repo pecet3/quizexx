@@ -47,7 +47,7 @@ type RoundQuestion struct {
 }
 
 func (r *room) GetContentFromGPT() *[]RoundQuestion {
-	response, err := external.FetchBodyFromGPT(r.settings.GameCategory, r.settings.Difficulty, r.settings.GameCategory)
+	response, err := external.FetchBodyFromGPT(r.settings.GameCategory, r.settings.Difficulty, r.settings.MaxRounds)
 	if err != nil {
 		log.Println(err)
 	}
@@ -132,5 +132,10 @@ func (g *Game) CheckIfShouldBeNextRound() bool {
 }
 
 func (g *Game) CheckIfIsEndGame() bool {
+	// for player := range g.Players {
+	// 	if !player.isAnswered {
+	// 		return false
+	// 	}
+	// }
 	return g.State.Round >= g.MaxRounds
 }

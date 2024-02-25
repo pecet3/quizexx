@@ -115,8 +115,6 @@ func (r *room) SendServerMessage(msg string) error {
 }
 
 func (g *Game) SendGameState() error {
-	log.Println("Sending new game state in room: ", g.Room.name)
-
 	eventBytes, err := MarshalEventToBytes[GameState](*g.State, "update_gamestate")
 	if err != nil {
 		return err
@@ -133,7 +131,6 @@ func (g *Game) SendGameState() error {
 func MarshalEventToBytes[T any](payload T, eventType string) ([]byte, error) {
 	p := payload
 	stateBytes, err := json.Marshal(p)
-	log.Println("Send Game State to the client: ", p)
 	if err != nil {
 		log.Println("Error marshaling game state:", err)
 		return nil, err
