@@ -20,25 +20,24 @@ type client struct {
 	room        *room
 	isReady     bool
 	isSpectator bool
+	isAnswered  bool
 	answer      int
 	points      int
 	roundsWon   []uint
 }
 
-func (client *client) addPoints(action RoundAction) {
+func (client *client) addPointsAndToggleIsAnswered(action RoundAction) {
 	if !client.isReady {
 		return
 	}
 	if client.name == action.Name {
-
 		client.answer = action.Answer
 		if action.Answer == client.room.game.Content[client.room.game.State.Round-1].CorrectAnswer {
 			client.points = client.points + 10
-			client.room.SendServerMessage(client.name + " odpowiedział dobrze")
-			log.Println("Correct answer: ", client.name)
 		}
 		if action.Answer >= 0 {
 			client.room.game.State.PlayersFinished = append(client.room.game.State.PlayersFinished, client.name)
+			client.isAnswered = true
 		}
 	}
 }

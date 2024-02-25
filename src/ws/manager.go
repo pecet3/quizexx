@@ -109,6 +109,7 @@ func (m *Manager) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 		points:      0,
 		isReady:     false,
 		isSpectator: isSpectator,
+		isAnswered:  false,
 	}
 
 	log.Printf("New connection, userName: %v connected to room: %v", name, roomName)

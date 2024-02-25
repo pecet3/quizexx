@@ -3,6 +3,7 @@ package ws
 import (
 	"encoding/json"
 	"log"
+	"strconv"
 )
 
 type room struct {
@@ -186,15 +187,34 @@ func (r *room) Run(m *Manager) {
 			}
 
 			for client := range r.game.Players {
-				client.addPoints(*actionParsed)
-				r.game.State.Actions = append(r.game.State.Actions, *actionParsed)
-				r.game.State.Score = r.game.NewScore()
+				if !client.isAnswered {
+					err := r.SendServerMessage(client.name + " odpowiedział na pytanie.")
+					if err != nil {
+						return
+					}
+					client.addPointsAndToggleIsAnswered(*actionParsed)
+					r.game.State.Actions = append(r.game.State.Actions, *actionParsed)
+					r.game.State.Score = r.game.NewScore()
+				}
+
 			}
 			isNextRound := r.game.CheckIfShouldBeNextRound()
 			if isNextRound {
 				r.game.State.Round++
+				for client := range r.game.Players {
+					if client.isAnswered {
+						client.isAnswered = false
+					}
+
+				}
+
 				newState := r.game.NewGameState()
 				r.game.State = newState
+
+				err := r.SendServerMessage("Rozpoczęła się nowa runda: " + strconv.Itoa(r.game.State.Round))
+				if err != nil {
+					return
+				}
 			}
 			r.game.SendGameState()
 
