@@ -89,14 +89,14 @@ func (r *room) CreateGame() *Game {
 		Content:    *data,
 	}
 
-	log.Println("new game: ", newGame.Content[0].Question)
+	log.Println("created new game in room: ", r.name)
 	return newGame
 }
 
 func (g *Game) NewGameState() *GameState {
 
 	score := g.NewScore()
-	log.Println(score)
+	log.Println("created new score in room: ", g.Room.name)
 
 	return &GameState{
 		Round:    g.State.Round,

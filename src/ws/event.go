@@ -115,7 +115,7 @@ func (r *room) SendServerMessage(msg string) error {
 }
 
 func (g *Game) SendGameState() error {
-	log.Println(g.Category, "category send game")
+	log.Println("Sending new game state in room: ", g.Room.name)
 
 	eventBytes, err := MarshalEventToBytes[GameState](*g.State, "update_gamestate")
 	if err != nil {

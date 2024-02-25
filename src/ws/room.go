@@ -138,7 +138,7 @@ func (r *room) Run(m *Manager) {
 			delete(r.clients, client)
 
 			if len(r.clients) == 0 {
-				log.Println("leaving")
+				log.Println(client.name, " is leaving a room: ", r.name)
 				m.RemoveRoom(r.name)
 				return
 			}

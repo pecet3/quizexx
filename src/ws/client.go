@@ -9,7 +9,7 @@ import (
 )
 
 var (
-	pongWait     = 10 * time.Second
+	pongWait     = 600 * time.Second
 	pingInterval = (pongWait * 9) / 10
 )
 
@@ -67,8 +67,6 @@ func (c *client) read(m *Manager) {
 
 		}
 
-		log.Println(string(payload))
-
 		var request Event
 		if err := json.Unmarshal(payload, &request); err != nil {
 			log.Println("error marshaling json", err)
@@ -84,7 +82,6 @@ func (c *client) read(m *Manager) {
 				log.Println("Error marshaling game state:", err)
 				return
 			}
-			log.Println("client", string(request.Payload))
 			c.room.receiveAnswer <- request.Payload
 		}
 	}
