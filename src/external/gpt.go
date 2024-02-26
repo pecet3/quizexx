@@ -51,8 +51,8 @@ func FetchBodyFromGPT(category string, difficulty string, maxRounds string) (str
 		return "", err
 	}
 
-	content := data["choices"].([]interface{})[0].(map[string]interface{})["message"].(map[string]interface{})["content"].(string)
-
+	// content := data["choices"].([]interface{})[0].(map[string]interface{})["message"].(map[string]interface{})["content"].(string)
+	content := `[ { "question": "Jakie są najpopularniejsze dystrybucje Linuxa?", "answers": ["Ubuntu", "Fedora", "Debian", "Mint"], "correctAnswer": 0 }, { "question": "Która dystrybucja Linuxa jest sponsorowana głównie przez firmę Red Hat?", "answers": ["Ubuntu", "Fedora", "Debian", "Mint"], "correctAnswer": 1 }, { "question": "Która dystrybucja Linuxa jest znana z dbałości o stabilność i system pakietów .deb?", "answers": ["Ubuntu", "Fedora", "Debian", "Mint"], "correctAnswer": 2 }, { "question": "Która dystrybucja Linuxa często jest polecana dla początkujących użytkowników?", "answers": ["Ubuntu", "Fedora", "Debian", "Mint"], "correctAnswer": 0 }, { "question": "Która dystrybucja Linuxa znana jest z lekkości i wyglądu przypominającego Windowsa?", "answers": ["Ubuntu", "Fedora", "Debian", "Mint"], "correctAnswer": 3 } ]`
 	log.Println(content)
 	return content, nil
 }
