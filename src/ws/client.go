@@ -60,7 +60,8 @@ func (c *client) read(m *Manager) {
 		_, payload, err := c.conn.ReadMessage()
 		if err != nil {
 			if websocket.IsUnexpectedCloseError(err, websocket.CloseGoingAway, websocket.CloseAbnormalClosure) {
-				log.Println("ws err !!!!:", err)
+				log.Println("ws err or user was too long inactive:", err)
+				c.room.leave <- c
 				return
 			}
 			log.Println("ws err !!!!:", err)
