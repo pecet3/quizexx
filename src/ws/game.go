@@ -99,11 +99,12 @@ func (g *Game) NewGameState() *GameState {
 	log.Println("created new score in room: ", g.Room.name)
 
 	return &GameState{
-		Round:    g.State.Round,
-		Question: g.Content[g.State.Round-1].Question,
-		Answers:  g.Content[g.State.Round-1].Answers,
-		Actions:  []RoundAction{},
-		Score:    score,
+		Round:           g.State.Round,
+		Question:        g.Content[g.State.Round-1].Question,
+		Answers:         g.Content[g.State.Round-1].Answers,
+		Actions:         []RoundAction{},
+		Score:           score,
+		PlayersFinished: []string{},
 	}
 }
 
@@ -137,5 +138,23 @@ func (g *Game) CheckIfIsEndGame() bool {
 	// 		return false
 	// 	}
 	// }
-	return g.State.Round >= g.MaxRounds
+	isEqualMaxAndCurrentRound := g.State.Round == g.MaxRounds
+	isNextRound := g.CheckIfShouldBeNextRound()
+
+	isEverybodyAnswered := true
+
+	for player := range g.Players {
+
+		if !player.isAnswered {
+			isEverybodyAnswered = false
+		}
+	}
+	log.Println("runda", g.State.Round, " zmienna ", isEqualMaxAndCurrentRound)
+
+	log.Println("is everybody answered: ", isEverybodyAnswered)
+
+	if isEqualMaxAndCurrentRound && !isNextRound {
+		return true
+	}
+	return false
 }
