@@ -173,12 +173,6 @@ func (r *room) Run(m *Manager) {
 			if !r.game.IsGame {
 				return
 			}
-			isEndGame := r.game.CheckIfIsEndGame()
-			if isEndGame {
-				r.game = &Game{}
-				_ = r.SendServerMessage("Koniec gry")
-				return
-			}
 
 			var actionParsed *RoundAction
 			if err := json.Unmarshal(action, &actionParsed); err != nil {
@@ -187,6 +181,7 @@ func (r *room) Run(m *Manager) {
 			}
 
 			for client := range r.game.Players {
+				log.Println("is answered: ", client.isAnswered, "round ", r.game.State.Round)
 				if !client.isAnswered {
 					err := r.SendServerMessage(client.name + " odpowiedział na pytanie.")
 					if err != nil {
@@ -198,14 +193,21 @@ func (r *room) Run(m *Manager) {
 				}
 
 			}
+
 			isNextRound := r.game.CheckIfShouldBeNextRound()
-			if isNextRound {
+			isEndGame := r.game.CheckIfIsEndGame()
+			if isEndGame && !isNextRound {
+				r.game = &Game{}
+				r.game.IsGame = false
+				_ = r.SendServerMessage("Koniec gry")
+				return
+			}
+			if isNextRound && isEndGame {
 				r.game.State.Round++
 				for client := range r.game.Players {
 					if client.isAnswered {
 						client.isAnswered = false
 					}
-
 				}
 
 				newState := r.game.NewGameState()
@@ -216,6 +218,7 @@ func (r *room) Run(m *Manager) {
 					return
 				}
 			}
+			log.Println(r.game.State.Round, " round")
 			r.game.SendGameState()
 
 		}
