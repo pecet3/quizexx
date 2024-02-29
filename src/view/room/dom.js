@@ -9,7 +9,6 @@ const answerDElement = document.getElementById('answerD');
 
 
 const displayRoundElement = document.getElementById('displayRound');
-const displayCategoryElement = document.getElementById('displayCategory');
 const displayQuestionElement = document.getElementById('displayQuestion');
 const displayPlayers = document.getElementById('displayPlayersInGame')
 // const displayPlayersInGame = document.getElementById('displayPlayersInGame')
@@ -114,9 +113,9 @@ function updateDomReadyStatus(playerList) {
     displayReadyCount.innerHTML = `${readyCounter}/${playerList.length}`
 }
 
-
 function updateDomSettings(data) {
-    console.log(roomSettings + "   a")
+    const displayCategoryElement = document.getElementById('displayCategory');
     displayCategoryElement.innerHTML = data.category
+
 }
 

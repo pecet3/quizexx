@@ -50,16 +50,16 @@
     </div>
 
 
-    <div id="gameDashboard" class="m-0 sm:m-auto max-w-3xl text-lg shadow-xl shadow-slate-700 bg-pattern h-screen p-2 
+    <div id="gameDashboard" class="m-0 sm:m-auto max-w-3xl text-lg shadow-slate-700 bg-pattern h-screen p-2 
         pr-0 sm:pr-4 pl-0 sm:pl-12 rounded-r-2xl shadow-md relative">
 
         <p class="hidden sm:block absolute top-1/4 left-0 ml-1 sm:ml-2 text-5xl text-gray-600">●</p>
         <p class="hidden sm:block absolute top-3/4 left-0 ml-1 sm:ml-2 text-5xl text-gray-600">●</p>
 
         <header class="p-1 my-4 relative">
-            <h1 class="text-8xl font-black	flex justify-center items-end text-center text-black 
-                font-mono underline decoration-wavy decoration-4 decoration-teal-500 ">
-                Quizex
+            <h1 class="text-8xl font-black	flex justify-center items-end text-center text-black font-mono 
+            underline decoration-wavy decoration-4 decoration-teal-400 ">
+                <span class="text-3xl absolute -top-0.5 right-1/2 mr-2">🎲</span>Quizex<span class="text-3xl"></span>
             </h1>
         </header>
 
@@ -68,7 +68,7 @@
             <div class="text-2xl flex sm:flex-row flex-col items-center font-bold font-mono bg-gray-400 
                 rounded-t-md p-1 border-2 border-black border-b-0">
                 <span class="hidden sm:block">Kategoria:</span>
-                <span id="displayCategory" class="text-blue-800 italic">-</span>
+                <p id="displayCategory" class="text-blue-800 italic"></p>
             </div>
             <div
                 class="text-2xl flex-col sm:flex-row flex items-center gap-1 sm:gap-2 font-black font-mono bg-gray-400 rounded-t-md p-0.5 sm:p-1 px-1 sm:px-2 border-2 border-black border-b-0">
@@ -125,7 +125,7 @@
                 <p id="displayServerMessageDashboard" class="font mono text-xl font-bold">...</p>
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 ">
                     <table id="scoreTable"
-                        class="text-xl table-fixed sm:order-none order-last bg-white bg-yellow-200 shadow-md shadow-gray-600">
+                        class="text-xl table-fixed sm:order-none order-last  bg-yellow-200 shadow-md shadow-gray-600">
                         <thead class="m-auto">
                             <tr class="flex justify-center border-b border-black font-mono font-black">
                                 <th class=" m-auto">Imię</th>
@@ -139,7 +139,7 @@
                         </tbody>
                     </table>
                     <div class="flex flex-col items-center justify-center gap-0.5">
-                        <button class="bg-teal-300 font-medium
+                        <button class="bg-teal-300
                          hover:rounded-xl border-2 border-black
                         font-mono font-semibold px-4 text-3xl duration-300 text-black rounded-lg m-auto py-2"
                             id="readyButton">
