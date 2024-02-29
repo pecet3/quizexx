@@ -13,7 +13,7 @@
     <title>🎲Quizex🏆</title>
 </head>
 
-<body class="bg-gray-400 pl-0 pr-2 p-0 sm:p-8 py-2 sm:py-10 text=center m-auto">
+<body class="bg-gray-400 pl-0 pr-0 p-0 sm:p-8 py-2 sm:py-10 text-center m-auto">
 
     <div id="entryDashboard" class="paper paper-yellow p-4 pt-8 shadow-md flex flex-col gap-2 items-center
    ">
@@ -50,11 +50,11 @@
     </div>
 
 
-    <div id="gameDashboard" class="m-0 sm:m-auto max-w-3xl text-lg shadow-slate-700 bg-pattern h-screen p-2 
+    <div id="gameDashboard" class="m-0 sm:m-auto max-w-3xl text-lg shadow-slate-700 bg-pattern h-screen p-0
         pr-0 sm:pr-4 pl-0 sm:pl-12 rounded-r-2xl shadow-md relative">
 
-        <p class="hidden sm:block absolute top-1/4 left-0 ml-1 sm:ml-2 text-5xl text-gray-600">●</p>
-        <p class="hidden sm:block absolute top-3/4 left-0 ml-1 sm:ml-2 text-5xl text-gray-600">●</p>
+        <p class="hidden sm:block absolute top-1/4 left-0 ml-1 sm:ml-2 text-5xl text-gray-500">●</p>
+        <p class="hidden sm:block absolute top-3/4 left-0 ml-1 sm:ml-2 text-5xl text-gray-500">●</p>
 
         <header class="p-1 my-4 relative">
             <h1 class="text-8xl font-black	flex justify-center items-end text-center text-black font-mono 
@@ -64,7 +64,7 @@
         </header>
 
 
-        <div class="flex justify-between gap-2 z-10">
+        <div class="flex justify-between gap-2 z-10  mx-1 sm:mx-0">
             <div class="text-2xl flex sm:flex-row flex-col items-center font-bold font-mono bg-gray-400 
                 rounded-t-md p-1 border-2 border-black border-b-0">
                 <span class="hidden sm:block">Kategoria:</span>
@@ -79,7 +79,7 @@
             </div>
         </div>
 
-        <div class="flex flex-col gap-6 items-center">
+        <div class="flex flex-col gap-6 items-center mx-1">
             <form id="gameForm" class="flex flex-col gap-6 w-full md:w-[44rem] h-64">
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-gray-200 border-2 border-black
@@ -122,7 +122,9 @@
                     </label>
 
                 </div>
-                <p id="displayServerMessageDashboard" class="font mono text-xl font-bold">...</p>
+                <p id="displayServerMessageDashboard"
+                    class="font-mono text-xl sm:text-2xl font-bold italic bg-white p-2 rounded-xl bg-opacity-70">
+                </p>
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 ">
                     <table id="scoreTable"
                         class="text-xl table-fixed sm:order-none order-last  bg-yellow-200 shadow-md shadow-gray-600">
