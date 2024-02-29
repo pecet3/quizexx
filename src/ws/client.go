@@ -29,7 +29,7 @@ type client struct {
 func (client *client) addPointsAndToggleIsAnswered(action RoundAction) {
 	if client.name == action.Name {
 		client.answer = action.Answer
-		if action.Answer == client.room.game.Content[client.room.game.State.Round-1].CorrectAnswer {
+		if action.Answer == client.room.game.Content[client.room.game.State.Round-1].CorrectAnswer && !client.isAnswered {
 			client.points = client.points + 10
 		}
 		if action.Answer >= 0 && !client.isAnswered {
@@ -38,6 +38,7 @@ func (client *client) addPointsAndToggleIsAnswered(action RoundAction) {
 		}
 	}
 }
+
 func (c *client) read(m *Manager) {
 	defer func() {
 		c.conn.Close()
