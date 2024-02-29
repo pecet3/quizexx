@@ -137,7 +137,7 @@ func (g *Game) CheckIfIsEndGame() bool {
 	isEqualMaxAndCurrentRound := g.State.Round == g.MaxRounds
 	isNextRound := g.CheckIfShouldBeNextRound()
 
-	if isEqualMaxAndCurrentRound && !isNextRound {
+	if isEqualMaxAndCurrentRound && isNextRound {
 		log.Println("to jest koniec gry ")
 		return true
 	}
