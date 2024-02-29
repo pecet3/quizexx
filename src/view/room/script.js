@@ -66,11 +66,13 @@ gameForm.addEventListener("submit", (e) => {
     const answer = Number(answerValue)
     if (answerValue !== null && !isAnswerSent) {
         sendAnswer(answer);
+        isAnswerSent = true
         formData = null
         return
     } else {
         console.log("Nie wybrano odpowiedzi");
     }
+    console.log(isAnswerSent)
 });
 
 ////////// W E B socket connection /////

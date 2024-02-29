@@ -115,8 +115,8 @@ function updateDomReadyStatus(playerList) {
 }
 
 
-function updateDomSettings(roomSettings) {
+function updateDomSettings(data) {
     console.log(roomSettings + "   a")
-    displayCategoryElement.innerHTML = roomSettings.category
+    displayCategoryElement.innerHTML = data.category
 }
 

@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"log"
 	"strconv"
+	"time"
 )
 
 type room struct {
@@ -151,7 +152,7 @@ func (r *room) Run(m *Manager) {
 			r.SendServerMessage(client.name + " jest gotowy")
 			r.SendReadyStatus()
 			if ok := r.CheckIfEveryoneIsReady(); ok {
-				err := r.SendServerMessage("⏳Tworzenie gry🎲, prosimy o cierpliwość...")
+				err := r.SendServerMessage("⏳Tworzenie gry🎲 <br> Prosimy o cierpliwość...")
 				if err != nil {
 					log.Println("run err send server msg")
 					return
@@ -172,7 +173,6 @@ func (r *room) Run(m *Manager) {
 			if !r.game.IsGame {
 				return
 			}
-
 			var actionParsed *RoundAction
 			if err := json.Unmarshal(action, &actionParsed); err != nil {
 				log.Println("Error marshaling game state:", err)
@@ -181,7 +181,6 @@ func (r *room) Run(m *Manager) {
 
 			for client := range r.game.Players {
 				log.Println("is answered: ", client.isAnswered, "round ", r.game.State.Round)
-
 				if !client.isAnswered {
 					err := r.SendServerMessage(client.name + " odpowiedział na pytanie.")
 					if err != nil {
@@ -216,7 +215,7 @@ func (r *room) Run(m *Manager) {
 					newState := r.game.NewGameState()
 					r.game.State = newState
 				}
-
+				time.Sleep(500 * time.Millisecond)
 				err := r.SendServerMessage("Rozpoczęła się nowa runda: " + strconv.Itoa(r.game.State.Round))
 				if err != nil {
 					return

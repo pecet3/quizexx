@@ -50,6 +50,9 @@ function updateGameState(event) {
             gameDashboard: true,
         })
     }
+    if (event.payload.round > gameState.round) {
+        isAnswerSent = false
+    }
     gameState = event.payload
     console.log(gameState, "update")
 
@@ -103,6 +106,9 @@ function sendReadines() {
 
 
 function sendAnswer(answer) {
+    if (isAnswerSent) {
+        return
+    }
     const payload = {
         name: userName,
         round: gameState.round,
@@ -110,5 +116,6 @@ function sendAnswer(answer) {
         points: 0,
     }
     sendEvent("send_answer", payload)
+    isAnswerSent = true
     return
 }
