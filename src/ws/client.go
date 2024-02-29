@@ -27,15 +27,12 @@ type client struct {
 }
 
 func (client *client) addPointsAndToggleIsAnswered(action RoundAction) {
-	if !client.isReady {
-		return
-	}
 	if client.name == action.Name {
 		client.answer = action.Answer
 		if action.Answer == client.room.game.Content[client.room.game.State.Round-1].CorrectAnswer {
 			client.points = client.points + 10
 		}
-		if action.Answer >= 0 {
+		if action.Answer >= 0 && !client.isAnswered {
 			client.room.game.State.PlayersFinished = append(client.room.game.State.PlayersFinished, client.name)
 			client.isAnswered = true
 		}

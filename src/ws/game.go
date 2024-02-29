@@ -133,28 +133,14 @@ func (g *Game) CheckIfShouldBeNextRound() bool {
 }
 
 func (g *Game) CheckIfIsEndGame() bool {
-	// for player := range g.Players {
-	// 	if !player.isAnswered {
-	// 		return false
-	// 	}
-	// }
+
 	isEqualMaxAndCurrentRound := g.State.Round == g.MaxRounds
 	isNextRound := g.CheckIfShouldBeNextRound()
 
-	isEverybodyAnswered := true
-
-	for player := range g.Players {
-
-		if !player.isAnswered {
-			isEverybodyAnswered = false
-		}
-	}
-	log.Println("runda", g.State.Round, " zmienna ", isEqualMaxAndCurrentRound)
-
-	log.Println("is everybody answered: ", isEverybodyAnswered)
-
 	if isEqualMaxAndCurrentRound && !isNextRound {
+		log.Println("to jest koniec gry ")
 		return true
 	}
+	log.Println("to nie jest koniec gry ")
 	return false
 }

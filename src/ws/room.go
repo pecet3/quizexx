@@ -54,14 +54,13 @@ func (m *Manager) CreateRoom(settings Settings) *room {
 	defer m.mutex.Unlock()
 
 	if existingRoom, ok := m.rooms[settings.Name]; ok {
-		log.Println("existingRoom", existingRoom)
 		return existingRoom
 	}
 
 	newRoom := NewRoom(settings)
 	m.rooms[settings.Name] = newRoom
 
-	log.Println("Created a room with name:", m.rooms, settings.Name)
+	log.Println("Created a room with name: ", settings.Name)
 	return newRoom
 }
 
@@ -182,27 +181,27 @@ func (r *room) Run(m *Manager) {
 
 			for client := range r.game.Players {
 				log.Println("is answered: ", client.isAnswered, "round ", r.game.State.Round)
-				if !client.isAnswered {
-					err := r.SendServerMessage(client.name + " odpowiedział na pytanie.")
-					if err != nil {
-						return
-					}
-					client.addPointsAndToggleIsAnswered(*actionParsed)
-					r.game.State.Actions = append(r.game.State.Actions, *actionParsed)
-					r.game.State.Score = r.game.NewScore()
+
+				err := r.SendServerMessage(client.name + " odpowiedział na pytanie.")
+				if err != nil {
+					return
 				}
+				client.addPointsAndToggleIsAnswered(*actionParsed)
+				r.game.State.Actions = append(r.game.State.Actions, *actionParsed)
+				r.game.State.Score = r.game.NewScore()
 
 			}
 
 			isNextRound := r.game.CheckIfShouldBeNextRound()
+
 			isEndGame := r.game.CheckIfIsEndGame()
-			if isEndGame && !isNextRound {
+			if isEndGame {
 				r.game = &Game{}
 				r.game.IsGame = false
 				_ = r.SendServerMessage("Koniec gry")
 				return
 			}
-			if isNextRound && isEndGame {
+			if isNextRound {
 				r.game.State.Round++
 				for client := range r.game.Players {
 					if client.isAnswered {
@@ -210,8 +209,10 @@ func (r *room) Run(m *Manager) {
 					}
 				}
 
-				newState := r.game.NewGameState()
-				r.game.State = newState
+				if !isEndGame {
+					newState := r.game.NewGameState()
+					r.game.State = newState
+				}
 
 				err := r.SendServerMessage("Rozpoczęła się nowa runda: " + strconv.Itoa(r.game.State.Round))
 				if err != nil {
