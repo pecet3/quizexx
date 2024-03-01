@@ -180,18 +180,19 @@ func (r *room) Run(m *Manager) {
 			}
 
 			for client := range r.game.Players {
-				log.Println("is answered: ", client.isAnswered, "round ", r.game.State.Round)
-				if !client.isAnswered {
-					err := r.SendServerMessage(client.name + " odpowiedział na pytanie.")
-					if err != nil {
-						return
+				if client.name == actionParsed.Name {
+					log.Println("is answered: ", client.isAnswered, "round ", r.game.State.Round)
+					if !client.isAnswered {
+						err := r.SendServerMessage(client.name + " odpowiedział na pytanie.")
+						if err != nil {
+							return
+						}
 					}
+
+					client.addPointsAndToggleIsAnswered(*actionParsed)
+					r.game.State.Actions = append(r.game.State.Actions, *actionParsed)
+					r.game.State.Score = r.game.NewScore()
 				}
-
-				client.addPointsAndToggleIsAnswered(*actionParsed)
-				r.game.State.Actions = append(r.game.State.Actions, *actionParsed)
-				r.game.State.Score = r.game.NewScore()
-
 			}
 
 			isNextRound := r.game.CheckIfShouldBeNextRound()
