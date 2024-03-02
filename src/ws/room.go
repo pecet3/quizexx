@@ -199,7 +199,6 @@ func (r *room) Run(m *Manager) {
 
 			isEndGame := r.game.CheckIfIsEndGame()
 			if isEndGame {
-				r.game = &Game{}
 				r.game.IsGame = false
 				_ = r.SendServerMessage("Koniec gry")
 				return
