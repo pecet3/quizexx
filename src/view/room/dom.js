@@ -15,7 +15,7 @@ const displayPlayers = document.getElementById('displayPlayersInGame')
 const displayReadyCount = document.getElementById('displayReadyCount')
 const displayServerMessageWaiting = document.getElementById('displayServerMessageWaiting')
 const displayServerMessageDashboard = document.getElementById('displayServerMessageDashboard')
-
+const displayCountAnswered = document.getElementById('displayAnswered')
 
 function updateVirtualDom(newVirtualDom) {
     virtualDom = newVirtualDom
@@ -65,8 +65,9 @@ function updateDomGameState() {
 
     displayRoundElement.innerHTML = gameState.round
     displayQuestionElement.innerHTML = gameState.question
-    displayCategoryElement.innerHTML = gameState.category
     // displayPlayersInGame.innerHTML = gameState.actions.length
+
+    displayCountAnswered.innerHTML = `${gameState.playersFinished.length}/${gameState.score.length}`
 }
 
 function updateDomScore(playerList) {
