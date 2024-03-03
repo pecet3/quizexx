@@ -9,7 +9,7 @@ COPY go.mod go.sum ./
 RUN go mod download
 
 # Skopiuj cały kod źródłowy do kontenera
-COPY . .
+COPY src .
 
 # Skompiluj aplikację do binarnego pliku wykonywalnego
 RUN CGO_ENABLED=0 GOOS=linux go build -o /quizex
@@ -21,7 +21,7 @@ FROM alpine:latest
 WORKDIR /app
 COPY --from=builder /app/view ./src/view
 
-COPY --from=builder /quizex .
+COPY --from=builder /czatex .
 
 EXPOSE 8080
 
