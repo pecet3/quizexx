@@ -5,7 +5,7 @@ FROM golang:latest AS builder
 WORKDIR /app
 
 # Skopiuj pliki go.mod i go.sum i pobierz zależności
-COPY go.mod go.sum ./
+COPY src/go.mod src/go.sum ./
 RUN go mod download
 
 # Skopiuj cały kod źródłowy do kontenera
