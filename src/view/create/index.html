@@ -19,12 +19,10 @@
         </h1>
     </header>
 
-    <div id="entryDashboard" class="bg-blue-300 max-w-sm sm:max-w-lg text-sm sm:text-lg
-     m-auto  border-r-4 border-b-4 border-r-white
-     border-b-white outline outline-1
-        border-black rounded-r-2xl flex items-center">
-        <form id="settingsForm" class="flex flex-col py-8 px-16 border border-black rounded-r-xl
-         gap-4 items-center text-xl">
+    <div id="entryDashboard" class="paper paper-yellow max-w-sm sm:max-w-lg text-sm sm:text-lg p-4 my-4
+     m-auto  flex items-center">
+        <div class="tape-section"></div>
+        <form id="settingsForm" class="flex flex-col gap-4 items-center text-xl">
             <input type="text" id="nameInput" class="p-0.5 text-2xl rounded-sm font m-auto border border-black
                 bg-white placeholder:text-gray-400 placeholder:text-center text-black text-center"
                 placeholder="Nazwa pokoju" required />
@@ -51,10 +49,11 @@
             </select>
             <button type="submit" class="bg-teal-300 my-4 font-thin
             hover:shadow-none hover:rounded-xl border border-black hover:scale-[0.995]
-            font-mono font-semibold px-2 text-2xl duration-300 text-black rounded-lg m-auto py-1" id="readyButton"
+            font-mono px-2 text-2xl duration-300 text-black rounded-lg m-auto py-1" id="readyButton"
                 id="createRoom">Utwórz
                 pokój</button>
         </form>
+        <div class="tape-section"></div>
 
     </div>
 

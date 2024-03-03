@@ -201,7 +201,7 @@ func (r *room) Run(m *Manager) {
 			if isEndGame {
 				r.game.IsGame = false
 				_ = r.SendServerMessage("Koniec gry")
-				return
+				continue
 			}
 			if isNextRound {
 				r.game.State.Round++
