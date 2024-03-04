@@ -9,7 +9,7 @@ COPY src/go.mod src/go.sum ./
 RUN go mod download
 
 # Skopiuj cały kod źródłowy do kontenera
-COPY src .
+COPY ./src .
 
 # Skompiluj aplikację do binarnego pliku wykonywalnego
 RUN CGO_ENABLED=0 GOOS=linux go build -o /quizex
