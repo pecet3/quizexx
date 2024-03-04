@@ -19,9 +19,9 @@ FROM alpine:latest
 
 # Utwórz katalog na pliki 'view' i skopiuj je
 WORKDIR /app
-COPY --from=builder /app/view ./src/view
+COPY --from=builder /app/view ./view
 
-COPY --from=builder /czatex .
+COPY --from=builder /quizex .
 
 EXPOSE 8080
 
