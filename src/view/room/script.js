@@ -70,9 +70,8 @@ gameForm.addEventListener("submit", (e) => {
         formData = null
         return
     } else {
-        console.log("Nie wybrano odpowiedzi");
+        alert("Nie wybrano odpowiedzi");
     }
-    console.log(isAnswerSent)
 });
 
 ////////// W E B socket connection /////
@@ -82,7 +81,6 @@ function connectWs() {
         const wsUrl = getWsUrl()
         conn = new WebSocket(wsUrl)
         conn.onopen = (e) => {
-            console.log("ok")
             updateVirtualDom({
                 entryDashboard: false,
                 waitingRoomDashboard: true,
@@ -122,7 +120,6 @@ function getWsUrl() {
             maxRounds: urlParams.get('maxRounds') || '',
             category: urlParams.get('category') || '',
         }
-        console.log(gameSettings)
         return `${baseUrl}?new=true&room=${roomName}&name=${userName}&difficulty=${gameSettings.difficulty}&maxRounds=${gameSettings.maxRounds}&category=${gameSettings.category}`
     } else {
         return `${baseUrl}?room=${roomName}&name=${userName}`

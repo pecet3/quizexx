@@ -19,7 +19,6 @@ const displayCountAnswered = document.getElementById('displayAnswered')
 
 function updateVirtualDom(newVirtualDom) {
     virtualDom = newVirtualDom
-    console.log(virtualDom)
     if (gameState.isGame) {
         virtualDom = {
             entryDashboard: false,

@@ -5,7 +5,6 @@ class Event {
     }
 }
 function routeEvent(event) {
-    console.log(event.type)
     if (event.type === undefined) {
         alert("no type field in the event")
     }
@@ -31,7 +30,6 @@ function routeEvent(event) {
             })
             break
         case "room_settings":
-            console.log(event)
             updateRoomSettings(event)
             break
         default:
@@ -54,7 +52,6 @@ function updateGameState(event) {
         isAnswerSent = false
     }
     gameState = event.payload
-    console.log(gameState, "update")
 
     updateDomScore(gameState.score)
     updateDomGameState()
@@ -76,7 +73,6 @@ function updateReadyStatus(event) {
 
 function updateRoomSettings(event) {
     const data = event.payload
-    console.log(data)
     roomSettings = data
     updateDomSettings(data)
 }
