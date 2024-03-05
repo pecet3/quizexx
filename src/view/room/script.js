@@ -111,7 +111,7 @@ function getRoomName() {
 }
 
 function getWsUrl() {
-    const baseUrl = "wss://0.0.0.0:8090/ws"
+    const baseUrl = "wss://quizex.pecet.it/ws"
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);
     const isNewGame = urlParams.get('newGame') === 'true';
