@@ -82,8 +82,15 @@ func (m *Manager) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 			conn.Close()
 			return
 		}
-
 	}
+
+	for client := range currentRoom.clients {
+		if client.name == name {
+			conn.Close()
+			return
+		}
+	}
+
 	if currentRoom == nil {
 		if newRoom == "true" {
 			currentRoom = m.CreateRoom(settings)
