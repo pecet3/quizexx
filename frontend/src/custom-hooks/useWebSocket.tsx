@@ -10,50 +10,63 @@ export interface IWSSettings {
 
 export const useWebSocket = () => {
     const { appState } = useAppStateContext();
-
     const settings = appState.settings;
     const user = appState.user;
     user.name = "test"
     const [socket, setSocket] = useState<WebSocket | null>(null);
     const [isConnected, setIsConnected] = useState(false);
+    const roomName = settings.roomName
+    const userName = user.name + "test"
 
-    useEffect(() => {
-        const createSocket = async () => {
-            try {
-                const isNewGame = settings.name === "";
-                let url = `ws://127.0.0.1:8090/ws?room=${settings.name}&name=${user.name}`;
+    function getWsUrl(isNewGame: boolean) {
+        const baseUrl = "ws://127.0.0.1:8090/ws"
 
-                if (isNewGame) {
-                    url += `&new=true&difficulty=${settings.difficulty}&maxRounds=${settings.maxRounds}&category=${settings.category}`;
-                }
-
-                const ws = new WebSocket(url);
-
-                ws.onopen = () => {
-                    setIsConnected(true);
-                    setSocket(ws);
-                    console.log("WebSocket connection opened successfully!");
-                };
-
-                ws.onerror = (error) => {
-                    console.error("WebSocket error:", error);
-                };
-
-                ws.onclose = () => {
-                    setIsConnected(false);
-                    setSocket(null);
-                    console.log("WebSocket connection closed.");
-                };
-
-                // Cleanup function to close the WebSocket connection on unmount
-                return () => ws.close();
-            } catch (error) {
-                console.error("Error creating WebSocket:", error);
+        console.log(settings, " sdadsa", user.name)
+        if (isNewGame) {
+            const gameSettings = {
+                difficulty: settings.difficulty || '',
+                maxRounds: settings.maxRounds || '',
+                category: settings.category || '',
             }
-        };
+            return `${baseUrl}?new=true&room=${roomName}&name=${userName}&difficulty=${gameSettings.difficulty}&maxRounds=${gameSettings.maxRounds}&category=${gameSettings.category}`
+        } else {
+            return `${baseUrl}?room=${roomName}&name=${userName}`
+        }
+    }
 
-        createSocket();
-    }, [appState.settings, appState.user]);
 
-    return { socket, isConnected, setSocket };
+    const createSocket = async (isNewGame: boolean) => {
+        if (settings.roomName === "" || user.name === "") {
+            return
+        }
+        try {
+            const url = await getWsUrl(isNewGame)
+            console.log(url, " <=url")
+            const ws = new WebSocket(url);
+
+            ws.onopen = () => {
+                setIsConnected(true);
+                setSocket(ws);
+                console.log("WebSocket connection opened successfully!");
+            };
+
+            ws.onerror = (error) => {
+                console.error("WebSocket error:", error);
+            };
+
+            ws.onclose = () => {
+                setIsConnected(false);
+                setSocket(null);
+                console.log("WebSocket connection closed.");
+            };
+
+            // Cleanup function to close the WebSocket connection on unmount
+            return () => ws.close();
+        } catch (error) {
+            console.error("Error creating WebSocket:", error);
+        }
+    };
+
+
+    return { socket, createSocket };
 };

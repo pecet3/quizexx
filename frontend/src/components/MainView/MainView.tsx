@@ -1,15 +1,16 @@
 
 import { Link } from "react-router-dom";
 import { useAppStateContext } from "../../custom-hooks/useAppContext";
+import { useWebSocket } from "../../custom-hooks/useWebSocket";
 
 
 export function MainView() {
   const { appState } = useAppStateContext();
+  const { socket, createSocket } = useWebSocket();
 
 
   const handleJoinRoom = () => {
-    console.log("Room Name:", appState.settings.name);
-    console.log(appState)
+    createSocket(false)
   };
 
   console.log(appState.settings)

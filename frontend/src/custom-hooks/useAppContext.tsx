@@ -17,7 +17,7 @@ const AppStateContext = createContext<IAppStateProps | undefined>(undefined);
 export const AppStateProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     const [appState, setAppState] = useState<TAppState>({
         settings: {
-            name: "Error Room",
+            roomName: "",
             category: "",
             difficulty: "easy",
             maxRounds: "5",
@@ -35,8 +35,8 @@ export const AppStateProvider: React.FC<{ children: ReactNode }> = ({ children }
         }
     });
     useEffect(() => {
-        console.log(appState)
-    }, [appState])
+
+    }, [appState.settings])
     return (
         <AppStateContext.Provider value={{ appState, setAppState }}>
             {children}

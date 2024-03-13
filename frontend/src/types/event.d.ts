@@ -11,13 +11,13 @@ export type TReadyClient = {
     isReady: boolean;
 };
 export type TRoomSettings = {
-    name: string;
+    roomName: string;
     category: string;
     difficulty: string;
     maxRounds: string;
 };
 
-export  type TServerMessage = {
+export type TServerMessage = {
     message: string;
 };
 

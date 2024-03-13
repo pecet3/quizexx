@@ -1,35 +1,38 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { TRoomSettings } from "../../types/event";
 import { useAppStateContext } from "../../custom-hooks/useAppContext";
+import { useWebSocket } from "../../custom-hooks/useWebSocket";
 
 export function CreateRoom() {
   const { appState, setAppState } = useAppStateContext();
-
+  const { socket, createSocket } = useWebSocket();
   const settings = appState.settings
+  const [isNewGame, setIsNewGame] = useState(false);
   const [roomSettings, setRoomSettings] = useState<TRoomSettings>({
-    name: settings.name,
+    roomName: settings.roomName,
     category: settings.category,
     difficulty: settings.difficulty,
     maxRounds: settings.maxRounds,
   })
 
-  const handleFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleFormSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-
     setAppState((prev) => ({
       ...prev,
       settings: {
-        name: roomSettings.name,
+        roomName: roomSettings.roomName,
         category: roomSettings.category,
         maxRounds: roomSettings.maxRounds,
         difficulty: roomSettings.difficulty,
       }
     }))
-
+    setIsNewGame(true)
   };
 
 
-
+  useEffect(() => {
+    createSocket(isNewGame)
+  }, [isNewGame])
 
   return (
     <section
@@ -50,7 +53,7 @@ export function CreateRoom() {
                 bg-white placeholder:text-gray-400 placeholder:text-center text-black text-center"
           placeholder="Nazwa pokoju"
           required
-          onChange={(e) => setRoomSettings((prev) => ({ ...prev, name: e.target.value }))}
+          onChange={(e) => setRoomSettings((prev) => ({ ...prev, roomName: e.target.value }))}
 
         />
         <div className="italic p-2 w-80 flex flex-col items-center">
