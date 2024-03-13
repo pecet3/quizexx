@@ -62,6 +62,7 @@ func (r *room) GetContentFromGPT() *[]RoundQuestion {
 	if err != nil {
 		maxRounds = 5
 	}
+
 	if len(*data) != maxRounds {
 		log.Println("ChatGPT returned insufficient content. Trying to process again...")
 		return r.GetContentFromGPT()
