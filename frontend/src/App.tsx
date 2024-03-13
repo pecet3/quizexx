@@ -6,6 +6,40 @@ import { MainView } from "./components/MainView/MainView";
 import { Room } from "./components/Room/Room";
 import { TGameState, TRoomSettings } from "./types/event";
 import { AppStateProvider } from "./custom-hooks/useAppContext";
+import {
+  createBrowserRouter,
+  RouterProvider,
+
+} from "react-router-dom";
+const router = createBrowserRouter([
+  {
+    path: "/",
+    element: (
+      <>
+        <Header />
+        <MainView />
+      </>
+    ),
+  },
+  {
+    path: "/create",
+    element: (
+      <>
+        <Header />
+        <CreateRoom />
+      </>
+    ),
+  },
+  {
+    path: "room",
+    element: (
+      <>
+        <Header />
+        <Room />
+      </>
+    ),
+  },
+]);
 
 function App() {
 
@@ -13,10 +47,8 @@ function App() {
   return (
     <>
       <AppStateProvider>
-        <Header />
-        {/* <MainView /> */}
-        {/* <CreateRoom /> */}
-        <Room />
+        <RouterProvider router={router} />
+
       </AppStateProvider>
 
     </>

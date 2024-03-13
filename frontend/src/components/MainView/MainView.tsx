@@ -1,4 +1,5 @@
 
+import { Link } from "react-router-dom";
 import { useAppStateContext } from "../../custom-hooks/useAppContext";
 
 
@@ -39,14 +40,14 @@ export function MainView() {
             Dołącz
           </button>
           <p className="text-black text-center font-bold">lub...</p>
-          <a
-            href="/create"
+          <Link
+            to="/create"
             className="bg-blue-200 
             hover:shadow-none hover:rounded-xl border border-black hover:scale-[0.995]
             font-mono font-semibold px-2 text-2xl duration-300 text-black rounded-lg m-auto py-1"
           >
             Utwórz pokój
-          </a>
+          </Link>
         </form>
       </div>
     </div>

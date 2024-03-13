@@ -33,13 +33,12 @@ export function CreateRoom() {
 
   return (
     <section
-      className="bg-blue-300 w-auto sm:w-[28rem] text-sm sm:text-lg
-     m-auto  border-r-4 border-b-4 border-r-white
-     border-b-white outline outline-1 rounded-r-xl
-        "
+      className="paper paper-yellow max-w-sm sm:max-w-lg text-sm sm:text-lg p-4 my-4
+      m-auto  flex items-center        "
     >
+      <div className="tape-section"></div>
       <form
-        className="flex flex-col p-6 border border-black rounded-r-xl
+        className="flex flex-col p-6 rounded-r-xl
          gap-4 items-center text-xl"
         onSubmit={handleFormSubmit}
 
@@ -120,6 +119,7 @@ export function CreateRoom() {
           Utwórz pokój
         </button>
       </form>
+      <div className="tape-section"></div>
     </section>
   );
 }
