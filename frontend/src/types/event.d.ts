@@ -1,5 +1,5 @@
 interface IEvent {
-    type: "ready_status" | "room_settings" | "update_gamestate" | "server_message" | "finish_game";
+    type: "ready_status" | "room_settings" | "update_gamestate" | "server_message" | "finish_game" | "update_players";
     payload: TReadyStatus | TRoomSettings | TGameState | TServerMessage | TFinishGame;
 };
 

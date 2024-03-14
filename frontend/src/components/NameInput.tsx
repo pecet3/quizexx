@@ -23,7 +23,7 @@ export function NameInput({ setPublicNameInput }: { setPublicNameInput: React.Di
             <input
                 type="text"
                 className="p-0.5 text-2xl rounded-sm font m-auto border border-black bg-white placeholder:text-gray-400 placeholder:text-center text-black text-center"
-                placeholder="Podaj swój nick"
+                placeholder="Your name..."
                 value={userName}
                 onChange={(e) => setUserName(e.target.value)}
             />
@@ -33,7 +33,7 @@ export function NameInput({ setPublicNameInput }: { setPublicNameInput: React.Di
                      border-black hover:scale-[0.995] font-mono px-4 text-2xl duration-300 text-black rounded-lg m-auto py-1.5"
 
             >
-                Dołącz
+                Join
             </button>
 
         </div>

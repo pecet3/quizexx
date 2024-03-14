@@ -22,15 +22,16 @@ export const GameDashboard = () => {
             <Header />
             <div className="flex justify-between gap-2 z-10">
                 <div className="text-2xl flex sm:flex-row flex-col items-center font-bold font-mono bg-gray-400 rounded-t-md p-1 border-2 border-black border-b-0">
-                    <span className="hidden sm:block">Kategoria:</span>
+                    <span className="hidden sm:block">Category:</span>
                     <span className="text-blue-800 italic">
                         {settings.category}
                     </span>
                 </div>
-                <div className="text-2xl flex-col sm:flex-row flex items-center gap-1 sm:gap-2 font-black font-mono bg-gray-400 
+                <div className="text-2xl flex-col sm:flex-row flex items-center gap-1 
+                sm:gap-2 font-black font-mono bg-gray-400 
                 rounded-t-md p-0.5 sm:p-1 px-1 sm:px-2 border-2 border-black border-b-0">
                     <div className="flex items-start m-auto gap-1">
-                        <p>Runda: </p>
+                        <p>Round: </p>
                         <p id="displayRound" className="text-blue-800">
                             {gameState.round}
                         </p>
@@ -89,7 +90,8 @@ export const GameDashboard = () => {
                         </label>
                         <label
                             htmlFor="a4"
-                            className="answer-option bg-purple-200 cursor-pointer flex justify-center items-center rounded-md hover:rounded-lg p-1 border border-black"
+                            className="answer-option bg-purple-200 cursor-pointer flex 
+                            justify-center items-center rounded-md hover:rounded-lg p-1 border border-black"
                         >
                             <input
                                 type="radio"
@@ -110,25 +112,30 @@ export const GameDashboard = () => {
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 ">
                         <table
                             id="scoreTable"
-                            className="text-xl table-fixed sm:order-none order-last bg-yellow-200 shadow-md shadow-gray-600"
+                            className="text-xl table-fixed sm:order-none order-last 
+                            bg-yellow-200 shadow-md shadow-gray-600"
                         >
                             <thead className="m-auto">
-                                <tr className="flex justify-center border-b border-black font-mono font-black">
-                                    <th className="m-auto">Imię</th>
-                                    <th className="m-auto">Punkty</th>
+                                <tr className="flex justify-center border-b border-black 
+                                font-mono font-black">
+                                    <th className="m-auto">Name</th>
+                                    <th className="m-auto">Points</th>
                                 </tr>
                             </thead>
                             <tbody
                                 id="scoreTableBody"
-                                className="flex flex-col [&_tr]:py-2 [&_tr]:gap-4 [&_tr]:flex [&_tr]:justify-between [&_td]:m-auto "
+                                className="flex flex-col 
+                                [&_tr]:py-2 [&_tr]:gap-4 [&_tr]:flex 
+                                [&_tr]:justify-between [&_td]:m-auto "
                             ></tbody>
                         </table>
                         <div className="flex flex-col items-center justify-center gap-0.5">
                             <button
-                                className="bg-teal-300 hover:rounded-xl border-2 border-black font-mono font-semibold px-4 text-3xl duration-300 text-black rounded-lg m-auto py-2"
+                                className="bg-teal-300 hover:rounded-xl border-2 border-black font-mono 
+                                font-light px-3 text-3xl duration-300 text-black rounded-lg m-auto py-2"
                                 id="submitAnswerButton"
                             >
-                                Wyślij Odpowiedź
+                                Send an Answer
                             </button>
                             <div className="flex gap-0.5">
                                 <span className="text-lg font-sans font-bold">[</span>

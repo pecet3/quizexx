@@ -1,7 +1,7 @@
 import { useEffect, useState, useContext } from "react";
 
 import { TAppState, TUser, useAppStateContext } from "./useAppContext";
-import { TRoomSettings } from "../types/event";
+import { IEvent, TRoomSettings } from "../types/event";
 
 export interface IWSSettings {
     settings: TRoomSettings;
@@ -9,7 +9,7 @@ export interface IWSSettings {
 }
 
 export const useWebSocket = () => {
-    const { appState } = useAppStateContext();
+    const { appState, setAppState } = useAppStateContext();
     const settings = appState.settings;
     const user = appState.user;
     const [socket, setSocket] = useState<WebSocket | null>(null);
@@ -32,7 +32,83 @@ export const useWebSocket = () => {
         }
     }
 
+    function routeEvent(event: IEvent) {
+        if (event.type === undefined) {
+            alert("no type field in the event")
+        }
+        switch (event.type) {
+            case "update_gamestate":
+                updateGameState(event)
+                break
+            case "update_players":
+                updatePlayers(event)
+                break
+            case "server_message":
+                updateServerMessage(event)
+                break
+            case "ready_status":
+                updateReadyStatus(event)
+                break
+            case "finish_game":
 
+                break
+            case "room_settings":
+                updateRoomSettings(event)
+                break
+            default:
+                alert("unsupporting message type")
+                break;
+        }
+    }
+
+    function updateGameState(event: IEvent) {
+        if (gameState.isGame) {
+            updateVirtualDom({
+                entryDashboard: false,
+                waitingRoomDashboard: false,
+                gameDashboard: true,
+            })
+        }
+        if (event.payload.round > gameState.round) {
+            isAnswerSent = false
+        }
+        gameState = event.payload
+
+        updateDomScore(gameState.score)
+        updateDomGameState()
+        return
+    }
+
+    function updatePlayers(event: IEvent) {
+        const newPlayersState = event.payload
+        gameState.players = newPlayersState
+        updateDomGameState()
+
+        return
+    }
+
+    function updateReadyStatus(event: IEvent) {
+        const players = event.payload.clients
+        updateDomReadyStatus(players)
+    }
+
+    function updateRoomSettings(event: IEvent) {
+        const data = event.payload
+        roomSettings = data
+        updateDomSettings(data)
+    }
+
+    function updateServerMessage(event: IEvent) {
+        const data = event.payload.message
+
+        updateDomServerMessage(data)
+    }
+
+    function sendEvent(eventName, payload) {
+        const event = new Event(eventName, payload)
+
+        ws.send(JSON.stringify(event))
+    }
     const createSocket = async (isNewGame: boolean) => {
         if (settings.roomName === "" || user.name === "") {
             return
@@ -58,7 +134,10 @@ export const useWebSocket = () => {
                 console.log("WebSocket connection closed.!!!!!!!!!");
             };
 
-            // Cleanup function to close the WebSocket connection on unmount
+            ws.onmessage = (e) => {
+                const event = JSON.parse(e.data) as IEvent
+                routeEvent(event)
+            }
             return () => ws.close();
         } catch (error) {
             console.error("Error creating WebSocket:", error);

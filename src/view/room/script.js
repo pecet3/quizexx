@@ -70,7 +70,7 @@ gameForm.addEventListener("submit", (e) => {
         formData = null
         return
     } else {
-        alert("Nie wybrano odpowiedzi");
+        alert("no answer :(");
     }
 });
 
@@ -90,6 +90,7 @@ function connectWs() {
 
         conn.onclose = (e) => {
             alert("closed connection with ws server ", e.data)
+
         }
 
         conn.onmessage = (e) => {
@@ -109,7 +110,7 @@ function getRoomName() {
 }
 
 function getWsUrl() {
-    const baseUrl = "wss://quizex.pecet.it/ws"
+    const baseUrl = "ws://127.0.0.1:8090/ws"
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);
     const isNewGame = urlParams.get('newGame') === 'true';

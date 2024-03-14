@@ -53,15 +53,11 @@ func (m *Manager) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	}
 
 	roomName := req.URL.Query().Get("room")
-
 	if roomName == "" {
-		conn.Close()
 		return
 	}
-
 	name := req.URL.Query().Get("name")
 	if name == "" || name == "serwer" || name == "klient" {
-		conn.Close()
 		return
 	}
 	difficulty := req.URL.Query().Get("difficulty")
@@ -69,13 +65,8 @@ func (m *Manager) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	category := req.URL.Query().Get("category")
 	newRoom := req.URL.Query().Get("new")
 
-	if difficulty == "" || maxRounds == "" || category == "" || newRoom == "" {
+	if len(category) >= 32 || len(category) < 5 {
 		conn.Close()
-		return
-	}
-	if len(category) >= 32 || len(category) < 6 {
-		conn.Close()
-
 		return
 	}
 
@@ -89,13 +80,6 @@ func (m *Manager) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 
 	if currentRoom != nil {
 		if newRoom == "true" {
-			conn.Close()
-			return
-		}
-	}
-
-	for client := range currentRoom.clients {
-		if client.name == name {
 			conn.Close()
 			return
 		}

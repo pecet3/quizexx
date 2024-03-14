@@ -12,7 +12,7 @@ node_modules
 dist
 dist-ssr
 *.local
-# frontend
+frontend
 
 .vscode/*
 !.vscode/extensions.json
