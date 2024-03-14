@@ -73,7 +73,9 @@ func (m *Manager) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 		conn.Close()
 		return
 	}
-	if len(category) >= 32 {
+	if len(category) >= 32 || len(category) < 6 {
+		conn.Close()
+
 		return
 	}
 

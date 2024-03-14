@@ -12,11 +12,9 @@ export const useWebSocket = () => {
     const { appState } = useAppStateContext();
     const settings = appState.settings;
     const user = appState.user;
-    user.name = "test"
     const [socket, setSocket] = useState<WebSocket | null>(null);
-    const [isConnected, setIsConnected] = useState(false);
     const roomName = settings.roomName
-    const userName = user.name + "test"
+    const userName = user.name
 
     function getWsUrl(isNewGame: boolean) {
         const baseUrl = "ws://127.0.0.1:8090/ws"
@@ -45,19 +43,19 @@ export const useWebSocket = () => {
             const ws = new WebSocket(url);
 
             ws.onopen = () => {
-                setIsConnected(true);
                 setSocket(ws);
                 console.log("WebSocket connection opened successfully!");
             };
 
             ws.onerror = (error) => {
                 console.error("WebSocket error:", error);
+
             };
 
             ws.onclose = () => {
-                setIsConnected(false);
+
                 setSocket(null);
-                console.log("WebSocket connection closed.");
+                console.log("WebSocket connection closed.!!!!!!!!!");
             };
 
             // Cleanup function to close the WebSocket connection on unmount
