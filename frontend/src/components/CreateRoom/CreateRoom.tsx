@@ -37,7 +37,7 @@ export function CreateRoom() {
   return (
     <section
       className="paper paper-yellow max-w-sm sm:max-w-lg text-sm sm:text-lg p-4 my-4
-      m-auto  flex items-center        "
+      m-auto  flex items-center"
     >
       <div className="tape-section"></div>
       <form
