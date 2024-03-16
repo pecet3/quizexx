@@ -83,6 +83,13 @@ func (m *Manager) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 			conn.Close()
 			return
 		}
+
+		for roomClient := range currentRoom.clients {
+			if name == roomClient.name {
+				conn.Close()
+				return
+			}
+		}
 	}
 
 	if currentRoom == nil {
