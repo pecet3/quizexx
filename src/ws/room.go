@@ -104,12 +104,12 @@ func (r *room) Run(m *Manager) {
 			r.clients[client] = client.name
 
 			if r.game.IsGame && client.isSpectator {
-				err := r.SendServerMessage(client.name + " dołączył jako widz")
+				err := r.SendServerMessage(client.name + " joins as spectator")
 				if err != nil {
 					return
 				}
 			} else {
-				err := r.SendServerMessage(client.name + " dołączył do pokoju")
+				err := r.SendServerMessage(client.name + " joins the game")
 				if err != nil {
 					return
 				}
@@ -145,14 +145,14 @@ func (r *room) Run(m *Manager) {
 
 		case client := <-r.ready:
 			if r.game.IsGame && client.isSpectator {
-				r.SendServerMessage(client.name + "dołącza jako widz")
+				r.SendServerMessage(client.name + "joins as a spectator")
 			}
 
 			client.isReady = true
 			r.SendServerMessage(client.name + " jest gotowy")
 			r.SendReadyStatus()
 			if ok := r.CheckIfEveryoneIsReady(); ok {
-				err := r.SendServerMessage("⏳Tworzenie gry🎲 <br> Prosimy o cierpliwość...")
+				err := r.SendServerMessage("⏳Creating a Game🎲 <br> Please be patient... ")
 				if err != nil {
 					log.Println("run err send server msg")
 					return
@@ -183,7 +183,7 @@ func (r *room) Run(m *Manager) {
 				if client.name == actionParsed.Name {
 					log.Println("is answered: ", client.isAnswered, "round ", r.game.State.Round)
 					if !client.isAnswered {
-						err := r.SendServerMessage(client.name + " odpowiedział na pytanie.")
+						err := r.SendServerMessage(client.name + " has answered")
 						if err != nil {
 							return
 						}
@@ -200,7 +200,7 @@ func (r *room) Run(m *Manager) {
 			isEndGame := r.game.CheckIfIsEndGame()
 			if isEndGame {
 				r.game.IsGame = false
-				_ = r.SendServerMessage("Koniec gry")
+				_ = r.SendServerMessage("Game Finish")
 				continue
 			}
 			if isNextRound {
