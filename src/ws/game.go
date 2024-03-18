@@ -90,14 +90,12 @@ func (r *room) CreateGame() *Game {
 		Content:    *data,
 	}
 
-	log.Println("created new game in room: ", r.name)
 	return newGame
 }
 
 func (g *Game) NewGameState() *GameState {
 
 	score := g.NewScore()
-	log.Println("created new score in room: ", g.Room.name)
 
 	return &GameState{
 		Round:           g.State.Round,
@@ -139,9 +137,7 @@ func (g *Game) CheckIfIsEndGame() bool {
 	isNextRound := g.CheckIfShouldBeNextRound()
 
 	if isEqualMaxAndCurrentRound && isNextRound {
-		log.Println("to jest koniec gry ")
 		return true
 	}
-	log.Println("to nie jest koniec gry ")
 	return false
 }
