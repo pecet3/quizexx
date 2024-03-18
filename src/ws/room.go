@@ -200,7 +200,9 @@ func (r *room) Run(m *Manager) {
 			isEndGame := r.game.CheckIfIsEndGame()
 			if isEndGame {
 				r.game.IsGame = false
-				_ = r.SendServerMessage("Game Finish")
+				_ = r.SendServerMessage("It's finish the game")
+				time.Sleep(800 * time.Millisecond)
+
 				continue
 			}
 			if isNextRound {
@@ -215,7 +217,7 @@ func (r *room) Run(m *Manager) {
 					newState := r.game.NewGameState()
 					r.game.State = newState
 				}
-				time.Sleep(500 * time.Millisecond)
+				time.Sleep(800 * time.Millisecond)
 				err := r.SendServerMessage("Rozpoczęła się nowa runda: " + strconv.Itoa(r.game.State.Round))
 				if err != nil {
 					return
