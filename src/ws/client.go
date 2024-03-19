@@ -17,7 +17,7 @@ type client struct {
 	name        string
 	conn        *websocket.Conn
 	receive     chan []byte
-	room        *room
+	room        *Room
 	isReady     bool
 	isSpectator bool
 	isAnswered  bool
