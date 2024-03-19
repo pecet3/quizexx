@@ -28,7 +28,7 @@ type ServerMessage struct {
 	Message string `json:"message"`
 }
 
-func (r *room) SendIsSpectator() error {
+func (r *Room) SendIsSpectator() error {
 	eventBytes, err := MarshalEventToBytes[bool](true, "")
 	if err != nil {
 		return err
@@ -41,7 +41,7 @@ func (r *room) SendIsSpectator() error {
 	}
 	return nil
 }
-func (r *room) SendIsFinish() error {
+func (r *Room) SendIsFinish() error {
 	eventBytes, err := MarshalEventToBytes[bool](true, "finish_game")
 	if err != nil {
 		return err
@@ -55,7 +55,7 @@ func (r *room) SendIsFinish() error {
 	return nil
 }
 
-func (r *room) SendSettings() error {
+func (r *Room) SendSettings() error {
 	eventBytes, err := MarshalEventToBytes[Settings](r.settings, "room_settings")
 	if err != nil {
 		return err
@@ -69,7 +69,7 @@ func (r *room) SendSettings() error {
 	return nil
 }
 
-func (r *room) SendReadyStatus() error {
+func (r *Room) SendReadyStatus() error {
 	var readyClients []ReadyClient
 
 	for c := range r.clients {
@@ -96,7 +96,7 @@ func (r *room) SendReadyStatus() error {
 	}
 	return nil
 }
-func (r *room) SendServerMessage(msg string) error {
+func (r *Room) SendServerMessage(msg string) error {
 	serverMsg := ServerMessage{
 		Message: msg,
 	}

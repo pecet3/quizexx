@@ -9,7 +9,7 @@ import (
 )
 
 type Game struct {
-	Room       *room
+	Room       *Room
 	State      *GameState
 	IsGame     bool
 	Players    map[*client]string
@@ -46,7 +46,7 @@ type RoundQuestion struct {
 	CorrectAnswer int      `json:"correctAnswer"`
 }
 
-func (r *room) GetContentFromGPT() *[]RoundQuestion {
+func (r *Room) GetContentFromGPT() *[]RoundQuestion {
 	response, err := external.FetchBodyFromGPT(r.settings.GameCategory, r.settings.Difficulty, r.settings.MaxRounds)
 	if err != nil {
 		log.Println(err)
@@ -70,7 +70,7 @@ func (r *room) GetContentFromGPT() *[]RoundQuestion {
 	return data
 }
 
-func (r *room) CreateGame() *Game {
+func (r *Room) CreateGame() *Game {
 	log.Println("creating a game")
 
 	data := r.GetContentFromGPT()
