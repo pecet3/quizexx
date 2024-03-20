@@ -7,7 +7,7 @@ import (
 	"time"
 )
 
-type room struct {
+type Room struct {
 	name    string
 	clients map[*client]string
 	join    chan *client
@@ -27,8 +27,8 @@ type Settings struct {
 	MaxRounds    string `json:"maxRounds"`
 }
 
-func NewRoom(settings Settings) *room {
-	r := &room{
+func NewRoom(settings Settings) *Room {
+	r := &Room{
 		name:          settings.Name,
 		clients:       make(map[*client]string),
 		join:          make(chan *client),
@@ -42,7 +42,7 @@ func NewRoom(settings Settings) *room {
 	return r
 }
 
-func (m *Manager) GetRoom(name string) *room {
+func (m *Manager) GetRoom(name string) *Room {
 	m.mutex.Lock()
 	defer m.mutex.Unlock()
 
@@ -50,7 +50,7 @@ func (m *Manager) GetRoom(name string) *room {
 	return m.rooms[name]
 }
 
-func (m *Manager) CreateRoom(settings Settings) *room {
+func (m *Manager) CreateRoom(settings Settings) *Room {
 	m.mutex.Lock()
 	defer m.mutex.Unlock()
 
@@ -84,7 +84,7 @@ func (m *Manager) RemoveRoom(name string) {
 		return
 	}
 }
-func (r *room) CheckIfEveryoneIsReady() bool {
+func (r *Room) CheckIfEveryoneIsReady() bool {
 	for c := range r.clients {
 		if !c.isReady {
 			return false
@@ -93,7 +93,7 @@ func (r *room) CheckIfEveryoneIsReady() bool {
 	return true
 }
 
-func (r *room) Run(m *Manager) {
+func (r *Room) Run(m *Manager) {
 	for {
 		select {
 		case msg := <-r.forward:

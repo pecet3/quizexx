@@ -10,7 +10,7 @@ import (
 
 type Manager struct {
 	mutex sync.Mutex
-	rooms map[string]*room
+	rooms map[string]*Room
 }
 
 var (
@@ -27,7 +27,7 @@ func checkOrigin(r *http.Request) bool {
 
 func NewManager() *Manager {
 	return &Manager{
-		rooms: make(map[string]*room),
+		rooms: make(map[string]*Room),
 	}
 }
 
