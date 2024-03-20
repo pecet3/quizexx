@@ -56,11 +56,7 @@ func (r *Room) SendIsFinish() error {
 }
 
 func (r *Room) SendSettings() error {
-<<<<<<< HEAD
 	eventBytes, err := MarshalEventToBytes[Settings](r.settings, "Room_settings")
-=======
-	eventBytes, err := MarshalEventToBytes[Settings](r.settings, "room_settings")
->>>>>>> c6390c2af782e7803490d5885bd52ce4d0caa102
 	if err != nil {
 		return err
 	}
