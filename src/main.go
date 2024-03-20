@@ -12,7 +12,7 @@ func main() {
 	manager := ws.NewManager()
 
 	mux := http.NewServeMux()
-
+	log.Println("Starting service")
 	mux.Handle("/ws", manager)
 
 	mux.Handle("/", http.FileServer(http.Dir("view")))
