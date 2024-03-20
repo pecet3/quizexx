@@ -13,6 +13,10 @@ type Manager struct {
 	rooms map[string]*Room
 }
 
+type ManagerInterface interface {
+	GetRoomNamesList(m Manager) []string
+}
+
 var (
 	upgrader = &websocket.Upgrader{
 		CheckOrigin:     checkOrigin,
