@@ -11,6 +11,13 @@ import (
 type Manager struct {
 	mutex sync.Mutex
 	rooms map[string]*Room
+<<<<<<< HEAD
+=======
+}
+
+type ManagerInterface interface {
+	GetRoomNamesList(m Manager) []string
+>>>>>>> c6390c2af782e7803490d5885bd52ce4d0caa102
 }
 
 var (
