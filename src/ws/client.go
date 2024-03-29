@@ -39,7 +39,7 @@ func (client *client) addPointsAndToggleIsAnswered(action RoundAction) {
 	}
 }
 
-func (c *client) read(m *Manager) {
+func (c *client) read() {
 	defer func() {
 		c.conn.Close()
 	}()

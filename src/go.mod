@@ -1,6 +1,6 @@
 module github.com/pecet3/quizex
 
-go 1.21.6
+go 1.22.1
 
 require (
 	github.com/go-resty/resty/v2 v2.11.0

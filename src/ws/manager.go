@@ -28,6 +28,7 @@ func checkOrigin(r *http.Request) bool {
 func NewManager() *Manager {
 	return &Manager{
 		rooms: make(map[string]*Room),
+		mutex: sync.Mutex{},
 	}
 }
 
@@ -124,5 +125,5 @@ func (m *Manager) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	currentRoom.join <- client
 	defer func() { currentRoom.leave <- client }()
 	go client.write()
-	client.read(m)
+	client.read()
 }
