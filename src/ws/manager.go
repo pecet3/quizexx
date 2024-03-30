@@ -2,6 +2,7 @@ package ws
 
 import (
 	"log"
+	"net/http"
 	"sync"
 
 	"github.com/gorilla/websocket"
@@ -20,13 +21,13 @@ func (m *Manager) NewManager() *Manager {
 }
 
 type IManager interface {
-	HandleWs(conn *websocket.Conn, settings Settings, newRoom string, userName string)
-
 	CreateRoom(settings Settings) *Room
 	RemoveRoom(name string)
 	GetRoomNamesList() []string
 	GetRoom(name string) *Room
 	NewRoom(settings Settings) *Room
+
+	ServeWs(w http.ResponseWriter, req *http.Request)
 }
 
 func (m *Manager) NewRoom(settings Settings) *Room {
@@ -45,6 +46,7 @@ func (m *Manager) NewRoom(settings Settings) *Room {
 }
 
 func (m *Manager) GetRoom(name string) *Room {
+	log.Println(m)
 	m.mutex.Lock()
 	defer m.mutex.Unlock()
 
@@ -99,91 +101,50 @@ func (m *Manager) GetRoomNamesList() []string {
 	return names
 }
 
-// func (m *Manager) ServeHTTP(w http.ResponseWriter, req *http.Request) {
+var (
+	upgrader = &websocket.Upgrader{
+		CheckOrigin:     checkOrigin,
+		ReadBufferSize:  1024,
+		WriteBufferSize: 1024,
+	}
+)
 
-// 	conn, err := upgrader.Upgrade(w, req, nil)
-// 	if err != nil {
-// 		log.Println(err)
-// 		return
-// 	}
+func checkOrigin(r *http.Request) bool {
+	return true
+}
+func (m *Manager) ServeWs(w http.ResponseWriter, req *http.Request) {
+	log.Println("ServerWs: ", m)
+	conn, err := upgrader.Upgrade(w, req, nil)
+	if err != nil {
+		log.Println(err)
+		return
+	}
 
-// 	roomName := req.URL.Query().Get("room")
-// 	if roomName == "" {
-// 		return
-// 	}
-// 	name := req.URL.Query().Get("name")
-// 	if name == "" || name == "serwer" || name == "klient" {
-// 		return
-// 	}
-// 	difficulty := req.URL.Query().Get("difficulty")
-// 	maxRounds := req.URL.Query().Get("maxRounds")
-// 	category := req.URL.Query().Get("category")
-// 	newRoom := req.URL.Query().Get("new")
+	roomName := req.URL.Query().Get("room")
+	if roomName == "" {
+		return
+	}
+	name := req.URL.Query().Get("name")
+	if name == "" || name == "serwer" || name == "klient" {
+		return
+	}
+	difficulty := req.URL.Query().Get("difficulty")
+	maxRounds := req.URL.Query().Get("maxRounds")
+	category := req.URL.Query().Get("category")
+	newRoom := req.URL.Query().Get("new")
 
-// 	if len(category) >= 32 || len(category) < 5 {
-// 		conn.Close()
-// 		return
-// 	}
+	settings := Settings{
+		Name:         roomName,
+		GameCategory: category,
+		Difficulty:   difficulty,
+		MaxRounds:    maxRounds,
+	}
+	currentRoom := m.GetRoom(roomName)
 
-// 	settings := Settings{
-// 		Name:         roomName,
-// 		GameCategory: category,
-// 		Difficulty:   difficulty,
-// 		MaxRounds:    maxRounds,
-// 	}
-// 	currentRoom := m.GetRoom(m, roomName)
-
-// 	if currentRoom != nil {
-// 		if newRoom == "true" {
-// 			conn.Close()
-// 			return
-// 		}
-
-// 		for roomClient := range currentRoom.clients {
-// 			if name == roomClient.name {
-// 				conn.Close()
-// 				break
-// 			}
-// 		}
-// 	}
-
-// 	if currentRoom == nil {
-// 		if newRoom == "true" {
-// 			currentRoom = m.CreateRoom(settings)
-// 			go currentRoom.Run(m)
-// 		} else {
-// 			conn.Close()
-// 			return
-// 		}
-// 	}
-
-// 	isSpectator := false
-
-// 	if currentRoom.game.IsGame {
-// 		isSpectator = true
-// 	}
-
-// 	client := &Client{
-// 		conn:        conn,
-// 		receive:     make(chan []byte),
-// 		room:        currentRoom,
-// 		name:        name,
-// 		answer:      -1,
-// 		points:      0,
-// 		isReady:     false,
-// 		isSpectator: isSpectator,
-// 		isAnswered:  false,
-// 	}
-
-// 	log.Printf("New connection, userName: %v connected to room: %v", name, roomName)
-// 	currentRoom.join <- client
-// 	defer func() { currentRoom.leave <- client }()
-// 	go client.write()
-// 	client.read()
-// }
-
-func (m *Manager) HandleWs(conn *websocket.Conn, settings Settings, newRoom string, userName string) {
-	currentRoom := m.GetRoom(settings.Name)
+	if newRoom == "true" && len(category) >= 32 || len(category) < 5 {
+		conn.Close()
+		return
+	}
 
 	if currentRoom != nil {
 		if newRoom == "true" {
@@ -192,14 +153,14 @@ func (m *Manager) HandleWs(conn *websocket.Conn, settings Settings, newRoom stri
 		}
 
 		for roomClient := range currentRoom.clients {
-			if userName == roomClient.name {
+			if name == roomClient.name {
 				conn.Close()
 				break
 			}
 		}
 	}
-
 	if currentRoom == nil {
+
 		if newRoom == "true" {
 			currentRoom = m.CreateRoom(settings)
 			go currentRoom.Run(m)
@@ -219,14 +180,15 @@ func (m *Manager) HandleWs(conn *websocket.Conn, settings Settings, newRoom stri
 		conn:        conn,
 		receive:     make(chan []byte),
 		room:        currentRoom,
-		name:        userName,
+		name:        name,
 		answer:      -1,
 		points:      0,
 		isReady:     false,
 		isSpectator: isSpectator,
 		isAnswered:  false,
 	}
-	log.Println("new conn")
+
+	log.Printf("New connection, userName: %v connected to room: %v", name, roomName)
 	currentRoom.join <- client
 	defer func() { currentRoom.leave <- client }()
 	go client.write()
