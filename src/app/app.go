@@ -10,24 +10,24 @@ import (
 )
 
 type app struct {
-	db        *sql.DB
-	mux       *http.ServeMux
-	wsManager *ws.Manager
+	db  *sql.DB
+	mux *http.ServeMux
 }
 
 func Run() *http.Server {
-	manager := ws.NewManager()
 
 	mux := http.NewServeMux()
 	app := &app{
-		db:        database.ConnectDb(),
-		mux:       http.NewServeMux(),
-		wsManager: ws.NewManager(),
+		db:  database.ConnectDb(),
+		mux: http.NewServeMux(),
 	}
-	app.routeQuiz()
+	manager := ws.Manager{}
+	m := manager.NewManager()
+
+	app.routeQuiz(m)
 
 	log.Println("Starting service")
-	mux.Handle("/ws", manager)
+
 	mux.Handle("/", http.FileServer(http.Dir("view")))
 
 	address := "127.0.0.1:8090"

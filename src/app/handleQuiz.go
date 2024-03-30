@@ -13,11 +13,13 @@ type quizHandler struct {
 	manager ws.IManager
 }
 
-func (app *app) routeQuiz() {
+func (app *app) routeQuiz(m *ws.Manager) {
+
 	routeHandler := &quizHandler{
 		app:     app,
 		manager: &ws.Manager{},
 	}
+	routeHandler.manager = m
 	app.mux.HandleFunc("/ws", app.mux.ServeHTTP)
 	app.mux.HandleFunc("/quiz", routeHandler.handleWs)
 }
@@ -68,56 +70,5 @@ func (h *quizHandler) handleWs(w http.ResponseWriter, req *http.Request) {
 		MaxRounds:    maxRounds,
 	}
 
-	currentRoom := m.GetRoom(roomName)
-
-	if currentRoom != nil {
-		if newRoom == "true" {
-			conn.Close()
-			return
-		}
-
-		for roomClient := range currentRoom.clients {
-			if name == roomClient.name {
-				conn.Close()
-				break
-			}
-		}
-	}
-
-	if currentRoom == nil {
-		if newRoom == "true" {
-			currentRoom = m.CreateRoom(settings)
-			go currentRoom.Run(m)
-		} else {
-			conn.Close()
-			return
-		}
-	}
-
-	isSpectator := false
-
-	if currentRoom.game.IsGame {
-		isSpectator = true
-	}
-
-	client := &client{
-		conn:        conn,
-		receive:     make(chan []byte),
-		room:        currentRoom,
-		name:        name,
-		answer:      -1,
-		points:      0,
-		isReady:     false,
-		isSpectator: isSpectator,
-		isAnswered:  false,
-	}
-
-	log.Printf("New connection, userName: %v connected to room: %v", name, roomName)
-	currentRoom.join <- client
-	defer func() { currentRoom.leave <- client }()
-	go client.write()
-	client.read()
-}
-func (h *quizHandler) handleHello() (w http.ResponseWriter, r *http.Request) {
-
+	m.HandleWs(conn, settings, newRoom, name)
 }
