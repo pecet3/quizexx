@@ -9,10 +9,10 @@ import (
 
 type Room struct {
 	name    string
-	clients map[*client]string
-	join    chan *client
-	ready   chan *client
-	leave   chan *client
+	clients map[*Client]string
+	join    chan *Client
+	ready   chan *Client
+	leave   chan *Client
 
 	forward       chan []byte
 	receiveAnswer chan []byte
@@ -27,63 +27,6 @@ type Settings struct {
 	MaxRounds    string `json:"maxRounds"`
 }
 
-func NewRoom(settings Settings) *Room {
-	r := &Room{
-		name:          settings.Name,
-		clients:       make(map[*client]string),
-		join:          make(chan *client),
-		leave:         make(chan *client),
-		ready:         make(chan *client),
-		forward:       make(chan []byte),
-		receiveAnswer: make(chan []byte),
-		game:          &Game{},
-		settings:      settings,
-	}
-	return r
-}
-
-func (m *Manager) GetRoom(name string) *Room {
-	m.mutex.Lock()
-	defer m.mutex.Unlock()
-
-	log.Println(m.rooms[name], " name ", name)
-	return m.rooms[name]
-}
-
-func (m *Manager) CreateRoom(settings Settings) *Room {
-	m.mutex.Lock()
-	defer m.mutex.Unlock()
-
-	if existingRoom, ok := m.rooms[settings.Name]; ok {
-		return existingRoom
-	}
-
-	newRoom := NewRoom(settings)
-	m.rooms[settings.Name] = newRoom
-
-	log.Println("Created a room with name: ", settings.Name)
-	return newRoom
-}
-
-func (m *Manager) RemoveRoom(name string) {
-	m.mutex.Lock()
-	defer m.mutex.Unlock()
-
-	if room, ok := m.rooms[name]; ok {
-		for client := range room.clients {
-			room.leave <- client
-		}
-		close(room.join)
-		close(room.forward)
-		close(room.ready)
-		close(room.receiveAnswer)
-		close(room.leave)
-
-		delete(m.rooms, name)
-		log.Println("Closing a room with name:", room.name)
-		return
-	}
-}
 func (r *Room) CheckIfEveryoneIsReady() bool {
 	for c := range r.clients {
 		if !c.isReady {
@@ -97,19 +40,19 @@ func (r *Room) Run(m *Manager) {
 	for {
 		select {
 		case msg := <-r.forward:
-			for client := range r.clients {
-				client.receive <- msg
+			for Client := range r.clients {
+				Client.receive <- msg
 			}
-		case client := <-r.join:
-			r.clients[client] = client.name
+		case Client := <-r.join:
+			r.clients[Client] = Client.name
 
-			if r.game.IsGame && client.isSpectator {
-				err := r.SendServerMessage(client.name + " joins as spectator")
+			if r.game.IsGame && Client.isSpectator {
+				err := r.SendServerMessage(Client.name + " joins as spectator")
 				if err != nil {
 					return
 				}
 			} else {
-				err := r.SendServerMessage(client.name + " joins the game")
+				err := r.SendServerMessage(Client.name + " joins the game")
 				if err != nil {
 					return
 				}
@@ -127,29 +70,29 @@ func (r *Room) Run(m *Manager) {
 			if err != nil {
 				return
 			}
-			client.receive <- eventBytes
-			if !r.game.IsGame && !client.isSpectator {
+			Client.receive <- eventBytes
+			if !r.game.IsGame && !Client.isSpectator {
 				r.SendReadyStatus()
 			}
 
-		case client := <-r.leave:
-			close(client.receive)
-			delete(r.game.Players, client)
-			delete(r.clients, client)
+		case Client := <-r.leave:
+			close(Client.receive)
+			delete(r.game.Players, Client)
+			delete(r.clients, Client)
 
 			if len(r.clients) == 0 {
-				log.Println(client.name, " is leaving a room: ", r.name)
+				log.Println(Client.name, " is leaving a room: ", r.name)
 				m.RemoveRoom(r.name)
 				return
 			}
 
-		case client := <-r.ready:
-			if r.game.IsGame && client.isSpectator {
-				r.SendServerMessage(client.name + "joins as a spectator")
+		case Client := <-r.ready:
+			if r.game.IsGame && Client.isSpectator {
+				r.SendServerMessage(Client.name + "joins as a spectator")
 			}
 
-			client.isReady = true
-			r.SendServerMessage(client.name + " jest gotowy")
+			Client.isReady = true
+			r.SendServerMessage(Client.name + " jest gotowy")
 			r.SendReadyStatus()
 			if ok := r.CheckIfEveryoneIsReady(); ok {
 				err := r.SendServerMessage("⏳Creating a Game🎲 <br> Please be patient... ")
@@ -179,17 +122,17 @@ func (r *Room) Run(m *Manager) {
 				return
 			}
 
-			for client := range r.game.Players {
-				if client.name == actionParsed.Name {
-					log.Println("is answered: ", client.isAnswered, "round ", r.game.State.Round)
-					if !client.isAnswered {
-						err := r.SendServerMessage(client.name + " has answered")
+			for Client := range r.game.Players {
+				if Client.name == actionParsed.Name {
+					log.Println("is answered: ", Client.isAnswered, "round ", r.game.State.Round)
+					if !Client.isAnswered {
+						err := r.SendServerMessage(Client.name + " has answered")
 						if err != nil {
 							return
 						}
 					}
 
-					client.addPointsAndToggleIsAnswered(*actionParsed)
+					Client.addPointsAndToggleIsAnswered(*actionParsed)
 					r.game.State.Actions = append(r.game.State.Actions, *actionParsed)
 					r.game.State.Score = r.game.NewScore()
 				}
@@ -207,9 +150,9 @@ func (r *Room) Run(m *Manager) {
 			}
 			if isNextRound {
 				r.game.State.Round++
-				for client := range r.game.Players {
-					if client.isAnswered {
-						client.isAnswered = false
+				for Client := range r.game.Players {
+					if Client.isAnswered {
+						Client.isAnswered = false
 					}
 				}
 

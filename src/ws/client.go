@@ -13,7 +13,7 @@ var (
 	pingInterval = (pongWait * 9) / 10
 )
 
-type client struct {
+type Client struct {
 	name        string
 	conn        *websocket.Conn
 	receive     chan []byte
@@ -26,20 +26,20 @@ type client struct {
 	roundsWon   []uint
 }
 
-func (client *client) addPointsAndToggleIsAnswered(action RoundAction) {
-	if client.name == action.Name {
-		client.answer = action.Answer
-		if action.Answer == client.room.game.Content[client.room.game.State.Round-1].CorrectAnswer && !client.isAnswered {
-			client.points = client.points + 10
+func (Client *Client) addPointsAndToggleIsAnswered(action RoundAction) {
+	if Client.name == action.Name {
+		Client.answer = action.Answer
+		if action.Answer == Client.room.game.Content[Client.room.game.State.Round-1].CorrectAnswer && !Client.isAnswered {
+			Client.points = Client.points + 10
 		}
-		if action.Answer >= 0 && !client.isAnswered {
-			client.room.game.State.PlayersFinished = append(client.room.game.State.PlayersFinished, client.name)
-			client.isAnswered = true
+		if action.Answer >= 0 && !Client.isAnswered {
+			Client.room.game.State.PlayersFinished = append(Client.room.game.State.PlayersFinished, Client.name)
+			Client.isAnswered = true
 		}
 	}
 }
 
-func (c *client) read() {
+func (c *Client) read() {
 	defer func() {
 		c.conn.Close()
 	}()
@@ -86,7 +86,7 @@ func (c *client) read() {
 	}
 }
 
-func (c *client) write() {
+func (c *Client) write() {
 	defer func() {
 		c.conn.Close()
 	}()
@@ -111,6 +111,6 @@ func (c *client) write() {
 	}
 }
 
-func (c *client) pongHandler(pongMsg string) error {
+func (c *Client) pongHandler(pongMsg string) error {
 	return c.conn.SetReadDeadline(time.Now().Add(pongWait))
 }

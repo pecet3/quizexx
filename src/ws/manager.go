@@ -25,13 +25,78 @@ func checkOrigin(r *http.Request) bool {
 	return true
 }
 
-func NewManager() *Manager {
+func (m *Manager) NewManager() *Manager {
 	return &Manager{
 		rooms: make(map[string]*Room),
 		mutex: sync.Mutex{},
 	}
 }
 
+type IManager interface {
+	CreateRoom(settings Settings) *Room
+	RemoveRoom(name string)
+	GetRoomNamesList() []string
+	GetRoom(name string) *Room
+	NewRoom(settings Settings) *Room
+}
+
+func (m *Manager) NewRoom(settings Settings) *Room {
+	r := &Room{
+		name:          settings.Name,
+		clients:       make(map[*Client]string),
+		join:          make(chan *Client),
+		leave:         make(chan *Client),
+		ready:         make(chan *Client),
+		forward:       make(chan []byte),
+		receiveAnswer: make(chan []byte),
+		game:          &Game{},
+		settings:      settings,
+	}
+	return r
+}
+
+func (m *Manager) GetRoom(name string) *Room {
+	m.mutex.Lock()
+	defer m.mutex.Unlock()
+
+	log.Println(m.rooms[name], " name ", name)
+	return m.rooms[name]
+}
+
+func (m *Manager) CreateRoom(settings Settings) *Room {
+	m.mutex.Lock()
+	defer m.mutex.Unlock()
+
+	if existingRoom, ok := m.rooms[settings.Name]; ok {
+		return existingRoom
+	}
+
+	newRoom := m.NewRoom(settings)
+	m.rooms[settings.Name] = newRoom
+
+	log.Println("Created a room with name: ", settings.Name)
+	return newRoom
+}
+
+func (m *Manager) RemoveRoom(name string) {
+	m.mutex.Lock()
+	defer m.mutex.Unlock()
+
+	if room, ok := m.rooms[name]; ok {
+		for Client := range room.clients {
+			room.leave <- Client
+		}
+		close(room.join)
+		close(room.forward)
+		close(room.ready)
+		close(room.receiveAnswer)
+		close(room.leave)
+
+		delete(m.rooms, name)
+		log.Println("Closing a room with name:", room.name)
+		return
+	}
+}
 func (m *Manager) GetRoomNamesList() []string {
 	m.mutex.Lock()
 	defer m.mutex.Unlock()
@@ -109,7 +174,7 @@ func (m *Manager) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 		isSpectator = true
 	}
 
-	client := &client{
+	client := &Client{
 		conn:        conn,
 		receive:     make(chan []byte),
 		room:        currentRoom,
