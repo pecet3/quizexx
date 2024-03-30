@@ -24,11 +24,20 @@ func Run() *http.Server {
 	manager := ws.Manager{}
 	m := manager.NewManager()
 
-	app.routeQuiz(m)
+	log.Println(app)
+	app.routeQuiz(m, mux)
 
 	log.Println("Starting service")
 
 	mux.Handle("/", http.FileServer(http.Dir("view")))
+
+	// tmpl := template.Must(template.ParseGlob("view/*.html"))
+	// mux.HandleFunc("/", func(w http.ResponseWriter, req *http.Request) {
+	// 	err := tmpl.Execute(w, 0)
+	// 	if err != nil {
+	// 		http.Error(w, err.Error(), http.StatusInternalServerError)
+	// 	}
+	// })
 
 	address := "127.0.0.1:8090"
 	log.Println("Server is running: ", address)

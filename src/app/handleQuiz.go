@@ -9,19 +9,20 @@ import (
 )
 
 type quizHandler struct {
-	app     *app
 	manager ws.IManager
 }
 
-func (app *app) routeQuiz(m *ws.Manager) {
-
+func (app *app) routeQuiz(m *ws.Manager, mux *http.ServeMux) {
+	manager := m.NewManager()
 	routeHandler := &quizHandler{
-		app:     app,
-		manager: &ws.Manager{},
+		manager: manager,
 	}
-	routeHandler.manager = m
-	app.mux.HandleFunc("/ws", app.mux.ServeHTTP)
-	app.mux.HandleFunc("/quiz", routeHandler.handleWs)
+	log.Println(2)
+	mux.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
+		routeHandler.serveWs(manager, w, r)
+	})
+	mux.HandleFunc("/hello", routeHandler.hello)
+
 }
 
 var (
@@ -35,10 +36,22 @@ var (
 func checkOrigin(r *http.Request) bool {
 	return true
 }
+func (h *quizHandler) hello(w http.ResponseWriter, req *http.Request) {
+	// Prosty tekst do zwrócenia
+	message := "Hello, world!"
 
-func (h *quizHandler) handleWs(w http.ResponseWriter, req *http.Request) {
-	m := h.manager
+	// Ustawienie odpowiedzi HTTP z prostym tekstem
+	w.Header().Set("Content-Type", "text/plain")
+	w.WriteHeader(http.StatusOK)
+	_, err := w.Write([]byte(message))
+	if err != nil {
+		log.Println("Error writing response:", err)
+	}
+}
 
+func (h *quizHandler) serveWs(manager *ws.Manager, w http.ResponseWriter, req *http.Request) {
+	m := manager
+	log.Println(1)
 	conn, err := upgrader.Upgrade(w, req, nil)
 	if err != nil {
 		log.Println(err)

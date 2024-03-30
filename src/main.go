@@ -8,5 +8,6 @@ import (
 
 func main() {
 	server := app.Run()
+
 	log.Fatal(server.ListenAndServe())
 }
