@@ -33,7 +33,6 @@ function routeEvent(event) {
             updateRoomSettings(event)
             break
         default:
-            alert("unsupporting message type")
             break;
     }
 }

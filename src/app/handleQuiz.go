@@ -21,7 +21,6 @@ func (app *app) routeQuiz(m *ws.Manager, mux *http.ServeMux) {
 		manager.ServeWs(w, r)
 	})
 	mux.HandleFunc("/hello", routeHandler.hello)
-
 }
 func (h *quizHandler) hello(w http.ResponseWriter, req *http.Request) {
 	message := "Hello, world!"
