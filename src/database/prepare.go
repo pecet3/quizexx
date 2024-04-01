@@ -4,14 +4,15 @@ import "database/sql"
 
 func prepare(db *sql.DB) error {
 	statement, err := db.Prepare(`
-		CREATE TABLE IF NOT EXISTS accounts (
-			id TEXT PRIMARY KEY,
-			user_name TEXT,
-			email TEXT,
-			hashed_password TEXT,
-			image_url TEXT DEFAULT '',
-			salt TEXT,
-			is_active BOOLEAN DEFAULT FALSE,
+		CREATE TABLE IF NOT EXISTS questions (
+			id INT PRIMARY KEY,
+			question_set_id INT PRIMARY KEY,
+			question TEXT,
+			answer1 TEXT,
+			answer2 TEXT,
+			answer3 TEXT,
+			answer4 TEXT,
+			correct_answer INT,
 			created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 	)`)
 
