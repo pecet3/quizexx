@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"github.com/pecet3/quizex/database"
+	"github.com/pecet3/quizex/external"
 )
 
 type app struct {
@@ -19,6 +20,7 @@ func Run() *http.Server {
 		db:  database.ConnectDb(),
 		mux: http.NewServeMux(),
 	}
+	external := external.NewExternalService()
 
 	app.routeQuiz(mux)
 	mux.Handle("/", http.FileServer(http.Dir("view")))

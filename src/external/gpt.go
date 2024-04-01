@@ -26,6 +26,11 @@ type RoundQuestion struct {
 	CorrectAnswer int      `json:"correctAnswer"`
 }
 
+func (e ExternalService) NewExternalService() *ExternalService {
+	return &ExternalService{}
+
+}
+
 func (e ExternalService) FetchBodyFromGPT(category, maxRounds, difficulty, lang string) ([]RoundQuestion, error) {
 	err := godotenv.Load(".env")
 

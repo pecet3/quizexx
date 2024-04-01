@@ -133,6 +133,7 @@ func (m *Manager) ServeWs(w http.ResponseWriter, req *http.Request) {
 	category := req.URL.Query().Get("category")
 	newRoom := req.URL.Query().Get("new")
 	lang := req.URL.Query().Get("lang")
+
 	settings := Settings{
 		Name:         roomName,
 		GameCategory: category,
