@@ -132,12 +132,13 @@ func (m *Manager) ServeWs(w http.ResponseWriter, req *http.Request) {
 	maxRounds := req.URL.Query().Get("maxRounds")
 	category := req.URL.Query().Get("category")
 	newRoom := req.URL.Query().Get("new")
-
+	lang := req.URL.Query().Get("lang")
 	settings := Settings{
 		Name:         roomName,
 		GameCategory: category,
 		Difficulty:   difficulty,
 		MaxRounds:    maxRounds,
+		Language:     lang,
 	}
 	currentRoom := m.GetRoom(roomName)
 

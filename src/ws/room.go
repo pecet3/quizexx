@@ -25,6 +25,7 @@ type Settings struct {
 	GameCategory string `json:"category"`
 	Difficulty   string `json:"difficulty"`
 	MaxRounds    string `json:"maxRounds"`
+	Language     string `json:"language"`
 }
 
 func (r *Room) CheckIfEveryoneIsReady() bool {

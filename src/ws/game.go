@@ -1,7 +1,6 @@
 package ws
 
 import (
-	"encoding/json"
 	"log"
 	"strconv"
 
@@ -16,7 +15,7 @@ type Game struct {
 	Category   string
 	Difficulty string
 	MaxRounds  int
-	Content    []RoundQuestion
+	Content    []external.RoundQuestion
 }
 
 type GameState struct {
@@ -40,44 +39,13 @@ type PlayerScore struct {
 	RoundsWon []uint `json:"roundsWon"`
 }
 
-type RoundQuestion struct {
-	Question      string   `json:"question"`
-	Answers       []string `json:"answers"`
-	CorrectAnswer int      `json:"correctAnswer"`
-}
-
-func (r *Room) GetContentFromGPT() *[]RoundQuestion {
-	response, err := external.FetchBodyFromGPT(r.settings.GameCategory, r.settings.Difficulty, r.settings.MaxRounds)
-	if err != nil {
-		log.Println(err)
-	}
-	var data *[]RoundQuestion
-
-	err = json.Unmarshal([]byte(response), &data)
-	if err != nil {
-		log.Println("error with unmarshal data")
-	}
-	maxRounds, err := strconv.Atoi(r.settings.MaxRounds)
-
-	if err != nil {
-		maxRounds = 5
-	}
-
-	if len(*data) != maxRounds {
-		log.Println("ChatGPT returned insufficient content. Trying to process again...")
-		return r.GetContentFromGPT()
-	}
-	return data
-}
-
-func (r *Room) CreateGame() *Game {
+func (r *Room) CreateGame(external external.ExternalService) *Game {
 	log.Println("creating a game")
 
-	data := r.GetContentFromGPT()
 	maxRounds, err := strconv.Atoi(r.settings.MaxRounds)
-
-	if err != nil {
-		maxRounds = 5
+	content, err := external.FetchBodyFromGPT(r.settings)
+	if err == nil {
+		return &Game{}
 	}
 	newGame := &Game{
 		Room:       r,
@@ -87,7 +55,7 @@ func (r *Room) CreateGame() *Game {
 		Category:   r.settings.GameCategory,
 		Difficulty: r.settings.Difficulty,
 		MaxRounds:  maxRounds,
-		Content:    *data,
+		Content:    content,
 	}
 
 	return newGame
