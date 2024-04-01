@@ -10,18 +10,18 @@ import (
 )
 
 type app struct {
-	db  *sql.DB
-	mux *http.ServeMux
+	db       *sql.DB
+	mux      *http.ServeMux
+	external external.ExternalService
 }
 
 func Run() *http.Server {
 	mux := http.NewServeMux()
 	app := &app{
-		db:  database.ConnectDb(),
-		mux: http.NewServeMux(),
+		db:       database.ConnectDb(),
+		mux:      http.NewServeMux(),
+		external: external.NewExternalService(),
 	}
-	external := external.NewExternalService()
-
 	app.routeQuiz(mux)
 	mux.Handle("/", http.FileServer(http.Dir("view")))
 
