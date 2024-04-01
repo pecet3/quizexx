@@ -6,7 +6,6 @@ import (
 	"net/http"
 
 	"github.com/pecet3/quizex/database"
-	"github.com/pecet3/quizex/ws"
 )
 
 type app struct {
@@ -15,20 +14,13 @@ type app struct {
 }
 
 func Run() *http.Server {
-
 	mux := http.NewServeMux()
 	app := &app{
 		db:  database.ConnectDb(),
 		mux: http.NewServeMux(),
 	}
-	manager := ws.Manager{}
-	m := manager.NewManager()
 
-	log.Println(app)
-	app.routeQuiz(m, mux)
-
-	log.Println("Starting service")
-
+	app.routeQuiz(mux)
 	mux.Handle("/", http.FileServer(http.Dir("view")))
 
 	// tmpl := template.Must(template.ParseGlob("view/*.html"))
