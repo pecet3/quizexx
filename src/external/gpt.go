@@ -1,6 +1,7 @@
 package external
 
 import (
+	"database/sql"
 	"encoding/json"
 	"fmt"
 	"log"
@@ -26,12 +27,16 @@ type RoundQuestion struct {
 	CorrectAnswer int      `json:"correctAnswer"`
 }
 
-func (e ExternalService) NewExternalService() *ExternalService {
+func NewExternalService() *ExternalService {
 	return &ExternalService{}
 
 }
 
-func (e ExternalService) FetchBodyFromGPT(category, maxRounds, difficulty, lang string) ([]RoundQuestion, error) {
+func (e ExternalService) SaveQuestionSetToDB(db *sql.DB) {
+
+}
+
+func (e ExternalService) FetchQuestionSet(category, maxRounds, difficulty, lang string) ([]RoundQuestion, error) {
 	err := godotenv.Load(".env")
 
 	if err != nil {
