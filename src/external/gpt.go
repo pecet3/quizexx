@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"strconv"
 
 	"github.com/go-resty/resty/v2"
 	"github.com/joho/godotenv"
@@ -19,26 +18,21 @@ const (
 type ExternalService struct {
 }
 type IExternal interface {
-	FetchBodyFromGPT() ([]RoundQuestion, error)
+	FetchBodyFromGPT() (string, error)
 	NewExternalService() *ExternalService
 	SaveQuestionSetToDB(db *sql.DB)
 }
-type RoundQuestion struct {
-	Question      string   `json:"question"`
-	Answers       []string `json:"answers"`
-	CorrectAnswer int      `json:"correctAnswer"`
-}
 
-func (e ExternalService) NewExternalService() *ExternalService {
+func (e *ExternalService) NewExternalService() *ExternalService {
 	return &ExternalService{}
 
 }
 
-func (e ExternalService) SaveQuestionSetToDB(db *sql.DB) {
+func (e *ExternalService) SaveQuestionSetToDB(db *sql.DB) {
 
 }
 
-func (e ExternalService) FetchQuestionSet(category, maxRounds, difficulty, lang string) ([]RoundQuestion, error) {
+func (e *ExternalService) FetchQuestionSet(category, maxRounds, difficulty, lang string) (string, error) {
 	err := godotenv.Load(".env")
 
 	if err != nil {
@@ -63,7 +57,7 @@ func (e ExternalService) FetchQuestionSet(category, maxRounds, difficulty, lang 
 
 	if err != nil {
 		fmt.Println("connecting with api error")
-		return nil, err
+		return "", err
 	}
 
 	body := response.Body()
@@ -71,21 +65,26 @@ func (e ExternalService) FetchQuestionSet(category, maxRounds, difficulty, lang 
 
 	err = json.Unmarshal(body, &data)
 	if err != nil {
-		return nil, err
+		log.Println("error kurwa")
 	}
-
 	content := data["choices"].([]interface{})[0].(map[string]interface{})["message"].(map[string]interface{})["content"].(string)
+	log.Println(data)
+	// var questions []RoundQuestion
 
-	var questions []RoundQuestion
+	// err = json.Unmarshal([]byte(content), &questions)
+	// if err != nil {
+	// 	log.Println("error with unmarshal data")
+	// 	log.Println(err)
+	// }
 
-	err = json.Unmarshal([]byte(content), &data)
-	if err != nil {
-		log.Println("error with unmarshal data")
-	}
-	maxRoundsInt, _ := strconv.Atoi(maxRounds)
-	if len(questions) != maxRoundsInt {
-		log.Println("ChatGPT returned insufficient content. Trying to process again...")
-		return e.FetchQuestionSet(category, maxRounds, difficulty, lang)
-	}
-	return questions, nil
+	// maxRoundsInt, err := strconv.Atoi(maxRounds)
+	// if err != nil {
+	// 	return nil, err
+	// }
+	// if len(questions) != maxRoundsInt {
+	// 	log.Println("ChatGPT returned insufficient content. Trying to process again...")
+	// 	return e.FetchQuestionSet(category, maxRounds, difficulty, lang)
+	// }
+	// log.Println(questions)
+	return content, nil
 }

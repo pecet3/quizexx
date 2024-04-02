@@ -146,13 +146,10 @@ func (m *Manager) ServeWs(external external.ExternalService, w http.ResponseWrit
 	}
 	currentRoom := m.GetRoom(roomName)
 
-	if newRoom == "true" && len(category) >= 32 || len(category) < 5 {
-		conn.Close()
-		return
-	}
-
 	if currentRoom != nil {
 		if newRoom == "true" {
+			log.Println(2)
+
 			conn.Close()
 			return
 		}
@@ -165,7 +162,6 @@ func (m *Manager) ServeWs(external external.ExternalService, w http.ResponseWrit
 		}
 	}
 	if currentRoom == nil {
-
 		if newRoom == "true" {
 			currentRoom = m.CreateRoom(settings)
 			go currentRoom.Run(m, external)

@@ -108,9 +108,11 @@ func (r *Room) Run(m *Manager, external external.ExternalService) {
 					log.Println("run err send settings")
 					return
 				}
-				game := r.CreateGame(external)
+				game := CreateGame(r, external)
+				log.Println(game.Content)
+
 				r.game = game
-				r.game.State = r.game.NewGameState()
+				r.game.State = r.game.NewGameState(r.game.Content)
 				r.game.IsGame = true
 				r.game.SendGameState()
 			}
@@ -160,7 +162,7 @@ func (r *Room) Run(m *Manager, external external.ExternalService) {
 				}
 
 				if !isEndGame {
-					newState := r.game.NewGameState()
+					newState := r.game.NewGameState(r.game.Content)
 					r.game.State = newState
 				}
 				time.Sleep(800 * time.Millisecond)

@@ -13,7 +13,7 @@ import (
 type app struct {
 	db        *sql.DB
 	mux       *http.ServeMux
-	wsManager *ws.Manager
+	wsManager ws.IManager
 	external  *external.ExternalService
 }
 

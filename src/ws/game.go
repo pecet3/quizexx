@@ -1,6 +1,7 @@
 package ws
 
 import (
+	"encoding/json"
 	"log"
 	"strconv"
 
@@ -15,7 +16,7 @@ type Game struct {
 	Category   string
 	Difficulty string
 	MaxRounds  int
-	Content    []external.RoundQuestion
+	Content    []RoundQuestion
 }
 
 type GameState struct {
@@ -38,20 +39,42 @@ type PlayerScore struct {
 	Points    int    `json:"points"`
 	RoundsWon []uint `json:"roundsWon"`
 }
+type RoundQuestion struct {
+	Question      string   `json:"question"`
+	Answers       []string `json:"answers"`
+	CorrectAnswer int      `json:"correctAnswer"`
+}
 
-func (r *Room) CreateGame(external external.ExternalService) *Game {
+func CreateGame(r *Room, external external.ExternalService) *Game {
 	log.Println("> Creating a game in room: ", r.name)
 	maxRoundStr := r.settings.MaxRounds
 	maxRoundsInt, err := strconv.Atoi(r.settings.MaxRounds)
-
-	difficulty := r.settings.Difficulty
-	category := r.settings.GameCategory
-	lang := r.settings.Language
-
-	content, err := external.FetchQuestionSet(category, maxRoundStr, difficulty, lang)
-	if err == nil {
+	if err != nil {
 		return &Game{}
 	}
+	difficulty := r.settings.Difficulty
+	category := r.settings.GameCategory
+	lang := "polish"
+
+	e := external.NewExternalService()
+
+	content, err := e.FetchQuestionSet(category, maxRoundStr, difficulty, lang)
+	log.Println("content", content)
+
+	if err != nil {
+		return &Game{}
+	}
+	var questions []RoundQuestion
+	log.Println("questions aaaaaaaaaaaaa")
+	log.Println("questions aaaaaaaaaaaaa")
+
+	err = json.Unmarshal([]byte(content), &questions)
+	if err != nil {
+		log.Println("error with unmarshal data")
+		log.Println(err)
+	}
+	log.Println("questions aaaaaaaaaaaaa")
+
 	newGame := &Game{
 		Room:       r,
 		State:      &GameState{Round: 1},
@@ -60,16 +83,15 @@ func (r *Room) CreateGame(external external.ExternalService) *Game {
 		Category:   r.settings.GameCategory,
 		Difficulty: r.settings.Difficulty,
 		MaxRounds:  maxRoundsInt,
-		Content:    content,
+		Content:    questions,
 	}
 
 	return newGame
 }
 
-func (g *Game) NewGameState() *GameState {
-
+func (g *Game) NewGameState(content []RoundQuestion) *GameState {
+	g.Content = content
 	score := g.NewScore()
-
 	return &GameState{
 		Round:           g.State.Round,
 		Question:        g.Content[g.State.Round-1].Question,
