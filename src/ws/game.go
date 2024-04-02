@@ -40,10 +40,15 @@ type PlayerScore struct {
 }
 
 func (r *Room) CreateGame(external external.ExternalService) *Game {
-	log.Println("creating a game")
+	log.Println("> Creating a game in room: ", r.name)
+	maxRoundStr := r.settings.MaxRounds
+	maxRoundsInt, err := strconv.Atoi(r.settings.MaxRounds)
 
-	maxRounds, err := strconv.Atoi(r.settings.MaxRounds)
-	content, err := external.FetchBodyFromGPT(r.settings)
+	difficulty := r.settings.Difficulty
+	category := r.settings.GameCategory
+	lang := r.settings.Language
+
+	content, err := external.FetchQuestionSet(category, maxRoundStr, difficulty, lang)
 	if err == nil {
 		return &Game{}
 	}
@@ -54,7 +59,7 @@ func (r *Room) CreateGame(external external.ExternalService) *Game {
 		Players:    r.clients,
 		Category:   r.settings.GameCategory,
 		Difficulty: r.settings.Difficulty,
-		MaxRounds:  maxRounds,
+		MaxRounds:  maxRoundsInt,
 		Content:    content,
 	}
 

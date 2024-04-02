@@ -6,6 +6,7 @@ import (
 	"sync"
 
 	"github.com/gorilla/websocket"
+	"github.com/pecet3/quizex/external"
 )
 
 type Manager struct {
@@ -21,13 +22,15 @@ func (m *Manager) NewManager() *Manager {
 }
 
 type IManager interface {
+	NewManager() *Manager
+
 	CreateRoom(settings Settings) *Room
 	RemoveRoom(name string)
 	GetRoomNamesList() []string
 	GetRoom(name string) *Room
 	NewRoom(settings Settings) *Room
 
-	ServeWs(w http.ResponseWriter, req *http.Request)
+	ServeWs(external external.ExternalService, w http.ResponseWriter, req *http.Request)
 }
 
 func (m *Manager) NewRoom(settings Settings) *Room {
@@ -112,7 +115,7 @@ var (
 func checkOrigin(r *http.Request) bool {
 	return true
 }
-func (m *Manager) ServeWs(w http.ResponseWriter, req *http.Request) {
+func (m *Manager) ServeWs(external external.ExternalService, w http.ResponseWriter, req *http.Request) {
 	log.Println("ServerWs: ", m)
 	conn, err := upgrader.Upgrade(w, req, nil)
 	if err != nil {
@@ -165,7 +168,7 @@ func (m *Manager) ServeWs(w http.ResponseWriter, req *http.Request) {
 
 		if newRoom == "true" {
 			currentRoom = m.CreateRoom(settings)
-			go currentRoom.Run(m)
+			go currentRoom.Run(m, external)
 		} else {
 			conn.Close()
 			return

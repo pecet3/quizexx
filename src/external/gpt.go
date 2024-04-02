@@ -20,6 +20,8 @@ type ExternalService struct {
 }
 type IExternal interface {
 	FetchBodyFromGPT() ([]RoundQuestion, error)
+	NewExternalService() *ExternalService
+	SaveQuestionSetToDB(db *sql.DB)
 }
 type RoundQuestion struct {
 	Question      string   `json:"question"`
@@ -27,7 +29,7 @@ type RoundQuestion struct {
 	CorrectAnswer int      `json:"correctAnswer"`
 }
 
-func NewExternalService() *ExternalService {
+func (e ExternalService) NewExternalService() *ExternalService {
 	return &ExternalService{}
 
 }
@@ -80,11 +82,10 @@ func (e ExternalService) FetchQuestionSet(category, maxRounds, difficulty, lang 
 	if err != nil {
 		log.Println("error with unmarshal data")
 	}
-	maxRounds, err = strconv.ParseInt(maxRounds, 10, 10)
-
-	if len(questions) != maxRounds {
+	maxRoundsInt, _ := strconv.Atoi(maxRounds)
+	if len(questions) != maxRoundsInt {
 		log.Println("ChatGPT returned insufficient content. Trying to process again...")
-		return e.FetchBodyFromGPT(s)
+		return e.FetchQuestionSet(category, maxRounds, difficulty, lang)
 	}
 	return questions, nil
 }

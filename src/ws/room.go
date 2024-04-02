@@ -5,6 +5,8 @@ import (
 	"log"
 	"strconv"
 	"time"
+
+	"github.com/pecet3/quizex/external"
 )
 
 type Room struct {
@@ -37,7 +39,7 @@ func (r *Room) CheckIfEveryoneIsReady() bool {
 	return true
 }
 
-func (r *Room) Run(m *Manager) {
+func (r *Room) Run(m *Manager, external external.ExternalService) {
 	for {
 		select {
 		case msg := <-r.forward:
@@ -106,7 +108,7 @@ func (r *Room) Run(m *Manager) {
 					log.Println("run err send settings")
 					return
 				}
-				game := r.CreateGame()
+				game := r.CreateGame(external)
 				r.game = game
 				r.game.State = r.game.NewGameState()
 				r.game.IsGame = true
