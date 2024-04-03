@@ -166,13 +166,12 @@ func (r *Room) Run(m *Manager, external external.ExternalService) {
 					r.game.State = newState
 				}
 				time.Sleep(800 * time.Millisecond)
-				err := r.SendServerMessage("Rozpoczęła się nowa runda: " + strconv.Itoa(r.game.State.Round))
+				r.game.SendGameState()
+				err := r.SendServerMessage("New round has began: " + strconv.Itoa(r.game.State.Round))
 				if err != nil {
 					return
 				}
 			}
-			log.Println(r.game.State.Round, " round")
-			r.game.SendGameState()
 
 		}
 	}

@@ -4,21 +4,22 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/pecet3/quizex/external"
 	"github.com/pecet3/quizex/ws"
 )
 
 type quizHandler struct {
-	manager ws.IManager
+	manager  ws.IManager
+	external external.IExternal
 }
 
 func (app *app) routeQuiz(mux *http.ServeMux, m *ws.Manager) {
 	routeHandler := &quizHandler{
-		manager: m,
+		manager:  m,
+		external: app.external,
 	}
 
-	mux.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
-		m.ServeWs(*app.external.NewExternalService(), w, r)
-	})
+	mux.HandleFunc("/ws", routeHandler.serveWS)
 	mux.HandleFunc("/hello", routeHandler.hello)
 }
 func (h *quizHandler) hello(w http.ResponseWriter, req *http.Request) {
@@ -30,4 +31,7 @@ func (h *quizHandler) hello(w http.ResponseWriter, req *http.Request) {
 	if err != nil {
 		log.Println("Error writing response:", err)
 	}
+}
+func (h *quizHandler) serveWS(w http.ResponseWriter, req *http.Request) {
+	h.manager.ServeWs(*h.external.NewExternalService(), w, req)
 }

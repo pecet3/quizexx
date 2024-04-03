@@ -59,21 +59,17 @@ func CreateGame(r *Room, external external.ExternalService) *Game {
 	e := external.NewExternalService()
 
 	content, err := e.FetchQuestionSet(category, maxRoundStr, difficulty, lang)
-	log.Println("content", content)
 
 	if err != nil {
 		return &Game{}
 	}
 	var questions []RoundQuestion
-	log.Println("questions aaaaaaaaaaaaa")
-	log.Println("questions aaaaaaaaaaaaa")
 
 	err = json.Unmarshal([]byte(content), &questions)
 	if err != nil {
 		log.Println("error with unmarshal data")
 		log.Println(err)
 	}
-	log.Println("questions aaaaaaaaaaaaa")
 
 	newGame := &Game{
 		Room:       r,
