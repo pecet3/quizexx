@@ -31,19 +31,34 @@
         bg-white placeholder:text-gray-400 placeholder:text-center text-black text-center"
                     placeholder="Category of Questions" required />
                 <p class="font-mono text-lg">Category can be anything, <b class="font-bold underline">Quizex is
-                        connected to AI (Chat-GPT-3.5)</b>. Based on the provided category, questions are prepared.</p>
+                        connected with Chat-GPT-3.5</b>. Based on the provided category, questions are prepared.</p>
             </div>
-            <label for="maxRounds" class="rounded-lg font-mono text-xl font-bold underline">Number of Rounds:</label>
-            <input type="number" id="maxRounds" min="1" max="6" value="4" class="p-0.5 text-2xl rounded-sm font m-auto border border-black
-          bg-white placeholder:text-gray-400 placeholder:text-center text-black text-center" />
-            <label for="difficulty" class="rounded-lg  font-mono text-xl font-bold underline">Difficulty Level:
+            <label for="difficulty" class="rounded-lg font-mono text-xl font-bold underline">Difficulty Level:
             </label>
             <select id="difficulty" name="difficulty" class="p-0.5 text-2xl rounded-sm font m-auto border border-black
-          bg-white placeholder:text-gray-400 placeholder:text-center text-black text-center">
+      bg-white placeholder:text-gray-400 placeholder:text-center text-black text-center">
                 <option value="easy" class="text-center">Easy</option>
                 <option value="medium" class="text-center">Medium</option>
                 <option value="hard" class="text-center">Hard</option>
             </select>
+
+            <div class="flex gap-4">
+                <div class="flex flex-col">
+                    <label for="maxRounds" class="rounded-lg font-mono text-xl font-bold underline">
+                        Rounds:</label>
+                    <input type="number" id="maxRounds" min="1" max="6" value="4" class="p-0.5 text-2xl rounded-sm font m-auto border border-black
+          bg-white placeholder:text-gray-400 placeholder:text-center text-black text-center" />
+                </div>
+                <div class="flex flex-col">
+                    <label for="lang" class="rounded-lg font-mono text-xl font-bold underline">Language:
+                    </label>
+                    <select id="lang" name="lang" class="p-0.5 text-2xl rounded-sm font m-auto border border-black
+                bg-white placeholder:text-gray-400 placeholder:text-center text-black text-center">
+                        <option value="polish" class="text-center">Polish</option>
+                        <option value="english" class="text-center">English</option>
+                    </select>
+                </div>
+            </div>
             <button type="submit" class="bg-teal-300 my-4 font-thin
         hover:shadow-none hover:rounded-xl border border-black hover:scale-[0.995]
         font-mono px-2 text-2xl duration-300 text-black rounded-lg m-auto py-1" id="readyButton" id="createRoom">Create

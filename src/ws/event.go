@@ -29,7 +29,7 @@ type ServerMessage struct {
 }
 
 func (r *Room) SendIsSpectator() error {
-	eventBytes, err := MarshalEventToBytes[bool](true, "")
+	eventBytes, err := MarshalEventToBytes(true, "")
 	if err != nil {
 		return err
 	}
@@ -42,7 +42,7 @@ func (r *Room) SendIsSpectator() error {
 	return nil
 }
 func (r *Room) SendIsFinish() error {
-	eventBytes, err := MarshalEventToBytes[bool](true, "finish_game")
+	eventBytes, err := MarshalEventToBytes(true, "finish_game")
 	if err != nil {
 		return err
 	}
@@ -56,7 +56,7 @@ func (r *Room) SendIsFinish() error {
 }
 
 func (r *Room) SendSettings() error {
-	eventBytes, err := MarshalEventToBytes[Settings](r.settings, "Room_settings")
+	eventBytes, err := MarshalEventToBytes(r.settings, "Room_settings")
 	if err != nil {
 		return err
 	}
@@ -84,7 +84,7 @@ func (r *Room) SendReadyStatus() error {
 		Clients: readyClients,
 	}
 
-	eventBytes, err := MarshalEventToBytes[ReadyStatus](RoomMsg, "ready_status")
+	eventBytes, err := MarshalEventToBytes(RoomMsg, "ready_status")
 	if err != nil {
 		return err
 	}
@@ -101,7 +101,7 @@ func (r *Room) SendServerMessage(msg string) error {
 		Message: msg,
 	}
 
-	eventBytes, err := MarshalEventToBytes[ServerMessage](serverMsg, "server_message")
+	eventBytes, err := MarshalEventToBytes(serverMsg, "server_message")
 	if err != nil {
 		return err
 	}
@@ -115,7 +115,7 @@ func (r *Room) SendServerMessage(msg string) error {
 }
 
 func (g *Game) SendGameState() error {
-	eventBytes, err := MarshalEventToBytes[GameState](*g.State, "update_gamestate")
+	eventBytes, err := MarshalEventToBytes(*g.State, "update_gamestate")
 	if err != nil {
 		return err
 	}
@@ -125,6 +125,10 @@ func (g *Game) SendGameState() error {
 		}
 		client.receive <- eventBytes
 	}
+	return nil
+}
+
+func (g *Game) SendPlayersAnswered() error {
 	return nil
 }
 

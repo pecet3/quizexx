@@ -68,7 +68,7 @@ func (m *Manager) CreateRoom(settings Settings) *Room {
 	newRoom := m.NewRoom(settings)
 	m.rooms[settings.Name] = newRoom
 
-	log.Println("Created a room with name: ", settings.Name)
+	log.Println("> Created a room with name: ", settings.Name)
 	return newRoom
 }
 
@@ -87,7 +87,7 @@ func (m *Manager) RemoveRoom(name string) {
 		close(room.leave)
 
 		delete(m.rooms, name)
-		log.Println("Closing a room with name:", room.name)
+		log.Println("> Closing a room with name:", room.name)
 		return
 	}
 }
@@ -116,7 +116,6 @@ func checkOrigin(r *http.Request) bool {
 	return true
 }
 func (m *Manager) ServeWs(external external.ExternalService, w http.ResponseWriter, req *http.Request) {
-	log.Println("ServerWs: ", m)
 	conn, err := upgrader.Upgrade(w, req, nil)
 	if err != nil {
 		log.Println(err)
@@ -189,7 +188,7 @@ func (m *Manager) ServeWs(external external.ExternalService, w http.ResponseWrit
 		isAnswered:  false,
 	}
 
-	log.Printf("New connection, userName: %v connected to room: %v", name, roomName)
+	log.Printf("> UserName: %v connected to room: %v", name, roomName)
 	currentRoom.join <- client
 	defer func() { currentRoom.leave <- client }()
 	go client.write()
