@@ -12,14 +12,13 @@ type quizHandler struct {
 }
 
 func (app *app) routeQuiz(mux *http.ServeMux) {
-	manager := &ws.Manager{}
-	manager = manager.NewManager()
+	manager := app.wsManager.NewManager()
 	routeHandler := &quizHandler{
 		manager: manager,
 	}
 
 	mux.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
-		manager.ServeWs(*app.external, w, r)
+		manager.ServeWs(*app.external.NewExternalService(), w, r)
 	})
 	mux.HandleFunc("/hello", routeHandler.hello)
 }

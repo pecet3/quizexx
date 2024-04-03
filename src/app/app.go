@@ -14,7 +14,7 @@ type app struct {
 	db        *sql.DB
 	mux       *http.ServeMux
 	wsManager ws.IManager
-	external  *external.ExternalService
+	external  external.IExternal
 }
 
 func Run() *http.Server {
@@ -25,6 +25,7 @@ func Run() *http.Server {
 		wsManager: &ws.Manager{},
 		external:  &external.ExternalService{},
 	}
+
 	app.routeQuiz(mux)
 	mux.Handle("/", http.FileServer(http.Dir("view")))
 

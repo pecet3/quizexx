@@ -18,7 +18,7 @@ const (
 type ExternalService struct {
 }
 type IExternal interface {
-	FetchBodyFromGPT() (string, error)
+	FetchQuestionSet(category, maxRounds, difficulty, lang string) (string, error)
 	NewExternalService() *ExternalService
 	SaveQuestionSetToDB(db *sql.DB)
 }
