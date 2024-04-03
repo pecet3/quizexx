@@ -5,6 +5,7 @@ const maxRoundsInput = document.getElementById('maxRounds');
 const difficultyInput = document.getElementById('difficulty');
 const langInput = document.getElementById("lang");
 
+const randomCategoryBtn = document.getElementById('randomCategory')
 
 const categories = [
     "General Knowledge",
@@ -48,6 +49,11 @@ const categories = [
     "Military History",
     "Gardening and Botany"
 ];
+
+randomCategoryBtn.addEventListener('click', () => {
+    const random = Math.floor(Math.random() * 40);
+    categoryInput.value = categories[random]
+})
 
 settingsForm.addEventListener('submit', function (event) {
     event.preventDefault();
