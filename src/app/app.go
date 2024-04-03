@@ -26,7 +26,9 @@ func Run() *http.Server {
 		external:  &external.ExternalService{},
 	}
 
-	app.routeQuiz(mux)
+	manager := app.wsManager.NewManager()
+
+	app.routeQuiz(mux, manager)
 	mux.Handle("/", http.FileServer(http.Dir("view")))
 
 	address := "127.0.0.1:8090"
