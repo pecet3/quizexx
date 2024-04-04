@@ -25,7 +25,7 @@ type GameState struct {
 	Answers         []string      `json:"answers"`
 	Actions         []RoundAction `json:"actions"`
 	Score           []PlayerScore `json:"score"`
-	PlayersFinished []string      `json:"playersFinished"`
+	PlayersAnswered []string      `json:"playersAnswered"`
 }
 
 type RoundAction struct {
@@ -53,11 +53,10 @@ func CreateGame(r *Room, external external.ExternalService) (*Game, error) {
 		return nil, err
 	}
 	difficulty := r.settings.Difficulty
-	category := ""
-	lang := "polish"
-	log.Println(external, "external")
+	category := r.settings.GameCategory
+	lang := r.settings.Language
+
 	content, err := external.FetchQuestionSet(category, maxRoundStr, difficulty, lang)
-	log.Println(content, " cotentenr")
 	if err != nil {
 		return nil, err
 	}
@@ -65,8 +64,6 @@ func CreateGame(r *Room, external external.ExternalService) (*Game, error) {
 
 	err = json.Unmarshal([]byte(content), &questions)
 	if err != nil {
-		log.Println("error with unmarshal data")
-		log.Println(err)
 		return nil, err
 	}
 
@@ -94,7 +91,7 @@ func (g *Game) NewGameState(content []RoundQuestion) *GameState {
 		Answers:         g.Content[g.State.Round-1].Answers,
 		Actions:         []RoundAction{},
 		Score:           score,
-		PlayersFinished: []string{},
+		PlayersAnswered: []string{},
 	}
 }
 
@@ -115,7 +112,7 @@ func (g *Game) NewScore() []PlayerScore {
 
 func (g *Game) CheckIfShouldBeNextRound() bool {
 	playersInGame := len(g.Players)
-	playersFinished := len(g.State.PlayersFinished)
+	playersFinished := len(g.State.PlayersAnswered)
 	if playersFinished == playersInGame && playersInGame > 0 {
 		return true
 	}

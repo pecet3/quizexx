@@ -33,7 +33,7 @@ func (Client *Client) addPointsAndToggleIsAnswered(action RoundAction) {
 			Client.points = Client.points + 10
 		}
 		if action.Answer >= 0 && !Client.isAnswered {
-			Client.room.game.State.PlayersFinished = append(Client.room.game.State.PlayersFinished, Client.name)
+			Client.room.game.State.PlayersAnswered = append(Client.room.game.State.PlayersAnswered, Client.name)
 			Client.isAnswered = true
 		}
 	}

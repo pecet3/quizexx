@@ -140,6 +140,7 @@ func (r *Room) Run(m *Manager, external external.ExternalService) {
 					Client.addPointsAndToggleIsAnswered(*actionParsed)
 					r.game.State.Actions = append(r.game.State.Actions, *actionParsed)
 					r.game.State.Score = r.game.NewScore()
+					r.game.SendPlayersAnswered()
 				}
 			}
 
@@ -172,7 +173,6 @@ func (r *Room) Run(m *Manager, external external.ExternalService) {
 					return
 				}
 			}
-
 		}
 	}
 }

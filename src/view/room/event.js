@@ -32,7 +32,11 @@ function routeEvent(event) {
         case "room_settings":
             updateRoomSettings(event)
             break
+        case "players_answered":
+            console.log(event)
         default:
+            alert("invalid event type :(")
+            console.log(event.type)
             break;
     }
 }

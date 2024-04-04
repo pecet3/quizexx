@@ -66,7 +66,7 @@ function updateDomGameState() {
     displayQuestionElement.innerHTML = gameState.question
     // displayPlayersInGame.innerHTML = gameState.actions.length
 
-    displayCountAnswered.innerHTML = `${gameState.playersFinished.length}/${gameState.score.length}`
+    // displayCountAnswered.innerHTML = `${gameState.playersFinished.length}/${gameState.score.length}`
 }
 
 function updateDomScore(playerList) {

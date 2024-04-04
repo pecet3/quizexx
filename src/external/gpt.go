@@ -2,6 +2,7 @@ package external
 
 import (
 	"database/sql"
+	"log"
 )
 
 const (
@@ -26,6 +27,7 @@ func (e *ExternalService) SaveQuestionSetToDB(db *sql.DB) {
 }
 
 func (e *ExternalService) FetchQuestionSet(category, maxRounds, difficulty, lang string) (string, error) {
+	log.Println(lang)
 	// err := godotenv.Load(".env")
 
 	// if err != nil {

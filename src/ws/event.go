@@ -28,6 +28,25 @@ type ServerMessage struct {
 	Message string `json:"message"`
 }
 
+type PlayersAnswered struct {
+	Players []string `json:"players"`
+}
+
+func (g *Game) SendPlayersAnswered() error {
+	log.Println(g.State.PlayersAnswered)
+	eventBytes, err := MarshalEventToBytes(g.State.PlayersAnswered, "players_answered")
+	if err != nil {
+		return err
+	}
+	for client := range g.Room.clients {
+		if client == nil {
+			return err
+		}
+		client.receive <- eventBytes
+	}
+	return nil
+}
+
 func (r *Room) SendIsSpectator() error {
 	eventBytes, err := MarshalEventToBytes(true, "")
 	if err != nil {
@@ -56,7 +75,7 @@ func (r *Room) SendIsFinish() error {
 }
 
 func (r *Room) SendSettings() error {
-	eventBytes, err := MarshalEventToBytes(r.settings, "Room_settings")
+	eventBytes, err := MarshalEventToBytes(r.settings, "room_settings")
 	if err != nil {
 		return err
 	}
@@ -125,10 +144,6 @@ func (g *Game) SendGameState() error {
 		}
 		client.receive <- eventBytes
 	}
-	return nil
-}
-
-func (g *Game) SendPlayersAnswered() error {
 	return nil
 }
 
