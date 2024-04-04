@@ -95,23 +95,24 @@ func (r *Room) Run(m *Manager, external external.ExternalService) {
 			}
 
 			Client.isReady = true
-			r.SendServerMessage(Client.name + " jest gotowy")
+			r.SendServerMessage(Client.name + " is ready!")
 			r.SendReadyStatus()
 			if ok := r.CheckIfEveryoneIsReady(); ok {
 				err := r.SendServerMessage("⏳Creating a Game🎲 <br> Please be patient... ")
 				if err != nil {
-					log.Println("run err send server msg")
+					log.Println("send server msg err: ", err)
 					return
 				}
 				err = r.SendSettings()
 				if err != nil {
-					log.Println("run err send settings")
+					log.Println("send settings err: ", err)
 					return
 				}
-				game := CreateGame(r, external)
-				log.Println(game.Content)
-
-				r.game = game
+				r.game, err = CreateGame(r, external)
+				if err != nil {
+					log.Println("create game err: ", err)
+					return
+				}
 				r.game.State = r.game.NewGameState(r.game.Content)
 				r.game.IsGame = true
 				r.game.SendGameState()

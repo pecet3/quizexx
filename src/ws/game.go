@@ -45,23 +45,21 @@ type RoundQuestion struct {
 	CorrectAnswer int      `json:"correctAnswer"`
 }
 
-func CreateGame(r *Room, external external.ExternalService) *Game {
-	log.Println("> Creating a game in room: ", r.name)
+func CreateGame(r *Room, external external.ExternalService) (*Game, error) {
+	log.Println("> Creating a game in room: ", r.settings.Name)
 	maxRoundStr := r.settings.MaxRounds
-	maxRoundsInt, err := strconv.Atoi(r.settings.MaxRounds)
+	maxRoundsInt, err := strconv.Atoi(maxRoundStr)
 	if err != nil {
-		return &Game{}
+		return nil, err
 	}
 	difficulty := r.settings.Difficulty
-	category := r.settings.GameCategory
+	category := ""
 	lang := "polish"
-
-	e := external.NewExternalService()
-
-	content, err := e.FetchQuestionSet(category, maxRoundStr, difficulty, lang)
-
+	log.Println(external, "external")
+	content, err := external.FetchQuestionSet(category, maxRoundStr, difficulty, lang)
+	log.Println(content, " cotentenr")
 	if err != nil {
-		return &Game{}
+		return nil, err
 	}
 	var questions []RoundQuestion
 
@@ -69,6 +67,7 @@ func CreateGame(r *Room, external external.ExternalService) *Game {
 	if err != nil {
 		log.Println("error with unmarshal data")
 		log.Println(err)
+		return nil, err
 	}
 
 	newGame := &Game{
@@ -82,10 +81,11 @@ func CreateGame(r *Room, external external.ExternalService) *Game {
 		Content:    questions,
 	}
 
-	return newGame
+	return newGame, nil
 }
 
 func (g *Game) NewGameState(content []RoundQuestion) *GameState {
+	log.Println("> New Game state in room: ", g.Room.name)
 	g.Content = content
 	score := g.NewScore()
 	return &GameState{

@@ -123,12 +123,7 @@ function getWsUrl() {
             category: urlParams.get('category') || '',
             lang: urlParams.get("lang") || '',
         }
-        return `${baseUrl}?new=true&room=${roomName}
-        &name=${userName}
-        &difficulty=${gameSettings.difficulty}
-        &maxRounds=${gameSettings.maxRounds}
-        &category=${gameSettings.category}
-        &lang=${gameSettings.lang}`
+        return `${baseUrl}?new=true&room=${roomName}&name=${userName}&difficulty=${gameSettings.difficulty}&maxRounds=${gameSettings.maxRounds}&category=${gameSettings.category}&lang=${gameSettings.lang}`
     } else {
         return `${baseUrl}?room=${roomName}&name=${userName}`
     }
