@@ -129,7 +129,6 @@ func (r *Room) Run(m *Manager, external external.ExternalService) {
 
 			for Client := range r.game.Players {
 				if Client.name == actionParsed.Name {
-					log.Println("is answered: ", Client.isAnswered, "round ", r.game.State.Round)
 					if !Client.isAnswered {
 						err := r.SendServerMessage(Client.name + " has answered")
 						if err != nil {
