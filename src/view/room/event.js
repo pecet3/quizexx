@@ -34,6 +34,7 @@ function routeEvent(event) {
             break
         case "players_answered":
             console.log(event)
+            break
         default:
             alert("invalid event type :(")
             console.log(event.type)
