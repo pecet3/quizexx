@@ -35,9 +35,10 @@ type RoundAction struct {
 }
 
 type PlayerScore struct {
-	Name      string `json:"name"`
-	Points    int    `json:"points"`
-	RoundsWon []uint `json:"roundsWon"`
+	Name       string `json:"name"`
+	Points     int    `json:"points"`
+	RoundsWon  []uint `json:"roundsWon"`
+	IsAnswered bool   `json:"isAnswered"`
 }
 type RoundQuestion struct {
 	Question      string   `json:"question"`

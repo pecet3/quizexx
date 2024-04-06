@@ -33,7 +33,8 @@ function routeEvent(event) {
             updateRoomSettings(event)
             break
         case "players_answered":
-            console.log(event)
+            updatePlayersAnswered(event)
+            console.log(gameState)
             break
         default:
             alert("invalid event type :(")
@@ -62,11 +63,17 @@ function updateGameState(event) {
     return
 }
 
+function updatePlayersAnswered(event) {
+    const playersAnswered = event.payload
+
+
+    updateDomScore(gameState.score, playersAnswered)
+}
+
 function updatePlayers(event) {
     const newPlayersState = event.payload
     gameState.players = newPlayersState
     updateDomGameState()
-
     return
 }
 

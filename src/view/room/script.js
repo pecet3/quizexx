@@ -21,9 +21,9 @@ let gameState = {
     question: "Test",
     answers: ["Lorem ipsum", "Lorem ipsum", "Lorem ipsum", "Lorem ipsum"],
     actions: [{ name: "", answer: null, round: 0 }],
-    score: [{ name: "", points: 0, roundsWon: [] }],
+    score: [{ name: "", points: 0, roundsWon: [], isAnswered: false }],
 };
-
+console.log(gameState)
 let virtualDom = {
     entryDashboard: true,
     waitingRoomDashboard: false,
@@ -38,7 +38,7 @@ if (gameState.isGame) {
 }
 handleVirtualDom()
 
-//////////////// Listeners ///////////////////////////////////////////
+//////////////// Listeners ///////////////////////
 
 connectButton.addEventListener("click", () => {
     const nameInput = document.getElementById("userNameInput")

@@ -69,7 +69,7 @@ function updateDomGameState() {
     // displayCountAnswered.innerHTML = `${gameState.playersFinished.length}/${gameState.score.length}`
 }
 
-function updateDomScore(playerList) {
+function updateDomScore(playerList, answeredList) {
     const tableBody = document.getElementById('scoreTableBody');
 
     tableBody.innerHTML = '';
@@ -78,9 +78,20 @@ function updateDomScore(playerList) {
         const row = document.createElement('tr');
         const nameCell = document.createElement('td');
         const pointsCell = document.createElement('td');
+        pointsCell.textContent = player.points;
 
         nameCell.textContent = player.name;
-        pointsCell.textContent = player.points;
+
+        if (answeredList !== undefined) {
+            answeredList.forEach(a => {
+                if (a === player.name) {
+                    nameCell.textContent = player.name + "✔";
+
+                }
+            }
+            )
+        }
+
         row.appendChild(nameCell);
         row.appendChild(pointsCell);
         tableBody.appendChild(row);
