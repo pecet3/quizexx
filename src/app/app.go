@@ -21,7 +21,7 @@ func Run() *http.Server {
 	mux := http.NewServeMux()
 	app := &app{
 		db:        database.ConnectDb(),
-		mux:       http.NewServeMux(),
+		mux:       mux,
 		wsManager: &ws.Manager{},
 		external:  &external.ExternalService{},
 	}
@@ -29,14 +29,15 @@ func Run() *http.Server {
 	manager := app.wsManager.NewManager()
 
 	app.routeQuiz(mux, manager)
-	mux.Handle("/", http.FileServer(http.Dir("view")))
+
+	app.routeView(mux)
 
 	address := "127.0.0.1:8090"
 	server := &http.Server{
 		Addr:    address,
 		Handler: mux,
 	}
-	log.Println("Server is running: ", address)
+	log.Printf("> > > Server is running // %saddress < < <", address)
 	log.Fatal(server.ListenAndServe())
 	return server
 }
