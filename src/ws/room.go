@@ -82,16 +82,16 @@ func (r *Room) Run(m *Manager, external external.ExternalService) {
 			close(Client.receive)
 			delete(r.game.Players, Client)
 			delete(r.clients, Client)
-
+			r.SendServerMessage(Client.name + " is leaving the room")
 			if len(r.clients) == 0 {
-				log.Println(Client.name, " is leaving a room: ", r.name)
+				log.Println("closing the room: ", r.name)
 				m.RemoveRoom(r.name)
 				return
 			}
 
 		case Client := <-r.ready:
 			if r.game.IsGame && Client.isSpectator {
-				r.SendServerMessage(Client.name + "joins as a spectator")
+				r.SendServerMessage(Client.name + " joins as a spectator")
 			}
 
 			Client.isReady = true
