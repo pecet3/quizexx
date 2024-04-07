@@ -48,7 +48,7 @@
 
 
     <div id="gameDashboard" class="m-0 sm:m-auto max-w-3xl text-lg shadow-slate-700 bg-pattern h-screen p-0
-        pr-0 sm:pr-4 pl-0 sm:pl-12 rounded-r-2xl shadow-md relative">
+        pr-0 sm:pr-4 pl-0 sm:pl-12 rounded-r-2xl shadow-md relative ">
 
         <p class="hidden sm:block absolute top-1/4 left-0 ml-1 sm:ml-2 text-5xl text-gray-500">●</p>
         <p class="hidden sm:block absolute top-3/4 left-0 ml-1 sm:ml-2 text-5xl text-gray-500">●</p>
@@ -138,7 +138,7 @@
                         <button type="submit" class="bg-teal-300
                          hover:rounded-xl border-2 border-black
                         font-mono font-semibold px-4 text-3xl duration-300 text-black rounded-lg m-auto py-2" id="">
-                            Send Answer
+                            Send the answer
                         </button>
                         <div class="flex gap-0.5">
                             <span class="text-lg font-sans font-bold">[</span>
@@ -147,6 +147,28 @@
                         </div>
                     </div>
 
+                </div>
+            </form>
+            <form id="chatForm" class="flex-col justify-between gap-1 p-1 flex 
+                rounded-md border border-black bg-slate-100 mt-12 overscroll-y-auto">
+                <ul class="bg-gray-100  overscroll-y-auto border border-black rounded-md">
+                    <li class="text-left p-0.5 border border-black rounded-md bg-slate-200">Kuba: hello world</li>
+                    <li class="text-left p-0.5 border border-black rounded-md ">Kuba: hello world</li>
+                    <li class="text-left p-0.5 border border-black rounded-md ">Kuba: hello world</li>
+                    <li class="text-left p-0.5 border border-black rounded-md ">Kuba: hello world</li>
+                    <li class="text-left p-0.5 border border-black rounded-md ">Kuba: hello world</li>
+                    <li class="text-left p-0.5 border border-black rounded-md ">Kuba: hello world</li>
+                    <li class="text-left p-0.5 border border-black rounded-md ">Kuba: hello world</li>
+                    <li class="text-left p-0.5 border border-black rounded-md ">Kuba: hello world</li>
+                    <li class="text-left p-0.5 border border-black rounded-md ">Kuba: hello world</li>
+                    <li class="text-left p-0.5 border border-black rounded-md ">Kuba: hello world</li>
+                </ul>
+                <div class="flex gap-1 items-end">
+                    <input type="text" class="p-1 rounded-md border border-black w-80" focus />
+                    <button type="submit"
+                        class="bg-blue-500 text-white text-xl py-1 px-2 rounded-lg border border-black">
+                        Send
+                    </button>
                 </div>
             </form>
 
