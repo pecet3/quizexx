@@ -34,11 +34,10 @@ function routeEvent(event) {
             break
         case "players_answered":
             updatePlayersAnswered(event)
-            console.log(gameState)
             break
         default:
-            alert("invalid event type :(")
-            console.log(event.type)
+            alert("invalid event type: ", event.type)
+
             break;
     }
 }
@@ -65,9 +64,8 @@ function updateGameState(event) {
 
 function updatePlayersAnswered(event) {
     const playersAnswered = event.payload
-
-
     updateDomScore(gameState.score, playersAnswered)
+    return
 }
 
 function updatePlayers(event) {
@@ -80,24 +78,26 @@ function updatePlayers(event) {
 function updateReadyStatus(event) {
     const players = event.payload.clients
     updateDomReadyStatus(players)
+    return
 }
 
 function updateRoomSettings(event) {
     const data = event.payload
     roomSettings = data
     updateDomSettings(data)
+    return
 }
 
 function updateServerMessage(event) {
     const data = event.payload.message
-
     updateDomServerMessage(data)
+    return
 }
 
 function sendEvent(eventName, payload) {
     const event = new Event(eventName, payload)
-
     conn.send(JSON.stringify(event))
+    return
 }
 
 //////////////////// CLIENT EVENT FUNCTIONS ////////////////////
