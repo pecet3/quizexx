@@ -1,4 +1,6 @@
 const gameForm = document.getElementById('gameForm');
+const chatForm = document.getElementById('chatForm');
+
 const connectButton = document.getElementById("connectButton")
 const readyButton = document.getElementById("readyButton")
 const readyUsersList = document.getElementById('readyUsersList')
@@ -16,6 +18,7 @@ const displayReadyCount = document.getElementById('displayReadyCount')
 const displayServerMessageWaiting = document.getElementById('displayServerMessageWaiting')
 const displayServerMessageDashboard = document.getElementById('displayServerMessageDashboard')
 const displayCountAnswered = document.getElementById('displayAnswered')
+
 
 function updateVirtualDom(newVirtualDom) {
     virtualDom = newVirtualDom
@@ -86,7 +89,6 @@ function updateDomScore(playerList, answeredList) {
             answeredList.forEach(a => {
                 if (a === player.name) {
                     nameCell.textContent = player.name + "✔";
-
                 }
             }
             )
