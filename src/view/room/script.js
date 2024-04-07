@@ -69,9 +69,12 @@ gameForm.addEventListener("submit", (e) => {
     let answerValue = formData.get('q1');
     const answer = Number(answerValue)
     if (answerValue !== null && !isAnswerSent) {
+
         sendAnswer(answer);
         isAnswerSent = true
-        formData = null
+        document.querySelectorAll('input[type="radio"]').forEach((radio) => {
+            radio.checked = false;
+        });
         return
     } else {
         alert("no answer :(");
