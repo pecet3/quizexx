@@ -15,16 +15,26 @@
 
 <body class="bg-pattern bg-opacity-70 pl-0 pr-0 p-0 sm:p-8 py-0 sm:py-10 text-center m-auto">
 
-    <div id="entryDashboard" class="paper paper-yellow my-6 p-4 pt-8 shadow-md flex flex-col gap-2 items-center
-   ">
-        <div class="top-tape"></div>
-        <input id="userNameInput" type="text" class="p-0.5 text-2xl rounded-sm font m-auto border border-black
-        bg-white placeholder:text-gray-400 placeholder:text-center text-black text-center" placeholder="your name" />
-        <button class="bg-purple-300 
-        hover:shadow-none hover:rounded-xl border border-black hover:scale-[0.995]
-        font-mono px-4 text-2xl duration-300 text-black rounded-lg m-auto py-1.5" id="connectButton">Join</button>
-    </div>
+    <div id="entryDashboard" class="flex flex-col justify-between">
+        <header id="minorLogo" class="p-1 my-1 sm:my-4 relative">
+            <h1 class="text-6xl font-blackflex justify-center items-end text-center text-black font-mono 
+            underline decoration-wavy decoration-4 decoration-teal-400 font-bold">
+                Quizex
+            </h1>
+            <span class="text-xs font-semibold italic underline ml-32 mono text-right">by pecet ❤</span>
+        </header>
+        <div class="paper paper-yellow my-6 p-4 pt-8 shadow-md flex flex-col gap-2 items-center
+    ">
 
+            <div class="top-tape"></div>
+            <input id="userNameInput" type="text" class="p-0.5 text-2xl rounded-sm font m-auto border border-black
+         bg-white placeholder:text-gray-400 placeholder:text-center text-black text-center" placeholder="your name" />
+            <button class="bg-purple-300 
+         hover:shadow-none hover:rounded-xl border border-black hover:scale-[0.995]
+         font-mono px-4 text-2xl duration-300 text-black rounded-lg m-auto py-1.5" id="connectButton">Join</button>
+        </div>
+
+    </div>
     <div id="waitingRoomDashboard" class="flex flex-col justify-center items-center my-6 ">
 
         <div class="paper paper-yellow max-w-md text-lg m-auto p-4 pt-8 shadow-md flex flex-col items-center">
@@ -51,15 +61,17 @@
     <div id="gameDashboard" class="m-0 sm:m-auto max-w-3xl text-lg  p-0
         pr-0 sm:pr-4 pl-0 pl-0 flex flex-col  ">
 
-        <header class="p-1 my-1 sm:my-4 relative">
+        <header class="p-1 my-1 sm:my-4 relative" id="majorLogo">
             <h1 class="text-8xl font-black	flex justify-center items-end text-center text-black font-mono 
             underline decoration-wavy decoration-4 decoration-teal-400 ">
-                <span class="text-3xl absolute -top-0.5 right-1/2 mr-2">🎲</span>Quizex<span class="text-3xl"></span>
+                <span class="text-3xl absolute -top-0.5 right-1/2 mr-2">🎲</span>
+                Quizex
+
             </h1>
         </header>
 
 
-        <div class="flex justify-between gap-2 z-10  mx-1 sm:mx-0">
+        <div class="flex justify-between gap-2 z-10  mx-1">
             <div class="text-2xl flex sm:flex-row flex-col items-center font-bold font-mono bg-gray-400 
                 rounded-t-md p-1 border-2 border-black border-b-0">
                 <span class="hidden sm:block">Category:</span>
@@ -74,7 +86,7 @@
             </div>
         </div>
         <div class="flex flex-col gap-6 items-center mx-1">
-            <form id="gameForm" class="flex flex-col gap-6 w-full md:w-[44rem] h-64">
+            <form id="gameForm" class="flex flex-col gap-6 w-full md:w-[46rem] h-64 mb-64">
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-gray-200 border-2 border-black
                   p-2 sm:p-4 rounded-b-xl text-lg font-medium">
@@ -116,6 +128,7 @@
                 </div>
                 <p id="displayServerMessageDashboard"
                     class="font-mono text-xl sm:text-2xl font-bold italic bg-white p-2 rounded-xl bg-opacity-70">
+                    .
                 </p>
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 ">
                     <table id="scoreTable"
@@ -148,12 +161,12 @@
                 ">
 
                 <div class="flex justify-between text-xl absolute">
-                    <button class="text-sm bg-indigo-100 border-t border-l border-r border-black py-0.5
+                    <button type="button" class="text-sm bg-indigo-100 border-t border-l border-r border-black py-0.5
                      rounded-t-md px-2 font-mono relative bottom-[2.3rem] right-[0.3rem] font-bold">
                         <span class="text-xl">🔽</span> Chat
                     </button>
                 </div>
-                <ul class="flex flex-col gap-1 h-32 sm:h-64 break-words
+                <ul class="flex flex-col gap-1 h-48 sm:h-96 break-words
                 overflow-y-scroll   p-0.5">
 
                     <li class="text-left bg-slate-200
@@ -182,9 +195,10 @@
                     </li>
                 </ul>
                 <div class="flex gap-2 m-auto justify-between">
-                    <input type="text" class="p-1 rounded-md border border-black w-[27rem]" focus />
-                    <button type="submit"
-                        class="bg-blue-500 text-white text-xl py-1 px-2 rounded-lg border border-black">
+                    <input name="chatInput" type="text" class="p-1 rounded-md border border-black w-[27rem]" focus />
+                    <button type="submit" class="bg-teal-300
+                        hover:rounded-xl border-2 border-black
+                       font-mono font-semibold px-2 text-xl duration-300 text-black rounded-lg m-auto py-1">
                         Send
                     </button>
                 </div>

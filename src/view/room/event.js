@@ -126,3 +126,13 @@ function sendAnswer(answer) {
     isAnswerSent = true
     return
 }
+
+function sendChatMessage(message) {
+    const payload = {
+        name: userName,
+        timeStamp: new Date().toISOString(),
+        message,
+    }
+    sendEvent("send_message", payload)
+    return
+}

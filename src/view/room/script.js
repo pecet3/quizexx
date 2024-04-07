@@ -23,11 +23,15 @@ let gameState = {
     actions: [{ name: "", answer: null, round: 0 }],
     score: [{ name: "", points: 0, roundsWon: [], isAnswered: false }],
 };
+
+// initial state "virtual dom"
 let virtualDom = {
     entryDashboard: true,
+    minorLogo: true,
     waitingRoomDashboard: false,
     gameDashboard: false,
 }
+
 if (gameState.isGame) {
     virtualDom = {
         entryDashboard: true,
@@ -35,7 +39,7 @@ if (gameState.isGame) {
         gameDashboard: false,
     }
 }
-handleVirtualDom()
+// handleVirtualDom()
 
 //////////////// Listeners ///////////////////////
 
@@ -73,6 +77,14 @@ gameForm.addEventListener("submit", (e) => {
         alert("no answer :(");
     }
 });
+
+chatForm.addEventListener("submit", (e) => {
+    e.preventDefault()
+    let formData = new FormData(chatForm)
+    const chatInput = formData.get('chatInput')
+    console.log(chatInput)
+    chatForm.elements['chatInput'].value = "";
+})
 
 ////////// W E B socket connection /////
 

@@ -149,6 +149,7 @@ func (r *Room) Run(m *Manager, external external.ExternalService) {
 			isEndGame := r.game.CheckIfIsEndGame()
 			if isEndGame {
 				r.game.IsGame = false
+				r.game.SendGameState()
 				_ = r.SendServerMessage("It's finish the game")
 				time.Sleep(800 * time.Millisecond)
 
