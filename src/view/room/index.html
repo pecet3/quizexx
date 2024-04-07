@@ -13,9 +13,9 @@
     <title>🎲Quizex🏆</title>
 </head>
 
-<body class="bg-gray-400 pl-0 pr-0 p-0 sm:p-8 py-10 text-center m-auto">
+<body class="bg-pattern bg-opacity-70 pl-0 pr-0 p-0 sm:p-8 py-0 sm:py-10 text-center m-auto">
 
-    <div id="entryDashboard" class="paper paper-yellow p-4 pt-8 shadow-md flex flex-col gap-2 items-center
+    <div id="entryDashboard" class="paper paper-yellow my-6 p-4 pt-8 shadow-md flex flex-col gap-2 items-center
    ">
         <div class="top-tape"></div>
         <input id="userNameInput" type="text" class="p-0.5 text-2xl rounded-sm font m-auto border border-black
@@ -25,7 +25,8 @@
         font-mono px-4 text-2xl duration-300 text-black rounded-lg m-auto py-1.5" id="connectButton">Join</button>
     </div>
 
-    <div id="waitingRoomDashboard" class="flex flex-col justify-center items-center">
+    <div id="waitingRoomDashboard" class="flex flex-col justify-center items-center my-6 ">
+
         <div class="paper paper-yellow max-w-md text-lg m-auto p-4 pt-8 shadow-md flex flex-col items-center">
             <div class="top-tape"></div>
 
@@ -47,13 +48,10 @@
     </div>
 
 
-    <div id="gameDashboard" class="m-0 sm:m-auto max-w-3xl text-lg shadow-slate-700 bg-pattern h-screen p-0
-        pr-0 sm:pr-4 pl-0 sm:pl-12 rounded-r-2xl shadow-md relative ">
+    <div id="gameDashboard" class="m-0 sm:m-auto max-w-3xl text-lg  p-0
+        pr-0 sm:pr-4 pl-0 pl-0 flex flex-col  ">
 
-        <p class="hidden sm:block absolute top-1/4 left-0 ml-1 sm:ml-2 text-5xl text-gray-500">●</p>
-        <p class="hidden sm:block absolute top-3/4 left-0 ml-1 sm:ml-2 text-5xl text-gray-500">●</p>
-
-        <header class="p-1 my-4 relative">
+        <header class="p-1 my-1 sm:my-4 relative">
             <h1 class="text-8xl font-black	flex justify-center items-end text-center text-black font-mono 
             underline decoration-wavy decoration-4 decoration-teal-400 ">
                 <span class="text-3xl absolute -top-0.5 right-1/2 mr-2">🎲</span>Quizex<span class="text-3xl"></span>
@@ -140,21 +138,26 @@
                         font-mono font-semibold px-4 text-3xl duration-300 text-black rounded-lg m-auto py-2" id="">
                             Send the answer
                         </button>
-                        <div class="flex gap-0.5">
-                            <span class="text-lg font-sans font-bold">[</span>
-                            <p id="displayAnswered" class="text-xl font-sans font-bold"></p>
-                            <span class="text-lg font-sans font-bold">]</span>
-                        </div>
+
                     </div>
 
                 </div>
             </form>
-            <form id="chatForm" class="flex-col justify-between gap-1 p-1 flex 
-                rounded-md border border-black bg-slate-100 sm:mt-20 mt-16 ">
-                <ul class="bg-gray-100 flex flex-col gap-1 h-40 sm:h-64 break-words
-                overflow-y-scroll border border-black rounded-md">
+            <form id="chatForm" class="flex-col justify-between sm:right-2 gap-1 p-1 flex fixed
+                rounded-tr-lg border border-black bg-indigo-200 bottom-0 w-[32rem] z-50 m-auto text-sm
+                ">
+
+                <div class="flex justify-between text-xl absolute">
+                    <button class="text-sm bg-indigo-100 border-t border-l border-r border-black py-0.5
+                     rounded-t-md px-2 font-mono relative bottom-[2.3rem] right-[0.3rem] font-bold">
+                        <span class="text-xl">🔽</span> Chat
+                    </button>
+                </div>
+                <ul class="flex flex-col gap-1 h-32 sm:h-64 break-words
+                overflow-y-scroll   p-0.5">
+
                     <li class="text-left bg-slate-200
-                    break-words w-96 max-w-max p-0.5 border border-black rounded-md ">
+                    break-words w-full p-0.5 border border-black rounded-md ">
                         Kuba: hello
                         Lorem ipsum dolor sit amet consectetur adipisicing elit. Ad, deserunt animi aliquam quibusdam
                         autem illo iure consequuntur.
@@ -178,8 +181,8 @@
                         repellendus cum?
                     </li>
                 </ul>
-                <div class="flex gap-1 items-end">
-                    <input type="text" class="p-1 rounded-md border border-black w-80" focus />
+                <div class="flex gap-2 m-auto justify-between">
+                    <input type="text" class="p-1 rounded-md border border-black w-[27rem]" focus />
                     <button type="submit"
                         class="bg-blue-500 text-white text-xl py-1 px-2 rounded-lg border border-black">
                         Send
