@@ -1,6 +1,7 @@
 package ws
 
 import (
+	"context"
 	"log"
 	"net/http"
 	"sync"
@@ -11,6 +12,7 @@ import (
 
 type Manager struct {
 	mutex sync.Mutex
+	ctx   context.Context
 	rooms map[string]*Room
 }
 
@@ -116,6 +118,9 @@ func checkOrigin(r *http.Request) bool {
 	return true
 }
 func (m *Manager) ServeWs(external external.ExternalService, w http.ResponseWriter, req *http.Request) {
+	ctx := req.Context()
+	m.ctx = ctx
+
 	conn, err := upgrader.Upgrade(w, req, nil)
 	if err != nil {
 		log.Println(err)

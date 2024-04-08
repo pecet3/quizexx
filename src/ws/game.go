@@ -1,6 +1,7 @@
 package ws
 
 import (
+	"context"
 	"encoding/json"
 	"log"
 	"strconv"
@@ -46,7 +47,7 @@ type RoundQuestion struct {
 	CorrectAnswer int      `json:"correctAnswer"`
 }
 
-func CreateGame(r *Room, external external.ExternalService) (*Game, error) {
+func CreateGame(ctx context.Context, r *Room, external external.ExternalService) (*Game, error) {
 	log.Println("> Creating a game in room: ", r.settings.Name)
 	maxRoundStr := r.settings.MaxRounds
 	maxRoundsInt, err := strconv.Atoi(maxRoundStr)
@@ -57,7 +58,7 @@ func CreateGame(r *Room, external external.ExternalService) (*Game, error) {
 	category := r.settings.GameCategory
 	lang := r.settings.Language
 
-	content, err := external.FetchQuestionSet(category, maxRoundStr, difficulty, lang)
+	content, err := external.FetchQuestionSet(ctx, category, maxRoundStr, difficulty, lang)
 	if err != nil {
 		return nil, err
 	}

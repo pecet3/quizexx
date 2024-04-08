@@ -108,7 +108,7 @@ func (r *Room) Run(m *Manager, external external.ExternalService) {
 					log.Println("send settings err: ", err)
 					return
 				}
-				r.game, err = CreateGame(r, external)
+				r.game, err = CreateGame(m.ctx, r, external)
 				if err != nil {
 					log.Println("create game err: ", err)
 					return

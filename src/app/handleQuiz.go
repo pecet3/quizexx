@@ -16,7 +16,7 @@ type quizHandler struct {
 func (app *app) routeQuiz(mux *http.ServeMux, m *ws.Manager) {
 	routeHandler := &quizHandler{
 		manager:  m,
-		external: app.external.NewExternalService(),
+		external: app.external,
 	}
 
 	mux.HandleFunc("/ws", routeHandler.serveWS)
