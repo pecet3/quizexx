@@ -35,6 +35,9 @@ function routeEvent(event) {
         case "players_answered":
             updatePlayersAnswered(event)
             break
+        case "send_message":
+            console.log(event)
+            break
         default:
             alert("invalid event type: ", event.type)
 
@@ -130,7 +133,7 @@ function sendAnswer(answer) {
 function sendChatMessage(message) {
     const payload = {
         name: userName,
-        timeStamp: new Date().toISOString(),
+        time: getCurrentDateTimeString(),
         message,
     }
     sendEvent("send_message", payload)

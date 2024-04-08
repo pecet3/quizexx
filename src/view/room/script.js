@@ -64,8 +64,6 @@ gameForm.addEventListener("submit", (e) => {
     if (!ready) return alert("you are not ready")
     let formData = new FormData(gameForm);
 
-    //// to fix reset value in the future
-
     let answerValue = formData.get('q1');
     const answer = Number(answerValue)
     if (answerValue !== null && !isAnswerSent) {
@@ -85,7 +83,9 @@ chatForm.addEventListener("submit", (e) => {
     e.preventDefault()
     let formData = new FormData(chatForm)
     const chatInput = formData.get('chatInput')
-    console.log(chatInput)
+    if (chatInput != "") {
+        sendChatMessage(chatInput)
+    }
     chatForm.elements['chatInput'].value = "";
 })
 
@@ -143,4 +143,18 @@ function getWsUrl() {
     }
 }
 
+function getCurrentDateTimeString() {
+    const currentDate = new Date();
+
+    const year = currentDate.getFullYear();
+    const month = (currentDate.getMonth() + 1).toString().padStart(2, '0');
+    const day = currentDate.getDate().toString().padStart(2, '0');
+    const hours = currentDate.getHours().toString().padStart(2, '0');
+    const minutes = currentDate.getMinutes().toString().padStart(2, '0');
+
+
+    const dateTimeString = `${year}-${month}-${day} ${hours}:${minutes}`;
+
+    return dateTimeString;
+}
 

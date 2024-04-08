@@ -45,7 +45,6 @@ func (c *Client) read() {
 	}()
 
 	if err := c.conn.SetReadDeadline(time.Now().Add(pongWait)); err != nil {
-
 		log.Println(err)
 		return
 	}
@@ -55,7 +54,7 @@ func (c *Client) read() {
 	c.conn.SetPongHandler(c.pongHandler)
 
 	for {
-		_, payload, err := c.conn.ReadMessage()
+		_, reqBytes, err := c.conn.ReadMessage()
 		if err != nil {
 			if websocket.IsUnexpectedCloseError(err, websocket.CloseGoingAway, websocket.CloseAbnormalClosure) {
 				log.Println("ws err or user was too long inactive:", err)
@@ -67,7 +66,7 @@ func (c *Client) read() {
 		}
 
 		var request Event
-		if err := json.Unmarshal(payload, &request); err != nil {
+		if err := json.Unmarshal(reqBytes, &request); err != nil {
 			log.Println("error marshaling json", err)
 			break
 		}
@@ -82,6 +81,9 @@ func (c *Client) read() {
 				return
 			}
 			c.room.receiveAnswer <- request.Payload
+		}
+		if request.Type == "send_message" {
+			c.room.forward <- reqBytes
 		}
 	}
 }
