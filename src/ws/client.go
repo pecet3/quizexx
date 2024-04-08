@@ -82,7 +82,7 @@ func (c *Client) read() {
 			}
 			c.room.receiveAnswer <- request.Payload
 		}
-		if request.Type == "send_message" {
+		if request.Type == "chat_message" {
 			c.room.forward <- reqBytes
 		}
 	}

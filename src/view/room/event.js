@@ -35,7 +35,7 @@ function routeEvent(event) {
         case "players_answered":
             updatePlayersAnswered(event)
             break
-        case "send_message":
+        case "chat_message":
             console.log(event)
             break
         default:
@@ -136,6 +136,6 @@ function sendChatMessage(message) {
         time: getCurrentDateTimeString(),
         message,
     }
-    sendEvent("send_message", payload)
+    sendEvent("chat_message", payload)
     return
 }
