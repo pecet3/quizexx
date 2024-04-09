@@ -32,6 +32,12 @@ type PlayersAnswered struct {
 	Players []string `json:"players"`
 }
 
+type ChatMessage struct {
+	Name    string `json:"name"`
+	Message string `json:"message"`
+	Date    string `json:"date"`
+}
+
 func (g *Game) SendPlayersAnswered() error {
 	log.Println(g.State.PlayersAnswered)
 	eventBytes, err := MarshalEventToBytes(g.State.PlayersAnswered, "players_answered")
