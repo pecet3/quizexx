@@ -21,9 +21,9 @@ body {
 }
 
 .bg-second-paper {
-    background-color: #ffffff;
-    background-image: linear-gradient(#a7aae7 1px, transparent 2px);
+    background-color: #e5e5f7;
     background-size: 20px 20px;
+    background-image: repeating-linear-gradient(0deg, #444cf7, #444cf7 1px, #e5e5f7 1px, #e5e5f7);
 }
 
 ///////////////////// f o n t s /////////////////////////
