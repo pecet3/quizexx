@@ -134,8 +134,8 @@ function sendAnswer(answer) {
 function sendChatMessage(message) {
     const payload = {
         name: userName,
-        time: getCurrentDateTimeString(),
-        message,
+        time: getCurrentTimeString(),
+        message: message,
     }
     sendEvent("chat_message", payload)
     return

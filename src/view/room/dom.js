@@ -142,17 +142,17 @@ function updateDomChatMessages(data) {
 
 
       ${userName === data.name
-            ? `<div class="p-1 flex flex-row-reverse bg-slate-100 rounded-md break-words max-w-64 sm:max-w-[38rem]">`
-            : `<div class="p-1 flex bg-slate-200 rounded-md max-w-64 sm:max-w-[38rem] break-words">`}
+            ? `<div class="p-1 flex flex-row-reverse bg-slate-200 rounded-md break-words max-w-64 sm:max-w-[38rem]">`
+            : `<div class="p-1 flex bg-slate-100 rounded-md max-w-64 sm:max-w-[38rem] break-words">`}
 
-        <div class="break-words flex flex-col justify-center items-center">
+        <div class="break-words flex flex-col justify-end items-center">
 
         ${data.name === userName
-            ? `<a class="font-bold text-pink-700 underline"> :${data.name}</a>`
-            : `<a class="font-bold text-pink-700 underline">${data.name}: </a>`}
+            ? `<a class="text-gray-700 ">(You)</a>`
+            : `<a class="font-bold text-teal-500 underline"> ${data.name}: </a>`}
 
-        ${typeof data.date !== 'undefined'
-            ? `<a class="font-mono text-[12px]">${data.date}</a>`
+        ${typeof data.time !== 'undefined'
+            ? `<a class="font-mono text-[12px]">${data.time}</a>`
             : ""}
         </div>
         
