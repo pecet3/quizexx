@@ -37,6 +37,7 @@ function routeEvent(event) {
             break
         case "chat_message":
             console.log(event)
+            updateDomChatMessages(event.payload)
             break
         default:
             alert("invalid event type: ", event.type)

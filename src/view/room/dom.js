@@ -132,3 +132,38 @@ function updateDomSettings(data) {
 
 }
 
+function updateDomChatMessages(data) {
+    const chatMessages = document.getElementById("chatMessages")
+
+    const elementHTML = `
+      ${userName === data.name
+            ? `<li class="flex flex-row-reverse">`
+            : `<li class="flex p-0.5">`}
+
+
+      ${userName === data.name
+            ? `<div class="p-1 flex flex-row-reverse bg-slate-100 rounded-md break-words max-w-64 sm:max-w-[38rem]">`
+            : `<div class="p-1 flex bg-slate-200 rounded-md max-w-64 sm:max-w-[38rem] break-words">`}
+
+        <div class="break-words flex flex-col justify-center items-center">
+
+        ${data.name === userName
+            ? `<a class="font-bold text-pink-700 underline"> :${data.name}</a>`
+            : `<a class="font-bold text-pink-700 underline">${data.name}: </a>`}
+
+        ${typeof data.date !== 'undefined'
+            ? `<a class="font-mono text-[12px]">${data.date}</a>`
+            : ""}
+        </div>
+        
+        
+        <a class="px-0.5"> ${data.message} </a>
+
+        </div>
+      </li>
+    `
+
+    chatMessages.insertAdjacentHTML("beforeend", elementHTML)
+    return
+}
+

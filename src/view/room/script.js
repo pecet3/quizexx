@@ -39,7 +39,7 @@ if (gameState.isGame) {
         gameDashboard: false,
     }
 }
-// handleVirtualDom()
+handleVirtualDom()
 
 //////////////// Listeners ///////////////////////
 
