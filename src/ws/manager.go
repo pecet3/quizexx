@@ -111,8 +111,7 @@ func checkOrigin(r *http.Request) bool {
 	return true
 }
 func (m *Manager) ServeWs(external external.IExternal, w http.ResponseWriter, req *http.Request) {
-	ctx := req.Context()
-	m.ctx = ctx
+	m.ctx = req.Context()
 
 	conn, err := upgrader.Upgrade(w, req, nil)
 	if err != nil {

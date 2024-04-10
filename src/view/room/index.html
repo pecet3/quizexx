@@ -15,7 +15,7 @@
 
 <body class="bg-pattern bg-opacity-70 pl-0 pr-0 p-0 sm:p-8 py-0 sm:py-10 text-center m-auto">
 
-    <div id="entryDashboard" class="flex flex-col justify-between">
+    <!-- <div id="entryDashboard" class="flex flex-col justify-between">
         <header id="minorLogo" class="p-1 my-1 sm:my-4 relative">
             <h1 class="text-6xl font-blackflex justify-center items-end text-center text-black font-mono 
             underline decoration-wavy decoration-4 decoration-teal-400 font-bold">
@@ -56,12 +56,12 @@
         </div>
         <p id="displayServerMessageWaiting" class="font-mono text-lg font-bold"></p>
     </div>
-
+ -->
 
     <div id="gameDashboard" class="m-0 sm:m-auto max-w-3xl text-lg  p-0
         pr-0 sm:pr-4 pl-0 pl-0 flex flex-col  ">
 
-        <header class="p-1 my-1 sm:my-4 relative" id="majorLogo">
+        <header class="p-1 mb-1 sm:mb-4 relative" id="majorLogo">
             <h1 class="text-8xl font-black	flex justify-center items-end text-center text-black font-mono 
             underline decoration-wavy decoration-4 decoration-teal-400 ">
                 <span class="text-3xl absolute -top-0.5 right-1/2 mr-2">🎲</span>
@@ -85,10 +85,10 @@
             </div>
         </div>
         <div class="flex flex-col gap-6 items-center mx-1">
-            <form id="gameForm" class="flex flex-col gap-6 w-full md:w-[46rem] h-64 mb-64">
+            <form id="gameForm" class="flex flex-col gap-6 w-full md:w-[46rem]">
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-gray-200 border-2 border-black
-                  p-2 sm:p-4 rounded-b-xl text-lg font-medium">
+                  p-2 sm:p-4 rounded-b-xl text-lg">
                     <h3 id="displayQuestion" class="sm:col-span-2 text-center font-bold text-2xl">
                     </h3>
                     <label id="a1" class=" has-[:checked]:rounded-lg has-[:checked]:scale-[1.01] bg-blue-200
@@ -97,7 +97,7 @@
                      border border-black
                         ">
                         <input type="radio" id="a2" name="q1" value="0" class="hidden ">
-                        <p id="answerA"></p>
+                        <p id="answerA">A</p>
                     </label>
                     <label id="a2" class=" has-[:checked]:rounded-lg has-[:checked]:scale-[1.01] bg-red-200
                     duration-300 has-[:checked]:bg-gray-700 has-[:checked]:ring ring-teal-500 has-[:checked]:text-white
@@ -105,7 +105,7 @@
                      border border-black
                      ">
                         <input type="radio" name="q1" value="1" class="hidden">
-                        <p id="answerB"></p>
+                        <p id="answerB">B</p>
                     </label>
                     <label id="a3" class=" has-[:checked]:rounded-lg has-[:checked]:scale-[1.01] bg-green-200
                     duration-300 has-[:checked]:bg-gray-700 has-[:checked]:ring ring-teal-500 has-[:checked]:text-white
@@ -113,7 +113,7 @@
                      border border-black
                      ">
                         <input type="radio" name="q1" value="2" class="hidden">
-                        <p id="answerC"></p>
+                        <p id="answerC">C</p>
                     </label>
                     <label id="a4" class=" has-[:checked]:rounded-lg has-[:checked]:scale-[1.01] bg-purple-200
                     duration-300 has-[:checked]:bg-gray-700 has-[:checked]:ring ring-teal-500 has-[:checked]:text-white
@@ -121,7 +121,7 @@
                      border border-black
                      ">
                         <input type="radio" name="q1" value="3" class="hidden">
-                        <p id="answerD"></p>
+                        <p id="answerD">D</p>
                     </label>
 
                 </div>
@@ -129,6 +129,7 @@
                     class="font-mono text-xl sm:text-2xl font-bold italic bg-white p-2 rounded-xl bg-opacity-70">
                     Have a good game!
                 </p>
+                <p></p>
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 ">
                     <table id="scoreTable"
                         class="text-xl table-fixed sm:order-none order-last  bg-yellow-200 shadow-md shadow-gray-600">
@@ -155,31 +156,34 @@
 
                 </div>
             </form>
-            <form id="chatForm" class="flex-col justify-between sm:right-2 gap-1 p-1 flex fixed
-                rounded-tr-lg border border-black bg-indigo-200 bottom-0 w-[32rem] z-50 m-auto text-sm
-                ">
 
-                <div class="flex justify-between text-xl absolute">
-                    <button type="button" class="text-sm bg-indigo-100 border-t border-l border-r border-black py-0.5
-                     rounded-t-md px-2 font-mono relative bottom-[2.3rem] right-[0.3rem] font-bold">
-                        <span class="text-xl">🔽</span> Chat
-                    </button>
-                </div>
-                <ul class="flex flex-col gap-1 h-48 sm:h-96 break-words
-                overflow-y-scroll text-sm sm:text-base p-0.5" id="chatMessages">
-                </ul>
-                <div class="flex gap-2 m-auto justify-between">
-                    <input name="chatInput" type="text" class="p-1 rounded-md border border-black w-[27rem]" focus />
-                    <button type="submit" class="bg-teal-300
-                        hover:rounded-xl border-2 border-black
-                       font-mono font-semibold px-2 text-xl duration-300 text-black rounded-lg m-auto py-1">
-                        Send
-                    </button>
-                </div>
-            </form>
 
 
         </div>
+        <form id="chatForm" class="flex-col justify-between sm:right-2 gap-1 p-1 flex bg-second-paper
+        rounded-b-lg rounded-r-lg border-2 border-black bg-slate-200 w-96 sm:w-[30rem]  z-50 m-auto text-sm
+        my-16
+        ">
+
+            <div class="flex justify-between text-xl absolute">
+                <div class="text-2xl bg-gray-400
+                 border-2 border-black py-0.5
+             rounded-t-md px-2 font-mono relative bottom-[2.5rem] right-[0.35rem] font-bold">
+                    Chat<span class="text-lg text-teal-500">💬</span>
+                </div>
+            </div>
+            <ul class="flex flex-col gap-1 h-64 sm:h-80 break-words
+        overflow-y-scroll text-sm sm:text-base p-0.5 border-b border-gray-400" id="chatMessages">
+            </ul>
+            <div class="flex gap-2 m-auto justify-between">
+                <input name="chatInput" type="text" class="p-1 rounded-md border border-black sm:w-[24rem] w-72" />
+                <button type="submit" class="bg-teal-300
+                hover:rounded-xl border-2 border-black
+               font-mono font-semibold px-2 text-xl duration-300 text-black rounded-lg m-auto py-1">
+                    Send
+                </button>
+            </div>
+        </form>
     </div>
 
 </body>
