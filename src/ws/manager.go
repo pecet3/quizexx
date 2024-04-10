@@ -25,14 +25,7 @@ func (m *Manager) NewManager() *Manager {
 
 type IManager interface {
 	NewManager() *Manager
-
-	CreateRoom(settings Settings) *Room
-	RemoveRoom(name string)
-	GetRoomNamesList() []string
-	GetRoom(name string) *Room
-	NewRoom(settings Settings) *Room
-
-	ServeWs(external external.ExternalService, w http.ResponseWriter, req *http.Request)
+	ServeWs(external external.IExternal, w http.ResponseWriter, req *http.Request)
 }
 
 func (m *Manager) NewRoom(settings Settings) *Room {
@@ -117,7 +110,7 @@ var (
 func checkOrigin(r *http.Request) bool {
 	return true
 }
-func (m *Manager) ServeWs(external external.ExternalService, w http.ResponseWriter, req *http.Request) {
+func (m *Manager) ServeWs(external external.IExternal, w http.ResponseWriter, req *http.Request) {
 	ctx := req.Context()
 	m.ctx = ctx
 

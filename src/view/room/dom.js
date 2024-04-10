@@ -4,6 +4,7 @@ const chatForm = document.getElementById('chatForm');
 const connectButton = document.getElementById("connectButton")
 const readyButton = document.getElementById("readyButton")
 const readyUsersList = document.getElementById('readyUsersList')
+
 const answerAElement = document.getElementById('answerA');
 const answerBElement = document.getElementById('answerB');
 const answerCElement = document.getElementById('answerC');
@@ -13,7 +14,6 @@ const answerDElement = document.getElementById('answerD');
 const displayRoundElement = document.getElementById('displayRound');
 const displayQuestionElement = document.getElementById('displayQuestion');
 const displayPlayers = document.getElementById('displayPlayersInGame')
-// const displayPlayersInGame = document.getElementById('displayPlayersInGame')
 const displayReadyCount = document.getElementById('displayReadyCount')
 const displayServerMessageWaiting = document.getElementById('displayServerMessageWaiting')
 const displayServerMessageDashboard = document.getElementById('displayServerMessageDashboard')

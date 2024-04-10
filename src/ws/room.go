@@ -39,7 +39,7 @@ func (r *Room) CheckIfEveryoneIsReady() bool {
 	return true
 }
 
-func (r *Room) Run(m *Manager, external external.ExternalService) {
+func (r *Room) Run(m *Manager, external external.IExternal) {
 	for {
 		select {
 		case msg := <-r.forward:

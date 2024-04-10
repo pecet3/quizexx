@@ -33,5 +33,5 @@ func (h *quizHandler) hello(w http.ResponseWriter, req *http.Request) {
 	}
 }
 func (h *quizHandler) serveWS(w http.ResponseWriter, req *http.Request) {
-	h.manager.ServeWs(*h.external.NewExternalService(), w, req)
+	h.manager.ServeWs(h.external, w, req)
 }

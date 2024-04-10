@@ -47,7 +47,7 @@ type RoundQuestion struct {
 	CorrectAnswer int      `json:"correctAnswer"`
 }
 
-func CreateGame(ctx context.Context, r *Room, external external.ExternalService) (*Game, error) {
+func CreateGame(ctx context.Context, r *Room, external external.IExternal) (*Game, error) {
 	log.Println("> Creating a game in room: ", r.settings.Name)
 	maxRoundStr := r.settings.MaxRounds
 	maxRoundsInt, err := strconv.Atoi(maxRoundStr)
