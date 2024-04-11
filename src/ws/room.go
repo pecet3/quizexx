@@ -130,6 +130,9 @@ func (r *Room) Run(m *Manager, external external.IExternal) {
 
 			for Client := range r.game.Players {
 				if Client.name == actionParsed.Name {
+					if Client.isSpectator {
+						return
+					}
 					if !Client.isAnswered {
 						err := r.SendServerMessage(Client.name + " has answered")
 						if err != nil {

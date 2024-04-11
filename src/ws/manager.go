@@ -144,8 +144,6 @@ func (m *Manager) ServeWs(external external.IExternal, w http.ResponseWriter, re
 
 	if currentRoom != nil {
 		if newRoom == "true" {
-			log.Println(2)
-
 			conn.Close()
 			return
 		}
