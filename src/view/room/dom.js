@@ -137,13 +137,13 @@ function updateDomChatMessages(data) {
 
     const elementHTML = `
       ${userName === data.name
-            ? `<li class="flex flex-row-reverse p-0.5">`
-            : `<li class="flex p-0.5">`}
+            ? `<li class="flex flex-row-reverse p-0.5 w-full ">`
+            : `<li class="flex p-0.5 w-full">`}
 
 
       ${userName === data.name
-            ? `<div class="p-1 flex flex-row-reverse bg-slate-100 rounded-md break-words max-w-64 sm:max-w-[38rem]">`
-            : `<div class="p-1 flex bg-slate-100 rounded-md max-w-64 sm:max-w-[38rem] break-words">`}
+            ? `<div class="p-1 flex flex-row-reverse rounded-md bg-white border border-black break-words ">`
+            : `<div class="p-1 flex bg-white border rounded-md border-black break-words">`}
 
         <div class="break-words flex flex-col justify-end items-center">
 
