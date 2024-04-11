@@ -83,9 +83,10 @@ chatForm.addEventListener("submit", (e) => {
     e.preventDefault()
     let formData = new FormData(chatForm)
     const chatInput = formData.get('chatInput')
-    if (chatInput != "") {
-        sendChatMessage(chatInput)
+    if (chatInput == "" || chatInput.length > 512) {
+        return
     }
+    sendChatMessage(chatInput.trim())
     chatForm.elements['chatInput'].value = "";
 })
 

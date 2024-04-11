@@ -49,7 +49,7 @@ func (c *Client) read() {
 		return
 	}
 
-	c.conn.SetReadLimit(512)
+	c.conn.SetReadLimit(1024)
 
 	c.conn.SetPongHandler(c.pongHandler)
 
