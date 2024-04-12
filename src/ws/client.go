@@ -26,15 +26,16 @@ type Client struct {
 	roundsWon   []uint
 }
 
-func (Client *Client) addPointsAndToggleIsAnswered(action RoundAction) {
-	if Client.name == action.Name {
-		Client.answer = action.Answer
-		if action.Answer == Client.room.game.Content[Client.room.game.State.Round-1].CorrectAnswer && !Client.isAnswered {
-			Client.points = Client.points + 10
+func (c *Client) addPointsAndToggleIsAnswered(action RoundAction, r *Room) {
+	if c.name == action.Name {
+		c.answer = action.Answer
+		if action.Answer == c.room.game.Content[c.room.game.State.Round-1].CorrectAnswer && !c.isAnswered {
+			c.points = c.points + 10
+			r.game.State.RoundWinners = append(r.game.State.RoundWinners, c.name)
 		}
-		if action.Answer >= 0 && !Client.isAnswered {
-			Client.room.game.State.PlayersAnswered = append(Client.room.game.State.PlayersAnswered, Client.name)
-			Client.isAnswered = true
+		if action.Answer >= 0 && !c.isAnswered {
+			c.room.game.State.PlayersAnswered = append(c.room.game.State.PlayersAnswered, c.name)
+			c.isAnswered = true
 		}
 	}
 }

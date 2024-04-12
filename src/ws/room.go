@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"log"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/pecet3/quizex/external"
@@ -97,6 +98,7 @@ func (r *Room) Run(m *Manager, external external.IExternal) {
 			Client.isReady = true
 			r.SendServerMessage(Client.name + " is ready!")
 			r.SendReadyStatus()
+
 			if ok := r.CheckIfEveryoneIsReady(); ok {
 				err := r.SendServerMessage("⏳Creating a Game🎲 <br> Please be patient... ")
 				if err != nil {
@@ -140,7 +142,7 @@ func (r *Room) Run(m *Manager, external external.IExternal) {
 						}
 					}
 
-					Client.addPointsAndToggleIsAnswered(*actionParsed)
+					Client.addPointsAndToggleIsAnswered(*actionParsed, r)
 					r.game.State.Actions = append(r.game.State.Actions, *actionParsed)
 					r.game.State.Score = r.game.NewScore()
 					r.game.SendPlayersAnswered()
@@ -155,27 +157,53 @@ func (r *Room) Run(m *Manager, external external.IExternal) {
 				r.game.SendGameState()
 				time.Sleep(800 * time.Millisecond)
 				_ = r.SendServerMessage("It's finish the game")
-
 				continue
 			}
 			if isNextRound {
 				r.game.State.Round++
-				for Client := range r.game.Players {
-					if Client.isAnswered {
-						Client.isAnswered = false
-					}
+
+				var err error
+				winnersStr := strings.Join(r.game.State.RoundWinners, ", ")
+
+				if len(r.game.State.RoundWinners) < 1 {
+					err = r.SendServerMessage("No one wins this round")
+				}
+				if len(r.game.State.RoundWinners) == 1 {
+					err = r.SendServerMessage("This round wins " + winnersStr)
+				}
+				if len(r.game.State.RoundWinners) < 3 {
+					err = r.SendServerMessage("This round win: " + winnersStr)
+				}
+				if err != nil {
+					return
 				}
 
 				if !isEndGame {
 					newState := r.game.NewGameState(r.game.Content)
 					r.game.State = newState
 				}
-				time.Sleep(800 * time.Millisecond)
+				time.Sleep(3000 * time.Millisecond)
 				r.game.SendGameState()
-				err := r.SendServerMessage("New round has began: " + strconv.Itoa(r.game.State.Round))
+
+				indexOkAnswr := r.game.Content[r.game.State.Round].CorrectAnswer
+				strOkAnswr := r.game.Content[r.game.State.Round].Answers[indexOkAnswr]
+
+				err = r.SendServerMessage("The correct answer was: " + strOkAnswr)
 				if err != nil {
 					return
 				}
+
+				time.Sleep(1800 * time.Millisecond)
+				err = r.SendServerMessage("New round has began: " + strconv.Itoa(r.game.State.Round))
+				if err != nil {
+					return
+				}
+				for Client := range r.game.Players {
+					if Client.isAnswered {
+						Client.isAnswered = false
+					}
+				}
+
 			}
 		}
 	}

@@ -27,6 +27,7 @@ type GameState struct {
 	Actions         []RoundAction `json:"actions"`
 	Score           []PlayerScore `json:"score"`
 	PlayersAnswered []string      `json:"playersAnswered"`
+	RoundWinners    []string      `json:"-"`
 }
 
 type RoundAction struct {
