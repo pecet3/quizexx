@@ -1,17 +1,15 @@
 package app
 
 import (
-	"database/sql"
 	"log"
 	"net/http"
 
-	"github.com/pecet3/quizex/database"
 	"github.com/pecet3/quizex/external"
 	"github.com/pecet3/quizex/ws"
 )
 
 type app struct {
-	db        *sql.DB
+	// db        *sql.DB
 	mux       *http.ServeMux
 	wsManager ws.IManager
 	external  external.IExternal
@@ -20,7 +18,7 @@ type app struct {
 func Run() *http.Server {
 	mux := http.NewServeMux()
 	app := &app{
-		db:        database.ConnectDb(),
+		// db:        database.ConnectDb(),
 		mux:       mux,
 		wsManager: &ws.Manager{},
 		external:  &external.ExternalService{},

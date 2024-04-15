@@ -182,7 +182,7 @@ func (r *Room) Run(m *Manager, external external.IExternal) {
 					newState := r.game.NewGameState(r.game.Content)
 					r.game.State = newState
 				}
-				time.Sleep(3000 * time.Millisecond)
+				time.Sleep(1800 * time.Millisecond)
 				r.game.SendGameState()
 
 				indexOkAnswr := r.game.Content[r.game.State.Round].CorrectAnswer
@@ -193,7 +193,7 @@ func (r *Room) Run(m *Manager, external external.IExternal) {
 					return
 				}
 
-				time.Sleep(1800 * time.Millisecond)
+				time.Sleep(2800 * time.Millisecond)
 				err = r.SendServerMessage("New round has began: " + strconv.Itoa(r.game.State.Round))
 				if err != nil {
 					return
