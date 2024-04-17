@@ -9,7 +9,7 @@ import (
 )
 
 type quizHandler struct {
-	manager  ws.IManager
+	manager  *ws.Manager
 	external external.IExternal
 }
 

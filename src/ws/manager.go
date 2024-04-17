@@ -23,11 +23,6 @@ func NewManager() *Manager {
 	}
 }
 
-type IManager interface {
-	NewManager() *Manager
-	ServeWs(external external.IExternal, w http.ResponseWriter, req *http.Request)
-}
-
 func (m *Manager) NewRoom(settings Settings) *Room {
 	r := &Room{
 		name:          settings.Name,
