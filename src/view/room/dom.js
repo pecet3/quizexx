@@ -47,9 +47,9 @@ function handleVirtualDom() {
 }
 function updateDomServerMessage(message) {
     if (virtualDom.waitingRoomDashboard) {
-        displayServerMessageWaiting.innerText = message
+        displayServerMessageWaiting.innerHTML = message
     } else if (virtualDom.gameDashboard) {
-        displayServerMessageDashboard.innerText = message
+        displayServerMessageDashboard.innerHTML = message
     }
 }
 function updateDomGameState() {

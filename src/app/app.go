@@ -11,7 +11,7 @@ import (
 type app struct {
 	// db        *sql.DB
 	mux       *http.ServeMux
-	wsManager ws.IManager
+	wsManager *ws.Manager
 	external  external.IExternal
 }
 
@@ -20,13 +20,11 @@ func Run() *http.Server {
 	app := &app{
 		// db:        database.ConnectDb(),
 		mux:       mux,
-		wsManager: &ws.Manager{},
+		wsManager: ws.NewManager(),
 		external:  &external.ExternalService{},
 	}
 
-	manager := app.wsManager.NewManager()
-
-	app.routeQuiz(mux, manager)
+	app.routeQuiz(mux, app.wsManager)
 
 	app.routeView(mux)
 

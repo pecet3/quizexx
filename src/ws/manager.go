@@ -16,7 +16,7 @@ type Manager struct {
 	rooms map[string]*Room
 }
 
-func (m *Manager) NewManager() *Manager {
+func NewManager() *Manager {
 	return &Manager{
 		rooms: make(map[string]*Room),
 		mutex: sync.Mutex{},
