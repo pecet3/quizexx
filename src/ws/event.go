@@ -40,7 +40,7 @@ type ChatMessage struct {
 
 func (g *Game) SendPlayersAnswered() error {
 	log.Println(g.State.PlayersAnswered)
-	eventBytes, err := MarshalEventToBytes(g.State.PlayersAnswered, "players_answered")
+	eventBytes, err := marshalEventToBytes(g.State.PlayersAnswered, "players_answered")
 	if err != nil {
 		return err
 	}
@@ -54,7 +54,7 @@ func (g *Game) SendPlayersAnswered() error {
 }
 
 func (r *Room) SendIsSpectator() error {
-	eventBytes, err := MarshalEventToBytes(true, "")
+	eventBytes, err := marshalEventToBytes(true, "")
 	if err != nil {
 		return err
 	}
@@ -67,7 +67,7 @@ func (r *Room) SendIsSpectator() error {
 	return nil
 }
 func (r *Room) SendIsFinish() error {
-	eventBytes, err := MarshalEventToBytes(true, "finish_game")
+	eventBytes, err := marshalEventToBytes(true, "finish_game")
 	if err != nil {
 		return err
 	}
@@ -80,8 +80,8 @@ func (r *Room) SendIsFinish() error {
 	return nil
 }
 
-func (r *Room) SendSettings() error {
-	eventBytes, err := MarshalEventToBytes(r.settings, "room_settings")
+func (r *Room) sendSettings() error {
+	eventBytes, err := marshalEventToBytes(r.settings, "room_settings")
 	if err != nil {
 		return err
 	}
@@ -94,7 +94,7 @@ func (r *Room) SendSettings() error {
 	return nil
 }
 
-func (r *Room) SendReadyStatus() error {
+func (r *Room) sendReadyStatus() error {
 	var readyClients []ReadyClient
 
 	for c := range r.clients {
@@ -109,7 +109,7 @@ func (r *Room) SendReadyStatus() error {
 		Clients: readyClients,
 	}
 
-	eventBytes, err := MarshalEventToBytes(RoomMsg, "ready_status")
+	eventBytes, err := marshalEventToBytes(RoomMsg, "ready_status")
 	if err != nil {
 		return err
 	}
@@ -121,12 +121,12 @@ func (r *Room) SendReadyStatus() error {
 	}
 	return nil
 }
-func (r *Room) SendServerMessage(msg string) error {
+func (r *Room) sendServerMessage(msg string) error {
 	serverMsg := ServerMessage{
 		Message: msg,
 	}
 
-	eventBytes, err := MarshalEventToBytes(serverMsg, "server_message")
+	eventBytes, err := marshalEventToBytes(serverMsg, "server_message")
 	if err != nil {
 		return err
 	}
@@ -139,8 +139,8 @@ func (r *Room) SendServerMessage(msg string) error {
 	return nil
 }
 
-func (g *Game) SendGameState() error {
-	eventBytes, err := MarshalEventToBytes(*g.State, "update_gamestate")
+func (g *Game) sendGameState() error {
+	eventBytes, err := marshalEventToBytes(*g.State, "update_gamestate")
 	if err != nil {
 		return err
 	}
@@ -153,7 +153,7 @@ func (g *Game) SendGameState() error {
 	return nil
 }
 
-func MarshalEventToBytes[T any](payload T, eventType string) ([]byte, error) {
+func marshalEventToBytes[T any](payload T, eventType string) ([]byte, error) {
 	p := payload
 	stateBytes, err := json.Marshal(p)
 	if err != nil {

@@ -38,7 +38,7 @@ func (m *Manager) NewRoom(settings Settings) *Room {
 	return r
 }
 
-func (m *Manager) GetRoom(name string) *Room {
+func (m *Manager) getRoom(name string) *Room {
 	log.Println(m)
 	m.mutex.Lock()
 	defer m.mutex.Unlock()
@@ -47,7 +47,7 @@ func (m *Manager) GetRoom(name string) *Room {
 	return m.rooms[name]
 }
 
-func (m *Manager) CreateRoom(settings Settings) *Room {
+func (m *Manager) createRoom(settings Settings) *Room {
 	m.mutex.Lock()
 	defer m.mutex.Unlock()
 
@@ -62,7 +62,7 @@ func (m *Manager) CreateRoom(settings Settings) *Room {
 	return newRoom
 }
 
-func (m *Manager) RemoveRoom(name string) {
+func (m *Manager) removeRoom(name string) {
 	m.mutex.Lock()
 	defer m.mutex.Unlock()
 
@@ -135,7 +135,7 @@ func (m *Manager) ServeWs(external external.IExternal, w http.ResponseWriter, re
 		MaxRounds:    maxRounds,
 		Language:     lang,
 	}
-	currentRoom := m.GetRoom(roomName)
+	currentRoom := m.getRoom(roomName)
 
 	if currentRoom != nil {
 		if newRoom == "true" {
@@ -152,7 +152,7 @@ func (m *Manager) ServeWs(external external.IExternal, w http.ResponseWriter, re
 	}
 	if currentRoom == nil {
 		if newRoom == "true" {
-			currentRoom = m.CreateRoom(settings)
+			currentRoom = m.createRoom(settings)
 			go currentRoom.run(m, external)
 		} else {
 			conn.Close()
