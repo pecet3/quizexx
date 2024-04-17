@@ -40,7 +40,7 @@ func (r *Room) CheckIfEveryoneIsReady() bool {
 	return true
 }
 
-func (r *Room) Run(m *Manager, external external.IExternal) {
+func (r *Room) run(m *Manager, external external.IExternal) {
 	for {
 		select {
 		case msg := <-r.forward:
@@ -185,8 +185,9 @@ func (r *Room) Run(m *Manager, external external.IExternal) {
 				time.Sleep(1800 * time.Millisecond)
 				r.game.SendGameState()
 
-				indexOkAnswr := r.game.Content[r.game.State.Round].CorrectAnswer
-				strOkAnswr := r.game.Content[r.game.State.Round].Answers[indexOkAnswr]
+				indexCurrentContent := r.game.Content[r.game.State.Round-2]
+				indexOkAnswr := indexCurrentContent.CorrectAnswer
+				strOkAnswr := indexCurrentContent.Answers[indexOkAnswr]
 
 				err = r.SendServerMessage("The correct answer was: " + strOkAnswr)
 				if err != nil {

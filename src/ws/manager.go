@@ -158,7 +158,7 @@ func (m *Manager) ServeWs(external external.IExternal, w http.ResponseWriter, re
 	if currentRoom == nil {
 		if newRoom == "true" {
 			currentRoom = m.CreateRoom(settings)
-			go currentRoom.Run(m, external)
+			go currentRoom.run(m, external)
 		} else {
 			conn.Close()
 			return

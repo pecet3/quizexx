@@ -47,9 +47,9 @@ function handleVirtualDom() {
 }
 function updateDomServerMessage(message) {
     if (virtualDom.waitingRoomDashboard) {
-        displayServerMessageWaiting.innerHTML = message
+        displayServerMessageWaiting.innerText = message
     } else if (virtualDom.gameDashboard) {
-        displayServerMessageDashboard.innerHTML = message
+        displayServerMessageDashboard.innerText = message
     }
 }
 function updateDomGameState() {
@@ -58,22 +58,22 @@ function updateDomGameState() {
         waitingRoomDashboard: false,
         gameDashboard: true,
     })
-    answerAElement.innerHTML = gameState.answers[0]
-    answerBElement.innerHTML = gameState.answers[1]
-    answerCElement.innerHTML = gameState.answers[2]
-    answerDElement.innerHTML = gameState.answers[3]
+    answerAElement.innerText = gameState.answers[0]
+    answerBElement.innerText = gameState.answers[1]
+    answerCElement.innerText = gameState.answers[2]
+    answerDElement.innerText = gameState.answers[3]
 
-    displayRoundElement.innerHTML = gameState.round
-    displayQuestionElement.innerHTML = gameState.question
-    // displayPlayersInGame.innerHTML = gameState.actions.length
+    displayRoundElement.innerText = gameState.round
+    displayQuestionElement.innerText = gameState.question
+    // displayPlayersInGame.innerText = gameState.actions.length
 
-    // displayCountAnswered.innerHTML = `${gameState.playersFinished.length}/${gameState.score.length}`
+    // displayCountAnswered.innerText = `${gameState.playersFinished.length}/${gameState.score.length}`
 }
 
 function updateDomScore(playerList, answeredList) {
     const tableBody = document.getElementById('scoreTableBody');
 
-    tableBody.innerHTML = '';
+    tableBody.innerText = '';
 
     playerList.forEach(player => {
         const row = document.createElement('tr');
@@ -101,7 +101,7 @@ function updateDomScore(playerList, answeredList) {
 function updateDomReadyStatus(playerList) {
     let readyCounter = 0;
 
-    readyUsersList.innerHTML = '';
+    readyUsersList.innerText = '';
 
     playerList.forEach(player => {
         const elementHTML = `
@@ -121,12 +121,12 @@ function updateDomReadyStatus(playerList) {
 
     });
 
-    displayReadyCount.innerHTML = `${readyCounter}/${playerList.length}`
+    displayReadyCount.innerText = `${readyCounter}/${playerList.length}`
 }
 
 function updateDomSettings(data) {
     const displayCategoryElement = document.getElementById('displayCategory');
-    displayCategoryElement.innerHTML = data.category
+    displayCategoryElement.innerText = data.category
 
 }
 
