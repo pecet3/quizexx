@@ -151,11 +151,21 @@ func (r *Room) run(m *Manager, external external.IExternal) {
 
 			isNextRound := r.game.CheckIfShouldBeNextRound()
 
+			indexCurrentContent := r.game.Content[r.game.State.Round-1]
+			indexOkAnswr := indexCurrentContent.CorrectAnswer
+			strOkAnswr := indexCurrentContent.Answers[indexOkAnswr]
+
 			isEndGame := r.game.CheckIfIsEndGame()
 			if isEndGame {
 				r.game.IsGame = false
 				r.game.sendGameState()
-				time.Sleep(800 * time.Millisecond)
+
+				time.Sleep(1800 * time.Millisecond)
+
+				err := r.sendServerMessage("The correct answer was: " + strOkAnswr)
+				if err != nil {
+					return
+				}
 				_ = r.sendServerMessage("It's finish the game")
 				continue
 			}
@@ -184,10 +194,6 @@ func (r *Room) run(m *Manager, external external.IExternal) {
 				}
 				time.Sleep(1800 * time.Millisecond)
 				r.game.sendGameState()
-
-				indexCurrentContent := r.game.Content[r.game.State.Round-2]
-				indexOkAnswr := indexCurrentContent.CorrectAnswer
-				strOkAnswr := indexCurrentContent.Answers[indexOkAnswr]
 
 				err = r.sendServerMessage("The correct answer was: " + strOkAnswr)
 				if err != nil {
