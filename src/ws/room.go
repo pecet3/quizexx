@@ -40,6 +40,8 @@ func (r *Room) CheckIfEveryoneIsReady() bool {
 	return true
 }
 
+// welcome to the spaghetti
+
 func (r *Room) run(m *Manager, external external.IExternal) {
 	for {
 		select {
