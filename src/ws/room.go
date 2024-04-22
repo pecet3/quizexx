@@ -167,6 +167,11 @@ func (r *Room) run(m *Manager, external external.IExternal) {
 					return
 				}
 				_ = r.sendServerMessage("It's finish the game")
+
+				for c := range r.clients {
+					c.conn.Close()
+				}
+				m.removeRoom(r.name)
 				continue
 			}
 			if isNextRound {
