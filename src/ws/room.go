@@ -166,7 +166,7 @@ func (r *Room) run(m *Manager, external external.IExternal) {
 
 				err := r.sendServerMessage("The correct answer was: " + strOkAnswr)
 				if err != nil {
-					return
+					continue
 				}
 				_ = r.sendServerMessage("It's finish the game")
 
@@ -192,7 +192,7 @@ func (r *Room) run(m *Manager, external external.IExternal) {
 					err = r.sendServerMessage("This round win: " + winnersStr)
 				}
 				if err != nil {
-					return
+					continue
 				}
 
 				if !isEndGame {
@@ -204,13 +204,13 @@ func (r *Room) run(m *Manager, external external.IExternal) {
 
 				err = r.sendServerMessage("The correct answer was: " + strOkAnswr)
 				if err != nil {
-					return
+					continue
 				}
 
 				time.Sleep(2800 * time.Millisecond)
 				err = r.sendServerMessage("New round has began: " + strconv.Itoa(r.game.State.Round))
 				if err != nil {
-					return
+					continue
 				}
 				for Client := range r.game.Players {
 					if Client.isAnswered {

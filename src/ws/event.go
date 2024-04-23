@@ -39,7 +39,6 @@ type ChatMessage struct {
 }
 
 func (g *Game) SendPlayersAnswered() error {
-	log.Println(g.State.PlayersAnswered)
 	eventBytes, err := marshalEventToBytes(g.State.PlayersAnswered, "players_answered")
 	if err != nil {
 		return err

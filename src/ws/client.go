@@ -62,7 +62,7 @@ func (c *Client) read() {
 				c.room.leave <- c
 				return
 			}
-			log.Println("ws err !!!!:", err)
+			log.Println("leave:", err)
 
 		}
 
