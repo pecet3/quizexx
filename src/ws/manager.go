@@ -39,11 +39,8 @@ func (m *Manager) NewRoom(settings Settings) *Room {
 }
 
 func (m *Manager) getRoom(name string) *Room {
-	log.Println(m)
 	m.mutex.Lock()
 	defer m.mutex.Unlock()
-
-	log.Println(m.rooms[name], " name ", name)
 	return m.rooms[name]
 }
 
