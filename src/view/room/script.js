@@ -40,12 +40,12 @@ if (gameState.isGame) {
     }
 }
 handleVirtualDom()
-
+replacePath()
 
 function replacePath() {
     const currentURL = window.location.href;
     const url = new URL(currentURL);
-    url.searchParams.set(paramName, paramValue);
+    url.searchParams.set("newRoom", false);
 
 }
 //////////////// Listeners ///////////////////////
