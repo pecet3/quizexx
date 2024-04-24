@@ -41,6 +41,13 @@ if (gameState.isGame) {
 }
 handleVirtualDom()
 
+
+function replacePath() {
+    const currentURL = window.location.href;
+    const url = new URL(currentURL);
+    url.searchParams.set(paramName, paramValue);
+
+}
 //////////////// Listeners ///////////////////////
 
 connectButton.addEventListener("click", () => {
