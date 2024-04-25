@@ -40,13 +40,12 @@ if (gameState.isGame) {
     }
 }
 handleVirtualDom()
-replacePath()
 
 function replacePath() {
     const currentURL = window.location.href;
     const url = new URL(currentURL);
-    url.searchParams.set("newRoom", false);
-
+    url.searchParams.set("newGame", false);
+    history.replaceState(null, '', url.toString());
 }
 //////////////// Listeners ///////////////////////
 
@@ -102,6 +101,7 @@ chatForm.addEventListener("submit", (e) => {
 function connectWs() {
     if (window.WebSocket) {
         const wsUrl = getWsUrl()
+        replacePath()
         conn = new WebSocket(wsUrl)
         conn.onopen = (e) => {
             updateVirtualDom({
