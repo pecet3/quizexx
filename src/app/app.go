@@ -28,7 +28,7 @@ func Run() *http.Server {
 
 	app.routeView(mux)
 
-	address := "127.0.0.1:8090"
+	address := "0.0.0.0:8090"
 	server := &http.Server{
 		Addr:    address,
 		Handler: mux,
