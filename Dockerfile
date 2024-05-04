@@ -14,6 +14,8 @@ COPY ./src .
 # Skompiluj aplikację do binarnego pliku wykonywalnego
 RUN CGO_ENABLED=0 GOOS=linux go build -o /quizex
 
+ENV $(cat .env | xargs)
+
 # Etap 2: Przygotuj lekki obraz do uruchomienia
 FROM alpine:latest
 
@@ -23,7 +25,7 @@ COPY --from=builder /app/view ./view
 
 COPY --from=builder /quizex .
 
-EXPOSE 8080
+EXPOSE 8090
 
 # Uruchom aplikację
 CMD ["./quizex"]
