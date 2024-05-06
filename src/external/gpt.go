@@ -44,6 +44,7 @@ func (e ExternalService) FetchQuestionSet(ctx context.Context, category, maxRoun
 	}
 
 	apiKey := os.Getenv("GPT_KEY")
+	log.Println(apiKey[:16])
 
 	options := "Options for this quiz:" +
 		" category: " + category +
