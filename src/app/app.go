@@ -33,7 +33,7 @@ func Run() *http.Server {
 		Addr:    address,
 		Handler: mux,
 	}
-	log.Printf("> > >   Server is running // %s   < < <", address)
+	log.Printf(">=>->[ Server is listening on: %s ]<-<=<", address)
 	log.Fatal(server.ListenAndServe())
 	return server
 }
