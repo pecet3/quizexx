@@ -25,6 +25,9 @@ COPY --from=builder /app/view ./view
 
 COPY --from=builder /quizex .
 
+COPY --from=builder .env .env
+
+
 EXPOSE 8090
 
 # Uruchom aplikację
