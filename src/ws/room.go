@@ -1,4 +1,4 @@
-package ws
+8package ws
 
 import (
 	"encoding/json"
@@ -169,13 +169,6 @@ func (r *Room) run(m *Manager, external external.IExternal) {
 					continue
 				}
 				_ = r.sendServerMessage("It's finish the game")
-
-				for c := range r.clients {
-					c.conn.Close()
-				}
-				m.removeRoom(r.name)
-				continue
-			}
 			if isNextRound {
 				r.game.State.Round++
 
