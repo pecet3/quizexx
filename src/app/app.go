@@ -28,12 +28,13 @@ func Run() *http.Server {
 
 	app.routeView(mux)
 
-	address := "0.0.0.0:8090"
+	addr := "0.0.0.0:8090"
+	// addrDev := "127.0.0.1:8090"
 	server := &http.Server{
-		Addr:    address,
+		Addr:    addr,
 		Handler: mux,
 	}
-	log.Printf(">=>->[ Server is listening on: %s ]<-<=<", address)
+	log.Printf(">=>->[ Server is listening on: %s ]<-<=<", addr)
 	log.Fatal(server.ListenAndServe())
 	return server
 }
