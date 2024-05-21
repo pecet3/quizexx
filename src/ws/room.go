@@ -43,6 +43,7 @@ func (r *Room) CheckIfEveryoneIsReady() bool {
 // welcome to the spaghetti
 
 func (r *Room) run(m *Manager, external external.IExternal) {
+	log.Println("New room with settings: ", r.settings)
 	for {
 		select {
 		case msg := <-r.forward:
@@ -124,6 +125,7 @@ func (r *Room) run(m *Manager, external external.IExternal) {
 
 		case action := <-r.receiveAnswer:
 			if !r.game.IsGame {
+				log.Println("is game: false, ", r.game.IsGame)
 				return
 			}
 			var actionParsed *RoundAction
@@ -159,30 +161,44 @@ func (r *Room) run(m *Manager, external external.IExternal) {
 
 			isEndGame := r.game.CheckIfIsEndGame()
 			if isEndGame {
-				r.game.IsGame = false
-				r.game.sendGameState()
-
-				time.Sleep(1800 * time.Millisecond)
-
-				err := r.sendServerMessage("The correct answer was: " + strOkAnswr)
+				err := r.game.sendGameState()
 				if err != nil {
+					log.Println("finish game err send game", err)
 					continue
 				}
+
+				err = r.sendServerMessage("The correct answer was: " + strOkAnswr)
+				if err != nil {
+					log.Println("finish game err", err)
+					continue
+				}
+				time.Sleep(1800 * time.Millisecond)
 				_ = r.sendServerMessage("It's finish the game")
+
+				for Client := range r.clients {
+					log.Println("deleting client ", Client.name)
+					close(Client.receive)
+					// Client.conn.Close()
+				}
+				delete(m.rooms, r.name)
+				return
 			}
+
 			if isNextRound {
+				log.Println("It was round: ", r.game.State.Round)
+
 				r.game.State.Round++
 
 				var err error
 				winnersStr := strings.Join(r.game.State.RoundWinners, ", ")
-
-				if len(r.game.State.RoundWinners) < 1 {
+				log.Println("Round winners: ", len(r.game.State.RoundWinners))
+				if len(r.game.State.RoundWinners) == 0 {
 					err = r.sendServerMessage("No one wins this round")
 				}
 				if len(r.game.State.RoundWinners) == 1 {
 					err = r.sendServerMessage("This round wins " + winnersStr)
 				}
-				if len(r.game.State.RoundWinners) < 3 {
+				if len(r.game.State.RoundWinners) >= 2 {
 					err = r.sendServerMessage("This round win: " + winnersStr)
 				}
 				if err != nil {
