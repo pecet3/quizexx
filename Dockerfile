@@ -25,7 +25,7 @@ COPY --from=builder /app/view ./view
 
 COPY --from=builder /quizex .
 
-COPY --from=builder .env .env
+COPY --from=builder /app/.env .env
 
 
 EXPOSE 8090
