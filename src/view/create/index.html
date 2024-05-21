@@ -19,7 +19,7 @@
         </h1>
     </header>
 
-    <div id="entryDashboard" class="paper paper-yellow max-w-sm sm:max-w-lg text-sm sm:text-lg p-4 my-4
+    <div id="entryDashboard" class="paper paper-yellow max-w-80 sm:max-w-lg text-sm sm:text-lg p-4 my-4
     m-auto flex items-center">
         <div class="tape-section"></div>
         <form id="settingsForm" class="flex flex-col gap-4 items-center text-xl">
@@ -43,12 +43,16 @@
                 <option value="hard" class="text-center">Hard</option>
             </select>
 
-            <div class="flex gap-4">
+            <div class="flex sm:flex-row flex-col gap-4">
                 <div class="flex flex-col">
                     <label for="maxRounds" class="rounded-lg font-mono text-xl font-bold underline">
                         Rounds:</label>
-                    <input type="number" id="maxRounds" min="1" max="6" value="4" class="p-0.5 text-2xl rounded-sm font m-auto border border-black
-          bg-white placeholder:text-gray-400 placeholder:text-center text-black text-center" />
+                    <select id="maxRounds" class="p-0.5 text-2xl rounded-sm font m-auto border border-black
+          bg-white placeholder:text-gray-400 placeholder:text-center text-black text-center">
+                        <option value="4" class="text-center">4</option>
+                        <option value="5" class="text-center">5</option>
+                        <option value="6" class="text-center">6</option>
+                    </select>
                 </div>
                 <div class="flex flex-col">
                     <label for="lang" class="rounded-lg font-mono text-xl font-bold underline">Language:
