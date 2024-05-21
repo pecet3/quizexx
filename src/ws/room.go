@@ -1,4 +1,4 @@
-8package ws
+package ws
 
 import (
 	"encoding/json"
@@ -169,6 +169,7 @@ func (r *Room) run(m *Manager, external external.IExternal) {
 					continue
 				}
 				_ = r.sendServerMessage("It's finish the game")
+			}
 			if isNextRound {
 				r.game.State.Round++
 
