@@ -63,7 +63,8 @@ func (c *Client) read() {
 				return
 			}
 			log.Println("leave:", err)
-
+			c.room.leave <- c
+			return
 		}
 
 		var request Event
