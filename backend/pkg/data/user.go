@@ -17,7 +17,7 @@ create table if not exists users (
     password text default '',
     salt text not null,
     image_url text default '',
-    created_at timestamp default current_timestamp,
+    created_at timestamp default current_timestamp
 );
 `
 

@@ -8,7 +8,7 @@ import (
 )
 
 type handlers struct {
-	d   data.Data
+	d   *data.Data
 	wsm *ws.Manager
 }
 
@@ -17,7 +17,7 @@ const BASE_URL = "localhost:3000"
 
 func Run(
 	srv *http.ServeMux,
-	d data.Data,
+	d *data.Data,
 	wsm *ws.Manager,
 ) {
 

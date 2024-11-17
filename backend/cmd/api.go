@@ -36,7 +36,7 @@ func runAPI() {
 		wsm:  wsm,
 	}
 
-	handlers.Run(mux, *app.data, app.wsm)
+	handlers.Run(mux, app.data, app.wsm)
 
 	address := "localhost:9090"
 	server := &http.Server{
