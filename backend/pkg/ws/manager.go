@@ -7,19 +7,21 @@ import (
 	"sync"
 
 	"github.com/gorilla/websocket"
-	"github.com/pecet3/quizex/external"
+	"github.com/pecet3/quizex/pkg/external"
 )
 
 type Manager struct {
-	mutex sync.Mutex
-	ctx   context.Context
-	rooms map[string]*Room
+	mutex    sync.Mutex
+	ctx      context.Context
+	rooms    map[string]*Room
+	external *external.ExternalService
 }
 
 func NewManager() *Manager {
 	return &Manager{
-		rooms: make(map[string]*Room),
-		mutex: sync.Mutex{},
+		rooms:    make(map[string]*Room),
+		mutex:    sync.Mutex{},
+		external: &external.ExternalService{},
 	}
 }
 
@@ -102,7 +104,7 @@ var (
 func checkOrigin(r *http.Request) bool {
 	return true
 }
-func (m *Manager) ServeWs(external external.IExternal, w http.ResponseWriter, req *http.Request) {
+func (m *Manager) ServeWs(w http.ResponseWriter, req *http.Request) {
 	m.ctx = req.Context()
 
 	conn, err := upgrader.Upgrade(w, req, nil)
@@ -150,7 +152,7 @@ func (m *Manager) ServeWs(external external.IExternal, w http.ResponseWriter, re
 	if currentRoom == nil {
 		if newRoom == "true" {
 			currentRoom = m.createRoom(settings)
-			go currentRoom.run(m, external)
+			go currentRoom.run(m, m.external)
 		} else {
 			conn.Close()
 			return

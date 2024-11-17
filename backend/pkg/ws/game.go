@@ -6,7 +6,7 @@ import (
 	"log"
 	"strconv"
 
-	"github.com/pecet3/quizex/external"
+	"github.com/pecet3/quizex/pkg/external"
 )
 
 type Game struct {

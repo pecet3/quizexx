@@ -7,7 +7,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/pecet3/quizex/external"
+	"github.com/pecet3/quizex/pkg/external"
 )
 
 type Room struct {
