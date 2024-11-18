@@ -9,6 +9,7 @@ import (
 
 	"github.com/go-playground/validator"
 	"github.com/pecet3/quizex/cmd/handlers"
+	"github.com/pecet3/quizex/pkg/auth"
 	"github.com/pecet3/quizex/pkg/data"
 	"github.com/pecet3/quizex/pkg/utils"
 	"github.com/pecet3/quizex/pkg/ws"
@@ -16,6 +17,7 @@ import (
 
 type App struct {
 	data *data.Data
+	auth *auth.Auth
 	v    *validator.Validate
 	wsm  *ws.Manager
 }
@@ -27,16 +29,15 @@ func runAPI() {
 	utils.LoadEnv()
 
 	mux := http.NewServeMux()
-	data := data.New()
-	v := validator.New()
-	wsm := ws.NewManager()
+
 	app := App{
-		data: data,
-		v:    v,
-		wsm:  wsm,
+		data: data.New(),
+		auth: auth.New(),
+		v:    validator.New(),
+		wsm:  ws.NewManager(),
 	}
 
-	handlers.Run(mux, app.data, app.wsm)
+	handlers.Run(mux, app.data, app.auth, app.wsm)
 
 	address := "localhost:9090"
 	server := &http.Server{
