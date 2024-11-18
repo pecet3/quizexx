@@ -3,8 +3,8 @@ package handlers
 import (
 	"net/http"
 
+	"github.com/pecet3/quizex/data"
 	"github.com/pecet3/quizex/pkg/auth"
-	"github.com/pecet3/quizex/pkg/data"
 	"github.com/pecet3/quizex/pkg/ws"
 )
 

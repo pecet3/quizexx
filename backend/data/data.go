@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	_ "github.com/mattn/go-sqlite3"
+	"github.com/pecet3/quizex/data/entities"
 )
 
 const PREFIX = "/v1"
@@ -22,8 +23,8 @@ func newDb() *sql.DB {
 	}
 
 	prepareList := [2]string{
-		UsersTable,
-		SessionsTable,
+		entities.UsersTable,
+		entities.SessionsTable,
 	}
 
 	for _, table := range prepareList {
@@ -55,12 +56,12 @@ func prepare(db *sql.DB, table string) error {
 
 type Data struct {
 	Db   *sql.DB
-	User User
+	User entities.User
 }
 
 func New() *Data {
 	return &Data{
 		Db:   newDb(),
-		User: User{},
+		User: entities.User{},
 	}
 }
