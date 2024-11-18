@@ -45,14 +45,14 @@ func (a *Auth) HandleGoogleLogin(w http.ResponseWriter, r *http.Request) {
 }
 
 func (a *Auth) HandleGoogleCallback(w http.ResponseWriter, r *http.Request) {
-
 	code := r.URL.Query().Get("code")
 	receivedState := r.URL.Query().Get("state")
 
-	if err := validateState(receivedState); err != nil {
+	if isValid := a.statesMap.has(receivedState); !isValid {
 		http.Error(w, "Invalid state", http.StatusBadRequest)
 		return
 	}
+	a.statesMap.delete(receivedState)
 
 	token, err := a.oauth2Config.Exchange(r.Context(), code)
 	if err != nil {

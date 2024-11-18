@@ -49,10 +49,6 @@ func (s *statesMap) has(key string) bool {
 	return exists
 }
 
-func validateState(state string) error {
-	return nil
-}
-
 func setTokenCookie(w http.ResponseWriter, token string) {
 	http.SetCookie(w, &http.Cookie{
 		Name:     "auth_token",

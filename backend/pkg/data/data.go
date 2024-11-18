@@ -21,8 +21,9 @@ func newDb() *sql.DB {
 		log.Fatalf("Failed to ping database: %v", err)
 	}
 
-	prepareList := [1]string{
+	prepareList := [2]string{
 		UsersTable,
+		SessionsTable,
 	}
 
 	for _, table := range prepareList {

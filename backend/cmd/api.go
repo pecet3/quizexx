@@ -22,7 +22,7 @@ type App struct {
 	wsm  *ws.Manager
 }
 
-const BASE_URL = "localhost:5173"
+const BASE_URL = "localhost:9090"
 
 func runAPI() {
 	log.Println("Running the server...")
@@ -55,6 +55,5 @@ func runAPI() {
 	onSrvClose()
 }
 func onSrvClose() {
-	log.Println("Closing a server, removing cache files...")
-	os.RemoveAll("s/")
+	log.Println("Closing the server...")
 }
