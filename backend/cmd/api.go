@@ -29,10 +29,10 @@ func runAPI() {
 	utils.LoadEnv()
 
 	mux := http.NewServeMux()
-
+	data := data.New()
 	app := App{
-		data: data.New(),
-		auth: auth.New(),
+		data: data,
+		auth: auth.New(data),
 		v:    validator.New(),
 		wsm:  ws.NewManager(),
 	}
