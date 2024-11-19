@@ -11,6 +11,7 @@ create table if not exists sessions (
 	id integer primary key autoincrement,
 	expiry timestamp not null,
 	token text default '',
+	user_id integer not null,
 	foreign key (user_id) references users(id)
 );`
 
