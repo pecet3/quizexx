@@ -1,7 +1,6 @@
 package auth
 
 import (
-	"net/http"
 	"sync"
 
 	"github.com/google/uuid"
@@ -47,16 +46,4 @@ func (s *statesMap) has(key string) bool {
 	defer s.mu.Unlock()
 	_, exists := s.states[key]
 	return exists
-}
-
-func setTokenCookie(w http.ResponseWriter, token string) {
-	http.SetCookie(w, &http.Cookie{
-		Name:     "auth_token",
-		Value:    token,
-		Path:     "/",
-		HttpOnly: true,
-		Secure:   true,
-		SameSite: http.SameSiteStrictMode,
-		MaxAge:   24 * 60 * 60, // 24 godziny
-	})
 }

@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"net/http"
 	"os"
-	"time"
 
 	"github.com/golang-jwt/jwt"
 	"golang.org/x/oauth2"
@@ -23,17 +22,11 @@ func newOAuthConfig() *oauth2.Config {
 		Endpoint: google.Endpoint,
 	}
 }
-
-// Generowanie JWT
-func generateJWT(user *GoogleUser) (string, error) {
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"sub":   user.ID,
-		"email": user.Email,
-		"name":  user.Name,
-		"exp":   time.Now().Add(time.Hour * 24).Unix(),
-	})
-
-	return token.SignedString([]byte(os.Getenv("JWT_SECRET")))
+func (a *Auth) HandleOAuthLogin(w http.ResponseWriter, r *http.Request) {
+	state := generateState()
+	a.statesMap.set(state, true)
+	url := a.oauth2Config.AuthCodeURL(state)
+	http.Redirect(w, r, url, http.StatusTemporaryRedirect)
 }
 
 // Middleware do autoryzacji

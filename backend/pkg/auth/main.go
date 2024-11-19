@@ -9,12 +9,14 @@ type Auth struct {
 	statesMap    statesMap
 	sessionsMap  sessionsMap
 	oauth2Config *oauth2.Config
+	d            *data.Data
 }
 
 func New(d *data.Data) *Auth {
 	return &Auth{
 		statesMap:    newStatesMap(),
-		sessionsMap:  newSessionMap(d),
+		sessionsMap:  newSessionMap(),
 		oauth2Config: newOAuthConfig(),
+		d:            d,
 	}
 }

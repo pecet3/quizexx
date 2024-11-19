@@ -2,7 +2,7 @@ package auth
 
 import (
 	"encoding/json"
-	"log"
+	"errors"
 	"net/http"
 )
 
@@ -17,48 +17,25 @@ type GoogleUser struct {
 	Locale        string `json:"locale"`
 }
 
-func (a *Auth) HandleGoogleLogin(w http.ResponseWriter, r *http.Request) {
-	state := generateState()
-	a.statesMap.set(state, true)
-	url := a.oauth2Config.AuthCodeURL(state)
-	http.Redirect(w, r, url, http.StatusTemporaryRedirect)
-
-}
-
-func (a *Auth) HandleGoogleCallback(w http.ResponseWriter, r *http.Request) {
+func (a *Auth) GetGoogleUser(w http.ResponseWriter, r *http.Request) (*GoogleUser, error) {
 	code := r.URL.Query().Get("code")
 	receivedState := r.URL.Query().Get("state")
 
 	if isValid := a.statesMap.has(receivedState); !isValid {
-		http.Error(w, "Invalid state", http.StatusBadRequest)
-		return
+		return nil, errors.New("invalid state")
 	}
 	a.statesMap.delete(receivedState)
 
 	token, err := a.oauth2Config.Exchange(r.Context(), code)
 	if err != nil {
-		http.Error(w, "Failed to exc  hange token", http.StatusInternalServerError)
-		return
+		return nil, errors.New("failed to exchange token")
 	}
 
 	user, err := getUserInfo(token.AccessToken)
 	if err != nil {
-		http.Error(w, "Failed to get user info", http.StatusInternalServerError)
-		return
+		return nil, errors.New("failed to get user info")
 	}
-	log.Println(user)
-	jwtToken, err := generateJWT(user)
-	if err != nil {
-		http.Error(w, "Failed to generate JWT", http.StatusInternalServerError)
-		return
-	}
-
-	err = json.NewEncoder(w).Encode(jwtToken)
-	if err != nil {
-		http.Error(w, "Failed to send json token", http.StatusInternalServerError)
-		return
-	}
-
+	return user, nil
 }
 
 // Pobranie informacji o użytkowniku z Google API
