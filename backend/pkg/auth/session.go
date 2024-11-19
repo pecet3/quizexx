@@ -56,7 +56,8 @@ func (sm *sessionsMap) AddAuthSession(token string, session *entities.Session) e
 	sm.mu.Lock()
 	defer sm.mu.Unlock()
 	sm.sessions[token] = session
-	err := sm.d.Session.Add(sm.d.Db, session)
+	sm.d.Session = *session
+	err := sm.d.Session.Add(sm.d.Db)
 	if err != nil {
 		log.Println(err)
 		return nil
