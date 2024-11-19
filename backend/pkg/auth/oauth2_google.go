@@ -2,6 +2,7 @@ package auth
 
 import (
 	"encoding/json"
+	"log"
 	"net/http"
 )
 
@@ -45,16 +46,18 @@ func (a *Auth) HandleGoogleCallback(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Failed to get user info", http.StatusInternalServerError)
 		return
 	}
-
+	log.Println(user)
 	jwtToken, err := generateJWT(user)
 	if err != nil {
 		http.Error(w, "Failed to generate JWT", http.StatusInternalServerError)
 		return
 	}
 
-	setTokenCookie(w, jwtToken)
-
-	http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
+	err = json.NewEncoder(w).Encode(jwtToken)
+	if err != nil {
+		http.Error(w, "Failed to send json token", http.StatusInternalServerError)
+		return
+	}
 
 }
 

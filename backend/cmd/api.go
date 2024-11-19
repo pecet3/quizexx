@@ -25,7 +25,7 @@ type App struct {
 const BASE_URL = "localhost:9090"
 
 func runAPI() {
-	log.Println("Running the server...")
+	log.Println("Starting...")
 	utils.LoadEnv()
 
 	mux := http.NewServeMux()
