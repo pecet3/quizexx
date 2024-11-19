@@ -1,4 +1,4 @@
-package handlers
+package router
 
 import (
 	"net/http"
@@ -8,7 +8,7 @@ import (
 	"github.com/pecet3/quizex/pkg/ws"
 )
 
-type handlers struct {
+type router struct {
 	d    *data.Data
 	auth *auth.Auth
 	wsm  *ws.Manager
@@ -24,7 +24,7 @@ func Run(
 	wsm *ws.Manager,
 ) {
 
-	h := handlers{
+	h := router{
 		d:    d,
 		wsm:  wsm,
 		auth: auth,

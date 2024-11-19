@@ -8,7 +8,7 @@ import (
 	"syscall"
 
 	"github.com/go-playground/validator"
-	"github.com/pecet3/quizex/cmd/handlers"
+	"github.com/pecet3/quizex/cmd/router"
 	"github.com/pecet3/quizex/data"
 	"github.com/pecet3/quizex/pkg/auth"
 	"github.com/pecet3/quizex/pkg/utils"
@@ -37,7 +37,7 @@ func runAPI() {
 		wsm:  ws.NewManager(),
 	}
 
-	handlers.Run(mux, app.data, app.auth, app.wsm)
+	router.Run(mux, app.data, app.auth, app.wsm)
 
 	address := "localhost:9090"
 	server := &http.Server{

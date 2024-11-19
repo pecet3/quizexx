@@ -1,11 +1,11 @@
-package handlers
+package router
 
 import (
 	"log"
 	"net/http"
 )
 
-func (h handlers) hello(w http.ResponseWriter, req *http.Request) {
+func (r router) hello(w http.ResponseWriter, req *http.Request) {
 	message := "Hello, world!"
 
 	w.Header().Set("Content-Type", "text/plain")
@@ -15,6 +15,6 @@ func (h handlers) hello(w http.ResponseWriter, req *http.Request) {
 		log.Println("Error writing response:", err)
 	}
 }
-func (h handlers) handleQuiz(w http.ResponseWriter, req *http.Request) {
-	h.wsm.ServeWs(w, req)
+func (r router) handleQuiz(w http.ResponseWriter, req *http.Request) {
+	r.wsm.ServeWs(w, req)
 }
