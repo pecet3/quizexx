@@ -24,14 +24,14 @@ func Run(
 	wsm *ws.Manager,
 ) {
 
-	h := router{
+	r := router{
 		d:    d,
 		wsm:  wsm,
 		auth: auth,
 	}
-	srv.HandleFunc(PREFIX+"/ws", h.handleQuiz)
-	srv.HandleFunc(PREFIX+"/hello", h.hello)
+	srv.HandleFunc(PREFIX+"/ws", r.handleQuiz)
+	srv.HandleFunc(PREFIX+"/hello", r.hello)
 	srv.Handle("/", http.FileServer(http.Dir("view")))
 
-	srv.HandleFunc(PREFIX+"/auth", h.auth.HandleGoogleLogin)
+	srv.HandleFunc(PREFIX+"/auth", r.auth.HandleGoogleLogin)
 }
