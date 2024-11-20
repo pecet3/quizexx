@@ -1,7 +1,13 @@
 package logger
 
-import "log"
+import (
+	"log"
+	"runtime"
+)
 
-func Error(where string, err error) {
-	log.Printf(`[ERROR] <%s>  %d\n`, where, err)
+func Error(err error) {
+	pc, _, _, _ := runtime.Caller(1)
+	fn := runtime.FuncForPC(pc)
+	fName := fn.Name()
+	log.Printf(`[ERROR] <%s> %s`, fName, err)
 }
