@@ -22,8 +22,8 @@ create table if not exists users (
 `
 
 type User struct {
-	Id        int       `json:"-"`
-	Uuid      string    `json:"uuid"`
+	ID        int       `json:"-"`
+	UUID      string    `json:"uuid"`
 	Name      string    `json:"name"`
 	Email     string    `json:"email"`
 	Password  string    `json:"-"`
@@ -33,11 +33,11 @@ type User struct {
 }
 
 func (u *User) Add(db *sql.DB) (int, error) {
-	u.Uuid = uuid.NewString()
+	u.UUID = uuid.NewString()
 	query := `INSERT INTO users (uuid, name, email, password, salt, image_url, created_at) 
               VALUES (?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)`
 
-	result, err := db.Exec(query, u.Uuid, u.Name, u.Email, u.Password, u.Salt, u.ImageUrl)
+	result, err := db.Exec(query, u.UUID, u.Name, u.Email, u.Password, u.Salt, u.ImageUrl)
 	if err != nil {
 		return 0, err
 	}
@@ -52,7 +52,7 @@ func (u *User) Add(db *sql.DB) (int, error) {
 
 func (u *User) Update(db *sql.DB) error {
 	query := `UPDATE users SET name = ?, email = ?, password = ?, salt = ?, image_url = ? WHERE id = ?`
-	_, err := db.Exec(query, u.Name, u.Email, u.Password, u.Salt, u.ImageUrl, u.Id)
+	_, err := db.Exec(query, u.Name, u.Email, u.Password, u.Salt, u.ImageUrl, u.ID)
 	return err
 }
 
@@ -80,7 +80,7 @@ func (u User) GetById(db *sql.DB, id int) (*User, error) {
 	row := db.QueryRow(query, id)
 
 	var user User
-	err := row.Scan(&user.Id, &user.Uuid, &user.Name, &user.Email, &user.Password, &user.Salt, &user.ImageUrl, &user.CreatedAt)
+	err := row.Scan(&user.ID, &user.UUID, &user.Name, &user.Email, &user.Password, &user.Salt, &user.ImageUrl, &user.CreatedAt)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, errors.New("user not found")
@@ -96,7 +96,7 @@ func (u User) GetByEmail(db *sql.DB, email string) (*User, error) {
 	row := db.QueryRow(query, email)
 
 	var user User
-	err := row.Scan(&user.Id, &user.Uuid, &user.Name, &user.Email, &user.Password, &user.Salt, &user.ImageUrl, &user.CreatedAt)
+	err := row.Scan(&user.ID, &user.UUID, &user.Name, &user.Email, &user.Password, &user.Salt, &user.ImageUrl, &user.CreatedAt)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, errors.New("user not found")

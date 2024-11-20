@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/golang-jwt/jwt"
+	"github.com/pecet3/quizex/data/entities"
 )
 
 func generateJWT(user *GoogleUser) (string, error) {
@@ -21,7 +22,7 @@ func generateJWT(user *GoogleUser) (string, error) {
 	return token.SignedString([]byte(os.Getenv("JWT_SECRET")))
 }
 
-func (a *Auth) ProcessJWT(user *GoogleUser, w http.ResponseWriter) error {
+func (a *Auth) ProcessJWT(user *entities.User, w http.ResponseWriter) error {
 	jwtToken, err := generateJWT(user)
 	if err != nil {
 		return errors.New("failed to generate JWT")

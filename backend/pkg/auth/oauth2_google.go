@@ -3,7 +3,11 @@ package auth
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"net/http"
+
+	"github.com/pecet3/quizex/data"
+	"github.com/pecet3/quizex/data/entities"
 )
 
 type GoogleUser struct {
@@ -15,6 +19,15 @@ type GoogleUser struct {
 	FamilyName    string `json:"family_name"`
 	Picture       string `json:"picture"`
 	Locale        string `json:"locale"`
+}
+
+func (gu *GoogleUser) ToDbUser(d *data.Data) *entities.User {
+	userDb := &entities.User{
+		Email:    gu.Email,
+		Name:     fmt.Sprintf(`%s %s`, gu.Name, gu.FamilyName),
+		ImageUrl: gu.Picture,
+	}
+	return userDb
 }
 
 func (a *Auth) GetGoogleUser(w http.ResponseWriter, r *http.Request) (*GoogleUser, error) {
