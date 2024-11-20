@@ -33,7 +33,7 @@ func Run(
 	srv.HandleFunc(PREFIX+"/hello", r.hello)
 	srv.Handle("/", http.FileServer(http.Dir("view")))
 
-	srv.HandleFunc(PREFIX+"/auth", r.auth.HandleGoogleLogin)
-	srv.HandleFunc("/google-callback", r.auth.HandleGoogleCallback)
+	srv.HandleFunc(PREFIX+"/auth", r.auth.HandleOAuthLogin)
+	srv.HandleFunc(PREFIX+"/google-callback", r.handleGoogleCallback)
 
 }

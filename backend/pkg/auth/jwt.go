@@ -26,7 +26,6 @@ func (a *Auth) ProcessJWT(user *GoogleUser, w http.ResponseWriter) error {
 	if err != nil {
 		return errors.New("failed to generate JWT")
 	}
-	a.sessionsMap.set()
 	err = json.NewEncoder(w).Encode(jwtToken)
 	if err != nil {
 		return err
