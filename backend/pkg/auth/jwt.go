@@ -11,23 +11,34 @@ import (
 	"github.com/pecet3/quizex/data/entities"
 )
 
-func generateJWT(user *GoogleUser) (string, error) {
+func getExp() time.Time {
+	return time.Now().Add(time.Hour * 24)
+}
+
+func generateJWT(user *entities.User, exp time.Time) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"sub":   user.ID,
 		"email": user.Email,
 		"name":  user.Name,
-		"exp":   time.Now().Add(time.Hour * 24).Unix(),
+		"exp":   exp.Unix(),
 	})
 
 	return token.SignedString([]byte(os.Getenv("JWT_SECRET")))
 }
 
 func (a *Auth) ProcessJWT(user *entities.User, w http.ResponseWriter) error {
-	jwtToken, err := generateJWT(user)
+	exp := getExp()
+	token, err := generateJWT(user, exp)
 	if err != nil {
 		return errors.New("failed to generate JWT")
 	}
-	err = json.NewEncoder(w).Encode(jwtToken)
+	session := &entities.Session{
+		UserID: user.ID,
+		Exp:    exp,
+		Token:  token,
+	}
+	a.AddSession(session)
+	err = json.NewEncoder(w).Encode(token)
 	if err != nil {
 		return err
 	}

@@ -6,8 +6,8 @@ import (
 	"github.com/pecet3/quizex/data/entities"
 )
 
-func (a *Auth) AddSession(token string, session *entities.Session) error {
-	a.sessionsMap.set(token, session)
+func (a *Auth) AddSession(session *entities.Session) error {
+	a.sessionsMap.set(session.Token, session)
 	err := a.d.Session.Add(a.d.Db)
 	if err != nil {
 		return err

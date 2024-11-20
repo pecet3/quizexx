@@ -3,9 +3,7 @@ package auth
 import (
 	"net/http"
 	"sync"
-	"time"
 
-	"github.com/google/uuid"
 	"github.com/pecet3/quizex/data/entities"
 )
 
@@ -19,19 +17,6 @@ func newSessionMap() sessionsMap {
 	return sessionsMap{
 		sessions: make(map[string]*entities.Session),
 	}
-}
-
-func (sm *sessionsMap) NewAuthSession(userId int) (*entities.Session, string) {
-	expiresAt := time.Now().Add(168 * 4 * time.Hour)
-	newToken := uuid.NewString()
-
-	ea := &entities.Session{
-		Token:  newToken,
-		Expiry: expiresAt,
-		UserId: userId,
-	}
-
-	return ea, newToken
 }
 
 func (sm *sessionsMap) get(token string) (*entities.Session, bool) {
