@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"github.com/joho/godotenv"
+	"github.com/pecet3/quizex/pkg/logger"
 )
 
 const PREFIX = "/v1"
@@ -41,5 +42,5 @@ func LoadEnv() {
 	if err != nil {
 		log.Fatalf("Error loading .env file: %v", err)
 	}
-	log.Println("Loaded .env")
+	logger.InfoWithCaller("Loaded .env")
 }

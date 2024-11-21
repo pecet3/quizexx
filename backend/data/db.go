@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/pecet3/quizex/data/entities"
+	"github.com/pecet3/quizex/pkg/logger"
 )
 
 func newDb() *sql.DB {
@@ -30,7 +31,7 @@ func newDb() *sql.DB {
 		}
 	}
 
-	log.Println("<DB> Preparing DB has been finished")
+	logger.Info("Preparing DB has been finished")
 
 	return db
 }
@@ -46,7 +47,7 @@ func prepare(db *sql.DB, table string) error {
 	}
 
 	endIndex := strings.Index(table, "(")
-	log.Print("<DB> ", table[1:endIndex])
+	logger.InfoWithCaller(table[1:endIndex])
 
 	return nil
 }

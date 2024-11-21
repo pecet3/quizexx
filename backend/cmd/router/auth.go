@@ -28,6 +28,8 @@ func (r router) handleGoogleCallback(w http.ResponseWriter, req *http.Request) {
 		http.Error(w, "", http.StatusUnauthorized)
 		return
 	}
+	log.Println(dbUser, gUser)
+
 	err = json.NewEncoder(w).Encode(session.Token)
 	if err != nil {
 		logger.Error(err)
@@ -35,5 +37,4 @@ func (r router) handleGoogleCallback(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	log.Println(dbUser, gUser)
 }
