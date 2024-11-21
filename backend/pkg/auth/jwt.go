@@ -1,9 +1,6 @@
 package auth
 
 import (
-	"encoding/json"
-	"errors"
-	"net/http"
 	"os"
 	"time"
 
@@ -24,24 +21,4 @@ func generateJWT(user *entities.User, exp time.Time) (string, error) {
 	})
 
 	return token.SignedString([]byte(os.Getenv("JWT_SECRET")))
-}
-
-func (a *Auth) ProcessJWT(user *entities.User, w http.ResponseWriter) error {
-	exp := getExp()
-	token, err := generateJWT(user, exp)
-	if err != nil {
-		return errors.New("failed to generate JWT")
-	}
-	session := &entities.Session{
-		UserID: user.ID,
-		Exp:    exp,
-		Token:  token,
-	}
-	a.AddSession(session)
-	err = json.NewEncoder(w).Encode(token)
-	if err != nil {
-		return err
-	}
-
-	return nil
 }

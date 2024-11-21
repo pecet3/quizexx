@@ -4,7 +4,9 @@ import (
 	"net/http"
 
 	"github.com/pecet3/quizex/data"
+	"github.com/pecet3/quizex/data/repos"
 	"github.com/pecet3/quizex/pkg/auth"
+	"github.com/pecet3/quizex/pkg/logger"
 	"github.com/pecet3/quizex/pkg/ws"
 )
 
@@ -12,28 +14,27 @@ type router struct {
 	d    *data.Data
 	auth *auth.Auth
 	wsm  *ws.Manager
+	log  logger.Logger
 }
 
 const PREFIX = "/v1"
 const BASE_URL = "localhost:3000"
 
 func Run(
-	srv *http.ServeMux,
-	d *data.Data,
-	auth *auth.Auth,
-	wsm *ws.Manager,
+	app repos.App,
 ) {
 
 	r := router{
-		d:    d,
-		wsm:  wsm,
-		auth: auth,
+		d:    app.Data,
+		wsm:  app.Wsm,
+		auth: app.Auth,
+		log:  app.Logger,
 	}
-	srv.HandleFunc(PREFIX+"/ws", r.handleQuiz)
-	srv.HandleFunc(PREFIX+"/hello", r.hello)
-	srv.Handle("/", http.FileServer(http.Dir("view")))
+	app.Srv.HandleFunc(PREFIX+"/ws", r.handleQuiz)
+	app.Srv.HandleFunc(PREFIX+"/hello", r.hello)
+	app.Srv.Handle("/", http.FileServer(http.Dir("view")))
 
-	srv.HandleFunc(PREFIX+"/auth", r.auth.HandleOAuthLogin)
-	srv.HandleFunc(PREFIX+"/google-callback", r.handleGoogleCallback)
+	app.Srv.HandleFunc(PREFIX+"/auth", r.auth.HandleOAuthLogin)
+	app.Srv.HandleFunc(PREFIX+"/google-callback", r.handleGoogleCallback)
 
 }

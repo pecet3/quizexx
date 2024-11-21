@@ -10,17 +10,12 @@ import (
 	"github.com/go-playground/validator"
 	"github.com/pecet3/quizex/cmd/router"
 	"github.com/pecet3/quizex/data"
+	"github.com/pecet3/quizex/data/repos"
 	"github.com/pecet3/quizex/pkg/auth"
+	"github.com/pecet3/quizex/pkg/logger"
 	"github.com/pecet3/quizex/pkg/utils"
 	"github.com/pecet3/quizex/pkg/ws"
 )
-
-type App struct {
-	data *data.Data
-	auth *auth.Auth
-	v    *validator.Validate
-	wsm  *ws.Manager
-}
 
 const BASE_URL = "localhost:9090"
 
@@ -30,14 +25,17 @@ func runAPI() {
 
 	mux := http.NewServeMux()
 	data := data.New()
-	app := App{
-		data: data,
-		auth: auth.New(data),
-		v:    validator.New(),
-		wsm:  ws.NewManager(),
+
+	app := repos.App{
+		Srv:       mux,
+		Data:      data,
+		Auth:      auth.New(data),
+		Validator: validator.New(),
+		Logger:    logger.New(),
+		Wsm:       ws.NewManager(),
 	}
 
-	router.Run(mux, app.data, app.auth, app.wsm)
+	router.Run(app)
 
 	address := "localhost:9090"
 	server := &http.Server{
