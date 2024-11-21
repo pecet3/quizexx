@@ -22,7 +22,7 @@ const (
 	magenta = "\033[35m"
 	cyan    = "\033[36m"
 	white   = "\033[37m"
-
+	orange  = "\033[38;2;255;165;0m"
 	// Bright Foreground Colors
 	brightBlack   = "\033[90m"
 	brightRed     = "\033[91m"

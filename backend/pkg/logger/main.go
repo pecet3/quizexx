@@ -70,3 +70,20 @@ func Warning(args ...interface{}) {
 		msg)
 	fmt.Println(content)
 }
+func Debug(args ...interface{}) {
+	pc, _, line, _ := runtime.Caller(1)
+	fn := runtime.FuncForPC(pc)
+	fName := fn.Name()
+	date := getCurrentDate()
+	time := getCurrentTime()
+
+	msg := fmt.Sprint(args...)
+	content := fmt.Sprintf(`%s %s [%s] (%s:%s) %s`,
+		formatText(italic, date),
+		formatText(underline, time),
+		formatTextExt(bold, orange, "DEBUG"),
+		formatText(brightBlue, fName),
+		formatText(bold, strconv.Itoa(line)),
+		msg)
+	fmt.Println(content)
+}
