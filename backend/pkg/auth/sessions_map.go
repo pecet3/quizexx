@@ -13,8 +13,8 @@ type sessionsMap struct {
 	sessions sessions
 }
 
-func newSessionMap() sessionsMap {
-	return sessionsMap{
+func newSessionMap() *sessionsMap {
+	return &sessionsMap{
 		sessions: make(map[string]*entities.Session),
 	}
 }

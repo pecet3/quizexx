@@ -6,8 +6,8 @@ import (
 )
 
 type Auth struct {
-	statesMap    statesMap
-	sessionsMap  sessionsMap
+	statesMap    *statesMap
+	sessionsMap  *sessionsMap
 	oauth2Config *oauth2.Config
 	d            *data.Data
 }

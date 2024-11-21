@@ -16,8 +16,8 @@ type statesMap struct {
 	states map[string]bool
 }
 
-func newStatesMap() statesMap {
-	return statesMap{
+func newStatesMap() *statesMap {
+	return &statesMap{
 		states: make(map[string]bool),
 	}
 }
