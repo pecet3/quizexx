@@ -2,6 +2,7 @@ package auth
 
 import (
 	"github.com/pecet3/quizex/data/entities"
+	"github.com/pecet3/quizex/pkg/logger"
 )
 
 func (a *Auth) NewSession(user *entities.User) (*entities.Session, error) {
@@ -20,10 +21,12 @@ func (a *Auth) NewSession(user *entities.User) (*entities.Session, error) {
 
 func (a *Auth) AddSession(session *entities.Session) error {
 	a.sessionsMap.set(session.Token, session)
-	err := a.d.Session.Add(a.d.Db)
+
+	err := session.Add(a.d.Db)
 	if err != nil {
 		return err
 	}
+	logger.Debug(a.sessionsMap.sessions)
 	return nil
 }
 

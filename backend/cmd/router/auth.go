@@ -16,6 +16,7 @@ func (r router) handleGoogleCallback(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 	dbUser := gUser.ToDbUser(r.d)
+	logger.Debug(dbUser)
 	session, err := r.auth.NewSession(dbUser)
 	if err != nil {
 		logger.Error(err)
