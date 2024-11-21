@@ -1,9 +1,6 @@
 package auth
 
 import (
-	"errors"
-	"log"
-
 	"github.com/pecet3/quizex/data/entities"
 )
 
@@ -11,7 +8,7 @@ func (a *Auth) NewSession(user *entities.User) (*entities.Session, error) {
 	exp := getExp()
 	token, err := generateJWT(user, exp)
 	if err != nil {
-		return nil, errors.New("failed to generate JWT")
+		return nil, err
 	}
 	session := &entities.Session{
 		UserID: user.ID,
@@ -35,7 +32,6 @@ func (a *Auth) GetSession(token string) (*entities.Session, bool) {
 	if !exists {
 		s, err := a.d.Session.GetByToken(a.d.Db, token)
 		if err != nil || s == nil {
-			log.Println(err, s)
 			return nil, false
 		}
 		return s, true

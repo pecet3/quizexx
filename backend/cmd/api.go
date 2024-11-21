@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -20,7 +21,7 @@ import (
 const BASE_URL = "localhost:9090"
 
 func runAPI() {
-	log.Println("Starting...")
+	logger.Info("Starting...")
 	utils.LoadEnv()
 
 	mux := http.NewServeMux()
@@ -31,7 +32,6 @@ func runAPI() {
 		Data:      data,
 		Auth:      auth.New(data),
 		Validator: validator.New(),
-		Logger:    logger.New(),
 		Wsm:       ws.NewManager(),
 	}
 
@@ -46,7 +46,7 @@ func runAPI() {
 	signal.Notify(stop, syscall.SIGINT, syscall.SIGTERM)
 
 	go func() {
-		log.Printf("Server is listening on: [%s]", address)
+		logger.Info(fmt.Sprintf("Server is listening on: [%s]", address))
 		log.Fatal(server.ListenAndServe())
 	}()
 	<-stop

@@ -6,7 +6,6 @@ import (
 	"github.com/go-playground/validator"
 	"github.com/pecet3/quizex/data"
 	"github.com/pecet3/quizex/pkg/auth"
-	"github.com/pecet3/quizex/pkg/logger"
 	"github.com/pecet3/quizex/pkg/ws"
 )
 
@@ -15,6 +14,5 @@ type App struct {
 	Data      *data.Data
 	Auth      *auth.Auth
 	Validator *validator.Validate
-	Logger    logger.Logger
 	Wsm       *ws.Manager
 }

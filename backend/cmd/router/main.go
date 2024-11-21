@@ -6,7 +6,6 @@ import (
 	"github.com/pecet3/quizex/data"
 	"github.com/pecet3/quizex/data/repos"
 	"github.com/pecet3/quizex/pkg/auth"
-	"github.com/pecet3/quizex/pkg/logger"
 	"github.com/pecet3/quizex/pkg/ws"
 )
 
@@ -14,7 +13,6 @@ type router struct {
 	d    *data.Data
 	auth *auth.Auth
 	wsm  *ws.Manager
-	log  logger.Logger
 }
 
 const PREFIX = "/v1"
@@ -28,7 +26,6 @@ func Run(
 		d:    app.Data,
 		wsm:  app.Wsm,
 		auth: app.Auth,
-		log:  app.Logger,
 	}
 	app.Srv.HandleFunc(PREFIX+"/ws", r.handleQuiz)
 	app.Srv.HandleFunc(PREFIX+"/hello", r.hello)
