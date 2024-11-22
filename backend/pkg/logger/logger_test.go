@@ -38,7 +38,7 @@ func TestLogger_Warning(t *testing.T) {
 	var logBuffer bytes.Buffer
 	log.SetOutput(&logBuffer)
 
-	logger.Warning("test", "warning")
+	logger.Warn("test", "warning")
 
 	logOutput := logBuffer.String()
 	fmt.Println(logOutput)

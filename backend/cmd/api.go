@@ -53,5 +53,5 @@ func runAPI() {
 	onSrvClose()
 }
 func onSrvClose() {
-	logger.Warning("Closing the server...")
+	logger.Warn("Closing the server...")
 }

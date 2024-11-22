@@ -47,7 +47,7 @@ func prepare(db *sql.DB, table string) error {
 	}
 
 	endIndex := strings.Index(table, "(")
-	logger.InfoWithCaller(table[1:endIndex])
+	logger.InfoC(table[1:endIndex])
 
 	return nil
 }
