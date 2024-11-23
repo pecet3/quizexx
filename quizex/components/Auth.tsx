@@ -1,32 +1,39 @@
-import React, { useState } from "react";
-import { View, TouchableOpacity, Text, StyleSheet } from "react-native";
-import * as WebBrowser from "expo-web-browser";
-import * as AuthSession from "expo-auth-session";
-import { makeRedirectUri } from "expo-auth-session";
-import Constants from "expo-constants";
-import * as SecureStore from "expo-secure-store";
-
+import React, { useState } from 'react';
+import { View, TouchableOpacity, Text, StyleSheet } from 'react-native';
+import * as WebBrowser from 'expo-web-browser';
+import * as AuthSession from 'expo-auth-session';
+import { makeRedirectUri } from 'expo-auth-session';
+import Constants from 'expo-constants';
+import * as SecureStore from 'expo-secure-store';
+import { AntDesign } from "@expo/vector-icons"
 // Konfiguracja do AuthSession
 WebBrowser.maybeCompleteAuthSession();
 
 const GoogleLogin = () => {
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+  const [error, setError] = useState<null | string>(null);
+
+  // Pobierz apiUrl z konfiguracji
+  const apiUrl = Constants.expoConfig?.extra?.apiUrl || 'http://localhost:9090';
 
   // Konfiguracja URI przekierowania
   const redirectUri = makeRedirectUri({
-    scheme: "your-app-scheme", // Zmień na scheme twojej aplikacji
-    path: "google-callback",
+    scheme: "myapp",
+    path: "v1/google-callback",
   });
+
+  console.log('Redirect URI:', redirectUri); // dla debugowania
 
   // Funkcja do inicjowania procesu logowania
   const handleGoogleLogin = async () => {
     try {
       setLoading(true);
-      setError("");
+      setError(null);
 
       // Rozpocznij proces autoryzacji
-      const authUrl = `${Constants.manifest.extra.apiUrl}/v1/auth`;
+      const authUrl = `${apiUrl}/v1/auth`;
+      console.log('Auth URL:', authUrl); // dla debugowania
+
       const result = await WebBrowser.openAuthSessionAsync(
         authUrl,
         redirectUri,
@@ -35,7 +42,9 @@ const GoogleLogin = () => {
         }
       );
 
-      if (result.type === "success") {
+      console.log('Auth result:', result); // dla debugowania
+
+      if (result.type === 'success') {
         // Pobierz token z URL
         const token = extractTokenFromUrl(result.url);
 
@@ -43,13 +52,16 @@ const GoogleLogin = () => {
           // Zapisz token w secure storage
           await saveToken(token);
           // Nawiguj do głównego ekranu lub wykonaj inne akcje po zalogowaniu
+          console.log('Token saved successfully');
         } else {
-          setError("Nie udało się uzyskać tokenu");
+          setError('Nie udało się uzyskać tokenu');
         }
+      } else if (result.type === 'cancel') {
+        setError('Logowanie zostało anulowane');
       }
     } catch (err) {
-      setError("Wystąpił błąd podczas logowania");
-      console.error(err);
+      setError('Wystąpił błąd podczas logowania');
+      console.error('Login error:', err);
     } finally {
       setLoading(false);
     }
@@ -62,7 +74,7 @@ const GoogleLogin = () => {
       const match = url.match(regex);
       return match ? match[1] : null;
     } catch (err) {
-      console.error("Błąd podczas parsowania URL:", err);
+      console.error('URL parsing error:', err);
       return null;
     }
   };
@@ -70,12 +82,13 @@ const GoogleLogin = () => {
   // Funkcja do zapisywania tokenu
   const saveToken = async (token: any) => {
     try {
-      await SecureStore.setItemAsync("userToken", token);
+      await SecureStore.setItemAsync('userToken', token);
     } catch (err) {
-      console.error("Błąd podczas zapisywania tokenu:", err);
+      console.error('Token save error:', err);
       throw err;
     }
   };
+
 
   return (
     <View style={styles.container}>
@@ -84,12 +97,22 @@ const GoogleLogin = () => {
         onPress={handleGoogleLogin}
         disabled={loading}
       >
-        <Text style={styles.buttonText}>
-          {loading ? "Logowanie..." : "Zaloguj się przez Google"}
-        </Text>
+        <View style={styles.buttonContent}>
+          <AntDesign
+            name="google"
+            size={20}
+            color="white"
+            style={styles.icon}
+          />
+          <Text style={styles.buttonText}>
+            {loading ? 'Loading...' : 'oogle'}
+          </Text>
+        </View>
       </TouchableOpacity>
 
-      {error && <Text style={styles.errorText}>{error}</Text>}
+      {error && (
+        <Text style={styles.errorText}>{error}</Text>
+      )}
     </View>
   );
 };
@@ -97,29 +120,36 @@ const GoogleLogin = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
     padding: 20,
   },
   googleButton: {
-    backgroundColor: "#4285F4",
+    backgroundColor: '#4285F4',
     paddingHorizontal: 20,
     paddingVertical: 12,
     borderRadius: 5,
-    width: "100%",
+    width: '100%',
     maxWidth: 300,
   },
+  buttonContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   buttonText: {
-    color: "white",
-    fontSize: 16,
-    textAlign: "center",
-    fontWeight: "600",
+    color: 'white',
+    fontSize: 20,
+    fontWeight: '600',
+    marginRight: 10,
+  },
+  icon: {
+    marginLeft: 0,
   },
   errorText: {
-    color: "red",
+    color: 'red',
     marginTop: 10,
-    textAlign: "center",
+    textAlign: 'center',
   },
 });
-
 export default GoogleLogin;
