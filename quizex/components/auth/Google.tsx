@@ -14,7 +14,7 @@ const GoogleLogin = () => {
   const [error, setError] = useState<null | string>(null);
 
   // Pobierz apiUrl z konfiguracji
-  const apiUrl = Constants.expoConfig?.extra?.apiUrl || 'http://localhost:9090';
+  const apiUrl = Constants.expoConfig?.extra?.apiUrl || 'http://10.0.2.2:9090';
 
   // Konfiguracja URI przekierowania
   const redirectUri = makeRedirectUri({
