@@ -8,6 +8,11 @@ import (
 	"github.com/pecet3/quizex/pkg/logger"
 )
 
+func (r router) handleAuth(w http.ResponseWriter, req *http.Request) {
+	url := r.auth.GetStateURL()
+	http.Redirect(w, req, url, http.StatusTemporaryRedirect)
+}
+
 func (r router) handleGoogleCallback(w http.ResponseWriter, req *http.Request) {
 	gUser, err := r.auth.GetGoogleUser(w, req)
 	if err != nil {
@@ -37,5 +42,4 @@ func (r router) handleGoogleCallback(w http.ResponseWriter, req *http.Request) {
 		http.Error(w, "", http.StatusUnauthorized)
 		return
 	}
-
 }

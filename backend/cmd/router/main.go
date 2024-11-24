@@ -16,7 +16,6 @@ type router struct {
 }
 
 const PREFIX = "/v1"
-const BASE_URL = "localhost:3000"
 
 func Run(
 	app repos.App,
@@ -31,7 +30,7 @@ func Run(
 	app.Srv.HandleFunc(PREFIX+"/hello", r.hello)
 	app.Srv.Handle("/", http.FileServer(http.Dir("view")))
 
-	app.Srv.HandleFunc(PREFIX+"/auth", r.auth.HandleOAuthLogin)
+	app.Srv.HandleFunc(PREFIX+"/auth", r.handleAuth)
 	app.Srv.HandleFunc(PREFIX+"/google-callback", r.handleGoogleCallback)
 
 }
