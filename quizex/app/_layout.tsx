@@ -12,8 +12,8 @@ import "react-native-reanimated";
 
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { ThemedView } from "@/components/ThemedView";
-import GoogleLogin from "@/components/Auth";
-import { StyleSheet } from "react-native";
+import GoogleLogin from "@/components/auth/Google";
+import { StyleSheet, Text } from "react-native";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -48,6 +48,7 @@ export default function RootLayout() {
         :
         <>
           <ThemedView style={styles.container}>
+            <Text style={styles.logoText}>Quizex</Text>
             <GoogleLogin />
           </ThemedView>
         </>
@@ -68,5 +69,12 @@ const styles = StyleSheet.create({
   titleContainer: {
     flexDirection: "row",
     gap: 8,
+  },
+  logoText: {
+    fontFamily: "SpaceMono",
+    textAlign: 'center',
+    fontSize: 32,
+    paddingTop: 32,
+    color: "#333",
   },
 });
