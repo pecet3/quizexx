@@ -23,7 +23,7 @@ func Error(args ...interface{}) {
 	)
 	fmt.Println(content)
 	if len(args) > 0 {
-		fmt.Println("↳", formatTextExt(bold, yellow, msg))
+		fmt.Println("↳", formatText(bold, msg))
 	}
 }
 
@@ -103,7 +103,7 @@ func Debug(args ...interface{}) {
 	)
 	fmt.Println(content)
 	if len(args) > 0 {
-		fmt.Println("↳", formatTextExt(bold, yellow, msg))
+		fmt.Println("↳", formatText(bold, msg))
 	}
 }
 func DebugT(args ...interface{}) {
