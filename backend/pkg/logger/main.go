@@ -15,12 +15,12 @@ func Error(args ...interface{}) {
 
 	msg := fmt.Sprint(args...)
 	content := fmt.Sprintf(`%s %s [%s] (%s:%s) %s`,
-		formatText(italic, date),
+		formatTextExt(dim, italic, date),
 		formatText(underline, time),
 		formatTextExt(bold, red, "ERROR"),
 		formatText(brightBlue, fName),
 		formatText(bold, strconv.Itoa(line)),
-		msg)
+		formatText(italic, msg))
 	fmt.Println(content)
 
 }
@@ -30,10 +30,10 @@ func Info(args ...interface{}) {
 	time := getCurrentTime()
 	msg := fmt.Sprint(args...)
 	content := fmt.Sprintf(`%s %s [%s] %s`,
-		formatText(italic, date),
+		formatTextExt(dim, italic, date),
 		formatText(underline, time),
 		formatTextExt(bold, green, "INFO"),
-		msg)
+		formatText(italic, msg))
 	fmt.Println(content)
 }
 
@@ -46,12 +46,12 @@ func InfoC(args ...interface{}) {
 
 	msg := fmt.Sprint(args...)
 	content := fmt.Sprintf(`%s %s [%s] (%s:%s) %s`,
-		formatText(italic, date),
+		formatTextExt(dim, italic, date),
 		formatText(underline, time),
 		formatTextExt(bold, green, "INFO"),
 		formatText(brightBlue, fName),
 		formatText(bold, strconv.Itoa(line)),
-		msg)
+		formatText(italic, msg))
 	fmt.Println(content)
 }
 func Warn(args ...interface{}) {
@@ -59,10 +59,10 @@ func Warn(args ...interface{}) {
 	time := getCurrentTime()
 	msg := fmt.Sprint(args...)
 	content := fmt.Sprintf(`%s %s [%s] %s`,
-		formatText(italic, date),
+		formatTextExt(dim, italic, date),
 		formatText(underline, time),
 		formatTextExt(bold, yellow, "WARN"),
-		msg)
+		formatText(italic, msg))
 	fmt.Println(content)
 }
 
@@ -75,12 +75,12 @@ func WarnC(args ...interface{}) {
 
 	msg := fmt.Sprint(args...)
 	content := fmt.Sprintf(`%s %s [%s] (%s:%s) %s`,
-		formatText(italic, date),
+		formatTextExt(dim, italic, date),
 		formatText(underline, time),
 		formatTextExt(bold, yellow, "WARN"),
 		formatText(brightBlue, fName),
 		formatText(bold, strconv.Itoa(line)),
-		msg)
+		formatText(italic, msg))
 	fmt.Println(content)
 
 }
@@ -97,7 +97,7 @@ func Debug(args ...interface{}) {
 	)
 	fmt.Println(content)
 	if len(args) > 0 {
-		fmt.Println("↳", msg)
+		fmt.Println("↳", formatTextExt(bold, yellow, msg))
 	}
 }
 func DebugT(args ...interface{}) {
@@ -109,11 +109,11 @@ func DebugT(args ...interface{}) {
 
 	msg := fmt.Sprint(args...)
 	content := fmt.Sprintf(`%s %s [%s] (%s:%s) %s`,
-		formatText(italic, date),
+		formatTextExt(dim, italic, date),
 		formatText(underline, time),
 		formatTextExt(bold, orange, "DEBUG"),
 		formatText(brightBlue, fName),
 		formatText(bold, strconv.Itoa(line)),
-		msg)
+		formatText(italic, msg))
 	fmt.Println(content)
 }
