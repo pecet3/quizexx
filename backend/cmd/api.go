@@ -39,9 +39,6 @@ func runAPI() {
 		Addr:    address,
 		Handler: mux,
 	}
-
-	logger.Debug("to jest test lorem lorawedsad asd asd awd sass d")
-
 	logger.Info(fmt.Sprintf("Server is listening on: [%s]", address))
 	log.Fatal(server.ListenAndServe())
 
