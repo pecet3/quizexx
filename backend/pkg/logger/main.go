@@ -61,7 +61,7 @@ func Warn(args ...interface{}) {
 	content := fmt.Sprintf(`%s %s [%s] %s`,
 		formatText(italic, date),
 		formatText(underline, time),
-		formatTextExt(bold, orange, "WARN"),
+		formatTextExt(bold, yellow, "WARN"),
 		msg)
 	fmt.Println(content)
 }
@@ -84,8 +84,23 @@ func WarnC(args ...interface{}) {
 	fmt.Println(content)
 
 }
-
 func Debug(args ...interface{}) {
+	pc, _, line, _ := runtime.Caller(1)
+	fn := runtime.FuncForPC(pc)
+	fName := fn.Name()
+
+	msg := fmt.Sprint(args...)
+	content := fmt.Sprintf(`[%s] (%s:%s)`,
+		formatTextExt(bold, blue, "DEBUG"),
+		formatText(orange, fName),
+		formatText(bold, strconv.Itoa(line)),
+	)
+	fmt.Println(content)
+	if len(args) > 0 {
+		fmt.Println("↳", msg)
+	}
+}
+func DebugT(args ...interface{}) {
 	pc, _, line, _ := runtime.Caller(1)
 	fn := runtime.FuncForPC(pc)
 	fName := fn.Name()

@@ -14,7 +14,7 @@ func newOAuthConfig() *oauth2.Config {
 	return &oauth2.Config{
 		ClientID:     os.Getenv("GOOGLE_CLIENT_ID"),
 		ClientSecret: os.Getenv("GOOGLE_CLIENT_SECRET"),
-		RedirectURL:  "https://c650-83-28-218-33.ngrok-free.app/v1/google-callback",
+		RedirectURL:  "https://afc9-83-28-218-33.ngrok-free.app/v1/google-callback",
 		Scopes: []string{
 			"https://www.googleapis.com/auth/userinfo.email",
 			"https://www.googleapis.com/auth/userinfo.profile",

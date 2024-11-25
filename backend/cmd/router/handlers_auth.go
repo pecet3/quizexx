@@ -1,7 +1,7 @@
 package router
 
 import (
-	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 
@@ -9,6 +9,7 @@ import (
 )
 
 func (r router) handleAuth(w http.ResponseWriter, req *http.Request) {
+	logger.Debug("AUTH")
 	url := r.auth.GetStateURL()
 	http.Redirect(w, req, url, http.StatusTemporaryRedirect)
 }
@@ -36,10 +37,15 @@ func (r router) handleGoogleCallback(w http.ResponseWriter, req *http.Request) {
 	}
 	log.Println(dbUser, gUser)
 
-	err = json.NewEncoder(w).Encode(session.Token)
-	if err != nil {
-		logger.Error(err)
-		http.Error(w, "", http.StatusUnauthorized)
-		return
-	}
+	// err = json.NewEncoder(w).Encode(session.Token)
+	// if err != nil {
+	// 	logger.Error(err)
+	// 	http.Error(w, "", http.StatusUnauthorized)
+	// 	return
+	// }
+
+	redirectUri := fmt.Sprintf("myapp://code?token=%s", session.Token)
+
+	// Przekieruj użytkownika z powrotem do aplikacji mobilnej
+	http.Redirect(w, req, redirectUri, http.StatusFound)
 }
