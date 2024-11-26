@@ -26,7 +26,7 @@ func (a *Auth) AddSession(session *entities.Session) error {
 	if err != nil {
 		return err
 	}
-	logger.Debug(a.sessionsMap.sessions)
+	logger.Debug()
 	return nil
 }
 

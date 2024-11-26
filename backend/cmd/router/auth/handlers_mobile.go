@@ -1,4 +1,4 @@
-package router
+package auth_router
 
 import (
 	"fmt"
@@ -10,6 +10,10 @@ import (
 
 func (r router) handleAuth(w http.ResponseWriter, req *http.Request) {
 	logger.Debug("AUTH")
+	queryParams := req.URL.Query()
+	pubToken := queryParams.Get("pubToken")
+
+	logger.Debug(pubToken)
 	url := r.auth.GetStateURL()
 	http.Redirect(w, req, url, http.StatusTemporaryRedirect)
 }

@@ -38,7 +38,7 @@ func (sm *sessionsMap) delete(token string) {
 	delete(sm.sessions, token)
 }
 
-func setTokenCookie(w http.ResponseWriter, token string) {
+func (a *Auth) SetTokenCookie(w http.ResponseWriter, token string) {
 	http.SetCookie(w, &http.Cookie{
 		Name:     "auth_token",
 		Value:    token,
