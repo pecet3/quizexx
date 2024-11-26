@@ -1,24 +1,40 @@
 package auth_router
 
 import (
-	"fmt"
-	"log"
+	"encoding/json"
 	"net/http"
 
 	"github.com/pecet3/quizex/pkg/logger"
 )
 
-func (r router) handleAuth(w http.ResponseWriter, req *http.Request) {
+func (r router) handleMobileExchangeCodes(w http.ResponseWriter, req *http.Request) {
+	logger.Debug("EXCHANGE CODES")
+	queryParams := req.URL.Query()
+	pubCode := queryParams.Get("pubCode")
+
+	logger.Debug(pubCode)
+	secretCode := r.auth.GetSecretCode(pubCode)
+
+	err := json.NewEncoder(w).Encode(secretCode)
+	if err != nil {
+		logger.Error(err)
+		http.Error(w, "", http.StatusUnauthorized)
+		return
+	}
+
+}
+
+func (r router) handleMobileAuth(w http.ResponseWriter, req *http.Request) {
 	logger.Debug("AUTH")
 	queryParams := req.URL.Query()
-	pubToken := queryParams.Get("pubToken")
+	pubCode := queryParams.Get("pubCode")
 
-	logger.Debug(pubToken)
-	url := r.auth.GetStateURL()
+	logger.Debug(pubCode)
+	url := r.auth.GetStateURL(pubCode)
 	http.Redirect(w, req, url, http.StatusTemporaryRedirect)
 }
 
-func (r router) handleGoogleCallback(w http.ResponseWriter, req *http.Request) {
+func (r router) handleMobileGoogleCallback(w http.ResponseWriter, req *http.Request) {
 	gUser, err := r.auth.GetGoogleUser(w, req)
 	if err != nil {
 		logger.Error(err)
@@ -39,17 +55,5 @@ func (r router) handleGoogleCallback(w http.ResponseWriter, req *http.Request) {
 		http.Error(w, "", http.StatusUnauthorized)
 		return
 	}
-	log.Println(dbUser, gUser)
-
-	// err = json.NewEncoder(w).Encode(session.Token)
-	// if err != nil {
-	// 	logger.Error(err)
-	// 	http.Error(w, "", http.StatusUnauthorized)
-	// 	return
-	// }
-
-	redirectUri := fmt.Sprintf("myapp://code?token=%s", session.Token)
-
-	// Przekieruj użytkownika z powrotem do aplikacji mobilnej
-	http.Redirect(w, req, redirectUri, http.StatusFound)
+	w.Write([]byte("<h1>You can go back to the app</h1>"))
 }

@@ -24,8 +24,8 @@ func Run(
 		wsm:  app.Wsm,
 		auth: app.Auth,
 	}
-
-	app.Srv.HandleFunc(PREFIX+"/auth", r.handleAuth)
-	app.Srv.HandleFunc(PREFIX+"/google-callback", r.handleGoogleCallback)
+	app.Srv.HandleFunc(PREFIX+"/exchange", r.handleMobileExchangeCodes)
+	app.Srv.HandleFunc(PREFIX+"/auth", r.handleMobileAuth)
+	app.Srv.HandleFunc(PREFIX+"/google-callback", r.handleMobileGoogleCallback)
 
 }
