@@ -1,12 +1,20 @@
-package router
+package auth_router
 
 import (
-	"encoding/json"
-	"log"
 	"net/http"
 
 	"github.com/pecet3/quizex/pkg/logger"
 )
+
+func (r router) handleAuth(w http.ResponseWriter, req *http.Request) {
+	logger.Debug("AUTH")
+	queryParams := req.URL.Query()
+	pubToken := queryParams.Get("pubToken")
+
+	logger.Debug(pubToken)
+	url := r.auth.GetStateURL()
+	http.Redirect(w, req, url, http.StatusTemporaryRedirect)
+}
 
 func (r router) handleGoogleCallback(w http.ResponseWriter, req *http.Request) {
 	gUser, err := r.auth.GetGoogleUser(w, req)
@@ -29,13 +37,7 @@ func (r router) handleGoogleCallback(w http.ResponseWriter, req *http.Request) {
 		http.Error(w, "", http.StatusUnauthorized)
 		return
 	}
-	log.Println(dbUser, gUser)
 
-	err = json.NewEncoder(w).Encode(session.Token)
-	if err != nil {
-		logger.Error(err)
-		http.Error(w, "", http.StatusUnauthorized)
-		return
-	}
+	r.auth.SetTokenCookie(w, session.Token)
 
 }

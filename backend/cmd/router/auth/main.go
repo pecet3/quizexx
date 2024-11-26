@@ -1,9 +1,6 @@
-package router
+package auth_router
 
 import (
-	"net/http"
-
-	authRouter "github.com/pecet3/quizex/cmd/router/auth"
 	"github.com/pecet3/quizex/data"
 	"github.com/pecet3/quizex/data/repos"
 	"github.com/pecet3/quizex/pkg/auth"
@@ -27,10 +24,8 @@ func Run(
 		wsm:  app.Wsm,
 		auth: app.Auth,
 	}
-	authRouter.Run(app)
-
-	app.Srv.HandleFunc(PREFIX+"/ws", r.handleQuiz)
-	app.Srv.HandleFunc(PREFIX+"/hello", r.hello)
-	app.Srv.Handle("/", http.FileServer(http.Dir("view")))
+	app.Srv.HandleFunc(PREFIX+"/exchange", r.handleMobileExchangeCodes)
+	app.Srv.HandleFunc(PREFIX+"/auth", r.handleMobileAuth)
+	app.Srv.HandleFunc(PREFIX+"/google-callback", r.handleMobileGoogleCallback)
 
 }

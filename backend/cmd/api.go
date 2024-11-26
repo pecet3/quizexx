@@ -4,9 +4,6 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"os"
-	"os/signal"
-	"syscall"
 
 	"github.com/go-playground/validator"
 	"github.com/pecet3/quizex/cmd/router"
@@ -42,16 +39,7 @@ func runAPI() {
 		Addr:    address,
 		Handler: mux,
 	}
-	stop := make(chan os.Signal, 1)
-	signal.Notify(stop, syscall.SIGINT, syscall.SIGTERM)
+	logger.Info(fmt.Sprintf("Server is listening on: [%s]", address))
+	log.Fatal(server.ListenAndServe())
 
-	go func() {
-		logger.Info(fmt.Sprintf("Server is listening on: [%s]", address))
-		log.Fatal(server.ListenAndServe())
-	}()
-	<-stop
-	onSrvClose()
-}
-func onSrvClose() {
-	logger.Warn("Closing the server...")
 }

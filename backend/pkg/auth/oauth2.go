@@ -14,7 +14,7 @@ func newOAuthConfig() *oauth2.Config {
 	return &oauth2.Config{
 		ClientID:     os.Getenv("GOOGLE_CLIENT_ID"),
 		ClientSecret: os.Getenv("GOOGLE_CLIENT_SECRET"),
-		RedirectURL:  "http://localhost:9090/v1/google-callback",
+		RedirectURL:  "https://cd52-83-28-218-33.ngrok-free.app/v1/google-callback",
 		Scopes: []string{
 			"https://www.googleapis.com/auth/userinfo.email",
 			"https://www.googleapis.com/auth/userinfo.profile",
@@ -22,11 +22,11 @@ func newOAuthConfig() *oauth2.Config {
 		Endpoint: google.Endpoint,
 	}
 }
-func (a *Auth) HandleOAuthLogin(w http.ResponseWriter, r *http.Request) {
+func (a *Auth) GetStateURL(pubCode pubCode) string {
 	state := generateState()
-	a.statesMap.set(state, true)
+	a.statesMap.set(state, pubCode)
 	url := a.oauth2Config.AuthCodeURL(state)
-	http.Redirect(w, r, url, http.StatusTemporaryRedirect)
+	return url
 }
 
 // Middleware do autoryzacji

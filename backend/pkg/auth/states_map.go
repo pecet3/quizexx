@@ -6,29 +6,30 @@ import (
 	"github.com/google/uuid"
 )
 
+type state = string
+
+type statesMap struct {
+	mu     sync.Mutex
+	states map[state]pubCode
+}
+
+func newStatesMap() *statesMap {
+	return &statesMap{
+		states: make(map[state]pubCode),
+	}
+}
 func generateState() string {
 	uuid := uuid.NewString()
 	return uuid
 }
 
-type statesMap struct {
-	mu     sync.Mutex
-	states map[string]bool
-}
-
-func newStatesMap() *statesMap {
-	return &statesMap{
-		states: make(map[string]bool),
-	}
-}
-
-func (s *statesMap) set(key string, value bool) {
+func (s *statesMap) set(key string, value pubCode) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 	s.states[key] = value
 }
 
-func (s *statesMap) get(key string) (bool, bool) {
+func (s *statesMap) get(key string) (pubCode, bool) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 	value, exists := s.states[key]
