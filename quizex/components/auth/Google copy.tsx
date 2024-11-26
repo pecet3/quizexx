@@ -1,67 +1,73 @@
-import React, { useState, useEffect } from 'react';
-import { View, Button, ActivityIndicator, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import React, { useState } from 'react';
+import { View, TouchableOpacity, Text, StyleSheet } from 'react-native';
 import * as WebBrowser from 'expo-web-browser';
+import * as AuthSession from 'expo-auth-session';
 import { makeRedirectUri } from 'expo-auth-session';
-import * as Linking from 'expo-linking';
-import * as SecureStore from 'expo-secure-store';
 import Constants from 'expo-constants';
-import { AntDesign } from '@expo/vector-icons';
-import * as Crypto from 'expo-crypto';
+import * as SecureStore from 'expo-secure-store';
+import { AntDesign } from "@expo/vector-icons"
+// Konfiguracja do AuthSession
+WebBrowser.maybeCompleteAuthSession();
 
 const GoogleLogin = () => {
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [pubCode, setPubCode] = useState("")
-  const [secretCode, setSecretCode] = useState("")
-  const apiUrl = Constants.expoConfig?.extra?.apiUrl || 'https://cd52-83-28-218-33.ngrok-free.app';
+  const [error, setError] = useState<null | string>(null);
+
+  // Pobierz apiUrl z konfiguracji
+  const apiUrl = Constants.expoConfig?.extra?.apiUrl || 'https://c650-83-28-218-33.ngrok-free.app';
 
   // Konfiguracja URI przekierowania
   const redirectUri = makeRedirectUri({
     scheme: "myapp",
-    path: "callback/google",
-    preferLocalhost: true
+    path: "v1/google-callback",
   });
 
 
-  // Inicjacja procesu logowania
+  // Funkcja do inicjowania procesu logowania
   const handleGoogleLogin = async () => {
     try {
       setLoading(true);
       setError(null);
-      const pubCode = Crypto.randomUUID()
-      console.log(pubCode)
-      setPubCode(pubCode)
 
-      const secretCodeResult = await fetch(`${apiUrl}/v1/exchange?pubCode=${pubCode}`)
-      const secretCode = await secretCodeResult.json()
-      console.log(secretCode)
-      const authUrl = `${apiUrl}/v1/auth?pubCode=${pubCode}`;
+      const authUrl = `${apiUrl}/v1/auth`;
       console.log('Auth URL:', authUrl);
 
-      await WebBrowser.maybeCompleteAuthSession();
       const result = await WebBrowser.openAuthSessionAsync(
         authUrl,
         redirectUri,
         {
-          showInRecents: false,
-          preferEphemeralSession: true // Używaj sesji tymczasowej
+          showInRecents: true,
         }
       );
 
-      await console.log('Auth result:', result);
+      console.log('Auth result:', result); // dla debugowania
 
-      if (result.type === 'dismiss') {
+      if (result.type === 'success') {
+        console.log("success")
+        // Pobierz token z URL
+        const token = extractTokenFromUrl(result.url);
+
+        if (token) {
+          // Zapisz token w secure storage
+          await saveToken(token);
+          // Nawiguj do głównego ekranu lub wykonaj inne akcje po zalogowaniu
+          console.log('Token saved successfully');
+        } else {
+          setError('Nie udało się uzyskać tokenu');
+        }
+      } else if (result.type === 'cancel') {
         setError('Logowanie zostało anulowane');
       }
     } catch (err) {
-      console.error('Login error:', err);
       setError('Wystąpił błąd podczas logowania');
+      console.error('Login error:', err);
     } finally {
       setLoading(false);
     }
   };
 
-  const extractTokenFromUrl = (url: string) => {
+  // Helper do wyciągania tokenu z URL
+  const extractTokenFromUrl = (url: any) => {
     try {
       const regex = /token=([^&]+)/;
       const match = url.match(regex);
@@ -72,7 +78,8 @@ const GoogleLogin = () => {
     }
   };
 
-  const saveToken = async (token: string) => {
+  // Funkcja do zapisywania tokenu
+  const saveToken = async (token: any) => {
     try {
       await SecureStore.setItemAsync('userToken', token);
     } catch (err) {

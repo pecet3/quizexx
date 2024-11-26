@@ -39,7 +39,7 @@
       "typedRoutes": true
     },
     "extra": {
-      "apiUrl": "http://10.0.2.2:9090"
+      "apiUrl": "https://cd52-83-28-218-33.ngrok-free.app"
     }
   }
 }
