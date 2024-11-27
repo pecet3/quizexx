@@ -25,7 +25,6 @@ func (r router) handleMobileExchangeCodes(w http.ResponseWriter, req *http.Reque
 }
 
 func (r router) handleMobileAuth(w http.ResponseWriter, req *http.Request) {
-	logger.Debug("AUTH")
 	queryParams := req.URL.Query()
 	pubCode := queryParams.Get("pubCode")
 
