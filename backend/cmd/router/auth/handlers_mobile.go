@@ -58,7 +58,7 @@ func (r router) handleMobileGoogleCallback(w http.ResponseWriter, req *http.Requ
 		http.Error(w, "", http.StatusUnauthorized)
 		return
 	}
-	w.Write([]byte("<h1>You can go back to the app</h1>"))
+	w.Write([]byte("<h1>Please close this tab, and back to the app</h1>"))
 }
 
 func (r router) handleIssuingJWT(w http.ResponseWriter, req *http.Request) {
