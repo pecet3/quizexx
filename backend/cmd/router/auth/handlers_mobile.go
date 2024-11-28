@@ -27,7 +27,11 @@ func (r router) handleMobileExchangeCodes(w http.ResponseWriter, req *http.Reque
 func (r router) handleMobileAuth(w http.ResponseWriter, req *http.Request) {
 	queryParams := req.URL.Query()
 	pubCode := queryParams.Get("pubCode")
-
+	if len(pubCode) <= 0 {
+		logger.WarnC("no pubCode")
+		http.Error(w, "", http.StatusBadRequest)
+		return
+	}
 	logger.Debug(pubCode)
 	url := r.auth.GetStateURL(pubCode)
 	http.Redirect(w, req, url, http.StatusTemporaryRedirect)
@@ -55,4 +59,16 @@ func (r router) handleMobileGoogleCallback(w http.ResponseWriter, req *http.Requ
 		return
 	}
 	w.Write([]byte("<h1>You can go back to the app</h1>"))
+}
+
+func (r router) handleIssuingJWT(w http.ResponseWriter, req *http.Request) {
+	queryParams := req.URL.Query()
+	pubCode := queryParams.Get("pubCode")
+	secretCode := queryParams.Get("secretCode")
+	if len(pubCode) <= 0 || len(secretCode) <= 0 {
+		logger.WarnC("no pubCode or secretCode")
+		http.Error(w, "", http.StatusBadRequest)
+		return
+	}
+	logger.Debug(pubCode)
 }
