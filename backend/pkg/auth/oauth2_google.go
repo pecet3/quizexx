@@ -43,10 +43,10 @@ func (a *Auth) GetGoogleUser(token *oauth2.Token) (*GoogleUser, error) {
 }
 func (a *Auth) GetOAuth2Token(state, code string) (*oauth2.Token, error) {
 
-	if isValid := a.tmpMap.has(state); !isValid {
+	if isValid := a.tmsMap.has(state); !isValid {
 		return nil, errors.New("invalid state")
 	}
-	a.tmpMap.delete(state)
+	a.tmsMap.delete(state)
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*30)
 	defer cancel()
 	token, err := a.oauth2Config.Exchange(ctx, code)

@@ -22,8 +22,7 @@ func newOAuthConfig() *oauth2.Config {
 		Endpoint: google.Endpoint,
 	}
 }
-func (a *Auth) GetStateURL(pubCode pubCode) string {
-	state := generateState()
+func (a *Auth) GetStateURL(state string) string {
 	url := a.oauth2Config.AuthCodeURL(state)
 	return url
 }

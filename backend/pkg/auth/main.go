@@ -6,7 +6,8 @@ import (
 )
 
 type Auth struct {
-	tmpMap       tempMobileSessions
+	tmsMap       tempMobileMap
+	jwtSmap      jwtSmap
 	sessionsMap  sessionsMap
 	oauth2Config *oauth2.Config
 	d            *data.Data
@@ -14,9 +15,10 @@ type Auth struct {
 
 func New(d *data.Data) *Auth {
 	return &Auth{
-		tmpMap:       newTempMobileSessions(),
+		tmsMap:       newTempMobileMap(),
 		sessionsMap:  newSessionMap(),
 		oauth2Config: newOAuthConfig(),
+		jwtSmap:      newjwtSmap(),
 		d:            d,
 	}
 }

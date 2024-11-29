@@ -16,16 +16,17 @@ create table if not exists sessions (
 );`
 
 type Session struct {
-	UserID int
-	Exp    time.Time
-	Token  string
+	UserID       int
+	Exp          time.Time
+	AccessToken  string
+	RefreshToken string
 }
 
 func (s *Session) Add(db *sql.DB) error {
 	query := `
 	INSERT INTO sessions (user_id, exp, token)
 	VALUES (?, ?, ?)`
-	_, err := db.Exec(query, s.UserID, s.Exp, s.Token)
+	_, err := db.Exec(query, s.UserID, s.Exp, s.AccessToken)
 	if err != nil {
 		return fmt.Errorf("error adding session: %w", err)
 	}
@@ -41,7 +42,7 @@ func (s *Session) GetByToken(db *sql.DB, token string) (*Session, error) {
 	err := db.QueryRow(query, token).Scan(
 		&session.UserID,
 		&session.Exp,
-		&session.Token,
+		&session.AccessToken,
 	)
 	if err != nil {
 		if err == sql.ErrNoRows {
