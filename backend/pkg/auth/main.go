@@ -6,18 +6,16 @@ import (
 )
 
 type Auth struct {
-	statesMap    *statesMap
-	sessionsMap  *sessionsMap
-	codesMap     *codesMap
+	tmpMap       tempMobileSessions
+	sessionsMap  sessionsMap
 	oauth2Config *oauth2.Config
 	d            *data.Data
 }
 
 func New(d *data.Data) *Auth {
 	return &Auth{
-		statesMap:    newStatesMap(),
+		tmpMap:       newTempMobileSessions(),
 		sessionsMap:  newSessionMap(),
-		codesMap:     newCodesMap(),
 		oauth2Config: newOAuthConfig(),
 		d:            d,
 	}

@@ -1,13 +1,16 @@
 package auth
 
 import (
+	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
 	"net/http"
+	"time"
 
 	"github.com/pecet3/quizex/data"
 	"github.com/pecet3/quizex/data/entities"
+	"golang.org/x/oauth2"
 )
 
 type GoogleUser struct {
@@ -30,19 +33,7 @@ func (gu *GoogleUser) ToDbUser(d *data.Data) *entities.User {
 	return userDb
 }
 
-func (a *Auth) GetGoogleUser(w http.ResponseWriter, r *http.Request) (*GoogleUser, error) {
-	code := r.URL.Query().Get("code")
-	receivedState := r.URL.Query().Get("state")
-
-	if isValid := a.statesMap.has(receivedState); !isValid {
-		return nil, errors.New("invalid state")
-	}
-	a.statesMap.delete(receivedState)
-
-	token, err := a.oauth2Config.Exchange(r.Context(), code)
-	if err != nil {
-		return nil, errors.New("failed to exchange token")
-	}
+func (a *Auth) GetGoogleUser(token *oauth2.Token) (*GoogleUser, error) {
 
 	user, err := getUserInfo(token.AccessToken)
 	if err != nil {
@@ -50,8 +41,21 @@ func (a *Auth) GetGoogleUser(w http.ResponseWriter, r *http.Request) (*GoogleUse
 	}
 	return user, nil
 }
+func (a *Auth) GetOAuth2Token(state, code string) (*oauth2.Token, error) {
 
-// Pobranie informacji o użytkowniku z Google API
+	if isValid := a.tmpMap.has(state); !isValid {
+		return nil, errors.New("invalid state")
+	}
+	a.tmpMap.delete(state)
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*30)
+	defer cancel()
+	token, err := a.oauth2Config.Exchange(ctx, code)
+	if err != nil {
+		return nil, errors.New("failed to exchange token")
+	}
+	return token, nil
+}
+
 func getUserInfo(accessToken string) (*GoogleUser, error) {
 	resp, err := http.Get("https://www.googleapis.com/oauth2/v2/userinfo?access_token=" + accessToken)
 	if err != nil {

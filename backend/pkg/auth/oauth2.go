@@ -24,7 +24,6 @@ func newOAuthConfig() *oauth2.Config {
 }
 func (a *Auth) GetStateURL(pubCode pubCode) string {
 	state := generateState()
-	a.statesMap.set(state, pubCode)
 	url := a.oauth2Config.AuthCodeURL(state)
 	return url
 }

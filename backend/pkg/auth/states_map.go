@@ -4,18 +4,43 @@ import (
 	"sync"
 
 	"github.com/google/uuid"
+	"github.com/pecet3/quizex/data/entities"
 )
 
 type state = string
 
-type statesMap struct {
-	mu     sync.Mutex
-	states map[state]pubCode
+type pubCode = string
+
+type Code struct {
+	dbUser     *entities.User
+	pubCode    string
+	secretCode string
+	jwtToken   string
 }
 
-func newStatesMap() *statesMap {
-	return &statesMap{
-		states: make(map[state]pubCode),
+func generateCode() string {
+	uuid := uuid.NewString()
+	return uuid
+}
+
+func (a *Auth) GetSecretCode(pubCode pubCode) string {
+	secretCode := generateCode()
+	code := &Code{
+		secretCode: secretCode,
+		jwtToken:   "",
+	}
+	a.tmpMap.set(pubCode, code)
+	return secretCode
+}
+
+type tempMobileSessions struct {
+	mu  sync.Mutex
+	tms map[state]*Code
+}
+
+func newTempMobileSessions() tempMobileSessions {
+	return tempMobileSessions{
+		tms: make(map[state]*Code),
 	}
 }
 func generateState() string {
@@ -23,28 +48,28 @@ func generateState() string {
 	return uuid
 }
 
-func (s *statesMap) set(key string, value pubCode) {
+func (s *tempMobileSessions) set(key string, value *Code) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
-	s.states[key] = value
+	s.tms[key] = value
 }
 
-func (s *statesMap) get(key string) (pubCode, bool) {
+func (s *tempMobileSessions) get(key string) (*Code, bool) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
-	value, exists := s.states[key]
+	value, exists := s.tms[key]
 	return value, exists
 }
 
-func (s *statesMap) delete(key string) {
+func (s *tempMobileSessions) delete(key string) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
-	delete(s.states, key)
+	delete(s.tms, key)
 }
 
-func (s *statesMap) has(key string) bool {
+func (s *tempMobileSessions) has(key string) bool {
 	s.mu.Lock()
 	defer s.mu.Unlock()
-	_, exists := s.states[key]
+	_, exists := s.tms[key]
 	return exists
 }

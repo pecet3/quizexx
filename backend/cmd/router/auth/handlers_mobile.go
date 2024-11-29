@@ -38,7 +38,22 @@ func (r router) handleMobileAuth(w http.ResponseWriter, req *http.Request) {
 }
 
 func (r router) handleMobileGoogleCallback(w http.ResponseWriter, req *http.Request) {
-	gUser, err := r.auth.GetGoogleUser(w, req)
+	query := req.URL.Query()
+	state := query.Get("state")
+	code := query.Get("code")
+
+	if state == "" || code == "" {
+		logger.Error("Missing 'state' or 'code' in query parameters")
+		http.Error(w, "Invalid request", http.StatusBadRequest)
+		return
+	}
+	token, err := r.auth.GetOAuth2Token(state, code)
+	if err != nil {
+		logger.Error(err)
+		http.Error(w, "", http.StatusUnauthorized)
+		return
+	}
+	gUser, err := r.auth.GetGoogleUser(token)
 	if err != nil {
 		logger.Error(err)
 		http.Error(w, "", http.StatusUnauthorized)
@@ -58,10 +73,10 @@ func (r router) handleMobileGoogleCallback(w http.ResponseWriter, req *http.Requ
 		http.Error(w, "", http.StatusUnauthorized)
 		return
 	}
-	w.Write([]byte("<h1>Please close this tab, and back to the app</h1>"))
+	w.Write([]byte("<h1>You can go back to the app</h1>"))
 }
 
-func (r router) handleIssuingJWT(w http.ResponseWriter, req *http.Request) {
+func (r router) handleProvideJWT(w http.ResponseWriter, req *http.Request) {
 	queryParams := req.URL.Query()
 	pubCode := queryParams.Get("pubCode")
 	secretCode := queryParams.Get("secretCode")
@@ -70,5 +85,5 @@ func (r router) handleIssuingJWT(w http.ResponseWriter, req *http.Request) {
 		http.Error(w, "", http.StatusBadRequest)
 		return
 	}
-	logger.Debug(pubCode)
+
 }
