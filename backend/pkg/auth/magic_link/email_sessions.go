@@ -42,7 +42,7 @@ func (ml *MagicLink) NewSessionRegister(
 	name,
 	email string) (*EmailSession, string) {
 	expiresAt := time.Now().Add(time.Minute * 5)
-	activateCode := "1234"
+	activateCode := "123456"
 	ea := &EmailSession{
 		Expiry:       expiresAt,
 		ActivateCode: activateCode,
@@ -54,19 +54,19 @@ func (ml *MagicLink) NewSessionRegister(
 	return ea, activateCode
 }
 
-func (ml *MagicLink) GetSession(code string) (*EmailSession, bool) {
+func (ml *MagicLink) GetSession(email string) (*EmailSession, bool) {
 	ml.sMu.Lock()
 	defer ml.sMu.Unlock()
-	session, exists := ml.emailSessions[code]
+	session, exists := ml.emailSessions[email]
 	return session, exists
 }
 
-func (ml *MagicLink) AddSession(code string, session *EmailSession) error {
+func (ml *MagicLink) AddSession(session *EmailSession) error {
 	ml.sMu.Lock()
 	defer ml.sMu.Unlock()
-	es, exists := ml.emailSessions[code]
+	es, exists := ml.emailSessions[session.UserEmail]
 	if !exists {
-		ml.emailSessions[code] = session
+		ml.emailSessions[session.UserEmail] = session
 	} else {
 		es.AttemptCounter = es.AttemptCounter + 1
 		es.LastNewSession = time.Now()

@@ -23,13 +23,13 @@ func (r router) handleRegister(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 	logger.Debug(dto)
-	es, code := r.auth.MagicLink.NewSessionRegister(dto.Email, dto.Name)
-	r.auth.MagicLink.AddSession(code, es)
+	s, code := r.auth.MagicLink.NewSessionRegister(dto.Name, dto.Email)
+	r.auth.MagicLink.AddSession(s)
 	err = r.auth.MagicLink.SendEmail(dto.Email, code, dto.Name)
 	if err != nil {
 		logger.Error(err)
 		http.Error(w, "", http.StatusBadRequest)
 		return
 	}
-	logger.Debug(es)
+	logger.Debug(s)
 }
