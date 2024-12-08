@@ -1,24 +1,13 @@
 package auth
 
-import (
-	"github.com/pecet3/quizex/data"
-	"golang.org/x/oauth2"
-)
+import "github.com/pecet3/quizex/pkg/auth/magic_link"
 
 type Auth struct {
-	tmsMap       tempMobileMap
-	jwtSmap      jwtSmap
-	sessionsMap  sessionsMap
-	oauth2Config *oauth2.Config
-	d            *data.Data
+	MagicLink *magic_link.MagicLink
 }
 
-func New(d *data.Data) *Auth {
+func New() *Auth {
 	return &Auth{
-		tmsMap:       newTempMobileMap(),
-		sessionsMap:  newSessionMap(),
-		oauth2Config: newOAuthConfig(),
-		jwtSmap:      newjwtSmap(),
-		d:            d,
+		MagicLink: magic_link.New(),
 	}
 }

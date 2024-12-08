@@ -13,7 +13,7 @@ type router struct {
 	wsm  *ws.Manager
 }
 
-const PREFIX = "/v1"
+const PREFIX = "/v1/auth"
 
 func Run(
 	app repos.App,
@@ -24,8 +24,5 @@ func Run(
 		wsm:  app.Wsm,
 		auth: app.Auth,
 	}
-	app.Srv.HandleFunc(PREFIX+"/exchange", r.handleMobileExchangeCodes)
-	app.Srv.HandleFunc(PREFIX+"/auth", r.handleMobileAuth)
-	app.Srv.HandleFunc(PREFIX+"/google-callback", r.handleMobileGoogleCallback)
-
+	app.Srv.HandleFunc(PREFIX+"/magic-link/register", r.handleMagicLinkRegister)
 }
