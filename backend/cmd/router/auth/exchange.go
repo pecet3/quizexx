@@ -8,8 +8,8 @@ import (
 	"github.com/pecet3/quizex/pkg/logger"
 )
 
-func (r router) handleRegister(w http.ResponseWriter, req *http.Request) {
-	dto := &dtos.RegisterDTO{}
+func (r router) handleExchange(w http.ResponseWriter, req *http.Request) {
+	dto := &dtos.ExchangeDTO{}
 	err := json.NewDecoder(req.Body).Decode(dto)
 	if err != nil {
 		logger.Error(err)
@@ -22,14 +22,15 @@ func (r router) handleRegister(w http.ResponseWriter, req *http.Request) {
 		http.Error(w, "", http.StatusBadRequest)
 		return
 	}
-	logger.Debug(dto)
-	es, code := r.auth.MagicLink.NewSessionRegister(dto.Email, dto.Name)
-	r.auth.MagicLink.AddSession(code, es)
-	err = r.auth.MagicLink.SendEmail(dto.Email, code, dto.Name)
-	if err != nil {
-		logger.Error(err)
+	s, exists := r.auth.MagicLink.GetSession(dto.Code)
+	if !exists {
+		logger.WarnC("email sessions deosn't exist")
 		http.Error(w, "", http.StatusBadRequest)
 		return
 	}
-	logger.Debug(es)
+	if s.IsRegister {
+		// register a user
+		logger.Debug(s.UserName)
+		return
+	}
 }

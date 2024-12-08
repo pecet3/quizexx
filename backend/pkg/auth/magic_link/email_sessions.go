@@ -1,98 +1,102 @@
 package magic_link
 
 import (
-	"crypto/sha256"
-	"encoding/hex"
-	"errors"
-	"log"
 	"time"
 
 	"github.com/google/uuid"
-	"github.com/pecet3/quizex/data/entities"
+	"github.com/pecet3/quizex/pkg/logger"
 )
 
-type emailSessions = map[string]*entities.Session
-
-func (ml *MagicLink) NewEmailSession(
-	userId int,
-	email string,
-	expiresAt time.Time) (*entities.Session, string) {
-	newToken := uuid.NewString()
-
-	hash := sha256.New()
-	hash.Write([]byte(newToken))
-	activateCode := hex.EncodeToString(hash.Sum(nil))
-	ea := &entities.Session{
-		Token:        newToken,
-		Expiry:       expiresAt,
-		ActivateCode: activateCode,
-		UserId:       userId,
-		Email:        email,
-	}
-	return ea, newToken
+type EmailSession struct {
+	UserEmail       string
+	ActivateCode    string
+	Expiry          time.Time
+	IsRegister      bool
+	LastNewSession  time.Time
+	UserID          int
+	UserName        string
+	AttemptCounter  int
+	ExchangeCounter int
 }
 
-func (ml *MagicLink) GetEmailSession(token string) (*entities.Session, bool) {
+type emailSessions = map[string]*EmailSession
+
+func (ml *MagicLink) NewSessionLogin(
+	uID int,
+	email string) (*EmailSession, string) {
+	newcode := uuid.NewString()
+	expiresAt := time.Now().Add(time.Minute * 5)
+
+	activateCode := "1234"
+	ea := &EmailSession{
+		Expiry:       expiresAt,
+		ActivateCode: activateCode,
+		IsRegister:   false,
+		UserID:       uID,
+		UserEmail:    email,
+	}
+	return ea, newcode
+}
+
+func (ml *MagicLink) NewSessionRegister(
+	name,
+	email string) (*EmailSession, string) {
+	expiresAt := time.Now().Add(time.Minute * 5)
+	activateCode := "1234"
+	ea := &EmailSession{
+		Expiry:       expiresAt,
+		ActivateCode: activateCode,
+		IsRegister:   true,
+		UserID:       -1,
+		UserName:     name,
+		UserEmail:    email,
+	}
+	return ea, activateCode
+}
+
+func (ml *MagicLink) GetSession(code string) (*EmailSession, bool) {
 	ml.sMu.Lock()
 	defer ml.sMu.Unlock()
-	session, exists := ml.emailSessions[token]
+	session, exists := ml.emailSessions[code]
 	return session, exists
 }
 
-func (ml *MagicLink) AddEmailSession(token string, session *entities.Session) error {
+func (ml *MagicLink) AddSession(code string, session *EmailSession) error {
 	ml.sMu.Lock()
 	defer ml.sMu.Unlock()
-	su, exists := ml.getTmpSection(session.UserId)
-	log.Println("exists ", exists, session.UserId)
+	es, exists := ml.emailSessions[code]
 	if !exists {
-		su = ml.newTmpSection(session.UserId)
-		err := ml.addTmpSection(su)
-		if err != nil {
-			log.Println(err)
-			return err
-		}
+		ml.emailSessions[code] = session
 	} else {
-		su.NewSessionCounter = su.NewSessionCounter + 1
-		su.LastNewSession = time.Now()
-		ml.updateTmpSection(su)
+		es.AttemptCounter = es.AttemptCounter + 1
+		es.LastNewSession = time.Now()
 	}
-	log.Println(su.NewSessionCounter, "counter")
-	ml.emailSessions[token] = session
+	logger.Debug(ml.emailSessions)
 	return nil
 }
-func (ml *MagicLink) VerifyNewEmailSession(uId int) bool {
-	su, exists := ml.getTmpSection(uId)
-	if !exists {
-		return true
-	}
-	log.Println(su.NewSessionCounter)
-	if su.NewSessionCounter < 5 {
 
-		return true
-	} else {
-		log.Println(3)
-		if time.Since(su.LastNewSession).Minutes() > 30 {
-			log.Println("since")
-			return true
-		}
-	}
-
-	return false
-}
-
-func (ml *MagicLink) RemoveEmailSession(token string) {
+func (ml *MagicLink) RemoveSession(email string) {
 	ml.sMu.Lock()
 	defer ml.sMu.Unlock()
-	delete(ml.emailSessions, token)
+	delete(ml.emailSessions, email)
 }
-func (ml *MagicLink) RemoveEmailSessionWithSessionUser(token string, uId int) error {
-	ml.sMu.Lock()
-	defer ml.sMu.Unlock()
-	delete(ml.emailSessions, token)
-	_, exists := ml.getTmpSection(uId)
-	if !exists {
-		return errors.New("no user in session users")
-	}
-	delete(ml.tmpSessions, uId)
-	return nil
-}
+
+// func (ml *MagicLink) VerifyNewEmailSession(uId int) bool {
+// 	es, exists := ml.GetEmailSession(uId)
+// 	if !exists {
+// 		return true
+// 	}
+// 	log.Println(es.AttemptCounter)
+// 	if es.AttemptCounter < 5 {
+
+// 		return true
+// 	} else {
+// 		log.Println(3)
+// 		if time.Since(es.LastNewSession).Minutes() > 30 {
+// 			log.Println("since")
+// 			return true
+// 		}
+// 	}
+
+// 	return false
+// }

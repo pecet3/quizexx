@@ -16,3 +16,16 @@ func (r RegisterDTO) Validate(v *validator.Validate) error {
 	}
 	return nil
 }
+
+type ExchangeDTO struct {
+	Email string `json:"email" validate:"required,email"`
+	Code  string `json:"code" validate:"required,min=6,max=6"`
+}
+
+func (r ExchangeDTO) Validate(v *validator.Validate) error {
+	err := v.Struct(r)
+	if err != nil {
+		return err
+	}
+	return nil
+}
