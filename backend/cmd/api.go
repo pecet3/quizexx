@@ -27,7 +27,7 @@ func runAPI() {
 	app := repos.App{
 		Srv:       mux,
 		Data:      data,
-		Auth:      auth.New(),
+		Auth:      auth.New(data),
 		Validator: validator.New(),
 		Wsm:       ws.NewManager(),
 	}

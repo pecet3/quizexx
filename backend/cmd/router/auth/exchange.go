@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/pecet3/quizex/data/dtos"
+	"github.com/pecet3/quizex/data/entities"
 	"github.com/pecet3/quizex/pkg/logger"
 )
 
@@ -34,8 +35,28 @@ func (r router) handleExchange(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 	if s.IsRegister {
-		// register a user
-		logger.Debug(s.UserName)
+		u := &entities.User{
+			Name:  s.UserName,
+			Email: s.UserEmail,
+		}
+		id, err := u.Add(r.d.Db)
+		if err != nil {
+			logger.Error(err)
+			http.Error(w, "", http.StatusBadRequest)
+			return
+		}
+		logger.Debug(s.UserName, id)
+	}
+	jwtToken, err := r.auth.JWT.GenerateJWT(s.UserEmail, s.UserName)
+	if err != nil {
+		logger.Error(err)
+		http.Error(w, "", http.StatusBadRequest)
+		return
+	}
+	err = json.NewEncoder(w).Encode(jwtToken)
+	if err != nil {
+		logger.Error(err)
+		http.Error(w, "", http.StatusBadRequest)
 		return
 	}
 }

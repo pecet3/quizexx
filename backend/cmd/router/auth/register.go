@@ -22,6 +22,12 @@ func (r router) handleRegister(w http.ResponseWriter, req *http.Request) {
 		http.Error(w, "", http.StatusBadRequest)
 		return
 	}
+	existingUser, err := r.d.User.GetByEmail(r.d.Db, dto.Email)
+	if existingUser != nil || err == nil {
+		logger.Error(err)
+		http.Error(w, "User with provided email already exists", http.StatusBadRequest)
+		return
+	}
 	logger.Debug(dto)
 	s, code := r.auth.MagicLink.NewSessionRegister(dto.Name, dto.Email)
 	r.auth.MagicLink.AddSession(s)

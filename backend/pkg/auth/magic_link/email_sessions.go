@@ -1,9 +1,9 @@
 package magic_link
 
 import (
+	"errors"
 	"time"
 
-	"github.com/google/uuid"
 	"github.com/pecet3/quizex/pkg/logger"
 )
 
@@ -24,34 +24,33 @@ type emailSessions = map[string]*EmailSession
 func (ml *MagicLink) NewSessionLogin(
 	uID int,
 	email string) (*EmailSession, string) {
-	newcode := uuid.NewString()
 	expiresAt := time.Now().Add(time.Minute * 5)
 
-	activateCode := "1234"
+	code := generateCode()
 	ea := &EmailSession{
 		Expiry:       expiresAt,
-		ActivateCode: activateCode,
+		ActivateCode: code,
 		IsRegister:   false,
 		UserID:       uID,
 		UserEmail:    email,
 	}
-	return ea, newcode
+	return ea, code
 }
 
 func (ml *MagicLink) NewSessionRegister(
 	name,
 	email string) (*EmailSession, string) {
 	expiresAt := time.Now().Add(time.Minute * 5)
-	activateCode := "123456"
+	code := generateCode()
 	ea := &EmailSession{
 		Expiry:       expiresAt,
-		ActivateCode: activateCode,
+		ActivateCode: code,
 		IsRegister:   true,
 		UserID:       -1,
 		UserName:     name,
 		UserEmail:    email,
 	}
-	return ea, activateCode
+	return ea, code
 }
 
 func (ml *MagicLink) GetSession(email string) (*EmailSession, bool) {
@@ -68,8 +67,12 @@ func (ml *MagicLink) AddSession(session *EmailSession) error {
 	if !exists {
 		ml.emailSessions[session.UserEmail] = session
 	} else {
-		es.AttemptCounter = es.AttemptCounter + 1
-		es.LastNewSession = time.Now()
+		if es.AttemptCounter < 5 {
+			es.AttemptCounter += 1
+			es.LastNewSession = time.Now()
+		} else {
+			return errors.New("too much attempts")
+		}
 	}
 	logger.Debug(ml.emailSessions)
 	return nil
@@ -80,23 +83,3 @@ func (ml *MagicLink) RemoveSession(email string) {
 	defer ml.sMu.Unlock()
 	delete(ml.emailSessions, email)
 }
-
-// func (ml *MagicLink) VerifyNewEmailSession(uId int) bool {
-// 	es, exists := ml.GetEmailSession(uId)
-// 	if !exists {
-// 		return true
-// 	}
-// 	log.Println(es.AttemptCounter)
-// 	if es.AttemptCounter < 5 {
-
-// 		return true
-// 	} else {
-// 		log.Println(3)
-// 		if time.Since(es.LastNewSession).Minutes() > 30 {
-// 			log.Println("since")
-// 			return true
-// 		}
-// 	}
-
-// 	return false
-// }
