@@ -4,7 +4,7 @@ import (
 	"math/rand"
 )
 
-const charset = "QSTVXYZ012345678901234567890123456789"
+const charset = "ABCDEFGHIJKLMNOPQRSTUVWXYZ01234567890123456789056789"
 
 func generateCode() string {
 	result := make([]byte, 6)

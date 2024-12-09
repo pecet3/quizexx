@@ -36,11 +36,11 @@ func (r router) handleLogin(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	err = r.auth.MagicLink.SendEmail(u.Email, code, u.Name)
+	err = r.auth.MagicLink.SendEmailLogin(u.Email, code, u.Name)
 	if err != nil {
 		logger.Error(err)
 		http.Error(w, "", http.StatusBadRequest)
 		return
 	}
-	logger.InfoC(fmt.Sprintf(`user with email: %s has been attempting to login. Access Code: %s`, u.Email, s.ActivateCode))
+	logger.InfoC(fmt.Sprintf(`user with email: %s is login. Access Code: %s`, u.Email, s.ActivateCode))
 }
