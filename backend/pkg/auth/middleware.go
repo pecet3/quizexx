@@ -35,12 +35,13 @@ func (as *Auth) Authorize(next http.HandlerFunc) http.Handler {
 			http.Error(w, "Empty token", http.StatusUnauthorized)
 			return
 		}
-		_, err := as.JWT.ValidateJWT(jwt)
+		claims, err := as.JWT.ValidateJWT(jwt)
 		if err != nil {
 			logger.Warn("<Auth> Session doesn't exist")
 			http.Error(w, "", http.StatusUnauthorized)
 			return
 		}
+		logger.Debug(claims)
 		var s *entities.Session
 		s, err = as.GetAuthSession(jwt)
 		if err != nil || s == nil {
@@ -57,7 +58,12 @@ func (as *Auth) Authorize(next http.HandlerFunc) http.Handler {
 		if s.Expiry.Before(time.Now()) {
 			as.MagicLink.RemoveSession(s.Email)
 			logger.Debug(s.Expiry.Before(time.Now()))
-			http.Error(w, "Your sessions is expired, you need to provide a new password", http.StatusUnauthorized)
+			http.Error(w, "Your sessions is expired you need to login once again", http.StatusUnauthorized)
+			if err := as.UpdateIsExpiredSession(s.Token); err != nil {
+				logger.Error(err)
+				http.Error(w, "", http.StatusUnauthorized)
+				return
+			}
 			return
 		}
 		if r.Method == http.MethodPost {

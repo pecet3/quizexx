@@ -77,6 +77,12 @@ func (r router) handleExchange(w http.ResponseWriter, req *http.Request) {
 		http.Error(w, "", http.StatusBadRequest)
 		return
 	}
+	err = r.auth.UpdateIsExpiredSession(token)
+	if err != nil {
+		logger.Error(err)
+		http.Error(w, "", http.StatusBadRequest)
+		return
+	}
 	err = json.NewEncoder(w).Encode(token)
 	if err != nil {
 		logger.Error(err)

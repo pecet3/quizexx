@@ -41,7 +41,7 @@ func (as *Auth) AddAuthSession(token string, session *entities.Session) error {
 	return as.d.Session.Add(as.d.Db, session)
 
 }
-func (as *Auth) RemoveAuthSession(token string) error {
+func (as *Auth) UpdateIsExpiredSession(token string) error {
 	return nil
 }
 
@@ -69,7 +69,7 @@ func (as *Auth) GetContextSession(r *http.Request) (*entities.Session, error) {
 	return session, nil
 }
 
-func (as *Auth) GetContextSessionUser(r *http.Request) (*entities.User, error) {
+func (as *Auth) GetContextUser(r *http.Request) (*entities.User, error) {
 	ctx := r.Context()
 	session, ok := ctx.Value(sessionContextKey).(*entities.Session)
 	u, err := as.d.User.GetById(as.d.Db, session.UserId)
