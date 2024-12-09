@@ -2,6 +2,7 @@ package magic_link
 
 import (
 	"errors"
+	"fmt"
 	"time"
 
 	"github.com/pecet3/quizex/pkg/logger"
@@ -12,6 +13,7 @@ type EmailSession struct {
 	ActivateCode    string
 	Expiry          time.Time
 	IsRegister      bool
+	IsBlocked       bool
 	LastNewSession  time.Time
 	UserID          int
 	UserName        string
@@ -66,14 +68,21 @@ func (ml *MagicLink) AddSession(session *EmailSession) error {
 	es, exists := ml.emailSessions[session.UserEmail]
 	if !exists {
 		ml.emailSessions[session.UserEmail] = session
-	} else {
-		if es.AttemptCounter < 5 {
-			es.AttemptCounter += 1
-			es.LastNewSession = time.Now()
-		} else {
-			return errors.New("too much attempts")
-		}
+		return nil
 	}
+	if es.IsBlocked {
+		errmsg := fmt.Sprintf(`Account is locked, left:%d minutes`, int(es.Expiry.Sub(time.Now()).Minutes()))
+		return errors.New(errmsg)
+	}
+	if es.AttemptCounter >= 5 {
+		es.IsBlocked = true
+		es.Expiry = time.Now().Add(time.Minute * 60)
+		return errors.New("too much attempts. account has been locked for an hour")
+	}
+	es.AttemptCounter = es.AttemptCounter + 1
+	logger.Debug(es.AttemptCounter)
+	es.LastNewSession = time.Now()
+
 	logger.Debug(ml.emailSessions)
 	return nil
 }

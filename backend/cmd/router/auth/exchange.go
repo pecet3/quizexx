@@ -3,6 +3,7 @@ package auth_router
 import (
 	"encoding/json"
 	"net/http"
+	"time"
 
 	"github.com/pecet3/quizex/data/dtos"
 	"github.com/pecet3/quizex/data/entities"
@@ -25,19 +26,29 @@ func (r router) handleExchange(w http.ResponseWriter, req *http.Request) {
 	}
 	s, exists := r.auth.MagicLink.GetSession(dto.Email)
 	if !exists {
-		logger.Warn("email sessions deosn't exist")
+		logger.Warn("email sessions doesn't exist", s.UserEmail)
 		http.Error(w, "", http.StatusBadRequest)
 		return
 	}
 	if s.ActivateCode != dto.Code {
-		logger.Warn("provided a wrong code")
+		logger.Warn("provided a wrong code", s.UserEmail)
 		http.Error(w, "", http.StatusBadRequest)
 		return
 	}
+	if s.ExchangeCounter > 5 || s.IsBlocked {
+		s.IsBlocked = true
+		logger.Warn("exchange counter block", s.UserEmail)
+		http.Error(w, "Your account is blocked due the security reasons.", http.StatusBadRequest)
+		return
+	}
+	s.ExchangeCounter += 1
+
 	if s.IsRegister {
+		// create a new user
 		u := &entities.User{
-			Name:  s.UserName,
-			Email: s.UserEmail,
+			Name:      s.UserName,
+			Email:     s.UserEmail,
+			CreatedAt: time.Now(),
 		}
 		id, err := u.Add(r.d.Db)
 		if err != nil {
@@ -47,16 +58,30 @@ func (r router) handleExchange(w http.ResponseWriter, req *http.Request) {
 		}
 		logger.Debug(s.UserName, id)
 	}
-	jwtToken, err := r.auth.JWT.GenerateJWT(s.UserEmail, s.UserName)
+	uDb, err := r.d.User.GetByEmail(r.d.Db, s.UserEmail)
 	if err != nil {
 		logger.Error(err)
 		http.Error(w, "", http.StatusBadRequest)
 		return
 	}
-	err = json.NewEncoder(w).Encode(jwtToken)
+	session, token, err := r.auth.NewAuthSession(uDb.ID, uDb.Email, s.UserName)
 	if err != nil {
 		logger.Error(err)
 		http.Error(w, "", http.StatusBadRequest)
 		return
 	}
+	err = r.auth.AddAuthSession(token, session)
+	if err != nil {
+		logger.Error(err)
+		http.Error(w, "", http.StatusBadRequest)
+		return
+	}
+	err = json.NewEncoder(w).Encode(token)
+	if err != nil {
+		logger.Error(err)
+		http.Error(w, "", http.StatusBadRequest)
+		return
+	}
+
+	r.auth.MagicLink.RemoveSession(dto.Email)
 }

@@ -28,5 +28,6 @@ func Run(
 		v:    app.Validator,
 	}
 	app.Srv.HandleFunc(PREFIX+"/register", r.handleRegister)
+	app.Srv.HandleFunc(PREFIX+"/login", r.handleLogin)
 	app.Srv.HandleFunc(PREFIX+"/exchange", r.handleExchange)
 }

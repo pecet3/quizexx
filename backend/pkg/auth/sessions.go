@@ -6,7 +6,6 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/google/uuid"
 	"github.com/pecet3/quizex/data/entities"
 )
 
@@ -16,20 +15,22 @@ const (
 
 type AuthSessions = map[string]*entities.Session
 
-func (as Auth) NewAuthSession(userId int) (*entities.Session, string) {
+func (as *Auth) NewAuthSession(userId int, uEmail, uName string) (*entities.Session, string, error) {
 	expiresAt := time.Now().Add(168 * 4 * time.Hour)
-	newToken := uuid.NewString()
-
+	jwtToken, err := as.JWT.GenerateJWT(uEmail, uName)
+	if err != nil {
+		return nil, "", err
+	}
 	ea := &entities.Session{
-		Token:             newToken,
+		Token:             jwtToken,
 		Expiry:            expiresAt,
 		UserId:            userId,
-		Email:             "",
-		ActivateCode:      "",
+		Email:             uEmail,
+		ActivateCode:      jwtToken,
 		PostSuspendExpiry: time.Now().Add(SUSPEND_POST_SECONDS * time.Second),
 	}
 
-	return ea, newToken
+	return ea, jwtToken, nil
 }
 
 func (as *Auth) GetAuthSession(token string) (*entities.Session, error) {
