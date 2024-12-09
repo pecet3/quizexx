@@ -13,7 +13,7 @@ const GoogleLogin = () => {
   const [error, setError] = useState<string | null>(null);
   const [pubCode, setPubCode] = useState("")
   const [secretCode, setSecretCode] = useState("")
-  const apiUrl = Constants.expoConfig?.extra?.apiUrl || 'https://cd52-83-28-218-33.ngrok-free.app';
+  const apiUrl = Constants.expoConfig?.extra?.apiUrl || 'https://267a-89-64-30-38.ngrok-free.app';
 
   // Konfiguracja URI przekierowania
   const redirectUri = makeRedirectUri({
@@ -35,6 +35,7 @@ const GoogleLogin = () => {
       const secretCodeResult = await fetch(`${apiUrl}/v1/exchange?pubCode=${pubCode}`)
       const secretCode = await secretCodeResult.json()
       console.log(secretCode)
+      setSecretCode(secretCode)
       const authUrl = `${apiUrl}/v1/auth?pubCode=${pubCode}`;
       console.log('Auth URL:', authUrl);
 
@@ -48,7 +49,7 @@ const GoogleLogin = () => {
         }
       );
 
-      await console.log('Auth result:', result);
+      console.log('Auth result:', result);
 
       if (result.type === 'dismiss') {
         setError('Logowanie zostało anulowane');
