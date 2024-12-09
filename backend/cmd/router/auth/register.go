@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/pecet3/quizex/data/dtos"
+	"github.com/pecet3/quizex/data/entities"
 	"github.com/pecet3/quizex/pkg/logger"
 )
 
@@ -22,12 +23,27 @@ func (r router) handleRegister(w http.ResponseWriter, req *http.Request) {
 		http.Error(w, "", http.StatusBadRequest)
 		return
 	}
-	existingUser, err := r.d.User.GetByEmail(r.d.Db, dto.Email)
-	if existingUser != nil || err == nil {
-		logger.Error(err)
-		http.Error(w, "User with provided email already exists", http.StatusBadRequest)
-		return
+	existingUser, _ := r.d.User.GetByEmail(r.d.Db, dto.Email)
+
+	if existingUser != nil {
+		if !existingUser.IsDraft {
+			logger.Error(err)
+			http.Error(w, "User with provided email already exists", http.StatusBadRequest)
+			return
+		}
+	} else {
+		u := &entities.User{}
+		u.Email = dto.Email
+		u.Name = dto.Name
+		u.IsDraft = true
+		_, err = u.Add(r.d.Db)
+		if err != nil {
+			logger.Error(err)
+			http.Error(w, "", http.StatusBadRequest)
+			return
+		}
 	}
+
 	logger.Debug(dto)
 	s, code := r.auth.MagicLink.NewSessionRegister(dto.Name, dto.Email)
 	if err = r.auth.MagicLink.AddSession(s); err != nil {

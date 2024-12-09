@@ -16,6 +16,7 @@ create table if not exists users (
     email text not null unique,
     salt text not null,
     image_url text default '',
+	is_draft bool default true,
     created_at timestamp default current_timestamp
 );`
 
@@ -26,15 +27,16 @@ type User struct {
 	Email     string    `json:"email"`
 	Salt      string    `json:"-"`
 	ImageUrl  string    `json:"image_url"`
+	IsDraft   bool      `json:"-"`
 	CreatedAt time.Time `json:"created_at"`
 }
 
 func (u *User) Add(db *sql.DB) (int, error) {
 	u.UUID = uuid.NewString()
-	query := `INSERT INTO users (uuid, name, email, salt, image_url, created_at)
-              VALUES (?, ?, ?, ?, ?, CURRENT_TIMESTAMP)`
+	query := `INSERT INTO users (uuid, name, email, salt, image_url, is_draft, created_at)
+              VALUES (?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)`
 
-	result, err := db.Exec(query, u.UUID, u.Name, u.Email, u.Salt, u.ImageUrl)
+	result, err := db.Exec(query, u.UUID, u.Name, u.Email, u.Salt, u.ImageUrl, u.IsDraft)
 	if err != nil {
 		return 0, err
 	}
@@ -48,8 +50,8 @@ func (u *User) Add(db *sql.DB) (int, error) {
 }
 
 func (u *User) Update(db *sql.DB) error {
-	query := `UPDATE users SET name = ?, email = ?, salt = ?, image_url = ? WHERE id = ?`
-	_, err := db.Exec(query, u.Name, u.Email, u.Salt, u.ImageUrl, u.ID)
+	query := `UPDATE users SET name = ?, email = ?, salt = ?, image_url = ?, is_draft = ? WHERE id = ?`
+	_, err := db.Exec(query, u.Name, u.Email, u.Salt, u.ImageUrl, u.IsDraft, u.ID)
 	return err
 }
 
@@ -73,11 +75,11 @@ func DeleteById(db *sql.DB, id int) error {
 }
 
 func (u User) GetById(db *sql.DB, id int) (*User, error) {
-	query := `SELECT id, uuid, name, email, salt, image_url, created_at FROM users WHERE id = ?`
+	query := `SELECT id, uuid, name, email, salt, image_url, is_draft, created_at FROM users WHERE id = ?`
 	row := db.QueryRow(query, id)
 
 	var user User
-	err := row.Scan(&user.ID, &user.UUID, &user.Name, &user.Email, &user.Salt, &user.ImageUrl, &user.CreatedAt)
+	err := row.Scan(&user.ID, &user.UUID, &user.Name, &user.Email, &user.Salt, &user.ImageUrl, &user.IsDraft, &user.CreatedAt)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, errors.New("user not found")
@@ -89,11 +91,11 @@ func (u User) GetById(db *sql.DB, id int) (*User, error) {
 }
 
 func (u User) GetByEmail(db *sql.DB, email string) (*User, error) {
-	query := `SELECT id, uuid, name, email, salt, image_url, created_at FROM users WHERE email = ?`
+	query := `SELECT id, uuid, name, email, salt, image_url, is_draft, created_at FROM users WHERE email = ?`
 	row := db.QueryRow(query, email)
 
 	var user User
-	err := row.Scan(&user.ID, &user.UUID, &user.Name, &user.Email, &user.Salt, &user.ImageUrl, &user.CreatedAt)
+	err := row.Scan(&user.ID, &user.UUID, &user.Name, &user.Email, &user.Salt, &user.ImageUrl, &user.IsDraft, &user.CreatedAt)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, errors.New("user not found")

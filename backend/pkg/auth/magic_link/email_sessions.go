@@ -8,7 +8,7 @@ import (
 	"github.com/pecet3/quizex/pkg/logger"
 )
 
-const ExpirySec = 30
+const ExpirySec = 60 * 5
 
 type EmailSession struct {
 	UserEmail       string
@@ -84,6 +84,7 @@ func (ml *MagicLink) AddSession(session *EmailSession) error {
 		return errors.New(errmsg)
 	}
 	es.AttemptCounter = es.AttemptCounter + 1
+	es.ActivateCode = session.ActivateCode
 	logger.Debug(es.AttemptCounter)
 	es.LastNewSession = time.Now()
 

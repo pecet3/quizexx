@@ -109,7 +109,7 @@ func Debug(args ...interface{}) {
 
 	msg := fmt.Sprint(args...)
 	content := fmt.Sprintf(`[%s] %s %s (%s:%s)`,
-		formatTextExt(bold, blue, " DBUG "),
+		formatTextExt(bold, magenta, " DBUG "),
 		formatTextExt(dim, italic, date),
 		formatText(underline, time),
 		formatText(brightBlue, fName),

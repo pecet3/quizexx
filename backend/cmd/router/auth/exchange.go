@@ -3,10 +3,8 @@ package auth_router
 import (
 	"encoding/json"
 	"net/http"
-	"time"
 
 	"github.com/pecet3/quizex/data/dtos"
-	"github.com/pecet3/quizex/data/entities"
 	"github.com/pecet3/quizex/pkg/logger"
 )
 
@@ -46,18 +44,19 @@ func (r router) handleExchange(w http.ResponseWriter, req *http.Request) {
 
 	if s.IsRegister {
 		// create a new user
-		u := &entities.User{
-			Name:      s.UserName,
-			Email:     s.UserEmail,
-			CreatedAt: time.Now(),
-		}
-		id, err := u.Add(r.d.Db)
+		u, err := r.d.User.GetByEmail(r.d.Db, s.UserEmail)
 		if err != nil {
 			logger.Error(err)
 			http.Error(w, "", http.StatusBadRequest)
 			return
 		}
-		logger.Debug(s.UserName, id)
+		u.IsDraft = false
+		if err = u.Update(r.d.Db); err != nil {
+			logger.Error(err)
+			http.Error(w, "", http.StatusBadRequest)
+			return
+		}
+		logger.Debug(s.UserName, u)
 	}
 	uDb, err := r.d.User.GetByEmail(r.d.Db, s.UserEmail)
 	if err != nil {
