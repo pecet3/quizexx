@@ -1,6 +1,7 @@
 package auth_router
 
 import (
+	"github.com/go-playground/validator/v10"
 	"github.com/pecet3/quizex/data"
 	"github.com/pecet3/quizex/data/repos"
 	"github.com/pecet3/quizex/pkg/auth"
@@ -11,9 +12,10 @@ type router struct {
 	d    *data.Data
 	auth *auth.Auth
 	wsm  *ws.Manager
+	v    *validator.Validate
 }
 
-const PREFIX = "/v1"
+const PREFIX = "/v1/auth"
 
 func Run(
 	app repos.App,
@@ -23,9 +25,9 @@ func Run(
 		d:    app.Data,
 		wsm:  app.Wsm,
 		auth: app.Auth,
+		v:    app.Validator,
 	}
-	app.Srv.HandleFunc(PREFIX+"/exchange", r.handleMobileExchangeCodes)
-	app.Srv.HandleFunc(PREFIX+"/auth", r.handleMobileAuth)
-	app.Srv.HandleFunc(PREFIX+"/google-callback", r.handleMobileGoogleCallback)
-
+	app.Srv.HandleFunc(PREFIX+"/register", r.handleRegister)
+	app.Srv.HandleFunc(PREFIX+"/login", r.handleLogin)
+	app.Srv.HandleFunc(PREFIX+"/exchange", r.handleExchange)
 }

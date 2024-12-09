@@ -1,24 +1,47 @@
 package auth
 
 import (
-	"os"
+	"errors"
 	"time"
 
-	"github.com/golang-jwt/jwt"
-	"github.com/pecet3/quizex/data/entities"
+	"github.com/golang-jwt/jwt/v5"
 )
 
-func getExp() time.Time {
-	return time.Now().Add(time.Hour * 24)
+var SecretKey = []byte("your_secret_key_here")
+
+type jwtServices struct {
 }
 
-func generateJWT(user *entities.User, exp time.Time) (string, error) {
+func (jwtServices) GenerateJWT(email, username string) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"sub":   user.ID,
-		"email": user.Email,
-		"name":  user.Name,
-		"exp":   exp.Unix(),
+		"email":    email,
+		"username": username,
+		"exp":      time.Now().Add(time.Hour * 24).Unix(), // Token ważny przez 24 godziny
 	})
 
-	return token.SignedString([]byte(os.Getenv("JWT_SECRET")))
+	signedToken, err := token.SignedString(SecretKey)
+	if err != nil {
+		return "", err
+	}
+
+	return signedToken, nil
+}
+
+func (jwtServices) ValidateJWT(tokenString string) (jwt.MapClaims, error) {
+	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, errors.New("unexpected signing method")
+		}
+		return SecretKey, nil
+	})
+
+	if err != nil {
+		return nil, err
+	}
+
+	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
+		return claims, nil
+	}
+
+	return nil, errors.New("invalid token")
 }

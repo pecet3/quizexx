@@ -2,9 +2,10 @@ package utils
 
 import (
 	"fmt"
-	"log"
 	"net/smtp"
 	"os"
+
+	"github.com/pecet3/quizex/pkg/logger"
 )
 
 func SendEmail(to, subject, body string) error {
@@ -14,7 +15,7 @@ func SendEmail(to, subject, body string) error {
 	host := os.Getenv("SMTP_HOST")
 
 	if from == "" || password == "" || addr == "" || host == "" {
-		log.Fatal("Required environment variables are missing")
+		logger.Error("Required environment variables are missing")
 	}
 	user := "contact.pecet.it@gmail.com"
 	t := fmt.Sprintf("To: %s\r\n", to)
@@ -43,9 +44,7 @@ func SendEmail(to, subject, body string) error {
 		[]byte(msg),
 	)
 	if err != nil {
-		log.Println("Unable to send an email")
 		return err
 	}
-	log.Printf("@email with subject:%s has been sent to: %s", subject, to)
 	return nil
 }

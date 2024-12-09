@@ -5,7 +5,7 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/go-playground/validator"
+	"github.com/go-playground/validator/v10"
 	"github.com/pecet3/quizex/cmd/router"
 	"github.com/pecet3/quizex/data"
 	"github.com/pecet3/quizex/data/repos"
@@ -39,6 +39,8 @@ func runAPI() {
 		Addr:    address,
 		Handler: mux,
 	}
+	go app.Auth.MagicLink.CleanUpExpiredSessions()
+
 	logger.Info(fmt.Sprintf("Server is listening on: [%s]", address))
 	log.Fatal(server.ListenAndServe())
 

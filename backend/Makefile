@@ -1,2 +1,7 @@
 run:
-	@ go run main.go
+	go run ./cmd
+
+rm:
+	rm -rf ../database.db 
+
+
