@@ -29,3 +29,15 @@ func (r ExchangeDTO) Validate(v *validator.Validate) error {
 	}
 	return nil
 }
+
+type LoginDTO struct {
+	Email string `json:"email" validate:"required,email"`
+}
+
+func (r LoginDTO) Validate(v *validator.Validate) error {
+	err := v.Struct(r)
+	if err != nil {
+		return err
+	}
+	return nil
+}

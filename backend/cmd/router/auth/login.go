@@ -2,6 +2,7 @@ package auth_router
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 
 	"github.com/pecet3/quizex/data/dtos"
@@ -9,7 +10,7 @@ import (
 )
 
 func (r router) handleLogin(w http.ResponseWriter, req *http.Request) {
-	dto := &dtos.RegisterDTO{}
+	dto := &dtos.LoginDTO{}
 	err := json.NewDecoder(req.Body).Decode(dto)
 	if err != nil {
 		logger.Error(err)
@@ -25,22 +26,21 @@ func (r router) handleLogin(w http.ResponseWriter, req *http.Request) {
 	u, err := r.d.User.GetByEmail(r.d.Db, dto.Email)
 	if u == nil || err != nil {
 		logger.Error(err)
-		http.Error(w, "User with provided email already exists", http.StatusBadRequest)
+		http.Error(w, "", http.StatusBadRequest)
 		return
 	}
-	logger.Debug(dto)
 	s, code := r.auth.MagicLink.NewSessionLogin(u.ID, dto.Email)
 	if err = r.auth.MagicLink.AddSession(s); err != nil {
 		logger.Error(err)
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		http.Error(w, "", http.StatusBadRequest)
 		return
 	}
 
-	// err = r.auth.MagicLink.SendEmail(dto.Email, code, dto.Name)
-	// if err != nil {
-	// 	logger.Error(err)
-	// 	http.Error(w, "", http.StatusBadRequest)
-	// 	return
-	// }
-	logger.Debug(code)
+	err = r.auth.MagicLink.SendEmail(u.Email, code, u.Name)
+	if err != nil {
+		logger.Error(err)
+		http.Error(w, "", http.StatusBadRequest)
+		return
+	}
+	logger.InfoC(fmt.Sprintf(`user with email: %s has been attempting to login. Access Code: %s`, u.Email, s.ActivateCode))
 }

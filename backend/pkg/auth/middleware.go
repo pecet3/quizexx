@@ -43,13 +43,20 @@ func (as *Auth) Authorize(next http.HandlerFunc) http.Handler {
 		}
 		var s *entities.Session
 		s, err = as.GetAuthSession(jwt)
-		if err != nil {
+		if err != nil || s == nil {
 			logger.Warn("<Auth> Session doesn't exist")
 			http.Error(w, "", http.StatusUnauthorized)
 			return
 		}
+		if s.ActivateCode != jwt {
+			logger.WarnC("invalid jwt token. user id: ", s.UserId)
+			as.MagicLink.RemoveSession(s.Email)
+			http.Error(w, "", http.StatusUnauthorized)
+			return
+		}
 		if s.Expiry.Before(time.Now()) {
-			as.MagicLink.RemoveSession("email")
+			as.MagicLink.RemoveSession(s.Email)
+			logger.Debug(s.Expiry.Before(time.Now()))
 			http.Error(w, "Your sessions is expired, you need to provide a new password", http.StatusUnauthorized)
 			return
 		}

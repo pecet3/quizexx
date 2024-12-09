@@ -36,11 +36,11 @@ func (r router) handleRegister(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	// err = r.auth.MagicLink.SendEmail(dto.Email, code, dto.Name)
-	// if err != nil {
-	// 	logger.Error(err)
-	// 	http.Error(w, "", http.StatusBadRequest)
-	// 	return
-	// }
+	err = r.auth.MagicLink.SendEmail(dto.Email, code, dto.Name)
+	if err != nil {
+		logger.Error(err)
+		http.Error(w, "", http.StatusBadRequest)
+		return
+	}
 	logger.Debug(code)
 }

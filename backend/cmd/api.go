@@ -39,6 +39,8 @@ func runAPI() {
 		Addr:    address,
 		Handler: mux,
 	}
+	go app.Auth.MagicLink.CleanUpExpiredSessions()
+
 	logger.Info(fmt.Sprintf("Server is listening on: [%s]", address))
 	log.Fatal(server.ListenAndServe())
 

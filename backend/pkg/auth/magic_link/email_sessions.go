@@ -8,6 +8,8 @@ import (
 	"github.com/pecet3/quizex/pkg/logger"
 )
 
+const ExpirySec = 30
+
 type EmailSession struct {
 	UserEmail       string
 	ActivateCode    string
@@ -26,7 +28,7 @@ type emailSessions = map[string]*EmailSession
 func (ml *MagicLink) NewSessionLogin(
 	uID int,
 	email string) (*EmailSession, string) {
-	expiresAt := time.Now().Add(time.Minute * 5)
+	expiresAt := time.Now().Add(time.Second * ExpirySec)
 
 	code := generateCode()
 	ea := &EmailSession{
@@ -42,7 +44,7 @@ func (ml *MagicLink) NewSessionLogin(
 func (ml *MagicLink) NewSessionRegister(
 	name,
 	email string) (*EmailSession, string) {
-	expiresAt := time.Now().Add(time.Minute * 5)
+	expiresAt := time.Now().Add(time.Minute * ExpirySec)
 	code := generateCode()
 	ea := &EmailSession{
 		Expiry:       expiresAt,
@@ -77,7 +79,9 @@ func (ml *MagicLink) AddSession(session *EmailSession) error {
 	if es.AttemptCounter >= 5 {
 		es.IsBlocked = true
 		es.Expiry = time.Now().Add(time.Minute * 60)
-		return errors.New("too much attempts. account has been locked for an hour")
+		errmsg := fmt.Sprintln(`Too many login attempts, Your account has been blocked for an hour`)
+
+		return errors.New(errmsg)
 	}
 	es.AttemptCounter = es.AttemptCounter + 1
 	logger.Debug(es.AttemptCounter)

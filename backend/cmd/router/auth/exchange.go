@@ -26,12 +26,13 @@ func (r router) handleExchange(w http.ResponseWriter, req *http.Request) {
 	}
 	s, exists := r.auth.MagicLink.GetSession(dto.Email)
 	if !exists {
-		logger.Warn("email sessions doesn't exist", s.UserEmail)
+		logger.WarnC("email sessions doesn't exist")
 		http.Error(w, "", http.StatusBadRequest)
 		return
 	}
 	if s.ActivateCode != dto.Code {
-		logger.Warn("provided a wrong code", s.UserEmail)
+		logger.WarnC("provided a wrong code ", s.UserEmail)
+		logger.Debug(s.ActivateCode, dto.Code)
 		http.Error(w, "", http.StatusBadRequest)
 		return
 	}
