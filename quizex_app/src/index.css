@@ -1,0 +1,70 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  font-family:Help Me, Inter, system-ui, Avenir, Helvetica, Arial, sans-serif,;
+  line-height: 1.5;
+  font-weight: 400;
+  background-image: url("./assets/background.jpg");
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  color-scheme: light dark;
+  color: rgba(255, 255, 255, 0.87);
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+html, body {
+  overflow: hidden;
+  margin: 0;
+  height: 100%;
+}
+
+.container {
+  height: 100vh; /* Ensures the container takes up full height */
+  background: inherit;
+}
+
+@font-face {
+  font-family: 'Help Me';
+  src: url('/static/fonts/HelpMe.ttf') format('truetype');
+}
+
+
+.step-title {
+  font-family: 'Help Me', sans-serif;
+}
+
+/* Custom scrollbar styles */
+.custom-scrollbar {
+  padding-right: 10px;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 14px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: #310577a2;
+  border-radius: 10px;
+  border: 2px solid #fff;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.pacifico-regular {
+  font-family: "Pacifico", cursive;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.container {
+  height: 100vh;
+}

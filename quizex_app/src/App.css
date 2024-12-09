@@ -1,0 +1,39 @@
+#root {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0rem;
+  text-align: center;
+  ;
+
+}
+
+
+
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+@media (max-width: 640px) {
+  .container {
+      padding: 20px;
+  }
+
+  .text-3xl {
+      font-size: 2rem; /* Ustawienie mniejszej czcionki na telefonach */
+  }
+}
+
+/* styles.css hamburger rozmycie */
+.blur-background {
+  position: fixed; /* Zmiana pozycji na fixed */
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  backdrop-filter: blur(10px); /* Ustawia efekt rozmycia */
+  z-index: 10; /* Upewnia się, że warstwa z rozmyciem jest przed innymi elementami */
+}
+
