@@ -51,6 +51,197 @@
             &lt;<span class="text-black">pecet</span>.<span class="text-blue-700">it</span>/&gt;
         </div>
     </a>
+    <!DOCTYPE html>
+    <html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script src="https://cdn.tailwindcss.com"></script>
+        <script defer src="dom.js"></script>
+        <script defer src="event.js"></script>
+        <script defer src="main_dev.js"></script>
+
+        <link rel="stylesheet" href="../styles.css">
+        <title>🎲Quizex🏆</title>
+    </head>
+
+    <body class="bg-pattern bg-opacity-70 pl-0 pr-0 p-0 sm:p-8 py-0 sm:py-10 text-center m-auto">
+
+        <div id="entryDashboard" class="flex flex-col justify-between">
+            <header id="minorLogo" class="p-1 my-1 sm:my-4 relative">
+                <h1 class="text-6xl font-blackflex justify-center items-end text-center text-black font-mono 
+            underline decoration-wavy decoration-4 decoration-teal-400 font-bold">
+                    Quizex
+                </h1>
+                <span class="text-xs font-semibold italic underline ml-32 mono text-right">by pecet ❤</span>
+            </header>
+            <div class="paper paper-yellow my-6 p-4 pt-8 shadow-md flex flex-col gap-2 items-center
+    ">
+
+                <div class="top-tape"></div>
+                <input id="userNameInput" type="text" class="my-4 p-0.5 text-2xl rounded-sm font m-auto border border-black
+         bg-white placeholder:text-gray-400 placeholder:text-center text-black text-center" placeholder="your name" />
+                <button class="bg-purple-300 
+         hover:shadow-none hover:rounded-xl border border-black hover:scale-[0.995]
+         font-mono px-4 text-2xl duration-300 text-black rounded-lg m-auto py-1.5" id="connectButton">Join</button>
+            </div>
+
+        </div>
+        <div id="waitingRoomDashboard" class="flex flex-col justify-center items-center my-6 ">
+
+            <div class="paper paper-yellow max-w-md text-lg m-auto p-4 pt-8 shadow-md flex flex-col items-center">
+                <div class="top-tape"></div>
+
+                <ul class="grid grid-cols-2 text-xl" id="readyUsersList">
+
+                </ul>
+
+                <div class="flex gap-0.5">
+                    <span class="text-2xl font-sans font-bold">[</span>
+                    <p id="displayReadyCount" class="text-2xl font-sans font-bold"></p>
+                    <span class="text-2xl font-sans font-bold">]</span>
+                </div>
+
+                <button class="bg-teal-300 
+        hover:shadow-none hover:rounded-xl border border-black hover:scale-[0.995]
+        font-mono px-4 text-2xl duration-300 text-black rounded-lg m-auto py-2" id="readyButton">I am ready</button>
+            </div>
+            <p id="displayServerMessageWaiting" class="font-mono text-lg font-bold"></p>
+        </div>
+
+
+        <div id="gameDashboard" class="m-0 sm:m-auto max-w-3xl text-lg  p-0
+        pr-0 sm:pr-4 pl-0 pl-0 flex flex-col  ">
+
+            <header class="p-1 mb-1 sm:mb-4 relative" id="majorLogo">
+                <h1 class="text-8xl font-black	flex justify-center items-end text-center text-black font-mono 
+            underline decoration-wavy decoration-4 decoration-teal-400 ">
+                    <span class="text-3xl absolute -top-0.5 right-1/2 mr-2">🎲</span>
+                    Quizex
+                </h1>
+            </header>
+
+
+            <div class="flex justify-between gap-2 z-10  mx-1">
+                <div class="text-2xl flex sm:flex-row flex-col items-center font-bold font-mono bg-gray-400 
+                rounded-t-md p-1 border-2 border-black border-b-0">
+                    <span class=" sm:block">Category:</span>
+                    <p id="displayCategory" class="text-blue-800 italic"></p>
+                </div>
+                <div
+                    class="text-2xl flex-col sm:flex-row flex items-center gap-1 sm:gap-2 font-black font-mono bg-gray-400 rounded-t-md p-0.5 sm:p-1 px-1 sm:px-2 border-2 border-black border-b-0">
+                    <div class="flex items-start m-auto gap-1">
+                        <p>Round: </p>
+                        <p id="displayRound" class="text-blue-800">1</p>
+                    </div>
+                </div>
+            </div>
+            <div class="flex flex-col gap-6 items-center mx-1">
+                <form id="gameForm" class="flex flex-col gap-6 w-full md:w-[46rem]">
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-gray-200 border-2 border-black
+                  p-2 sm:p-4 rounded-b-xl text-lg">
+                        <h3 id="displayQuestion" class="sm:col-span-2 text-center font-bold text-2xl">
+                        </h3>
+                        <label id="a1" class=" has-[:checked]:rounded-lg has-[:checked]:scale-[1.01] bg-blue-200
+                    duration-300 has-[:checked]:bg-gray-700 has-[:checked]:ring ring-teal-500 has-[:checked]:text-white
+                     cursor-pointer flex justify-center items-center rounded-md hover:rounded-lg p-1
+                     border border-black
+                        ">
+                            <input type="radio" id="a2" name="q1" value="0" class=" ">
+                            <p id="answerA">A</p>
+                        </label>
+                        <label id="a2" class=" has-[:checked]:rounded-lg has-[:checked]:scale-[1.01] bg-red-200
+                    duration-300 has-[:checked]:bg-gray-700 has-[:checked]:ring ring-teal-500 has-[:checked]:text-white
+                     cursor-pointer flex justify-center items-center rounded-md hover:rounded-lg p-1
+                     border border-black
+                     ">
+                            <input type="radio" name="q1" value="1" class="">
+                            <p id="answerB">B</p>
+                        </label>
+                        <label id="a3" class=" has-[:checked]:rounded-lg has-[:checked]:scale-[1.01] bg-green-200
+                    duration-300 has-[:checked]:bg-gray-700 has-[:checked]:ring ring-teal-500 has-[:checked]:text-white
+                     cursor-pointer flex justify-center items-center rounded-md hover:rounded-lg p-1
+                     border border-black
+                     ">
+                            <input type="radio" name="q1" value="2" class="">
+                            <p id="answerC">C</p>
+                        </label>
+                        <label id="a4" class=" has-[:checked]:rounded-lg has-[:checked]:scale-[1.01] bg-purple-200
+                    duration-300 has-[:checked]:bg-gray-700 has-[:checked]:ring ring-teal-500 has-[:checked]:text-white
+                     cursor-pointer flex justify-center items-center rounded-md hover:rounded-lg p-1
+                     border border-black
+                     ">
+                            <input type="radio" name="q1" value="3" class="">
+                            <p id="answerD">D</p>
+                        </label>
+
+                    </div>
+                    <p id="displayServerMessageDashboard"
+                        class="font-mono text-xl sm:text-2xl font-bold italic bg-white p-2 rounded-xl bg-opacity-70">
+                        Have a good game!
+                    </p>
+                    <p></p>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 ">
+                        <table id="scoreTable"
+                            class="text-xl table-fixed sm:order-none order-last  bg-yellow-200 shadow-md shadow-gray-600">
+                            <thead class="m-auto">
+                                <tr class="flex justify-center border-b border-black font-mono font-black">
+                                    <th class=" m-auto">Name</th>
+                                    <th class=" m-auto">Points</th>
+                                </tr>
+                            </thead>
+                            <tbody id="scoreTableBody"
+                                class="flex flex-col [&_tr]:py-2 [&_tr]:gap-4 [&_tr]:flex [&_tr]:justify-between [&_td]:m-auto ">
+
+
+                            </tbody>
+                        </table>
+                        <div class="flex flex-col items-center justify-center gap-0.5">
+                            <button type="submit" class="bg-teal-300
+                         hover:rounded-xl border-2 border-black
+                        font-mono font-semibold px-4 text-3xl duration-300 text-black rounded-lg m-auto py-2" id="">
+                                Send the answer
+                            </button>
+
+                        </div>
+
+                    </div>
+                </form>
+
+
+
+            </div>
+            <form id="chatForm" class="flex-col justify-between sm:right-2 gap-1 p-1 flex bg-second-paper 
+        rounded-b-lg rounded-r-lg border-2 border-black bg-slate-200 w-96 sm:w-[30rem]  z-50 m-auto text-sm
+        my-16
+        ">
+
+                <div class="flex justify-between text-xl absolute">
+                    <div class="text-2xl bg-gray-400
+                 border-2 border-black py-0.5
+             rounded-t-md px-2 font-mono relative bottom-[2.75rem] right-[0.35rem] font-bold">
+                        Chat<span class="text-lg text-teal-500">💬</span>
+                    </div>
+                </div>
+                <ul class="flex flex-col gap-1 h-64 sm:h-80 break-words
+        overflow-y-scroll text-sm sm:text-base p-0.5 border-b border-gray-400" id="chatMessages">
+                </ul>
+                <div class="flex gap-2 m-auto justify-between">
+                    <input name="chatInput" type="text" class="p-1 rounded-md border border-black sm:w-[24rem] w-72" />
+                    <button type="submit" class="bg-teal-300
+                hover:rounded-xl border-2 border-black
+               font-mono font-semibold px-2 text-xl duration-300 text-black rounded-lg m-auto py-1">
+                        Send
+                    </button>
+                </div>
+            </form>
+        </div>
+
+    </body>
+
+    </html>
 </body>
 
 </html>
