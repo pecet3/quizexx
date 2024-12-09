@@ -30,7 +30,7 @@ func Run(
 	authRouter.Run(app)
 
 	app.Srv.HandleFunc(PREFIX+"/ws", r.handleQuiz)
-	app.Srv.HandleFunc(PREFIX+"/hello", r.hello)
+	app.Srv.Handle(PREFIX+"/hello", r.auth.Authorize(r.hello))
 	app.Srv.Handle("/", http.FileServer(http.Dir("view")))
 
 }
