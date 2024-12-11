@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import axios from "axios";
 
-const API_URL = "YOUR_API_URL"; // Replace with your actual API URL
-const PREFIX = "YOUR_PREFIX"; // Replace with your API prefix
+const API_URL = "localhost:9090"; // Replace with your actual API URL
+const PREFIX = "/v1/auth"; // Replace with your API prefix
 
 type Step = "register" | "login" | "exchange";
 
@@ -163,7 +163,7 @@ export const Auth: React.FC = () => {
   );
 
   return (
-    <div className="flex flex-col items-center justify-center h-screen bg-gray-100 p-6">
+    <div className="flex flex-col items-center justify-center h-screen pb-64">
       <h1 className="text-2xl font-bold mb-6">
         {currentStep === "register"
           ? "Register"
