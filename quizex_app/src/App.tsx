@@ -13,7 +13,7 @@ function App() {
 
   return (
     <>
-      {user ? (
+      {!user ? (
         <>
           <Navbar />
           <Routes>
