@@ -17,12 +17,8 @@ export const Home = () => {
 
   return (
     <MainWrapper>
-      <section className="mt-24 flex flex-col gap-2 items-end max-w-2xl m-auto">
-        <div className="">
-          <Link to={"/test"} className="btn bg-red-300">
-            Create a Room
-          </Link>
-        </div>
+      <section className="mt-24 flex flex-col gap-4 items-center">
+        <h2 className="text-2xl ">Available Rooms</h2>
         <PaperWrapper>
           <RoomsList />
         </PaperWrapper>
