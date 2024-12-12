@@ -7,6 +7,7 @@ import { Navbar } from "./components/Navbar";
 import { How } from "./pages/How";
 import { Auth } from "./pages/Auth";
 import { useAuthContext } from "./context/useContext";
+import { CreateRoom } from "./pages/CreateRoom";
 
 function App() {
   const { user, setUser } = useAuthContext();
@@ -18,7 +19,7 @@ function App() {
           <Navbar />
           <Routes>
             <Route path="/" element={<Home />} />
-            <Route path="/how" element={<How />} />
+            <Route path="/create-room" element={<CreateRoom />} />
           </Routes>
         </>
       ) : (

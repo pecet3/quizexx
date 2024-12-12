@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 export const RoomsList = () => {
   return (
     <div className="text-base flex flex-col py-8 px-6 max-w-2xl w-full">
-      <Link to={"/test"} className="btn text-xs bg-red-300">
+      <Link to={"/create-room"} className="btn text-xs bg-red-300">
         Create a Room
       </Link>
       <table className="table-auto border-collapse w-auto">

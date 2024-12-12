@@ -198,3 +198,7 @@ body {
 .btn {
   @apply hover:rounded-xl border-2 border-black font-mono font-semibold px-3 duration-300 text-black rounded-lg m-auto py-1.5;
 }
+
+.section {
+  @apply mt-24 flex flex-col gap-4 items-center;
+}

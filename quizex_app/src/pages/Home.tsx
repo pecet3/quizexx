@@ -17,7 +17,7 @@ export const Home = () => {
 
   return (
     <MainWrapper>
-      <section className="mt-24 flex flex-col gap-4 items-center">
+      <section className="section">
         <h2 className="text-2xl ">Available Rooms</h2>
         <PaperWrapper>
           <RoomsList />
