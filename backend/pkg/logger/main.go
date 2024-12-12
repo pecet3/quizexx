@@ -23,8 +23,9 @@ func Error(args ...interface{}) {
 	)
 	fmt.Println(content)
 	if len(args) > 0 {
-		fmt.Println("↳", formatTextExt(bold, brightYellow, msg))
+		fmt.Println("↳", formatText(bgRed, formatTextExt(bold, brightYellow, msg)))
 	}
+
 }
 
 func Info(args ...interface{}) {

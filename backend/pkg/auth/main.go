@@ -12,9 +12,11 @@ type Auth struct {
 }
 
 func New(d *data.Data) *Auth {
-	return &Auth{
+	a := &Auth{
 		MagicLink: magic_link.New(),
 		JWT:       jwtServices{},
 		d:         d,
 	}
+	go a.MagicLink.CleanUpExpiredSessions()
+	return a
 }
