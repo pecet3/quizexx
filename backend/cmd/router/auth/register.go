@@ -10,6 +10,7 @@ import (
 )
 
 func (r router) handleRegister(w http.ResponseWriter, req *http.Request) {
+	logger.Debug()
 	dto := &dtos.RegisterDTO{}
 	err := json.NewDecoder(req.Body).Decode(dto)
 	if err != nil {

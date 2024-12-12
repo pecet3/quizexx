@@ -3,6 +3,7 @@ package auth_router
 import (
 	"encoding/json"
 	"net/http"
+	"time"
 
 	"github.com/pecet3/quizex/data/dtos"
 	"github.com/pecet3/quizex/pkg/logger"
@@ -82,6 +83,7 @@ func (r router) handleExchange(w http.ResponseWriter, req *http.Request) {
 		http.Error(w, "", http.StatusBadRequest)
 		return
 	}
+
 	err = json.NewEncoder(w).Encode(token)
 	if err != nil {
 		logger.Error(err)
@@ -90,4 +92,5 @@ func (r router) handleExchange(w http.ResponseWriter, req *http.Request) {
 	}
 
 	r.auth.MagicLink.RemoveSession(dto.Email)
+	r.auth.SetCookie(w, "auth", s.ActivateCode, time.Now().Add(time.Hour*192))
 }

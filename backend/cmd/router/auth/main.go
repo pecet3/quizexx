@@ -15,7 +15,7 @@ type router struct {
 	v    *validator.Validate
 }
 
-const PREFIX = "/v1/auth"
+const PREFIX = "/api/auth"
 
 func Run(
 	app repos.App,

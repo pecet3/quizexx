@@ -16,7 +16,7 @@ type router struct {
 	wsm  *ws.Manager
 }
 
-const PREFIX = "/v1"
+const PREFIX = "/api"
 
 func Run(
 	app repos.App,

@@ -23,7 +23,7 @@ func Error(args ...interface{}) {
 	)
 	fmt.Println(content)
 	if len(args) > 0 {
-		fmt.Println("↳", formatTextExt(bold, orange, msg))
+		fmt.Println("↳", formatTextExt(bold, brightYellow, msg))
 	}
 }
 

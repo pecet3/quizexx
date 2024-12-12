@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 
-const API_URL = "localhost:9090"; // Replace with your actual API URL
-const PREFIX = "/v1/auth"; // Replace with your API prefix
+const API_URL = "/api";
+const PREFIX = "/auth";
 
 type Step = "register" | "login" | "exchange";
 
@@ -20,7 +20,9 @@ export const Auth: React.FC = () => {
     code: "",
   });
   const [loading, setLoading] = useState<boolean>(false);
-
+  useEffect(() => {
+    console.log(currentStep);
+  }, [currentStep]);
   const handleRegister = async () => {
     try {
       setLoading(true);
@@ -29,7 +31,7 @@ export const Auth: React.FC = () => {
         email: formData.email,
       });
 
-      if (response.data) {
+      if (response.status === 200) {
         alert(
           "Registration successful! Please check your email for verification code."
         );
@@ -49,7 +51,7 @@ export const Auth: React.FC = () => {
         email: formData.email,
       });
 
-      if (response.data) {
+      if (response.status === 200) {
         alert("Please check your email for verification code.");
         setCurrentStep("exchange");
       }
@@ -71,6 +73,7 @@ export const Auth: React.FC = () => {
       if (response.data) {
         alert("Authentication successful!");
         // Navigate to main app or handle success accordingly
+        console.log(response.data);
       }
     } catch (error: any) {
       alert(error.response?.data?.message || "Code verification failed");
@@ -82,14 +85,14 @@ export const Auth: React.FC = () => {
   const renderRegisterForm = () => (
     <>
       <input
-        className="w-full border border-gray-300 rounded-md p-3 mb-4"
+        className="bg-gray-300 w-full border border-gray-300 rounded-md p-3 mb-4"
         type="text"
         placeholder="Name"
         value={formData.name}
         onChange={(e) => setFormData({ ...formData, name: e.target.value })}
       />
       <input
-        className="w-full border border-gray-300 rounded-md p-3 mb-4"
+        className="bg-gray-300 w-full border border-gray-300 rounded-md p-3 mb-4"
         type="email"
         placeholder="Email"
         value={formData.email}
@@ -116,7 +119,7 @@ export const Auth: React.FC = () => {
   const renderLoginForm = () => (
     <>
       <input
-        className="w-full border border-gray-300 rounded-md p-3 mb-4"
+        className="bg-gray-300 w-full border border-gray-300 rounded-md p-3 mb-4"
         type="email"
         placeholder="Email"
         value={formData.email}
@@ -143,7 +146,7 @@ export const Auth: React.FC = () => {
   const renderExchangeForm = () => (
     <>
       <input
-        className="w-full border border-gray-300 rounded-md p-3 mb-4"
+        className="bg-gray-300 w-full border border-gray-300 rounded-md p-3 mb-4"
         type="text"
         placeholder="Verification Code"
         value={formData.code}

@@ -16,21 +16,24 @@ const sessionContextKey contextKey = "session"
 
 func (as *Auth) Authorize(next http.HandlerFunc) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		authHeader := r.Header.Get("Authorization")
-		if authHeader == "" {
-			http.Error(w, "No authorization header", http.StatusUnauthorized)
-			return
+
+		var jwt string
+		if r.Header.Get("Authorization") != "" {
+			headerParts := strings.Split(r.Header.Get("Authorization"), " ")
+			if len(headerParts) != 2 || headerParts[0] != "Bearer" {
+				http.Error(w, "Invalid authorization header format", http.StatusUnauthorized)
+				return
+			}
+			jwt = headerParts[1]
+		} else {
+			cookie, err := r.Cookie("auth")
+			if err != nil || cookie.Value == "" {
+				http.Error(w, "Invalid authorization header format", http.StatusUnauthorized)
+				return
+			}
+			jwt = cookie.Value
 		}
 
-		// Check if it's a Bearer token
-		headerParts := strings.Split(authHeader, " ")
-		if len(headerParts) != 2 || headerParts[0] != "Bearer" {
-			http.Error(w, "Invalid authorization header format", http.StatusUnauthorized)
-			return
-		}
-
-		// Extract the token
-		jwt := headerParts[1]
 		if jwt == "" {
 			http.Error(w, "Empty token", http.StatusUnauthorized)
 			return
