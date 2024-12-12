@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { redirect, useNavigate, useNavigation } from "react-router-dom";
 
 const API_URL = "/api";
 const PREFIX = "/auth";
@@ -72,8 +73,8 @@ export const Auth: React.FC = () => {
 
       if (response.data) {
         alert("Authentication successful!");
-        // Navigate to main app or handle success accordingly
         console.log(response.data);
+        redirect("/");
       }
     } catch (error: any) {
       alert(error.response?.data?.message || "Code verification failed");

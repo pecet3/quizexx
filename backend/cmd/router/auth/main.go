@@ -30,4 +30,5 @@ func Run(
 	app.Srv.HandleFunc(PREFIX+"/register", r.handleRegister)
 	app.Srv.HandleFunc(PREFIX+"/login", r.handleLogin)
 	app.Srv.HandleFunc(PREFIX+"/exchange", r.handleExchange)
+	app.Srv.HandleFunc(PREFIX+"/ping", r.handlePing)
 }

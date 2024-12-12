@@ -3,6 +3,7 @@ import { MainWrapper } from "../components/MainWrapper";
 import { Link } from "react-router-dom";
 import { RoomsList } from "../components/RoomsList";
 import { PaperWrapper } from "../components/PaperWrapper";
+import axios from "axios";
 
 export const CreateRoom = () => {
   useEffect(() => {
@@ -26,16 +27,15 @@ export const CreateRoom = () => {
     };
 
     try {
-      const response = await fetch("/api/create-room", {
-        method: "POST",
+      const response = await axios.post("/api/create-room", {
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(data),
       });
 
-      if (response.ok) {
-        const result = await response.json();
+      if (response.status === 200) {
+        const result = await response.data;
         console.log("Room created successfully:", result);
       } else {
         console.error("Failed to create room", response.statusText);
