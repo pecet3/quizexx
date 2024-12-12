@@ -4,17 +4,23 @@ import chat from "../assets/chat.png";
 import { useAuthContext } from "../context/useContext";
 import { useEffect } from "react";
 import axios from "axios";
+import { redirect, useNavigate } from "react-router-dom";
 
 export const ProtectedPage = ({ children }: { children: React.ReactNode }) => {
   const { user, setUser } = useAuthContext();
+  const navigate = useNavigate();
   useEffect(() => {
     if (!user) {
       (async function () {
-        const result = await axios.get("/api/auth/ping");
+        try {
+          const result = await axios.get("/api/auth/ping");
 
-        console.log(result.data);
+          console.log(result.status);
+        } catch (err: any) {
+          navigate("/auth");
+        }
       })();
     }
-  }, [user]);
+  }, []);
   return <>{user ? <>{children}</> : null}</>;
 };

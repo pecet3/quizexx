@@ -23,29 +23,29 @@ func (r router) handleExchange(w http.ResponseWriter, req *http.Request) {
 		http.Error(w, "", http.StatusBadRequest)
 		return
 	}
-	s, exists := r.auth.MagicLink.GetSession(dto.Email)
+	es, exists := r.auth.MagicLink.GetSession(dto.Email)
 	if !exists {
 		logger.WarnC("email sessions doesn't exist")
 		http.Error(w, "", http.StatusBadRequest)
 		return
 	}
-	if s.ActivateCode != dto.Code {
-		logger.WarnC("provided a wrong code ", s.UserEmail)
-		logger.Debug(s.ActivateCode, dto.Code)
+	if es.ActivateCode != dto.Code {
+		logger.WarnC("provided a wrong code ", es.UserEmail)
+		logger.Debug(es.ActivateCode, dto.Code)
 		http.Error(w, "", http.StatusBadRequest)
 		return
 	}
-	if s.ExchangeCounter > 5 || s.IsBlocked {
-		s.IsBlocked = true
-		logger.Warn("exchange counter block", s.UserEmail)
-		http.Error(w, "Your account is blocked due the security reasons.", http.StatusBadRequest)
+	if es.ExchangeCounter > 5 || es.IsBlocked {
+		es.IsBlocked = true
+		logger.Warn("exchange counter block", es.UserEmail)
+		http.Error(w, "Your account is blocked due the security reasones.", http.StatusBadRequest)
 		return
 	}
-	s.ExchangeCounter += 1
+	es.ExchangeCounter += 1
 
-	if s.IsRegister {
+	if es.IsRegister {
 		// create a new user
-		u, err := r.d.User.GetByEmail(r.d.Db, s.UserEmail)
+		u, err := r.d.User.GetByEmail(r.d.Db, es.UserEmail)
 		if err != nil {
 			logger.Error(err)
 			http.Error(w, "", http.StatusBadRequest)
@@ -57,21 +57,21 @@ func (r router) handleExchange(w http.ResponseWriter, req *http.Request) {
 			http.Error(w, "", http.StatusBadRequest)
 			return
 		}
-		logger.Debug(s.UserName, u)
+		logger.Debug(es.UserName, u)
 	}
-	uDb, err := r.d.User.GetByEmail(r.d.Db, s.UserEmail)
+	uDb, err := r.d.User.GetByEmail(r.d.Db, es.UserEmail)
 	if err != nil {
 		logger.Error(err)
 		http.Error(w, "", http.StatusBadRequest)
 		return
 	}
-	session, token, err := r.auth.NewAuthSession(uDb.ID, uDb.Email, s.UserName)
+	s, token, err := r.auth.NewAuthSession(uDb.ID, uDb.Email, es.UserName)
 	if err != nil {
 		logger.Error(err)
 		http.Error(w, "", http.StatusBadRequest)
 		return
 	}
-	err = r.auth.AddAuthSession(token, session)
+	err = r.auth.AddAuthSession(token, s)
 	if err != nil {
 		logger.Error(err)
 		http.Error(w, "", http.StatusBadRequest)
@@ -83,6 +83,7 @@ func (r router) handleExchange(w http.ResponseWriter, req *http.Request) {
 		http.Error(w, "", http.StatusBadRequest)
 		return
 	}
+	r.auth.SetCookie(w, "auth", token, time.Now().Add(time.Hour*192))
 
 	err = json.NewEncoder(w).Encode(token)
 	if err != nil {
@@ -92,5 +93,4 @@ func (r router) handleExchange(w http.ResponseWriter, req *http.Request) {
 	}
 
 	r.auth.MagicLink.RemoveSession(dto.Email)
-	r.auth.SetCookie(w, "auth", s.ActivateCode, time.Now().Add(time.Hour*192))
 }
