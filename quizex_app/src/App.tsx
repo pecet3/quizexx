@@ -10,8 +10,6 @@ import { CreateRoom } from "./pages/CreateRoom";
 import { ProtectedPage } from "./components/Protected";
 
 function App() {
-  const { user, setUser } = useAuthContext();
-
   return (
     <>
       {true ? (

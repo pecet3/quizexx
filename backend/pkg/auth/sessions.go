@@ -72,10 +72,11 @@ func (as *Auth) GetContextSession(r *http.Request) (*entities.Session, error) {
 func (as *Auth) GetContextUser(r *http.Request) (*entities.User, error) {
 	ctx := r.Context()
 	session, ok := ctx.Value(sessionContextKey).(*entities.Session)
-	u, err := as.d.User.GetById(as.d.Db, session.UserId)
 	if !ok {
 		return nil, errors.New("session not found in context")
 	}
+	u, err := as.d.User.GetById(as.d.Db, session.UserId)
+
 	if err != nil {
 		return nil, errors.New("not found in db")
 	}
