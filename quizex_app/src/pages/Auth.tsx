@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { redirect, useNavigate, useNavigation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const API_URL = "/api";
 const PREFIX = "/auth";
@@ -14,6 +14,8 @@ interface FormData {
 }
 
 export const Auth: React.FC = () => {
+  const navigate = useNavigate();
+
   const [currentStep, setCurrentStep] = useState<Step>("register");
   const [formData, setFormData] = useState<FormData>({
     name: "",
@@ -74,7 +76,7 @@ export const Auth: React.FC = () => {
       if (response.data) {
         alert("Authentication successful!");
         console.log(response.data);
-        redirect("/");
+        navigate("/");
       }
     } catch (error: any) {
       alert(error.response?.data?.message || "Code verification failed");

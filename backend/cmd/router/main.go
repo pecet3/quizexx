@@ -32,5 +32,8 @@ func Run(
 	app.Srv.HandleFunc(PREFIX+"/ws", r.handleQuiz)
 	app.Srv.Handle(PREFIX+"/hello", r.auth.Authorize(r.hello))
 	app.Srv.Handle("/", http.FileServer(http.Dir("view")))
+	app.Srv.Handle(PREFIX+"/", http.FileServer(http.Dir("img")))
+
+	app.Srv.Handle(PREFIX+"/img/{fname}", r.auth.Authorize(r.handleImages))
 
 }

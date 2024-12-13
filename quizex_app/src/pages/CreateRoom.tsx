@@ -1,7 +1,5 @@
 import { useEffect } from "react";
 import { MainWrapper } from "../components/MainWrapper";
-import { Link } from "react-router-dom";
-import { RoomsList } from "../components/RoomsList";
 import { PaperWrapper } from "../components/PaperWrapper";
 import axios from "axios";
 
@@ -48,7 +46,6 @@ export const CreateRoom = () => {
   return (
     <MainWrapper>
       <section className="section">
-        <h2 className="text-2xl ">Available Rooms</h2>
         <PaperWrapper>
           <form
             id="settingsForm"

@@ -52,6 +52,7 @@ func (r router) handleExchange(w http.ResponseWriter, req *http.Request) {
 			return
 		}
 		u.IsDraft = false
+		u.ImageUrl = "/api/img/avatar.png"
 		if err = u.Update(r.d.Db); err != nil {
 			logger.Error(err)
 			http.Error(w, "", http.StatusBadRequest)

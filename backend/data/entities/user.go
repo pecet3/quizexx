@@ -15,7 +15,7 @@ create table if not exists users (
     name text default '',
     email text not null unique,
     salt text not null,
-    image_url text default '',
+    image_url text default "/api/img/avatar.png",
 	is_draft bool default true,
     created_at timestamp default current_timestamp
 );`

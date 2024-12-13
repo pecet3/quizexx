@@ -5,39 +5,41 @@ import { Route, Routes } from "react-router-dom";
 import { Home } from "./pages/Home";
 import { Navbar } from "./components/Navbar";
 import { Auth } from "./pages/Auth";
-import { useAuthContext } from "./context/useContext";
 import { CreateRoom } from "./pages/CreateRoom";
 import { ProtectedPage } from "./components/Protected";
+import { Quiz } from "./pages/Quiz";
 
 function App() {
   return (
     <>
-      {true ? (
-        <>
-          <Navbar />
-          <Routes>
-            <Route
-              path="/"
-              element={
-                <ProtectedPage>
-                  <Home />
-                </ProtectedPage>
-              }
-            />
-            <Route
-              path="/create-room"
-              element={
-                <ProtectedPage>
-                  <Home />
-                </ProtectedPage>
-              }
-            />
-            <Route path="/auth" element={<Auth />} />
-          </Routes>
-        </>
-      ) : (
-        <Auth />
-      )}
+      <Navbar />
+      <Routes>
+        <Route
+          path="/"
+          element={
+            <ProtectedPage>
+              <Home />
+            </ProtectedPage>
+          }
+        />
+        <Route
+          path="/create-room"
+          element={
+            <ProtectedPage>
+              <CreateRoom />
+            </ProtectedPage>
+          }
+        />
+        <Route
+          path="/quiz"
+          element={
+            <ProtectedPage>
+              <Quiz />
+            </ProtectedPage>
+          }
+        />
+        <Route path="/auth" element={<Auth />} />
+      </Routes>
     </>
   );
 }

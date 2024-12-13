@@ -8,14 +8,17 @@ import { redirect, useNavigate } from "react-router-dom";
 
 export const ProtectedPage = ({ children }: { children: React.ReactNode }) => {
   const { user, setUser } = useAuthContext();
+
   const navigate = useNavigate();
   useEffect(() => {
     if (!user) {
       (async function () {
         try {
           const result = await axios.get("/api/auth/ping");
-
-          console.log(result.status);
+          if (result.data) {
+            console.log(result.data);
+            setUser(result.data);
+          }
         } catch (err: any) {
           navigate("/auth");
         }
