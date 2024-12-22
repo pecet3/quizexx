@@ -17,7 +17,7 @@ type router struct {
 	quiz *quiz.Manager
 }
 
-const PREFIX = "/api/auth"
+const PREFIX = "/api/quiz"
 
 func Run(
 	app repos.App,

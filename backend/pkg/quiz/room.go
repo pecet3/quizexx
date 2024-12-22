@@ -6,6 +6,8 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/pecet3/quizex/pkg/logger"
 )
 
 type Room struct {
@@ -23,11 +25,11 @@ type Room struct {
 }
 
 type Settings struct {
-	Name         string `json:"name"`
-	GameCategory string `json:"category"`
-	Difficulty   string `json:"difficulty"`
-	MaxRounds    string `json:"maxRounds"`
-	Language     string `json:"language"`
+	Name       string `json:"name"`
+	GenContent string `json:"gen_content"`
+	Difficulty string `json:"difficulty"`
+	MaxRounds  string `json:"maxRounds"`
+	Language   string `json:"language"`
 }
 
 func (r *Room) CheckIfEveryoneIsReady() bool {
@@ -39,8 +41,8 @@ func (r *Room) CheckIfEveryoneIsReady() bool {
 	return true
 }
 
-func (r *Room) run(m *Manager) {
-	log.Println("New room with settings: ", r.settings)
+func (r *Room) Run(m *Manager) {
+	logger.Info("New room: ", r)
 	for {
 		select {
 		case msg := <-r.forward:

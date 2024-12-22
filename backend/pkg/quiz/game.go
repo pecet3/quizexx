@@ -25,7 +25,7 @@ type GameState struct {
 	Answers         []string      `json:"answers"`
 	Actions         []RoundAction `json:"actions"`
 	Score           []PlayerScore `json:"score"`
-	PlayersAnswered []string      `json:"playersAnswered"`
+	PlayersAnswered []string      `json:"players_answered"`
 	RoundWinners    []string      `json:"-"`
 }
 
@@ -38,13 +38,13 @@ type RoundAction struct {
 type PlayerScore struct {
 	Name       string `json:"name"`
 	Points     int    `json:"points"`
-	RoundsWon  []uint `json:"roundsWon"`
-	IsAnswered bool   `json:"isAnswered"`
+	RoundsWon  []uint `json:"rounds_won"`
+	IsAnswered bool   `json:"is_answered"`
 }
 type RoundQuestion struct {
 	Question      string   `json:"question"`
 	Answers       []string `json:"answers"`
-	CorrectAnswer int      `json:"correctAnswer"`
+	CorrectAnswer int      `json:"correct_answer"`
 }
 
 func (r *Room) CreateGame() (*Game, error) {
@@ -55,7 +55,7 @@ func (r *Room) CreateGame() (*Game, error) {
 		return nil, err
 	}
 	difficulty := r.settings.Difficulty
-	category := r.settings.GameCategory
+	category := r.settings.GenContent
 	lang := r.settings.Language
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*60)
 	defer cancel()
@@ -75,12 +75,12 @@ func (r *Room) CreateGame() (*Game, error) {
 		State:      &GameState{Round: 1},
 		IsGame:     false,
 		Players:    r.clients,
-		Category:   r.settings.GameCategory,
+		Category:   r.settings.GenContent,
 		Difficulty: r.settings.Difficulty,
 		MaxRounds:  maxRoundsInt,
 		Content:    questions,
 	}
-
+	r.game = newGame
 	return newGame, nil
 }
 

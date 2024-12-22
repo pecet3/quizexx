@@ -11,7 +11,7 @@ import (
 )
 
 type Manager struct {
-	mutex    sync.Mutex
+	mu       sync.Mutex
 	ctx      context.Context
 	rooms    map[string]*Room
 	external *external.ExternalService
@@ -20,7 +20,7 @@ type Manager struct {
 func NewManager() *Manager {
 	return &Manager{
 		rooms:    make(map[string]*Room),
-		mutex:    sync.Mutex{},
+		mu:       sync.Mutex{},
 		external: &external.ExternalService{},
 	}
 }
@@ -42,14 +42,14 @@ func (m *Manager) newRoom(settings Settings, creatorID int) *Room {
 }
 
 func (m *Manager) getRoom(name string) *Room {
-	m.mutex.Lock()
-	defer m.mutex.Unlock()
+	m.mu.Lock()
+	defer m.mu.Unlock()
 	return m.rooms[name]
 }
 
 func (m *Manager) CreateRoom(settings Settings, creatorID int) *Room {
-	m.mutex.Lock()
-	defer m.mutex.Unlock()
+	m.mu.Lock()
+	defer m.mu.Unlock()
 
 	if existingRoom, ok := m.rooms[settings.Name]; ok {
 		return existingRoom
@@ -63,8 +63,8 @@ func (m *Manager) CreateRoom(settings Settings, creatorID int) *Room {
 }
 
 func (m *Manager) removeRoom(name string) {
-	m.mutex.Lock()
-	defer m.mutex.Unlock()
+	m.mu.Lock()
+	defer m.mu.Unlock()
 
 	if room, ok := m.rooms[name]; ok {
 		for Client := range room.clients {
@@ -82,8 +82,8 @@ func (m *Manager) removeRoom(name string) {
 	}
 }
 func (m *Manager) GetRoomNamesList() []string {
-	m.mutex.Lock()
-	defer m.mutex.Unlock()
+	m.mu.Lock()
+	defer m.mu.Unlock()
 
 	var names []string
 
@@ -129,11 +129,11 @@ func (m *Manager) ServeWs(w http.ResponseWriter, req *http.Request) {
 	lang := req.URL.Query().Get("lang")
 
 	settings := Settings{
-		Name:         roomName,
-		GameCategory: category,
-		Difficulty:   difficulty,
-		MaxRounds:    maxRounds,
-		Language:     lang,
+		Name:       roomName,
+		GenContent: category,
+		Difficulty: difficulty,
+		MaxRounds:  maxRounds,
+		Language:   lang,
 	}
 	currentRoom := m.getRoom(roomName)
 
@@ -154,7 +154,7 @@ func (m *Manager) ServeWs(w http.ResponseWriter, req *http.Request) {
 	if currentRoom == nil {
 		if newRoom == "true" {
 			currentRoom = m.CreateRoom(settings, 0)
-			go currentRoom.run(m)
+			go currentRoom.Run(m)
 		} else {
 			conn.Close()
 			return
