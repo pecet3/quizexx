@@ -19,6 +19,3 @@ func (r router) hello(w http.ResponseWriter, req *http.Request) {
 		log.Println("Error writing response:", err)
 	}
 }
-func (r router) handleQuiz(w http.ResponseWriter, req *http.Request) {
-	r.wsm.ServeWs(w, req)
-}

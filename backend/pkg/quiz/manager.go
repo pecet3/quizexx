@@ -1,4 +1,4 @@
-package ws
+package quiz
 
 import (
 	"context"
@@ -25,7 +25,7 @@ func NewManager() *Manager {
 	}
 }
 
-func (m *Manager) NewRoom(settings Settings) *Room {
+func (m *Manager) newRoom(settings Settings, creatorID int) *Room {
 	r := &Room{
 		name:          settings.Name,
 		clients:       make(map[*Client]string),
@@ -36,6 +36,7 @@ func (m *Manager) NewRoom(settings Settings) *Room {
 		receiveAnswer: make(chan []byte),
 		game:          &Game{},
 		settings:      settings,
+		creatorID:     creatorID,
 	}
 	return r
 }
@@ -46,7 +47,7 @@ func (m *Manager) getRoom(name string) *Room {
 	return m.rooms[name]
 }
 
-func (m *Manager) createRoom(settings Settings) *Room {
+func (m *Manager) CreateRoom(settings Settings, creatorID int) *Room {
 	m.mutex.Lock()
 	defer m.mutex.Unlock()
 
@@ -54,7 +55,7 @@ func (m *Manager) createRoom(settings Settings) *Room {
 		return existingRoom
 	}
 
-	newRoom := m.NewRoom(settings)
+	newRoom := m.newRoom(settings, creatorID)
 	m.rooms[settings.Name] = newRoom
 
 	log.Println("> Created a room with name: ", settings.Name)
@@ -149,10 +150,11 @@ func (m *Manager) ServeWs(w http.ResponseWriter, req *http.Request) {
 			}
 		}
 	}
+	// to fix
 	if currentRoom == nil {
 		if newRoom == "true" {
-			currentRoom = m.createRoom(settings)
-			go currentRoom.run(m, m.external)
+			currentRoom = m.CreateRoom(settings, 0)
+			go currentRoom.run(m)
 		} else {
 			conn.Close()
 			return

@@ -1,4 +1,4 @@
-package ws
+package quiz
 
 import (
 	"encoding/json"
@@ -6,8 +6,6 @@ import (
 	"strconv"
 	"strings"
 	"time"
-
-	"github.com/pecet3/quizex/pkg/external"
 )
 
 type Room struct {
@@ -21,6 +19,7 @@ type Room struct {
 	receiveAnswer chan []byte
 	game          *Game
 	settings      Settings
+	creatorID     int
 }
 
 type Settings struct {
@@ -40,9 +39,7 @@ func (r *Room) CheckIfEveryoneIsReady() bool {
 	return true
 }
 
-// welcome to the spaghetti
-
-func (r *Room) run(m *Manager, external external.IExternal) {
+func (r *Room) run(m *Manager) {
 	log.Println("New room with settings: ", r.settings)
 	for {
 		select {
@@ -113,7 +110,7 @@ func (r *Room) run(m *Manager, external external.IExternal) {
 					log.Println("send settings err: ", err)
 					return
 				}
-				r.game, err = CreateGame(m.ctx, r, external)
+				r.game, err = r.CreateGame()
 				if err != nil {
 					log.Println("create game err: ", err)
 					return

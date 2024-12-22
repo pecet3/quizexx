@@ -1,12 +1,11 @@
-package ws
+package quiz
 
 import (
 	"context"
 	"encoding/json"
 	"log"
 	"strconv"
-
-	"github.com/pecet3/quizex/pkg/external"
+	"time"
 )
 
 type Game struct {
@@ -48,7 +47,7 @@ type RoundQuestion struct {
 	CorrectAnswer int      `json:"correctAnswer"`
 }
 
-func CreateGame(ctx context.Context, r *Room, external external.IExternal) (*Game, error) {
+func (r *Room) CreateGame() (*Game, error) {
 	log.Println("> Creating a game in room: ", r.settings.Name)
 	maxRoundStr := r.settings.MaxRounds
 	maxRoundsInt, err := strconv.Atoi(maxRoundStr)
@@ -58,8 +57,9 @@ func CreateGame(ctx context.Context, r *Room, external external.IExternal) (*Gam
 	difficulty := r.settings.Difficulty
 	category := r.settings.GameCategory
 	lang := r.settings.Language
-
-	content, err := external.FetchQuestionSet(ctx, category, maxRoundStr, difficulty, lang)
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*60)
+	defer cancel()
+	content, err := fetchQuestionSet(ctx, category, maxRoundStr, difficulty, lang)
 	if err != nil {
 		return nil, err
 	}

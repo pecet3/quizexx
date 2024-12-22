@@ -4,16 +4,17 @@ import (
 	"net/http"
 
 	authRouter "github.com/pecet3/quizex/cmd/router/auth"
+	quizRouter "github.com/pecet3/quizex/cmd/router/quiz"
 	"github.com/pecet3/quizex/data"
 	"github.com/pecet3/quizex/data/repos"
 	"github.com/pecet3/quizex/pkg/auth"
-	"github.com/pecet3/quizex/pkg/ws"
+	"github.com/pecet3/quizex/pkg/quiz"
 )
 
 type router struct {
 	d    *data.Data
 	auth *auth.Auth
-	wsm  *ws.Manager
+	quiz *quiz.Manager
 }
 
 const PREFIX = "/api"
@@ -24,12 +25,11 @@ func Run(
 
 	r := router{
 		d:    app.Data,
-		wsm:  app.Wsm,
+		quiz: app.Quiz,
 		auth: app.Auth,
 	}
 	authRouter.Run(app)
-
-	app.Srv.HandleFunc(PREFIX+"/ws", r.handleQuiz)
+	quizRouter.Run(app)
 	app.Srv.Handle(PREFIX+"/hello", r.auth.Authorize(r.hello))
 	app.Srv.Handle("/", http.FileServer(http.Dir("view")))
 	app.Srv.Handle(PREFIX+"/", http.FileServer(http.Dir("img")))

@@ -1,4 +1,4 @@
-package ws
+package quiz
 
 import (
 	"encoding/json"

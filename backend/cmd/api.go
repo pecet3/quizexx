@@ -11,8 +11,8 @@ import (
 	"github.com/pecet3/quizex/data/repos"
 	"github.com/pecet3/quizex/pkg/auth"
 	"github.com/pecet3/quizex/pkg/logger"
+	"github.com/pecet3/quizex/pkg/quiz"
 	"github.com/pecet3/quizex/pkg/utils"
-	"github.com/pecet3/quizex/pkg/ws"
 )
 
 const BASE_URL = "localhost:9090"
@@ -29,7 +29,7 @@ func runAPI() {
 		Data:      data,
 		Auth:      auth.New(data),
 		Validator: validator.New(),
-		Wsm:       ws.NewManager(),
+		Quiz:      quiz.NewManager(),
 	}
 
 	router.Run(app)
