@@ -39,7 +39,7 @@ func (m *Manager) newRoom(settings dtos.Settings, creatorID int) *Room {
 		game:          &Game{},
 		settings:      settings,
 		creatorID:     creatorID,
-		expiresAt:     time.Now().Add(time.Minute * 2),
+		createdAt:     time.Now(),
 		UUID:          uuid.NewString(),
 	}
 	return r
@@ -79,11 +79,11 @@ func (m *Manager) CreateRoom(settings dtos.Settings, creatorID int) *Room {
 	return newRoom
 }
 
-func (m *Manager) removeRoom(name string) {
+func (m *Manager) removeRoom(uuid string) {
 	m.mu.Lock()
 	defer m.mu.Unlock()
 
-	if room, ok := m.rooms[name]; ok {
+	if room, ok := m.rooms[uuid]; ok {
 		for Client := range room.clients {
 			room.leave <- Client
 		}
@@ -93,7 +93,7 @@ func (m *Manager) removeRoom(name string) {
 		close(room.receiveAnswer)
 		close(room.leave)
 
-		delete(m.rooms, name)
+		delete(m.rooms, uuid)
 		log.Println("> Closing a room with name:", room.name)
 		return
 	}

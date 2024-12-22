@@ -23,7 +23,7 @@ type Room struct {
 	game          *Game
 	settings      dtos.Settings
 	creatorID     int
-	expiresAt     time.Time
+	createdAt     time.Time
 	UUID          string
 }
 
@@ -39,8 +39,10 @@ func (r *Room) CheckIfEveryoneIsReady() bool {
 func (r *Room) Run(m *Manager) {
 	logger.Info("New room: ", r)
 	for {
-		if !r.expiresAt.Before(time.Now()) {
-			break
+		logger.Debug()
+		if !r.createdAt.Before(time.Now().Add(time.Second * 30)) {
+			m.removeRoom(r.UUID)
+			return
 		}
 		select {
 		case msg := <-r.forward:
@@ -50,7 +52,8 @@ func (r *Room) Run(m *Manager) {
 		case Client := <-r.join:
 			r.clients[Client] = Client.name
 			if len(r.clients) == 0 {
-				r.expiresAt = time.Now().Add(time.Hour * 2)
+				logger.Debug("zero")
+				r.createdAt = time.Now().Add(time.Hour * 2)
 			}
 			if r.game.IsGame && Client.isSpectator {
 				err := r.sendServerMessage(Client.name + " joins as spectator")
