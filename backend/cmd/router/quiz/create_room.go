@@ -21,12 +21,12 @@ func (r router) handleCreateRoom(w http.ResponseWriter, req *http.Request) {
 		Difficulty: "1",
 	}
 	room := r.quiz.CreateRoom(settings, 0)
-	_, err := room.CreateGame()
+	game, err := room.CreateGame()
 	if err != nil {
 		logger.Error(err)
 		http.Error(w, "", http.StatusInternalServerError)
 		return
 	}
 	go room.Run(r.quiz)
-	logger.Debug(room)
+	logger.Debug(game.Content)
 }

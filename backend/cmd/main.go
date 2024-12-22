@@ -13,6 +13,7 @@ const TEST = 10
 func main() {
 	stop := make(chan os.Signal, 1)
 	signal.Notify(stop, syscall.SIGINT, syscall.SIGTERM)
+
 	go runAPI()
 
 	<-stop
