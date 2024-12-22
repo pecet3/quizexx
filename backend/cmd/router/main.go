@@ -1,6 +1,7 @@
 package router
 
 import (
+	"log"
 	"net/http"
 
 	authRouter "github.com/pecet3/quizex/cmd/router/auth"
@@ -8,6 +9,7 @@ import (
 	"github.com/pecet3/quizex/data"
 	"github.com/pecet3/quizex/data/repos"
 	"github.com/pecet3/quizex/pkg/auth"
+	"github.com/pecet3/quizex/pkg/logger"
 	"github.com/pecet3/quizex/pkg/quiz"
 )
 
@@ -36,4 +38,16 @@ func Run(
 
 	app.Srv.Handle(PREFIX+"/img/{fname}", r.auth.Authorize(r.handleImages))
 
+}
+func (r router) hello(w http.ResponseWriter, req *http.Request) {
+	u, _ := r.auth.GetContextUser(req)
+	logger.Debug(u)
+	message := "Hello, world!"
+
+	w.Header().Set("Content-Type", "text/plain")
+	w.WriteHeader(http.StatusOK)
+	_, err := w.Write([]byte(message))
+	if err != nil {
+		log.Println("Error writing response:", err)
+	}
 }

@@ -7,6 +7,7 @@ import (
 	"sync"
 
 	"github.com/gorilla/websocket"
+	"github.com/pecet3/quizex/data/dtos"
 	"github.com/pecet3/quizex/pkg/external"
 )
 
@@ -25,7 +26,7 @@ func NewManager() *Manager {
 	}
 }
 
-func (m *Manager) newRoom(settings Settings, creatorID int) *Room {
+func (m *Manager) newRoom(settings dtos.Settings, creatorID int) *Room {
 	r := &Room{
 		name:          settings.Name,
 		clients:       make(map[*Client]string),
@@ -47,7 +48,7 @@ func (m *Manager) getRoom(name string) *Room {
 	return m.rooms[name]
 }
 
-func (m *Manager) CreateRoom(settings Settings, creatorID int) *Room {
+func (m *Manager) CreateRoom(settings dtos.Settings, creatorID int) *Room {
 	m.mu.Lock()
 	defer m.mu.Unlock()
 
@@ -128,7 +129,7 @@ func (m *Manager) ServeWs(w http.ResponseWriter, req *http.Request) {
 	newRoom := req.URL.Query().Get("new")
 	lang := req.URL.Query().Get("lang")
 
-	settings := Settings{
+	settings := dtos.Settings{
 		Name:       roomName,
 		GenContent: category,
 		Difficulty: difficulty,

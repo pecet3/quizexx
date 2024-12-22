@@ -7,6 +7,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/pecet3/quizex/data/dtos"
 	"github.com/pecet3/quizex/pkg/logger"
 )
 
@@ -20,16 +21,8 @@ type Room struct {
 	forward       chan []byte
 	receiveAnswer chan []byte
 	game          *Game
-	settings      Settings
+	settings      dtos.Settings
 	creatorID     int
-}
-
-type Settings struct {
-	Name       string `json:"name"`
-	GenContent string `json:"gen_content"`
-	Difficulty string `json:"difficulty"`
-	MaxRounds  string `json:"maxRounds"`
-	Language   string `json:"language"`
 }
 
 func (r *Room) CheckIfEveryoneIsReady() bool {
@@ -72,7 +65,7 @@ func (r *Room) Run(m *Manager) {
 			if r.game.IsGame {
 				_ = r.game.sendGameState()
 			}
-			eventBytes, err := marshalEventToBytes[Settings](r.settings, "room_settings")
+			eventBytes, err := marshalEventToBytes[dtos.Settings](r.settings, "room_settings")
 			if err != nil {
 				return
 			}
