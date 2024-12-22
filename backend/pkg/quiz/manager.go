@@ -4,7 +4,9 @@ import (
 	"log"
 	"net/http"
 	"sync"
+	"time"
 
+	"github.com/google/uuid"
 	"github.com/gorilla/websocket"
 	"github.com/pecet3/quizex/data/dtos"
 	"github.com/pecet3/quizex/pkg/external"
@@ -37,16 +39,31 @@ func (m *Manager) newRoom(settings dtos.Settings, creatorID int) *Room {
 		game:          &Game{},
 		settings:      settings,
 		creatorID:     creatorID,
+		expiresAt:     time.Now().Add(time.Minute * 2),
+		UUID:          uuid.NewString(),
 	}
 	return r
 }
 
-func (m *Manager) getRoom(name string) *Room {
+func (m *Manager) getRoom(uuid string) *Room {
 	m.mu.Lock()
 	defer m.mu.Unlock()
-	return m.rooms[name]
+	return m.rooms[uuid]
 }
-
+func (m *Manager) getRoomByUserID(uID int) *Room {
+	m.mu.Lock()
+	defer m.mu.Unlock()
+	for _, room := range m.rooms {
+		if room.creatorID == uID {
+			return room
+		}
+	}
+	return nil
+}
+func (m *Manager) CheckUserHasRoom(uID int) bool {
+	r := m.getRoomByUserID(uID)
+	return r != nil
+}
 func (m *Manager) CreateRoom(settings dtos.Settings, creatorID int) *Room {
 	m.mu.Lock()
 	defer m.mu.Unlock()
@@ -56,7 +73,7 @@ func (m *Manager) CreateRoom(settings dtos.Settings, creatorID int) *Room {
 	}
 
 	newRoom := m.newRoom(settings, creatorID)
-	m.rooms[settings.Name] = newRoom
+	m.rooms[newRoom.UUID] = newRoom
 
 	logger.Info("> Created a room with name: ", settings.Name)
 	return newRoom
@@ -87,8 +104,9 @@ func (m *Manager) GetRoomsList() []*dtos.Room {
 
 	var rooms []*dtos.Room
 
-	for _, room := range m.rooms {
+	for uuid, room := range m.rooms {
 		r := &dtos.Room{
+			UUID:       uuid,
 			Name:       room.name,
 			Players:    len(room.game.Players),
 			MaxPlayers: 10,

@@ -8,6 +8,11 @@ import (
 )
 
 func (r router) handleCreateRoom(w http.ResponseWriter, req *http.Request) {
+	if isExists := r.quiz.CheckUserHasRoom(0); isExists {
+		logger.InfoC("it exists ")
+		http.Error(w, "", http.StatusBadRequest)
+		return
+	}
 
 	settings := dtos.Settings{
 		Name:       "room1",

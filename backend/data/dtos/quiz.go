@@ -12,6 +12,7 @@ type Rooms struct {
 	Rooms []*Room `json:"rooms"`
 }
 type Room struct {
+	UUID       string `json:"uuid"`
 	Name       string `json:"name"`
 	Players    int    `json:"players"`
 	MaxPlayers int    `json:"max_players"`
