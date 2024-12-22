@@ -10,7 +10,7 @@ import (
 )
 
 func (r router) handleExchange(w http.ResponseWriter, req *http.Request) {
-	dto := &dtos.ExchangeDTO{}
+	dto := &dtos.Exchange{}
 	err := json.NewDecoder(req.Body).Decode(dto)
 	if err != nil {
 		logger.Error(err)

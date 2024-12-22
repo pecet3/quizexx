@@ -6,6 +6,8 @@ import (
 	"log"
 	"strconv"
 	"time"
+
+	"github.com/pecet3/quizex/pkg/logger"
 )
 
 type Game struct {
@@ -48,7 +50,7 @@ type RoundQuestion struct {
 }
 
 func (r *Room) CreateGame() (*Game, error) {
-	log.Println("> Creating a game in room: ", r.settings.Name)
+	logger.Info("Creating a game in room: ", r.settings.Name)
 	maxRoundStr := r.settings.MaxRounds
 	maxRoundsInt, err := strconv.Atoi(maxRoundStr)
 	if err != nil {

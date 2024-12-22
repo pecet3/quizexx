@@ -1,7 +1,6 @@
 package quiz
 
 import (
-	"context"
 	"log"
 	"net/http"
 	"sync"
@@ -9,11 +8,11 @@ import (
 	"github.com/gorilla/websocket"
 	"github.com/pecet3/quizex/data/dtos"
 	"github.com/pecet3/quizex/pkg/external"
+	"github.com/pecet3/quizex/pkg/logger"
 )
 
 type Manager struct {
 	mu       sync.Mutex
-	ctx      context.Context
 	rooms    map[string]*Room
 	external *external.ExternalService
 }
@@ -59,7 +58,7 @@ func (m *Manager) CreateRoom(settings dtos.Settings, creatorID int) *Room {
 	newRoom := m.newRoom(settings, creatorID)
 	m.rooms[settings.Name] = newRoom
 
-	log.Println("> Created a room with name: ", settings.Name)
+	logger.Info("> Created a room with name: ", settings.Name)
 	return newRoom
 }
 
@@ -82,17 +81,24 @@ func (m *Manager) removeRoom(name string) {
 		return
 	}
 }
-func (m *Manager) GetRoomNamesList() []string {
+func (m *Manager) GetRoomsList() []*dtos.Room {
 	m.mu.Lock()
 	defer m.mu.Unlock()
 
-	var names []string
+	var rooms []*dtos.Room
 
-	for roomName := range m.rooms {
-		names = append(names, roomName)
+	for _, room := range m.rooms {
+		r := &dtos.Room{
+			Name:       room.name,
+			Players:    len(room.game.Players),
+			MaxPlayers: 10,
+			Round:      room.game.State.Round,
+			MaxRounds:  room.game.MaxRounds,
+		}
+		rooms = append(rooms, r)
 	}
 
-	return names
+	return rooms
 }
 
 var (
@@ -107,7 +113,6 @@ func checkOrigin(r *http.Request) bool {
 	return true
 }
 func (m *Manager) ServeWs(w http.ResponseWriter, req *http.Request) {
-	m.ctx = req.Context()
 
 	conn, err := upgrader.Upgrade(w, req, nil)
 	if err != nil {

@@ -10,7 +10,7 @@ import (
 )
 
 func (r router) handleLogin(w http.ResponseWriter, req *http.Request) {
-	dto := &dtos.LoginDTO{}
+	dto := &dtos.Login{}
 	err := json.NewDecoder(req.Body).Decode(dto)
 	if err != nil {
 		logger.Error(err)

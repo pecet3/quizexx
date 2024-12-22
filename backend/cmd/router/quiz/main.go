@@ -32,6 +32,7 @@ func Run(
 	app.Srv.HandleFunc(PREFIX+"/game", r.handleQuiz)
 
 	app.Srv.HandleFunc(PREFIX+"/create-room", r.handleCreateRoom)
+	app.Srv.HandleFunc(PREFIX+"/rooms", r.handleGetRooms)
 
 }
 func (r router) handleQuiz(w http.ResponseWriter, req *http.Request) {
