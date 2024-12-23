@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { MainWrapper } from "../components/MainWrapper";
 import { PaperWrapper } from "../components/PaperWrapper";
 import axios from "axios";
+import { QuizSettings } from "../types";
 
 export const CreateRoom = () => {
   useEffect(() => {
@@ -16,16 +17,16 @@ export const CreateRoom = () => {
     event.preventDefault();
 
     const formData = new FormData(event.target);
-    const data = {
-      roomName: formData.get("roomName"),
-      category: formData.get("category"),
-      difficulty: formData.get("difficulty"),
-      maxRounds: formData.get("maxRounds"),
-      lang: formData.get("lang"),
+    const data: QuizSettings = {
+      name: formData.get("roomName") as string,
+      gen_content: formData.get("category") as string,
+      difficulty: formData.get("difficulty") as string,
+      max_rounds: formData.get("maxRounds") as string,
+      language: formData.get("lang") as string,
     };
 
     try {
-      const response = await axios.post("/api/create-room", {
+      const response = await axios.post("/api/quiz/rooms", {
         headers: {
           "Content-Type": "application/json",
         },

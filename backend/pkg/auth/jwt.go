@@ -16,7 +16,7 @@ func (jwtServices) GenerateJWT(email, username string) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"email":    email,
 		"username": username,
-		"exp":      time.Now().Add(time.Hour * 24).Unix(), // Token ważny przez 24 godziny
+		"exp":      time.Now().Add(time.Hour * 24 * 7).Unix(), // Token ważny przez 24 godziny
 	})
 
 	signedToken, err := token.SignedString(SecretKey)

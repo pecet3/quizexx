@@ -40,7 +40,7 @@ func (as *Auth) Authorize(next http.HandlerFunc) http.Handler {
 		}
 		claims, err := as.JWT.ValidateJWT(jwt)
 		if err != nil {
-			logger.Warn("<Auth> Session doesn't exist")
+			logger.Error(err)
 			http.Error(w, "", http.StatusUnauthorized)
 			return
 		}
