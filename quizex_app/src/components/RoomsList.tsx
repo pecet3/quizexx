@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Room, Rooms } from "../types";
 import axios from "axios";
@@ -8,11 +8,10 @@ export const RoomsList = () => {
   const [rooms, setRooms] = useState<Room[]>([]);
   const [loading, setLoading] = useState(false);
 
-  // Fetch rooms from the backend
   const fetchRooms = async () => {
     setLoading(true);
     try {
-      const response = await axios.get("/api/quiz/rooms"); // Adjust the endpoint URL as needed
+      const response = await axios.get("/api/quiz/rooms");
       if (!response.status) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
@@ -28,7 +27,6 @@ export const RoomsList = () => {
     }
   };
 
-  // Fetch rooms on component mount
   useEffect(() => {
     fetchRooms();
   }, []);

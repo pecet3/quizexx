@@ -29,10 +29,10 @@ func Run(
 		v:    app.Validator,
 		quiz: app.Quiz,
 	}
-	app.Srv.HandleFunc(PREFIX+"/game", r.handleQuiz)
+	app.Srv.Handle(PREFIX+"/game", r.auth.Authorize(r.handleQuiz))
 
-	app.Srv.HandleFunc("POST "+PREFIX+"/rooms", r.handleCreateRoom)
-	app.Srv.HandleFunc("GET "+PREFIX+"/rooms", r.handleGetRooms)
+	app.Srv.Handle("POST "+PREFIX+"/rooms", r.auth.Authorize(r.handleCreateRoom))
+	app.Srv.Handle("GET "+PREFIX+"/rooms", r.auth.Authorize(r.handleGetRooms))
 
 }
 func (r router) handleQuiz(w http.ResponseWriter, req *http.Request) {

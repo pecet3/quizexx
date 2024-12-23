@@ -10,7 +10,6 @@ import (
 
 func (r router) handleGetRooms(w http.ResponseWriter, req *http.Request) {
 	rooms := r.quiz.GetRoomsList()
-	logger.Debug(rooms)
 
 	var res dtos.Rooms
 	res.Rooms = rooms
