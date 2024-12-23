@@ -16,7 +16,7 @@ func (r router) handleCreateRoom(w http.ResponseWriter, req *http.Request) {
 		http.Error(w, "", http.StatusUnauthorized)
 		return
 	}
-	if isExists := r.quiz.CheckUserHasRoom(0); isExists {
+	if isExists := r.quiz.CheckUserHasRoom(u.ID); isExists {
 		logger.Warn(fmt.Sprintf(`user with id: %s wanted to create a room, when them room exists`, "0"))
 		http.Error(w, "", http.StatusBadRequest)
 		return
@@ -25,6 +25,12 @@ func (r router) handleCreateRoom(w http.ResponseWriter, req *http.Request) {
 	if err := json.NewDecoder(req.Body).Decode(dto); err != nil {
 		logger.Error(err)
 		http.Error(w, "", http.StatusInternalServerError)
+		return
+	}
+	err = dto.Validate(r.v)
+	if err != nil {
+		logger.Error(err)
+		http.Error(w, "", http.StatusBadRequest)
 		return
 	}
 	room := r.quiz.CreateRoom(*dto, u.ID)

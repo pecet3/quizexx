@@ -3,11 +3,11 @@ package dtos
 import "github.com/go-playground/validator/v10"
 
 type Settings struct {
-	Name       string `json:"name" validate:"required"`
-	GenContent string `json:"gen_content" validate:"required"`
-	Difficulty string `json:"difficulty" validate:"required"`
-	MaxRounds  string `json:"max_rounds" validate:"required"`
-	Language   string `json:"language" validate:"required"`
+	Name       string `json:"name" validate:"required,min=3,max=32"`
+	GenContent string `json:"gen_content" validate:"required,min=3,max=32"`
+	Difficulty string `json:"difficulty" validate:"required,min=3,max=32"`
+	MaxRounds  string `json:"max_rounds" validate:"required,min=1,max=1"`
+	Language   string `json:"language" validate:"required,min=3,max=32"`
 }
 
 func (r Settings) Validate(v *validator.Validate) error {

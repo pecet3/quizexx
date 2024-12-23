@@ -32,6 +32,7 @@ func Run(
 	}
 	authRouter.Run(app)
 	quizRouter.Run(app)
+
 	app.Srv.Handle(PREFIX+"/hello", r.auth.Authorize(r.hello))
 	app.Srv.Handle("/", http.FileServer(http.Dir("view")))
 	app.Srv.Handle(PREFIX+"/", http.FileServer(http.Dir("img")))
