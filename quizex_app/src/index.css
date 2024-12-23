@@ -13,7 +13,6 @@
   color: rgba(0, 0, 0, 0.87);
   font-synthesis: none;
   text-rendering: optimizeLegibility;
-  overflow: hidden;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   --pink: #ecb2ba;

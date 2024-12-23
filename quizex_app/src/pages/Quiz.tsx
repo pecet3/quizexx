@@ -1,5 +1,4 @@
-import { Chat } from "../components/Chat";
-
+import Dashboard from "../components/Dashboard";
 export const Quiz = () => {
-  return <Chat />;
+  return <Dashboard />;
 };

@@ -6,7 +6,6 @@ import { PaperWrapper } from "../components/PaperWrapper";
 import { useAuthContext } from "../context/useContext";
 
 export const Home = () => {
-  const { user } = useAuthContext();
   return (
     <MainWrapper>
       <section className="section">

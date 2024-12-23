@@ -57,6 +57,7 @@ function App() {
             </ProtectedPage>
           }
         />
+
         <Route path="/auth" element={<Auth />} />
       </Routes>
     </>
