@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Room, Rooms } from "../types";
 import axios from "axios";
+import { HiOutlineRefresh } from "react-icons/hi";
 
 export const RoomsList = () => {
   const [rooms, setRooms] = useState<Room[]>([]);
@@ -34,17 +35,18 @@ export const RoomsList = () => {
 
   return (
     <div className="text-base flex flex-col py-8 px-6 max-w-2xl w-full">
-      <Link to="/create-room" className="btn text-xs bg-red-300">
-        Create a Room
-      </Link>
-
-      <button
-        onClick={fetchRooms}
-        className="btn text-xs bg-blue-300 my-4 self-start"
-        disabled={loading}
-      >
-        {loading ? "Refreshing..." : "Refresh"}
-      </button>
+      <div className="flex justify-between mb-6">
+        <button
+          onClick={fetchRooms}
+          className="btn text-xs bg-blue-300 my-4 self-start"
+          disabled={loading}
+        >
+          <HiOutlineRefresh size={18} />
+        </button>
+        <Link to="/create-room" className="btn text-xs bg-red-300">
+          Create a Room
+        </Link>
+      </div>
 
       <table className="table-auto border-collapse w-auto">
         <thead>

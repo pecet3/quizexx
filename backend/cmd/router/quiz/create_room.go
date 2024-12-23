@@ -16,15 +16,16 @@ func (r router) handleCreateRoom(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	settings := &dtos.Settings{}
+	dto := &dtos.Settings{}
+	logger.Debug(dto)
 
-	if err := json.NewDecoder(req.Body).Decode(settings); err != nil {
+	if err := json.NewDecoder(req.Body).Decode(dto); err != nil {
 		logger.Error(err)
 		http.Error(w, "", http.StatusInternalServerError)
 		return
 	}
-
-	room := r.quiz.CreateRoom(*settings, 0)
+	logger.Debug(dto, req.Body)
+	room := r.quiz.CreateRoom(*dto, 0)
 	game, err := room.CreateGame()
 	if err != nil {
 		logger.Error(err)

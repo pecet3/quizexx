@@ -1,7 +1,6 @@
 import { useEffect } from "react";
 import { MainWrapper } from "../components/MainWrapper";
 import { PaperWrapper } from "../components/PaperWrapper";
-import axios from "axios";
 import { QuizSettings } from "../types";
 
 export const CreateRoom = () => {
@@ -24,9 +23,9 @@ export const CreateRoom = () => {
       max_rounds: formData.get("maxRounds") as string,
       language: formData.get("lang") as string,
     };
-
     try {
-      const response = await axios.post("/api/quiz/rooms", {
+      const response = await fetch("/api/quiz/rooms", {
+        method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
@@ -34,7 +33,7 @@ export const CreateRoom = () => {
       });
 
       if (response.status === 200) {
-        const result = await response.data;
+        const result = await response.json;
         console.log("Room created successfully:", result);
       } else {
         console.error("Failed to create room", response.statusText);
