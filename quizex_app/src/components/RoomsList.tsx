@@ -16,6 +16,7 @@ export const RoomsList = () => {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       const data: Rooms = await response.data;
+      if (!data.rooms) return;
       if (data.rooms.length > 0) {
         setRooms(data.rooms);
       }
