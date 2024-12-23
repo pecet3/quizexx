@@ -94,7 +94,6 @@ func (m *Manager) removeRoom(uuid string) {
 		close(room.leave)
 
 		delete(m.rooms, uuid)
-		log.Println("> Closing a room with name:", room.name)
 		return
 	}
 }

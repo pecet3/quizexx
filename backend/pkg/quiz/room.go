@@ -2,6 +2,7 @@ package quiz
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"strconv"
 	"strings"
@@ -37,14 +38,16 @@ func (r *Room) CheckIfEveryoneIsReady() bool {
 }
 
 func (r *Room) Run(m *Manager) {
-	logger.Info("New room: ", r)
+	logger.Info(fmt.Sprintf(`Created a room: %s. creator: %d`, r.UUID, r.creatorID))
+	ticker := time.NewTicker(time.Second * 10)
 	for {
-		logger.Debug()
-		if !r.createdAt.Before(time.Now().Add(time.Second * 30)) {
-			m.removeRoom(r.UUID)
-			return
-		}
 		select {
+		case t := <-ticker.C:
+			if t.Before(time.Now()) || len(r.clients) <= 0 {
+				logger.Info(fmt.Sprintf(`No one is ine the room: %s. Closing...`, r.UUID))
+				defer m.removeRoom(r.UUID)
+				return
+			}
 		case msg := <-r.forward:
 			for Client := range r.clients {
 				Client.receive <- msg
