@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Room, Rooms } from "../types";
-import axios from "axios";
 import { HiOutlineRefresh } from "react-icons/hi";
 
 export const RoomsList = () => {
@@ -11,11 +10,11 @@ export const RoomsList = () => {
   const fetchRooms = async () => {
     setLoading(true);
     try {
-      const response = await axios.get("/api/quiz/rooms");
+      const response = await fetch("/api/quiz/rooms");
       if (!response.status) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-      const data: Rooms = await response.data;
+      const data: Rooms = await response.json();
       if (!data.rooms) return;
       if (data.rooms.length > 0) {
         setRooms(data.rooms);
