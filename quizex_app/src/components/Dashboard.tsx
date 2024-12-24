@@ -1,4 +1,4 @@
-import React, { useState, FormEvent, ChangeEvent } from "react";
+import React, { useState, FormEvent } from "react";
 
 type User = {
   name: string;
@@ -135,7 +135,7 @@ const GameDashboard: React.FC<{
 
   return (
     <div className="m-0 sm:m-auto max-w-3xl text-lg p-0 pr-0 sm:pr-4 pl-0 flex flex-col">
-      <div className="flex justify-between gap-2 z-10 mx-1">
+      <div className="flex justify-between gap-2 z-10 m-0">
         <div className="text-2xl flex sm:flex-row flex-col items-center font-bold font-mono bg-gray-400 rounded-t-md p-1 border-2 border-black border-b-0">
           <span className="hidden sm:block">Category:</span>
           <p className="text-blue-800 italic">{category}</p>
@@ -150,7 +150,7 @@ const GameDashboard: React.FC<{
 
       <form
         onSubmit={handleSubmit}
-        className="flex flex-col gap-6 w-full md:w-[46rem]"
+        className="flex flex-col gap-6 m-auto  w-full "
       >
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-gray-200 border-2 border-black p-2 sm:p-4 rounded-b-xl text-lg">
           <h3 className="sm:col-span-2 text-center font-bold text-2xl">
