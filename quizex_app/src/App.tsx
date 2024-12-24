@@ -8,7 +8,7 @@ import { Auth } from "./pages/Auth";
 import { CreateRoom } from "./pages/CreateRoom";
 import { ProtectedPage } from "./components/Protected";
 import { Quiz } from "./pages/Quiz";
-import { useAuthContext } from "./context/useContext";
+import { useAuthContext } from "./context/authContext";
 import { useEffect } from "react";
 import axios from "axios";
 

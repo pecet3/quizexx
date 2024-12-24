@@ -1,7 +1,7 @@
 import vape from "../assets/vape.png";
 import basket from "../assets/basket.png";
 import chat from "../assets/chat.png";
-import { useAuthContext } from "../context/useContext";
+import { useAuthContext } from "../context/authContext";
 import { useEffect } from "react";
 import axios from "axios";
 import { redirect, useNavigate } from "react-router-dom";

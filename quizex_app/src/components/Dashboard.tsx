@@ -64,15 +64,7 @@ const EntryDashboard: React.FC<{ onJoin: (name: string) => void }> = ({
   };
 
   return (
-    <div className="flex flex-col justify-between">
-      <header className="p-1 my-1 sm:my-4 relative">
-        <h1 className="text-6xl font-black flex justify-center items-end text-center text-black font-mono underline decoration-wavy decoration-4 decoration-teal-400 font-bold">
-          Quizex
-        </h1>
-        <span className="text-xs font-semibold italic underline ml-32 mono text-right">
-          by pecet ❤
-        </span>
-      </header>
+    <div className="flex flex-col justify-between h-full">
       <div className="paper paper-yellow my-6 p-4 pt-8 shadow-md flex flex-col gap-2 items-center">
         <div className="top-tape"></div>
         <input

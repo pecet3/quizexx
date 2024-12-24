@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { useAuthContext } from "../context/useContext";
+import { useAuthContext } from "../context/authContext";
 import { Logo } from "./Logo";
 
 export const Navbar = () => {
