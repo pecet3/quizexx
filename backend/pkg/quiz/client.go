@@ -14,6 +14,7 @@ var (
 )
 
 type Client struct {
+	UUID        string
 	name        string
 	conn        *websocket.Conn
 	receive     chan []byte

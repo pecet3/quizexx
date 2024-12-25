@@ -5,8 +5,6 @@ type User = {
   points: number;
 };
 
-type GameState = "entry" | "waiting" | "game";
-
 const Chat: React.FC = () => {
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState<string[]>([]);
@@ -134,7 +132,7 @@ const GameDashboard: React.FC<{
   };
 
   return (
-    <div className="m-0 sm:m-auto max-w-3xl text-lg p-0 pr-0 sm:pr-4 pl-0 flex flex-col">
+    <div className="m-0 sm:m-auto max-w-3xl text-lg flex flex-col">
       <div className="flex justify-between gap-2 z-10 m-0">
         <div className="text-2xl flex sm:flex-row flex-col items-center font-bold font-mono bg-gray-400 rounded-t-md p-1 border-2 border-black border-b-0">
           <span className="hidden sm:block">Category:</span>
@@ -215,40 +213,29 @@ const GameDashboard: React.FC<{
 };
 
 // Main App Component
-const QuizexApp: React.FC = () => {
-  const [gameState, setGameState] = useState<GameState>("entry");
+export const Dashboard: React.FC = () => {
+  const [isWaiting, setIsWaiting] = useState(true);
   const [users, setUsers] = useState<User[]>([]);
   const [currentUser, setCurrentUser] = useState<User | null>(null);
 
-  // Sample game state
   const [category] = useState("Sample Category");
   const [round] = useState(1);
   const [question] = useState("Sample Question?");
   const [answers] = useState(["Answer A", "Answer B", "Answer C", "Answer D"]);
 
-  const handleJoin = (name: string) => {
-    const newUser = { name, points: 0 };
-    setUsers([...users, newUser]);
-    setCurrentUser(newUser);
-    setGameState("waiting");
-  };
-
   const handleReady = () => {
-    setGameState("game");
+    setIsWaiting(false);
   };
 
   const handleAnswer = (answer: number) => {
     console.log("Selected answer:", answer);
-    // Handle answer logic here
   };
 
   return (
-    <div className="bg-pattern bg-opacity-70 pl-0 pr-0 p-0 sm:p-8 py-0 sm:py-10 text-center m-auto">
-      {gameState === "entry" && <EntryDashboard onJoin={handleJoin} />}
-      {gameState === "waiting" && (
+    <div className="p-2 bg-opacity-70 text-center m-auto">
+      {isWaiting ? (
         <WaitingRoom readyUsers={users} onReady={handleReady} />
-      )}
-      {gameState === "game" && (
+      ) : (
         <GameDashboard
           category={category}
           round={round}
@@ -261,5 +248,3 @@ const QuizexApp: React.FC = () => {
     </div>
   );
 };
-
-export default QuizexApp;

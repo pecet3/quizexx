@@ -26,3 +26,32 @@ type Room = {
 type Rooms = {
   rooms: Room[];
 };
+
+type GameState= {
+  round: number;
+  question: string;
+  answers: string[];
+  actions: RoundAction[];
+  score: PlayerScore[];
+  playersAnswered: string[];
+  roundWinners?: string[];
+}
+
+type  RoundAction = {
+  name: string;
+  answer: number;
+  round: number;
+}
+
+type  PlayerScore =  {
+  uuid: string;
+  points: number;
+  roundsWon: number[];
+  isAnswered: boolean;
+}
+
+type RoundQuestion = {
+  question: string;
+  answers: string[];
+  correctAnswer: number;
+}

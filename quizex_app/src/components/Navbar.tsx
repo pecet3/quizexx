@@ -7,7 +7,7 @@ export const Navbar = () => {
   return (
     <>
       {user ? (
-        <nav className="flex justify-between items-center w-full px-4 py-2">
+        <nav className="flex justify-between items-center w-full px-4 pt-1">
           <Logo />
           <div className="justify-end flex-1 flex">
             <div className="text-right">

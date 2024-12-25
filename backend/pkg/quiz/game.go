@@ -38,7 +38,7 @@ type RoundAction struct {
 }
 
 type PlayerScore struct {
-	Name       string `json:"name"`
+	UUID       string `json:"uuid"`
 	Points     int    `json:"points"`
 	RoundsWon  []uint `json:"rounds_won"`
 	IsAnswered bool   `json:"is_answered"`
@@ -105,7 +105,7 @@ func (g *Game) NewScore() []PlayerScore {
 
 	for p := range g.Players {
 		playerScore := PlayerScore{
-			Name:      p.name,
+			UUID:      p.UUID,
 			Points:    p.points,
 			RoundsWon: p.roundsWon,
 		}
