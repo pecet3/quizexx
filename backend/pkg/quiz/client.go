@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/gorilla/websocket"
+	"github.com/pecet3/quizex/data/entities"
 )
 
 var (
@@ -14,7 +15,7 @@ var (
 )
 
 type Client struct {
-	UUID        string
+	user        *entities.User
 	name        string
 	conn        *websocket.Conn
 	receive     chan []byte

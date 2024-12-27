@@ -38,7 +38,6 @@ func Run(
 }
 func (r router) handleQuiz(w http.ResponseWriter, req *http.Request) {
 	u, err := r.auth.GetContextUser(req)
-	logger.Debug(u)
 	if err != nil {
 		logger.Error(err)
 		http.Error(w, "", http.StatusUnauthorized)

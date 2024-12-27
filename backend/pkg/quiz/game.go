@@ -7,6 +7,7 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/pecet3/quizex/data/entities"
 	"github.com/pecet3/quizex/pkg/logger"
 )
 
@@ -38,10 +39,10 @@ type RoundAction struct {
 }
 
 type PlayerScore struct {
-	UUID       string `json:"uuid"`
-	Points     int    `json:"points"`
-	RoundsWon  []uint `json:"rounds_won"`
-	IsAnswered bool   `json:"is_answered"`
+	User       *entities.User `json:"user"`
+	Points     int            `json:"points"`
+	RoundsWon  []uint         `json:"rounds_won"`
+	IsAnswered bool           `json:"is_answered"`
 }
 type RoundQuestion struct {
 	Question      string   `json:"question"`
@@ -105,7 +106,7 @@ func (g *Game) NewScore() []PlayerScore {
 
 	for p := range g.Players {
 		playerScore := PlayerScore{
-			UUID:      p.UUID,
+			User:      p.user,
 			Points:    p.points,
 			RoundsWon: p.roundsWon,
 		}

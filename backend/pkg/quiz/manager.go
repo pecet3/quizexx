@@ -135,17 +135,19 @@ func (m *Manager) ServeQuiz(w http.ResponseWriter, req *http.Request, u *entitie
 	currentRoom := m.getRoom(roomUUID)
 	conn, err := upgrader.Upgrade(w, req, nil)
 	if err != nil {
-		log.Println(err)
+		logger.Error(err)
+		http.Error(w, "", http.StatusBadRequest)
 		return
 	}
 
 	log.Println(roomUUID)
 	if currentRoom == nil {
+		logger.Error("no room with provided uuid")
+		http.Error(w, "", http.StatusBadRequest)
 		return
 	}
 
 	isSpectator := false
-
 	if currentRoom.game.IsGame {
 		isSpectator = true
 	}

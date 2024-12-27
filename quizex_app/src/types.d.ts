@@ -44,7 +44,7 @@ type  RoundAction = {
 }
 
 type  PlayerScore =  {
-  uuid: string;
+  user: User;
   points: number;
   roundsWon: number[];
   isAnswered: boolean;
