@@ -1,13 +1,13 @@
 package quiz
 
 import (
-	"log"
 	"net/http"
 	"sync"
 	"time"
 
 	"github.com/google/uuid"
 	"github.com/gorilla/websocket"
+	"github.com/pecet3/quizex/data"
 	"github.com/pecet3/quizex/data/dtos"
 	"github.com/pecet3/quizex/data/entities"
 	"github.com/pecet3/quizex/pkg/external"
@@ -18,13 +18,15 @@ type Manager struct {
 	mu       sync.Mutex
 	rooms    map[string]*Room
 	external *external.ExternalService
+	d        *data.Data
 }
 
-func NewManager() *Manager {
+func NewManager(d *data.Data) *Manager {
 	return &Manager{
 		rooms:    make(map[string]*Room),
 		mu:       sync.Mutex{},
 		external: &external.ExternalService{},
+		d:        d,
 	}
 }
 
@@ -140,7 +142,7 @@ func (m *Manager) ServeQuiz(w http.ResponseWriter, req *http.Request, u *entitie
 		return
 	}
 
-	log.Println(roomUUID)
+	logger.Debug("room uuid: ", roomUUID)
 	if currentRoom == nil {
 		logger.Error("no room with provided uuid")
 		http.Error(w, "", http.StatusBadRequest)
@@ -162,6 +164,7 @@ func (m *Manager) ServeQuiz(w http.ResponseWriter, req *http.Request, u *entitie
 		isReady:     false,
 		isSpectator: isSpectator,
 		isAnswered:  false,
+		user:        u,
 	}
 
 	currentRoom.join <- client

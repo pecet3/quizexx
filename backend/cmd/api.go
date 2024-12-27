@@ -29,7 +29,7 @@ func runAPI() {
 		Data:      data,
 		Auth:      auth.New(data),
 		Validator: validator.New(),
-		Quiz:      quiz.NewManager(),
+		Quiz:      quiz.NewManager(data),
 	}
 
 	router.Run(app)
