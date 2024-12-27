@@ -9,7 +9,7 @@ import (
 
 func (ss *MagicLink) CleanUpExpiredSessions() {
 	for {
-		time.Sleep(60 * time.Second)
+		time.Sleep(1800 * time.Second)
 		cleanedEmailSessions := 0
 		ss.sMu.Lock()
 		for token, session := range ss.emailSessions {

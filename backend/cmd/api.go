@@ -34,12 +34,11 @@ func runAPI() {
 
 	router.Run(app)
 
-	address := "localhost:9090"
 	server := &http.Server{
-		Addr:    address,
+		Addr:    BASE_URL,
 		Handler: mux,
 	}
-	logger.Info(fmt.Sprintf("Server is listening on: [%s]", address))
+	logger.Info(fmt.Sprintf("Server is listening on: [%s]", BASE_URL))
 	log.Fatal(server.ListenAndServe())
 
 }
