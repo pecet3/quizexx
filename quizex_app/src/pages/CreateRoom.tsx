@@ -2,8 +2,11 @@ import { useEffect } from "react";
 import { MainWrapper } from "../components/MainWrapper";
 import { PaperWrapper } from "../components/PaperWrapper";
 import { QuizSettings } from "../types";
+import { useNavigate } from "react-router-dom";
 
 export const CreateRoom = () => {
+  const nav = useNavigate();
+
   useEffect(() => {
     document.body.style.overflow = "hidden";
 
@@ -35,6 +38,7 @@ export const CreateRoom = () => {
       if (response.status === 200) {
         const result = await response.json;
         console.log("Room created successfully:", result);
+        nav(`/quiz/${data.name}`);
       } else {
         console.error("Failed to create room", response.statusText);
       }

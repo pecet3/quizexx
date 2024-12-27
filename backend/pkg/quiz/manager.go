@@ -135,16 +135,15 @@ func checkOrigin(r *http.Request) bool {
 func (m *Manager) ServeQuiz(w http.ResponseWriter, req *http.Request, u *entities.User) {
 	roomName := req.PathValue("name")
 	currentRoom := m.GetRoom(roomName)
-	conn, err := upgrader.Upgrade(w, req, nil)
-	if err != nil {
-		logger.Error(err)
+	logger.Debug("room name: ", roomName)
+	if currentRoom == nil {
+		logger.Error("no room with provided uuid")
 		http.Error(w, "", http.StatusBadRequest)
 		return
 	}
-
-	logger.Debug("room uuid: ", roomName)
-	if currentRoom == nil {
-		logger.Error("no room with provided uuid")
+	conn, err := upgrader.Upgrade(w, req, nil)
+	if err != nil {
+		logger.Error(err)
 		http.Error(w, "", http.StatusBadRequest)
 		return
 	}

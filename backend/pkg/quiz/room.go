@@ -40,32 +40,32 @@ func (r *Room) CheckIfEveryoneIsReady() bool {
 
 func (r *Room) Run(m *Manager) {
 	logger.Info(fmt.Sprintf(`Created a room: %s. creator: %d`, r.UUID, r.creatorID))
-	ticker := time.NewTicker(time.Second * 10)
+	ticker := time.NewTicker(time.Second * 60)
 	for {
 		select {
 		case t := <-ticker.C:
 			if t.Before(time.Now()) || len(r.clients) <= 0 {
 				logger.Info(fmt.Sprintf(`No one is ine the room: %s. Closing...`, r.UUID))
-				defer m.removeRoom(r.UUID)
+				defer m.removeRoom(r.Name)
 				return
 			}
 		case msg := <-r.forward:
-			for Client := range r.clients {
-				Client.receive <- msg
+			for client := range r.clients {
+				client.receive <- msg
 			}
-		case Client := <-r.join:
-			r.clients[Client] = Client.name
+		case client := <-r.join:
+			r.clients[client] = client.name
 			if len(r.clients) == 0 {
 				logger.Debug("zero")
 				r.createdAt = time.Now().Add(time.Hour * 2)
 			}
-			if r.game.IsGame && Client.isSpectator {
-				err := r.sendServerMessage(Client.name + " joins as spectator")
+			if r.game.IsGame && client.isSpectator {
+				err := r.sendServerMessage(client.name + " joins as spectator")
 				if err != nil {
 					return
 				}
 			} else {
-				err := r.sendServerMessage(Client.name + " joins the game")
+				err := r.sendServerMessage(client.name + " joins the game")
 				if err != nil {
 					return
 				}
@@ -83,29 +83,29 @@ func (r *Room) Run(m *Manager) {
 			if err != nil {
 				return
 			}
-			Client.receive <- eventBytes
-			if !r.game.IsGame && !Client.isSpectator {
+			client.receive <- eventBytes
+			if !r.game.IsGame && !client.isSpectator {
 				r.sendReadyStatus()
 			}
 
-		case Client := <-r.leave:
-			close(Client.receive)
-			delete(r.game.Players, Client)
-			delete(r.clients, Client)
-			r.sendServerMessage(Client.name + " is leaving the room")
+		case client := <-r.leave:
+			close(client.receive)
+			delete(r.game.Players, client)
+			delete(r.clients, client)
+			r.sendServerMessage(client.name + " is leaving the room")
 			if len(r.clients) == 0 {
 				log.Println("closing the room: ", r.Name)
 				m.removeRoom(r.Name)
 				return
 			}
 
-		case Client := <-r.ready:
-			if r.game.IsGame && Client.isSpectator {
-				r.sendServerMessage(Client.name + " joins as a spectator")
+		case client := <-r.ready:
+			if r.game.IsGame && client.isSpectator {
+				r.sendServerMessage(client.name + " joins as a spectator")
 			}
 
-			Client.isReady = true
-			r.sendServerMessage(Client.name + " is ready!")
+			client.isReady = true
+			r.sendServerMessage(client.name + " is ready!")
 			r.sendReadyStatus()
 
 			if ok := r.CheckIfEveryoneIsReady(); ok {
@@ -140,19 +140,19 @@ func (r *Room) Run(m *Manager) {
 				return
 			}
 
-			for Client := range r.game.Players {
-				if Client.name == actionParsed.Name {
-					if Client.isSpectator {
+			for client := range r.game.Players {
+				if client.name == actionParsed.Name {
+					if client.isSpectator {
 						return
 					}
-					if !Client.isAnswered {
-						err := r.sendServerMessage(Client.name + " has answered")
+					if !client.isAnswered {
+						err := r.sendServerMessage(client.name + " has answered")
 						if err != nil {
 							return
 						}
 					}
 
-					Client.addPointsAndToggleIsAnswered(*actionParsed, r)
+					client.addPointsAndToggleIsAnswered(*actionParsed, r)
 					r.game.State.Actions = append(r.game.State.Actions, *actionParsed)
 					r.game.State.Score = r.game.NewScore()
 					r.game.SendPlayersAnswered()
@@ -181,10 +181,10 @@ func (r *Room) Run(m *Manager) {
 				time.Sleep(1800 * time.Millisecond)
 				_ = r.sendServerMessage("It's finish the game")
 
-				for Client := range r.clients {
-					log.Println("deleting client ", Client.name)
-					close(Client.receive)
-					// Client.conn.Close()
+				for client := range r.clients {
+					log.Println("deleting client ", client.name)
+					close(client.receive)
+					// client.conn.Close()
 				}
 				delete(m.rooms, r.Name)
 				return
@@ -228,9 +228,9 @@ func (r *Room) Run(m *Manager) {
 				if err != nil {
 					continue
 				}
-				for Client := range r.game.Players {
-					if Client.isAnswered {
-						Client.isAnswered = false
+				for client := range r.game.Players {
+					if client.isAnswered {
+						client.isAnswered = false
 					}
 				}
 

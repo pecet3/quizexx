@@ -1,4 +1,5 @@
 import React, { useState, FormEvent, useEffect } from "react";
+import { useParams } from "react-router-dom";
 
 type User = {
   name: string;
@@ -214,6 +215,7 @@ const GameDashboard: React.FC<{
 
 // Main App Component
 export const Dashboard: React.FC = () => {
+  const { roomName } = useParams<{ roomName: string }>();
   const [isWaiting, setIsWaiting] = useState(true);
   const [users, setUsers] = useState<User[]>([]);
   const [currentUser, setCurrentUser] = useState<User | null>(null);
@@ -234,7 +236,7 @@ export const Dashboard: React.FC = () => {
 
   useEffect(() => {
     // Tworzenie połączenia WebSocket
-    const ws = new WebSocket("ws://localhost:9090/api/quiz/test");
+    const ws = new WebSocket(`ws://localhost:9090/api/quiz/${roomName}`);
     setSocket(ws);
 
     // Obsługa otwarcia połączenia

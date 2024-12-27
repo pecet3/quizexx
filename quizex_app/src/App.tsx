@@ -1,5 +1,3 @@
-// src/App.tsx
-
 import "./App.css";
 import { Route, Routes, useNavigate } from "react-router-dom";
 import { Home } from "./pages/Home";
@@ -13,21 +11,23 @@ import { useEffect } from "react";
 import axios from "axios";
 
 function App() {
-  const { setUser } = useAuthContext();
+  const { setUser, user } = useAuthContext();
 
   const navigate = useNavigate();
   useEffect(() => {
-    (async function () {
-      try {
-        const result = await axios.get("/api/auth/ping");
-        if (result.data) {
-          console.log(result.data);
-          setUser(result.data);
+    if (!user) {
+      (async function () {
+        try {
+          const result = await axios.get("/api/auth/ping");
+          if (result.data) {
+            console.log(result.data);
+            setUser(result.data);
+          }
+        } catch (err: any) {
+          navigate("/auth");
         }
-      } catch (err: any) {
-        navigate("/auth");
-      }
-    })();
+      })();
+    }
   }, []);
   return (
     <>
@@ -50,7 +50,7 @@ function App() {
           }
         />
         <Route
-          path="/quiz"
+          path="/quiz/:roomName"
           element={
             <ProtectedPage>
               <Quiz />

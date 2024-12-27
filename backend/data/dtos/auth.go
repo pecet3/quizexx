@@ -5,7 +5,7 @@ import (
 )
 
 type Register struct {
-	Name  string `json:"name" validate:"required,min=4"`
+	Name  string `json:"name" validate:"required,min=4,alphanumunicode"`
 	Email string `json:"email" validate:"required,email"`
 }
 
