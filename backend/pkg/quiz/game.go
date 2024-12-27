@@ -52,17 +52,15 @@ type RoundQuestion struct {
 
 func (r *Room) CreateGame() (*Game, error) {
 	logger.Info("Creating a game in room: ", r.settings.Name)
-	maxRoundStr := r.settings.MaxRounds
-	maxRoundsInt, err := strconv.Atoi(maxRoundStr)
-	if err != nil {
-		return nil, err
-	}
+	maxRoundsInt := r.settings.MaxRounds
+	maxRoundsStr := strconv.Itoa(r.settings.MaxRounds)
+
 	difficulty := r.settings.Difficulty
 	category := r.settings.GenContent
 	lang := r.settings.Language
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*60)
 	defer cancel()
-	content, err := fetchQuestionSet(ctx, category, maxRoundStr, difficulty, lang)
+	content, err := fetchQuestionSet(ctx, category, maxRoundsStr, difficulty, lang)
 	if err != nil {
 		return nil, err
 	}

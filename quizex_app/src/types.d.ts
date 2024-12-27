@@ -10,7 +10,7 @@ export type QuizSettings = {
     name: string;
     gen_content: string;
     difficulty: string;
-    max_rounds: string;
+    max_rounds: number;
     language: string;
 };
 

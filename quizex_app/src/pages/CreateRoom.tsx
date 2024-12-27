@@ -19,11 +19,13 @@ export const CreateRoom = () => {
     event.preventDefault();
 
     const formData = new FormData(event.target);
+    const maxRoundsStr = formData.get("maxRounds");
+    const maxRounds = parseInt(maxRoundsStr as string);
     const data: QuizSettings = {
       name: formData.get("roomName") as string,
       gen_content: formData.get("category") as string,
       difficulty: formData.get("difficulty") as string,
-      max_rounds: formData.get("maxRounds") as string,
+      max_rounds: maxRounds,
       language: formData.get("lang") as string,
     };
     try {

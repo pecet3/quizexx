@@ -6,7 +6,7 @@ type Settings struct {
 	Name       string `json:"name" validate:"required,alphanumunicode,min=3,max=32"`
 	GenContent string `json:"gen_content" validate:"required,alphanumunicode,min=3,max=32"`
 	Difficulty string `json:"difficulty" validate:"required,alphanumunicode,min=3,max=32"`
-	MaxRounds  string `json:"max_rounds" validate:"required,alphanumunicode,min=1,max=1"`
+	MaxRounds  int    `json:"max_rounds" validate:"required,gt=1,lt=10"`
 	Language   string `json:"language" validate:"required,alphanumunicode,min=3,max=32"`
 }
 
