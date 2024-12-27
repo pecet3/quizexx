@@ -14,7 +14,6 @@ func (r router) handlePing(w http.ResponseWriter, req *http.Request) {
 		http.Error(w, "", http.StatusBadRequest)
 		return
 	}
-	logger.Debug(u)
 
 	err = json.NewEncoder(w).Encode(u)
 	if err != nil {

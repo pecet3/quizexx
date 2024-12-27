@@ -1,4 +1,4 @@
-import React, { useState, FormEvent } from "react";
+import React, { useState, FormEvent, useEffect } from "react";
 
 type User = {
   name: string;
@@ -230,6 +230,38 @@ export const Dashboard: React.FC = () => {
   const handleAnswer = (answer: number) => {
     console.log("Selected answer:", answer);
   };
+  const [socket, setSocket] = useState<WebSocket | null>(null);
+
+  useEffect(() => {
+    // Tworzenie połączenia WebSocket
+    const ws = new WebSocket("ws://localhost:9090/api/quiz/test");
+    setSocket(ws);
+
+    // Obsługa otwarcia połączenia
+    ws.onopen = () => {
+      console.log("Połączenie WebSocket zostało nawiązane.");
+    };
+
+    // Obsługa wiadomości przychodzących
+    ws.onmessage = (event) => {
+      console.log("Otrzymano wiadomość:", event.data);
+    };
+
+    // Obsługa błędów
+    ws.onerror = (error) => {
+      console.error("Błąd WebSocket:", error);
+    };
+
+    // Obsługa zamknięcia połączenia
+    ws.onclose = () => {
+      console.log("Połączenie WebSocket zostało zamknięte.");
+    };
+
+    // Czyszczenie po zamknięciu komponentu
+    return () => {
+      ws.close();
+    };
+  }, []);
 
   return (
     <div className="p-2 bg-opacity-70 text-center m-auto">

@@ -9,6 +9,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/gorilla/websocket"
 	"github.com/pecet3/quizex/data/dtos"
+	"github.com/pecet3/quizex/data/entities"
 	"github.com/pecet3/quizex/pkg/external"
 	"github.com/pecet3/quizex/pkg/logger"
 )
@@ -129,59 +130,18 @@ var (
 func checkOrigin(r *http.Request) bool {
 	return true
 }
-func (m *Manager) ServeWs(w http.ResponseWriter, req *http.Request) {
-
+func (m *Manager) ServeQuiz(w http.ResponseWriter, req *http.Request, u *entities.User) {
+	roomUUID := req.PathValue("uuid")
+	currentRoom := m.getRoom(roomUUID)
 	conn, err := upgrader.Upgrade(w, req, nil)
 	if err != nil {
 		log.Println(err)
 		return
 	}
 
-	roomName := req.URL.Query().Get("room")
-	if roomName == "" {
-		return
-	}
-	name := req.URL.Query().Get("name")
-	if name == "" || name == "serwer" || name == "klient" {
-		return
-	}
-	difficulty := req.URL.Query().Get("difficulty")
-	maxRounds := req.URL.Query().Get("maxRounds")
-	category := req.URL.Query().Get("category")
-	newRoom := req.URL.Query().Get("new")
-	lang := req.URL.Query().Get("lang")
-
-	settings := dtos.Settings{
-		Name:       roomName,
-		GenContent: category,
-		Difficulty: difficulty,
-		MaxRounds:  maxRounds,
-		Language:   lang,
-	}
-	currentRoom := m.getRoom(roomName)
-
-	if currentRoom != nil {
-		if newRoom == "true" {
-			conn.Close()
-			return
-		}
-
-		for roomClient := range currentRoom.clients {
-			if name == roomClient.name {
-				conn.Close()
-				break
-			}
-		}
-	}
-	// to fix
+	log.Println(roomUUID)
 	if currentRoom == nil {
-		if newRoom == "true" {
-			currentRoom = m.CreateRoom(settings, 0)
-			go currentRoom.Run(m)
-		} else {
-			conn.Close()
-			return
-		}
+		return
 	}
 
 	isSpectator := false
@@ -194,7 +154,7 @@ func (m *Manager) ServeWs(w http.ResponseWriter, req *http.Request) {
 		conn:        conn,
 		receive:     make(chan []byte),
 		room:        currentRoom,
-		name:        name,
+		name:        u.Name,
 		answer:      -1,
 		points:      0,
 		isReady:     false,
@@ -202,7 +162,6 @@ func (m *Manager) ServeWs(w http.ResponseWriter, req *http.Request) {
 		isAnswered:  false,
 	}
 
-	log.Printf("> UserName: %v connected to room: %v", name, roomName)
 	currentRoom.join <- client
 	defer func() { currentRoom.leave <- client }()
 	go client.write()

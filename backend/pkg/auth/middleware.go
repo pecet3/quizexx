@@ -38,13 +38,13 @@ func (as *Auth) Authorize(next http.HandlerFunc) http.Handler {
 			http.Error(w, "Empty token", http.StatusUnauthorized)
 			return
 		}
-		claims, err := as.JWT.ValidateJWT(jwt)
+		_, err := as.JWT.ValidateJWT(jwt)
 		if err != nil {
 			logger.Error(err)
 			http.Error(w, "", http.StatusUnauthorized)
 			return
 		}
-		logger.Debug(claims)
+
 		var s *entities.Session
 		s, err = as.GetAuthSession(jwt)
 		if err != nil || s == nil {
@@ -52,6 +52,7 @@ func (as *Auth) Authorize(next http.HandlerFunc) http.Handler {
 			http.Error(w, "", http.StatusUnauthorized)
 			return
 		}
+
 		if s.ActivateCode != jwt {
 			logger.WarnC("invalid jwt token. user id: ", s.UserId)
 			as.MagicLink.RemoveSession(s.Email)

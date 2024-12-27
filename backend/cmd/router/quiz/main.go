@@ -7,6 +7,7 @@ import (
 	"github.com/pecet3/quizex/data"
 	"github.com/pecet3/quizex/data/repos"
 	"github.com/pecet3/quizex/pkg/auth"
+	"github.com/pecet3/quizex/pkg/logger"
 	"github.com/pecet3/quizex/pkg/quiz"
 )
 
@@ -29,12 +30,19 @@ func Run(
 		v:    app.Validator,
 		quiz: app.Quiz,
 	}
-	app.Srv.Handle(PREFIX+"/game", r.auth.Authorize(r.handleQuiz))
+	app.Srv.Handle(PREFIX+"/{uuid}", r.auth.Authorize(r.handleQuiz))
 
 	app.Srv.Handle("POST "+PREFIX+"/rooms", r.auth.Authorize(r.handleCreateRoom))
 	app.Srv.Handle("GET "+PREFIX+"/rooms", r.auth.Authorize(r.handleGetRooms))
 
 }
 func (r router) handleQuiz(w http.ResponseWriter, req *http.Request) {
-	r.quiz.ServeWs(w, req)
+	u, err := r.auth.GetContextUser(req)
+	logger.Debug(u)
+	if err != nil {
+		logger.Error(err)
+		http.Error(w, "", http.StatusUnauthorized)
+		return
+	}
+	r.quiz.ServeQuiz(w, req, u)
 }
