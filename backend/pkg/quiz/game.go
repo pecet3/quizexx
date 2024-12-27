@@ -88,7 +88,7 @@ func (r *Room) CreateGame() (*Game, error) {
 }
 
 func (g *Game) NewGameState(content []RoundQuestion) *GameState {
-	log.Println("> New Game state in room: ", g.Room.name)
+	log.Println("> New Game state in room: ", g.Room.Name)
 	g.Content = content
 	score := g.NewScore()
 	return &GameState{

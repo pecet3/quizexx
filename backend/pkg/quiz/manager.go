@@ -32,7 +32,7 @@ func NewManager(d *data.Data) *Manager {
 
 func (m *Manager) newRoom(settings dtos.Settings, creatorID int) *Room {
 	r := &Room{
-		name:          settings.Name,
+		Name:          settings.Name,
 		clients:       make(map[*Client]string),
 		join:          make(chan *Client),
 		leave:         make(chan *Client),
@@ -48,10 +48,10 @@ func (m *Manager) newRoom(settings dtos.Settings, creatorID int) *Room {
 	return r
 }
 
-func (m *Manager) getRoom(uuid string) *Room {
+func (m *Manager) GetRoom(name string) *Room {
 	m.mu.Lock()
 	defer m.mu.Unlock()
-	return m.rooms[uuid]
+	return m.rooms[name]
 }
 func (m *Manager) getRoomByUserID(uID int) *Room {
 	m.mu.Lock()
@@ -76,7 +76,7 @@ func (m *Manager) CreateRoom(settings dtos.Settings, creatorID int) *Room {
 	}
 
 	newRoom := m.newRoom(settings, creatorID)
-	m.rooms[newRoom.UUID] = newRoom
+	m.rooms[newRoom.Name] = newRoom
 
 	logger.Info("> Created a room with name: ", settings.Name)
 	return newRoom
@@ -109,7 +109,7 @@ func (m *Manager) GetRoomsList() []*dtos.Room {
 	for uuid, room := range m.rooms {
 		r := &dtos.Room{
 			UUID:       uuid,
-			Name:       room.name,
+			Name:       room.Name,
 			Players:    len(room.game.Players),
 			MaxPlayers: 10,
 			Round:      room.game.State.Round,
@@ -133,8 +133,8 @@ func checkOrigin(r *http.Request) bool {
 	return true
 }
 func (m *Manager) ServeQuiz(w http.ResponseWriter, req *http.Request, u *entities.User) {
-	roomUUID := req.PathValue("uuid")
-	currentRoom := m.getRoom(roomUUID)
+	roomName := req.PathValue("name")
+	currentRoom := m.GetRoom(roomName)
 	conn, err := upgrader.Upgrade(w, req, nil)
 	if err != nil {
 		logger.Error(err)
@@ -142,7 +142,7 @@ func (m *Manager) ServeQuiz(w http.ResponseWriter, req *http.Request, u *entitie
 		return
 	}
 
-	logger.Debug("room uuid: ", roomUUID)
+	logger.Debug("room uuid: ", roomName)
 	if currentRoom == nil {
 		logger.Error("no room with provided uuid")
 		http.Error(w, "", http.StatusBadRequest)

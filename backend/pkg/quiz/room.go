@@ -13,7 +13,9 @@ import (
 )
 
 type Room struct {
-	name    string
+	Name string
+	UUID string
+
 	clients map[*Client]string
 	join    chan *Client
 	ready   chan *Client
@@ -25,7 +27,6 @@ type Room struct {
 	settings      dtos.Settings
 	creatorID     int
 	createdAt     time.Time
-	UUID          string
 }
 
 func (r *Room) CheckIfEveryoneIsReady() bool {
@@ -93,8 +94,8 @@ func (r *Room) Run(m *Manager) {
 			delete(r.clients, Client)
 			r.sendServerMessage(Client.name + " is leaving the room")
 			if len(r.clients) == 0 {
-				log.Println("closing the room: ", r.name)
-				m.removeRoom(r.name)
+				log.Println("closing the room: ", r.Name)
+				m.removeRoom(r.Name)
 				return
 			}
 
@@ -185,7 +186,7 @@ func (r *Room) Run(m *Manager) {
 					close(Client.receive)
 					// Client.conn.Close()
 				}
-				delete(m.rooms, r.name)
+				delete(m.rooms, r.Name)
 				return
 			}
 
