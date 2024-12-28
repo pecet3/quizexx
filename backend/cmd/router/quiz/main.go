@@ -30,7 +30,7 @@ func Run(
 		v:    app.Validator,
 		quiz: app.Quiz,
 	}
-	app.Srv.Handle(PREFIX+"/{uuid}", r.auth.Authorize(r.handleQuiz))
+	app.Srv.Handle(PREFIX+"/{name}", r.auth.Authorize(r.handleQuiz))
 
 	app.Srv.Handle("POST "+PREFIX+"/rooms", r.auth.Authorize(r.handleCreateRoom))
 	app.Srv.Handle("GET "+PREFIX+"/rooms", r.auth.Authorize(r.handleGetRooms))

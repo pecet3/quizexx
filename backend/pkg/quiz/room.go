@@ -54,6 +54,7 @@ func (r *Room) Run(m *Manager) {
 				client.receive <- msg
 			}
 		case client := <-r.join:
+			logger.Debug("client joined")
 			r.clients[client] = client.name
 			if len(r.clients) == 0 {
 				logger.Debug("zero")
@@ -70,7 +71,6 @@ func (r *Room) Run(m *Manager) {
 					return
 				}
 			}
-
 			err := r.sendSettings()
 			if err != nil {
 				log.Println("run err send settings")

@@ -44,7 +44,6 @@ func (c *Client) addPointsAndToggleIsAnswered(action RoundAction, r *Room) {
 
 func (c *Client) read() {
 	defer func() {
-		c.conn.Close()
 	}()
 
 	if err := c.conn.SetReadDeadline(time.Now().Add(pongWait)); err != nil {
@@ -100,11 +99,20 @@ func (c *Client) write() {
 
 	for {
 		select {
-		case msg := <-c.receive:
+		case msg, ok := <-c.receive:
+			if !ok {
+				if err := c.conn.WriteMessage(websocket.CloseMessage, nil); err != nil {
+					log.Println("connection closed: ", err)
+				}
+				return
 
+			}
 			err := c.conn.WriteMessage(websocket.TextMessage, msg)
-
-			if err != nil {
+			if err == websocket.ErrCloseSent {
+				log.Println(err)
+				continue
+			}
+			if websocket.IsUnexpectedCloseError(err, websocket.CloseGoingAway, websocket.CloseAbnormalClosure) {
 				return
 			}
 
