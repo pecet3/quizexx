@@ -44,6 +44,7 @@ func (c *Client) addPointsAndToggleIsAnswered(action RoundAction, r *Room) {
 
 func (c *Client) read() {
 	defer func() {
+		c.conn.Close()
 	}()
 
 	if err := c.conn.SetReadDeadline(time.Now().Add(pongWait)); err != nil {

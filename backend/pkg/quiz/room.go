@@ -3,7 +3,6 @@ package quiz
 import (
 	"encoding/json"
 	"fmt"
-	"log"
 	"strconv"
 	"strings"
 	"time"
@@ -73,7 +72,7 @@ func (r *Room) Run(m *Manager) {
 			}
 			err := r.sendSettings()
 			if err != nil {
-				log.Println("run err send settings")
+				logger.Info("run err send settings")
 				return
 			}
 			if r.game.IsGame {
@@ -94,7 +93,7 @@ func (r *Room) Run(m *Manager) {
 			delete(r.clients, client)
 			r.sendServerMessage(client.name + " is leaving the room")
 			if len(r.clients) == 0 {
-				log.Println("closing the room: ", r.Name)
+				logger.Info("closing the room: ", r.Name)
 				m.removeRoom(r.Name)
 				return
 			}
@@ -111,17 +110,17 @@ func (r *Room) Run(m *Manager) {
 			if ok := r.CheckIfEveryoneIsReady(); ok {
 				err := r.sendServerMessage("⏳Creating a Game🎲 <br> Please be patient... ")
 				if err != nil {
-					log.Println("send server msg err: ", err)
+					logger.Info("send server msg err: ", err)
 					return
 				}
 				err = r.sendSettings()
 				if err != nil {
-					log.Println("send settings err: ", err)
+					logger.Info("send settings err: ", err)
 					return
 				}
 				r.game, err = r.CreateGame()
 				if err != nil {
-					log.Println("create game err: ", err)
+					logger.Info("create game err: ", err)
 					return
 				}
 				r.game.State = r.game.NewGameState(r.game.Content)
@@ -131,12 +130,12 @@ func (r *Room) Run(m *Manager) {
 
 		case action := <-r.receiveAnswer:
 			if !r.game.IsGame {
-				log.Println("is game: false, ", r.game.IsGame)
+				logger.Info("is game: false, ", r.game.IsGame)
 				return
 			}
 			var actionParsed *RoundAction
 			if err := json.Unmarshal(action, &actionParsed); err != nil {
-				log.Println("Error marshaling game state:", err)
+				logger.Info("Error marshaling game state:", err)
 				return
 			}
 
@@ -169,20 +168,20 @@ func (r *Room) Run(m *Manager) {
 			if isEndGame {
 				err := r.game.sendGameState()
 				if err != nil {
-					log.Println("finish game err send game", err)
+					logger.Info("finish game err send game", err)
 					continue
 				}
 
 				err = r.sendServerMessage("The correct answer was: " + strOkAnswr)
 				if err != nil {
-					log.Println("finish game err", err)
+					logger.Info("finish game err", err)
 					continue
 				}
 				time.Sleep(1800 * time.Millisecond)
 				_ = r.sendServerMessage("It's finish the game")
 
 				for client := range r.clients {
-					log.Println("deleting client ", client.name)
+					logger.Info("deleting client ", client.name)
 					close(client.receive)
 					// client.conn.Close()
 				}
@@ -191,13 +190,13 @@ func (r *Room) Run(m *Manager) {
 			}
 
 			if isNextRound {
-				log.Println("It was round: ", r.game.State.Round)
+				logger.Info("It was round: ", r.game.State.Round)
 
 				r.game.State.Round++
 
 				var err error
 				winnersStr := strings.Join(r.game.State.RoundWinners, ", ")
-				log.Println("Round winners: ", len(r.game.State.RoundWinners))
+				logger.Info("Round winners: ", len(r.game.State.RoundWinners))
 				if len(r.game.State.RoundWinners) == 0 {
 					err = r.sendServerMessage("No one wins this round")
 				}
