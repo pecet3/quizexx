@@ -15,7 +15,7 @@ type Room struct {
 	Name string
 	UUID string
 
-	clients map[*Client]string
+	clients map[*Client]bool
 	join    chan *Client
 	ready   chan *Client
 	leave   chan *Client
@@ -39,22 +39,23 @@ func (r *Room) CheckIfEveryoneIsReady() bool {
 
 func (r *Room) Run(m *Manager) {
 	logger.Info(fmt.Sprintf(`Created a room: %s. creator: %d`, r.UUID, r.creatorID))
-	ticker := time.NewTicker(time.Second * 60)
+	ticker := time.NewTicker(time.Second * 20)
 	for {
 		select {
-		case t := <-ticker.C:
-			if t.Before(time.Now()) || len(r.clients) <= 0 {
-				logger.Info(fmt.Sprintf(`No one is ine the room: %s. Closing...`, r.UUID))
+		case <-ticker.C:
+			if len(r.clients) <= 0 {
+				logger.Info(fmt.Sprintf(`No one is ine the room: %d. Closing...`, len(r.clients)))
 				defer m.removeRoom(r.Name)
 				return
 			}
+			r.sendServerMessage("test")
 		case msg := <-r.forward:
 			for client := range r.clients {
 				client.receive <- msg
 			}
 		case client := <-r.join:
 			logger.Debug("client joined")
-			r.clients[client] = client.name
+			r.clients[client] = true
 			if len(r.clients) == 0 {
 				logger.Debug("zero")
 				r.createdAt = time.Now().Add(time.Hour * 2)
@@ -97,6 +98,7 @@ func (r *Room) Run(m *Manager) {
 				m.removeRoom(r.Name)
 				return
 			}
+			logger.Debug(r.clients)
 
 		case client := <-r.ready:
 			if r.game.IsGame && client.isSpectator {

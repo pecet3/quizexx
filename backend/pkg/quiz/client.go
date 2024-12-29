@@ -2,15 +2,15 @@ package quiz
 
 import (
 	"encoding/json"
-	"log"
 	"time"
 
 	"github.com/gorilla/websocket"
 	"github.com/pecet3/quizex/data/entities"
+	"github.com/pecet3/quizex/pkg/logger"
 )
 
 var (
-	pongWait     = 60 * time.Second
+	pongWait     = 10 * time.Second
 	pingInterval = (pongWait * 9) / 10
 )
 
@@ -48,7 +48,7 @@ func (c *Client) read() {
 	}()
 
 	if err := c.conn.SetReadDeadline(time.Now().Add(pongWait)); err != nil {
-		log.Println(err)
+		logger.Error(err)
 		return
 	}
 
@@ -60,18 +60,16 @@ func (c *Client) read() {
 		_, reqBytes, err := c.conn.ReadMessage()
 		if err != nil {
 			if websocket.IsUnexpectedCloseError(err, websocket.CloseGoingAway, websocket.CloseAbnormalClosure) {
-				log.Println("ws err or user was too long inactive:", err)
-				c.room.leave <- c
+				logger.Error("ws err or user was too long inactive:", err)
 				return
 			}
-			log.Println("leave:", err)
-			c.room.leave <- c
+			logger.Error("leave:", err)
 			return
 		}
 
 		var request Event
 		if err := json.Unmarshal(reqBytes, &request); err != nil {
-			log.Println("error marshaling json", err)
+			logger.Error("error marshaling json", err)
 			break
 		}
 		if request.Type == "ready_player" {
@@ -81,7 +79,7 @@ func (c *Client) read() {
 			var actionPlayer *RoundAction
 			err := json.Unmarshal(request.Payload, &actionPlayer)
 			if err != nil {
-				log.Println("Error marshaling game state:", err)
+				logger.Error("Error marshaling game state:", err)
 				return
 			}
 			c.room.receiveAnswer <- request.Payload
@@ -103,14 +101,13 @@ func (c *Client) write() {
 		case msg, ok := <-c.receive:
 			if !ok {
 				if err := c.conn.WriteMessage(websocket.CloseMessage, nil); err != nil {
-					log.Println("connection closed: ", err)
+					logger.Error("connection closed: ", err)
 				}
 				return
-
 			}
 			err := c.conn.WriteMessage(websocket.TextMessage, msg)
 			if err == websocket.ErrCloseSent {
-				log.Println(err)
+				logger.Error(err)
 				continue
 			}
 			if websocket.IsUnexpectedCloseError(err, websocket.CloseGoingAway, websocket.CloseAbnormalClosure) {
@@ -119,7 +116,7 @@ func (c *Client) write() {
 
 		case <-ticker.C:
 			if err := c.conn.WriteMessage(websocket.PingMessage, []byte(``)); err != nil {
-				log.Println("write message error: ", err)
+				logger.Error("write message error: ", err)
 				return
 			}
 		}

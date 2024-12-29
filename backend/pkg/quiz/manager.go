@@ -33,7 +33,7 @@ func NewManager(d *data.Data) *Manager {
 func (m *Manager) newRoom(settings dtos.Settings, creatorID int) *Room {
 	r := &Room{
 		Name:          settings.Name,
-		clients:       make(map[*Client]string),
+		clients:       make(map[*Client]bool),
 		join:          make(chan *Client),
 		leave:         make(chan *Client),
 		ready:         make(chan *Client),
@@ -167,7 +167,10 @@ func (m *Manager) ServeQuiz(w http.ResponseWriter, req *http.Request, u *entitie
 	}
 
 	currentRoom.join <- client
-	defer func() { currentRoom.leave <- client }()
+	defer func() {
+		currentRoom.leave <- client
+		logger.Debug()
+	}()
 	client.write()
 	go client.read()
 

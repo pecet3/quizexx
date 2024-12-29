@@ -15,7 +15,7 @@ type Game struct {
 	Room       *Room
 	State      *GameState
 	IsGame     bool
-	Players    map[*Client]string
+	Players    map[*Client]bool
 	Category   string
 	Difficulty string
 	MaxRounds  int
