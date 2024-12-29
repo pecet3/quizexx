@@ -50,40 +50,6 @@ const Chat: React.FC = () => {
   );
 };
 
-// Entry Dashboard Component
-const EntryDashboard: React.FC<{ onJoin: (name: string) => void }> = ({
-  onJoin,
-}) => {
-  const [userName, setUserName] = useState("");
-
-  const handleSubmit = () => {
-    if (userName.trim()) {
-      onJoin(userName);
-    }
-  };
-
-  return (
-    <div className="flex flex-col justify-between h-full">
-      <div className="paper paper-yellow my-6 p-4 pt-8 shadow-md flex flex-col gap-2 items-center">
-        <div className="top-tape"></div>
-        <input
-          value={userName}
-          onChange={(e) => setUserName(e.target.value)}
-          type="text"
-          className="my-4 p-0.5 text-2xl rounded-sm font m-auto border border-black bg-white placeholder:text-gray-400 placeholder:text-center text-black text-center"
-          placeholder="your name"
-        />
-        <button
-          onClick={handleSubmit}
-          className="bg-purple-300 hover:shadow-none hover:rounded-xl border border-black hover:scale-[0.995] font-mono px-4 text-2xl duration-300 text-black rounded-lg m-auto py-1.5"
-        >
-          Join
-        </button>
-      </div>
-    </div>
-  );
-};
-
 // Waiting Room Component
 const WaitingRoom: React.FC<{ readyUsers: User[]; onReady: () => void }> = ({
   readyUsers,
@@ -208,12 +174,14 @@ const GameDashboard: React.FC<{
           </div>
         </div>
       </form>
-      <Chat />
     </div>
   );
 };
 
-// Main App Component
+type Event = {
+  type: string;
+  payload: any;
+};
 export const Dashboard: React.FC = () => {
   const { roomName } = useParams<{ roomName: string }>();
   const [isWaiting, setIsWaiting] = useState(true);
@@ -232,34 +200,59 @@ export const Dashboard: React.FC = () => {
   const handleAnswer = (answer: number) => {
     console.log("Selected answer:", answer);
   };
-  const [socket, setSocket] = useState<WebSocket | null>(null);
+  function routeEvent(event: Event) {
+    if (event.type === undefined) {
+      alert("no type field in the event");
+    }
+    switch (event.type) {
+      case "update_gamestate":
+        break;
+      case "update_players":
+        break;
+      case "server_message":
+        break;
+      case "waiting_state":
+        break;
+      case "finish_game":
+        break;
+      case "room_settings":
+        break;
+      case "players_answered":
+        break;
+      case "chat_message":
+        break;
+      default:
+        console.log(event.type);
+
+        break;
+    }
+  }
 
   useEffect(() => {
     // Tworzenie połączenia WebSocket
     const ws = new WebSocket(`ws://localhost:9090/api/quiz/${roomName}`);
-    setSocket(ws);
 
-    // Obsługa otwarcia połączenia
     ws.onopen = () => {
       console.log("Połączenie WebSocket zostało nawiązane.");
     };
 
-    // Obsługa wiadomości przychodzących
     ws.onmessage = (event) => {
-      console.log("Otrzymano wiadomość:", event.data);
+      try {
+        const eventJSON = JSON.parse(event.data);
+        routeEvent(eventJSON);
+      } catch (error) {
+        console.error("Nie udało się sparsować wiadomości jako JSON:", error);
+      }
     };
 
-    // Obsługa błędów
     ws.onerror = (error) => {
       console.error("Błąd WebSocket:", error);
     };
 
-    // Obsługa zamknięcia połączenia
     ws.onclose = () => {
       console.log("Połączenie WebSocket zostało zamknięte.");
     };
 
-    // Czyszczenie po zamknięciu komponentu
     return () => {
       ws.close();
     };
@@ -270,14 +263,17 @@ export const Dashboard: React.FC = () => {
       {isWaiting ? (
         <WaitingRoom readyUsers={users} onReady={handleReady} />
       ) : (
-        <GameDashboard
-          category={category}
-          round={round}
-          question={question}
-          answers={answers}
-          users={users}
-          onAnswer={handleAnswer}
-        />
+        <>
+          <GameDashboard
+            category={category}
+            round={round}
+            question={question}
+            answers={answers}
+            users={users}
+            onAnswer={handleAnswer}
+          />
+          <Chat />
+        </>
       )}
     </div>
   );

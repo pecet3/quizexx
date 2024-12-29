@@ -11,17 +11,17 @@ type Event struct {
 }
 
 type SendMessageEvent struct {
-	UserName string `json:"userName"`
+	UserName string `json:"user_name"`
 	Message  string `json:"message"`
 }
 
-type ReadyClient struct {
+type WaitingPlayer struct {
 	Name    string `json:"name"`
-	IsReady bool   `json:"isReady"`
+	IsReady bool   `json:"is_ready"`
 }
 
-type ReadyStatus struct {
-	Clients []ReadyClient `json:"clients"`
+type WaitingState struct {
+	Players []WaitingPlayer `json:"players"`
 }
 
 type ServerMessage struct {
@@ -94,21 +94,21 @@ func (r *Room) sendSettings() error {
 }
 
 func (r *Room) sendReadyStatus() error {
-	var readyClients []ReadyClient
+	var readyClients []WaitingPlayer
 
 	for c := range r.clients {
-		RoomClient := ReadyClient{
+		RoomClient := WaitingPlayer{
 			Name:    c.name,
 			IsReady: c.isReady,
 		}
 		readyClients = append(readyClients, RoomClient)
 	}
 
-	RoomMsg := ReadyStatus{
-		Clients: readyClients,
+	RoomMsg := WaitingState{
+		Players: readyClients,
 	}
 
-	eventBytes, err := marshalEventToBytes(RoomMsg, "ready_status")
+	eventBytes, err := marshalEventToBytes(RoomMsg, "waiting_state")
 	if err != nil {
 		return err
 	}
