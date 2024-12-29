@@ -1,12 +1,8 @@
 import React, { useState, FormEvent, useEffect } from "react";
 import { useParams } from "react-router-dom";
+import { User } from "../pages/Quiz";
 
-type User = {
-  name: string;
-  points: number;
-};
-
-const Chat: React.FC = () => {
+export const Chat: React.FC = () => {
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState<string[]>([]);
 
@@ -51,10 +47,10 @@ const Chat: React.FC = () => {
 };
 
 // Waiting Room Component
-const WaitingRoom: React.FC<{ readyUsers: User[]; onReady: () => void }> = ({
-  readyUsers,
-  onReady,
-}) => {
+export const WaitingRoom: React.FC<{
+  readyUsers: User[];
+  onReady: () => void;
+}> = ({ readyUsers, onReady }) => {
   return (
     <div className="flex flex-col justify-center items-center my-6">
       <div className="paper paper-yellow max-w-md text-lg m-auto p-4 pt-8 shadow-md flex flex-col items-center">
@@ -81,7 +77,7 @@ const WaitingRoom: React.FC<{ readyUsers: User[]; onReady: () => void }> = ({
 };
 
 // Game Dashboard Component
-const GameDashboard: React.FC<{
+export const GameDashboard: React.FC<{
   category: string;
   round: number;
   question: string;
@@ -174,107 +170,6 @@ const GameDashboard: React.FC<{
           </div>
         </div>
       </form>
-    </div>
-  );
-};
-
-type Event = {
-  type: string;
-  payload: any;
-};
-export const Dashboard: React.FC = () => {
-  const { roomName } = useParams<{ roomName: string }>();
-  const [isWaiting, setIsWaiting] = useState(true);
-  const [users, setUsers] = useState<User[]>([]);
-  const [currentUser, setCurrentUser] = useState<User | null>(null);
-
-  const [category] = useState("Sample Category");
-  const [round] = useState(1);
-  const [question] = useState("Sample Question?");
-  const [answers] = useState(["Answer A", "Answer B", "Answer C", "Answer D"]);
-
-  const handleReady = () => {
-    setIsWaiting(false);
-  };
-
-  const handleAnswer = (answer: number) => {
-    console.log("Selected answer:", answer);
-  };
-  function routeEvent(event: Event) {
-    if (event.type === undefined) {
-      alert("no type field in the event");
-    }
-    switch (event.type) {
-      case "update_gamestate":
-        break;
-      case "update_players":
-        break;
-      case "server_message":
-        break;
-      case "waiting_state":
-        break;
-      case "finish_game":
-        break;
-      case "room_settings":
-        break;
-      case "players_answered":
-        break;
-      case "chat_message":
-        break;
-      default:
-        console.log(event.type);
-
-        break;
-    }
-  }
-
-  useEffect(() => {
-    // Tworzenie połączenia WebSocket
-    const ws = new WebSocket(`ws://localhost:9090/api/quiz/${roomName}`);
-
-    ws.onopen = () => {
-      console.log("Połączenie WebSocket zostało nawiązane.");
-    };
-
-    ws.onmessage = (event) => {
-      try {
-        const eventJSON = JSON.parse(event.data);
-        routeEvent(eventJSON);
-      } catch (error) {
-        console.error("Nie udało się sparsować wiadomości jako JSON:", error);
-      }
-    };
-
-    ws.onerror = (error) => {
-      console.error("Błąd WebSocket:", error);
-    };
-
-    ws.onclose = () => {
-      console.log("Połączenie WebSocket zostało zamknięte.");
-    };
-
-    return () => {
-      ws.close();
-    };
-  }, []);
-
-  return (
-    <div className="p-2 bg-opacity-70 text-center m-auto">
-      {isWaiting ? (
-        <WaitingRoom readyUsers={users} onReady={handleReady} />
-      ) : (
-        <>
-          <GameDashboard
-            category={category}
-            round={round}
-            question={question}
-            answers={answers}
-            users={users}
-            onAnswer={handleAnswer}
-          />
-          <Chat />
-        </>
-      )}
     </div>
   );
 };

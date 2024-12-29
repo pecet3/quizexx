@@ -1,9 +1,6 @@
-import { useEffect } from "react";
 import { MainWrapper } from "../components/MainWrapper";
-import { Link } from "react-router-dom";
 import { RoomsList } from "../components/RoomsList";
 import { PaperWrapper } from "../components/PaperWrapper";
-import { useAuthContext } from "../context/authContext";
 
 export const Home = () => {
   return (

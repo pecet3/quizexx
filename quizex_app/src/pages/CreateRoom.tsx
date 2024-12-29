@@ -66,30 +66,24 @@ export const CreateRoom = () => {
               placeholder="Room Name"
               required
             />
-            <div className="italic p-2 w-80 flex flex-col items-center">
-              <input
-                type="text"
-                id="categoryInput"
-                name="category"
-                className="p-0.5 text-2xl rounded-sm font m-auto border border-black bg-white placeholder:text-gray-400 placeholder:text-center text-black text-center"
-                placeholder="Category of Questions"
-                required
-              />
-              <button
-                id="randomCategory"
-                className="text-sm py-2"
-                type="button"
-              >
-                [Get random category]
-              </button>
-              <p className="font-mono text-lg">
-                Category can be anything,{" "}
-                <b className="font-bold underline">
-                  Quizex is connected with Chat-GPT-3.5
-                </b>
-                . Based on the provided category, questions are prepared.
-              </p>
-            </div>
+            <input
+              type="text"
+              id="categoryInput"
+              name="category"
+              className="p-0.5 text-2xl rounded-sm font m-auto border border-black bg-white placeholder:text-gray-400 placeholder:text-center text-black text-center"
+              placeholder="Category of Questions"
+              required
+            />
+            <button id="randomCategory" className="text-sm py-2" type="button">
+              [Get random category]
+            </button>
+            <p className="font-mono text-lg max-w-sm">
+              Category can be anything,{" "}
+              <b className="font-bold underline">
+                Quizex is connected with Chat-GPT-3.5
+              </b>
+              . Based on the provided category, questions are prepared.
+            </p>
             <label className="rounded-lg font-mono text-xl font-bold underline">
               Difficulty Level:
             </label>{" "}
