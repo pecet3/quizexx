@@ -33,7 +33,7 @@ func NewManager(d *data.Data) *Manager {
 func (m *Manager) newRoom(settings dtos.Settings, creatorID int) *Room {
 	r := &Room{
 		Name:          settings.Name,
-		clients:       make(map[*Client]bool),
+		clients:       make(map[UUID]*Client),
 		join:          make(chan *Client),
 		leave:         make(chan *Client),
 		ready:         make(chan *Client),
@@ -87,8 +87,8 @@ func (m *Manager) removeRoom(uuid string) {
 	defer m.mu.Unlock()
 
 	if room, ok := m.rooms[uuid]; ok {
-		for Client := range room.clients {
-			room.leave <- Client
+		for _, c := range room.clients {
+			room.leave <- c
 		}
 		close(room.join)
 		close(room.forward)

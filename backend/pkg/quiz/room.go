@@ -5,17 +5,20 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/pecet3/quizex/data/dtos"
 	"github.com/pecet3/quizex/pkg/logger"
 )
 
+type UUID = string
 type Room struct {
 	Name string
 	UUID string
 
-	clients map[*Client]bool
+	clients map[UUID]*Client
+	cMu     sync.RWMutex
 	join    chan *Client
 	ready   chan *Client
 	leave   chan *Client
@@ -29,12 +32,18 @@ type Room struct {
 }
 
 func (r *Room) CheckIfEveryoneIsReady() bool {
-	for c := range r.clients {
+	for _, c := range r.clients {
 		if !c.isReady {
 			return false
 		}
 	}
 	return true
+}
+
+func (r *Room) AddClient(c *Client) {
+	r.cMu.Lock()
+	defer r.cMu.Unlock()
+	r.clients[c.user.UUID] = c
 }
 
 func (r *Room) Run(m *Manager) {
@@ -50,12 +59,12 @@ func (r *Room) Run(m *Manager) {
 			}
 			r.sendServerMessage("test")
 		case msg := <-r.forward:
-			for client := range r.clients {
+			for _, client := range r.clients {
 				client.receive <- msg
 			}
 		case client := <-r.join:
 			logger.Debug("client joined")
-			r.clients[client] = true
+			r.AddClient(client)
 			if len(r.clients) == 0 {
 				logger.Debug("zero")
 				r.createdAt = time.Now().Add(time.Hour * 2)
@@ -90,8 +99,8 @@ func (r *Room) Run(m *Manager) {
 
 		case client := <-r.leave:
 			close(client.receive)
-			delete(r.game.Players, client)
-			delete(r.clients, client)
+			delete(r.game.Players, client.user.UUID)
+			delete(r.clients, client.user.UUID)
 			r.sendServerMessage(client.name + " is leaving the room")
 			if len(r.clients) == 0 {
 				logger.Info("closing the room: ", r.Name)
@@ -141,7 +150,7 @@ func (r *Room) Run(m *Manager) {
 				return
 			}
 
-			for client := range r.game.Players {
+			for _, client := range r.game.Players {
 				if client.name == actionParsed.Name {
 					if client.isSpectator {
 						return
@@ -182,7 +191,7 @@ func (r *Room) Run(m *Manager) {
 				time.Sleep(1800 * time.Millisecond)
 				_ = r.sendServerMessage("It's finish the game")
 
-				for client := range r.clients {
+				for _, client := range r.clients {
 					logger.Info("deleting client ", client.name)
 					close(client.receive)
 					// client.conn.Close()
@@ -229,7 +238,7 @@ func (r *Room) Run(m *Manager) {
 				if err != nil {
 					continue
 				}
-				for client := range r.game.Players {
+				for _, client := range r.game.Players {
 					if client.isAnswered {
 						client.isAnswered = false
 					}

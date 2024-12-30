@@ -22,7 +22,7 @@ func (*MagicLink) SendEmailLogin(to, code, userName string) error {
 	return nil
 }
 func (*MagicLink) SendEmailRegister(to, code, userName string) error {
-	subject := "🎲 Quizex 🎲  Welcome the first time! (noreply)"
+	subject := "🎲 Quizex 🎲 Welcome! (noreply)"
 	body := `
     <html>
     	<body>

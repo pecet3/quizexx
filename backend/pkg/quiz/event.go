@@ -43,7 +43,7 @@ func (g *Game) SendPlayersAnswered() error {
 	if err != nil {
 		return err
 	}
-	for client := range g.Room.clients {
+	for _, client := range g.Room.clients {
 		if client == nil {
 			return err
 		}
@@ -57,7 +57,7 @@ func (r *Room) SendIsSpectator() error {
 	if err != nil {
 		return err
 	}
-	for client := range r.clients {
+	for _, client := range r.clients {
 		if client == nil {
 			return err
 		}
@@ -70,7 +70,7 @@ func (r *Room) SendIsFinish() error {
 	if err != nil {
 		return err
 	}
-	for client := range r.clients {
+	for _, client := range r.clients {
 		if client == nil {
 			return err
 		}
@@ -84,7 +84,7 @@ func (r *Room) sendSettings() error {
 	if err != nil {
 		return err
 	}
-	for client := range r.clients {
+	for _, client := range r.clients {
 		if client == nil {
 			return err
 		}
@@ -96,7 +96,7 @@ func (r *Room) sendSettings() error {
 func (r *Room) sendReadyStatus() error {
 	var readyClients []WaitingPlayer
 
-	for c := range r.clients {
+	for _, c := range r.clients {
 		RoomClient := WaitingPlayer{
 			Name:    c.name,
 			IsReady: c.isReady,
@@ -112,7 +112,7 @@ func (r *Room) sendReadyStatus() error {
 	if err != nil {
 		return err
 	}
-	for client := range r.clients {
+	for _, client := range r.clients {
 		if client == nil {
 			return err
 		}
@@ -129,7 +129,7 @@ func (r *Room) sendServerMessage(msg string) error {
 	if err != nil {
 		return err
 	}
-	for client := range r.clients {
+	for _, client := range r.clients {
 		if client == nil {
 			return err
 		}
@@ -143,7 +143,7 @@ func (g *Game) sendGameState() error {
 	if err != nil {
 		return err
 	}
-	for client := range g.Room.clients {
+	for _, client := range g.Room.clients {
 		if client == nil {
 			return err
 		}

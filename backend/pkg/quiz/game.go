@@ -15,7 +15,7 @@ type Game struct {
 	Room       *Room
 	State      *GameState
 	IsGame     bool
-	Players    map[*Client]bool
+	Players    map[UUID]*Client
 	Category   string
 	Difficulty string
 	MaxRounds  int
@@ -102,7 +102,7 @@ func (g *Game) NewGameState(content []RoundQuestion) *GameState {
 func (g *Game) NewScore() []PlayerScore {
 	var score []PlayerScore
 
-	for p := range g.Players {
+	for _, p := range g.Players {
 		playerScore := PlayerScore{
 			User:      p.user,
 			Points:    p.points,
