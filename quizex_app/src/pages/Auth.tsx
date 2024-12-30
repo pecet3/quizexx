@@ -106,13 +106,13 @@ export const Auth: React.FC = () => {
         onChange={(e) => setFormData({ ...formData, email: e.target.value })}
       />
       <button
-        className={`w-full bg-blue-600 text-white p-3 rounded-md mb-4 ${
+        className={`w-full bg-teal-600 text-white p-3 rounded-md mb-4 ${
           loading ? "opacity-50" : ""
         }`}
         onClick={handleRegister}
         disabled={loading}
       >
-        Submit
+        {loading ? "Loading..." : "Submit"}
       </button>
       <p
         className="text-center text-blue-600 cursor-pointer"
@@ -133,13 +133,13 @@ export const Auth: React.FC = () => {
         onChange={(e) => setFormData({ ...formData, email: e.target.value })}
       />
       <button
-        className={`w-full bg-blue-600 text-white p-3 rounded-md mb-4 ${
+        className={`w-full bg-teal-600 text-white p-3 rounded-md mb-4 ${
           loading ? "opacity-50" : ""
         }`}
         onClick={handleLogin}
         disabled={loading}
       >
-        Submit
+        {loading ? "Loading..." : "Submit"}
       </button>
       <p
         className="text-center text-blue-600 cursor-pointer"
@@ -161,19 +161,26 @@ export const Auth: React.FC = () => {
         maxLength={6}
       />
       <button
-        className={`w-full bg-blue-600 text-white p-3 rounded-md ${
+        className={`w-full bg-teal-600 text-white p-3 rounded-md ${
           loading ? "opacity-50" : ""
         }`}
         onClick={handleExchange}
         disabled={loading}
       >
-        Submit
+        {loading ? "Loading..." : "Submit"}
       </button>
     </>
   );
 
   return (
     <div className="flex flex-col items-center gap-4 justify-center h-screen pb-64">
+      <h1 className="text-2xl font-bold ">
+        {currentStep === "register"
+          ? "Sign Up"
+          : currentStep === "login"
+          ? "Sign In"
+          : "Verify Code"}
+      </h1>
       <p> {message}</p>
       <div className="w-full max-w-md bg-white p-6 rounded-md shadow-md">
         {currentStep === "register" && renderRegisterForm()}
