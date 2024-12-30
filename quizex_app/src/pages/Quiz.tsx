@@ -11,6 +11,34 @@ export type Event = {
   payload: any;
 };
 
+export type SendMessageEvent = {
+  userName: string;
+  message: string;
+};
+
+export type WaitingPlayer = {
+  name: string;
+  isReady: boolean;
+};
+
+export type WaitingState = {
+  players: WaitingPlayer[];
+};
+
+export type ServerMessage = {
+  message: string;
+};
+
+export type PlayersAnswered = {
+  players: string[];
+};
+
+export type ChatMessage = {
+  name: string;
+  message: string;
+  date: string;
+};
+
 export const Quiz = () => {
   const { roomName } = useParams<{ roomName: string }>();
   const [isWaiting, setIsWaiting] = useState(true);
