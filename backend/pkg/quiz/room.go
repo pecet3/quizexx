@@ -40,10 +40,18 @@ func (r *Room) CheckIfEveryoneIsReady() bool {
 	return true
 }
 
-func (r *Room) AddClient(c *Client) {
+func (r *Room) addClient(c *Client) {
 	r.cMu.Lock()
 	defer r.cMu.Unlock()
 	r.clients[c.user.UUID] = c
+}
+func (r *Room) removeClient(c *Client) {
+	r.cMu.Lock()
+	defer r.cMu.Unlock()
+	delete(r.clients, c.user.UUID)
+	delete(r.game.Players, c.user.UUID)
+	close(c.receive)
+	// close receive chan?
 }
 
 func (r *Room) Run(m *Manager) {
@@ -64,7 +72,7 @@ func (r *Room) Run(m *Manager) {
 			}
 		case client := <-r.join:
 			logger.Debug("client joined")
-			r.AddClient(client)
+			r.addClient(client)
 			if len(r.clients) == 0 {
 				logger.Debug("zero")
 				r.createdAt = time.Now().Add(time.Hour * 2)
@@ -98,9 +106,7 @@ func (r *Room) Run(m *Manager) {
 			}
 
 		case client := <-r.leave:
-			close(client.receive)
-			delete(r.game.Players, client.user.UUID)
-			delete(r.clients, client.user.UUID)
+			r.removeClient(client)
 			r.sendServerMessage(client.name + " is leaving the room")
 			if len(r.clients) == 0 {
 				logger.Info("closing the room: ", r.Name)
