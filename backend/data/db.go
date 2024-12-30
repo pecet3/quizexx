@@ -10,7 +10,7 @@ import (
 )
 
 func newDb() *sql.DB {
-	db, err := sql.Open("sqlite3", "../database.db")
+	db, err := sql.Open("sqlite3", "./store.db")
 	if err != nil {
 		log.Fatalf("Failed to connect database: %v", err)
 	}
