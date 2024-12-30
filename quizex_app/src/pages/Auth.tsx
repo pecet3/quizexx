@@ -108,13 +108,13 @@ export const Auth: React.FC = () => {
         onClick={handleRegister}
         disabled={loading}
       >
-        {loading ? "Registering..." : "Register"}
+        Submit
       </button>
       <p
         className="text-center text-blue-600 cursor-pointer"
         onClick={() => setCurrentStep("login")}
       >
-        Already have an account? Login
+        Already have an account? Sign in
       </p>
     </>
   );
@@ -135,13 +135,13 @@ export const Auth: React.FC = () => {
         onClick={handleLogin}
         disabled={loading}
       >
-        {loading ? "Logging in..." : "Login"}
+        Submit
       </button>
       <p
         className="text-center text-blue-600 cursor-pointer"
         onClick={() => setCurrentStep("register")}
       >
-        Don't have an account? Register
+        Don't have an account? Sign up
       </p>
     </>
   );
@@ -172,9 +172,9 @@ export const Auth: React.FC = () => {
     <div className="flex flex-col items-center justify-center h-screen pb-64">
       <h1 className="text-2xl font-bold mb-6">
         {currentStep === "register"
-          ? "Register"
+          ? "Sign Up"
           : currentStep === "login"
-          ? "Login"
+          ? "Sign In"
           : "Verify Code"}
       </h1>
       <div className="w-full max-w-md bg-white p-6 rounded-md shadow-md">
