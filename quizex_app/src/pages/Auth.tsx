@@ -23,9 +23,15 @@ export const Auth: React.FC = () => {
     code: "",
   });
   const [loading, setLoading] = useState<boolean>(false);
+  const [message, setMessage] = useState("");
   useEffect(() => {
-    console.log(currentStep);
-  }, [currentStep]);
+    document.body.style.overflow = "hidden";
+
+    return () => {
+      document.body.style.overflow = "auto";
+    };
+  }, []);
+
   const handleRegister = async () => {
     try {
       setLoading(true);
@@ -35,9 +41,7 @@ export const Auth: React.FC = () => {
       });
 
       if (response.status === 200) {
-        alert(
-          "Registration successful! Please check your email for verification code."
-        );
+        setMessage("Please check your email for verification code.");
         setCurrentStep("exchange");
       }
     } catch (error: any) {
@@ -55,7 +59,7 @@ export const Auth: React.FC = () => {
       });
 
       if (response.status === 200) {
-        alert("Please check your email for verification code.");
+        setMessage("Please check your email for verification code.");
         setCurrentStep("exchange");
       }
     } catch (error: any) {
@@ -163,20 +167,14 @@ export const Auth: React.FC = () => {
         onClick={handleExchange}
         disabled={loading}
       >
-        {loading ? "Verifying..." : "Verify Code"}
+        Submit
       </button>
     </>
   );
 
   return (
-    <div className="flex flex-col items-center justify-center h-screen pb-64">
-      <h1 className="text-2xl font-bold mb-6">
-        {currentStep === "register"
-          ? "Sign Up"
-          : currentStep === "login"
-          ? "Sign In"
-          : "Verify Code"}
-      </h1>
+    <div className="flex flex-col items-center gap-4 justify-center h-screen pb-64">
+      <p> {message}</p>
       <div className="w-full max-w-md bg-white p-6 rounded-md shadow-md">
         {currentStep === "register" && renderRegisterForm()}
         {currentStep === "login" && renderLoginForm()}

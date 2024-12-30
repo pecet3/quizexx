@@ -7,14 +7,6 @@ import { useNavigate } from "react-router-dom";
 export const CreateRoom = () => {
   const nav = useNavigate();
 
-  useEffect(() => {
-    document.body.style.overflow = "hidden";
-
-    return () => {
-      document.body.style.overflow = "auto";
-    };
-  }, []);
-
   const handleSubmit = async (event: any) => {
     event.preventDefault();
 
