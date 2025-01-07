@@ -42,9 +42,9 @@ func (c *Client) addPointsAndToggleIsAnswered(action RoundAction, r *Room) {
 	}
 }
 
-func (c *Client) read() {
+func (c *Client) read(r *Room) {
 	defer func() {
-		c.conn.Close()
+		r.leave <- c
 	}()
 
 	if err := c.conn.SetReadDeadline(time.Now().Add(pongWait)); err != nil {
@@ -90,9 +90,9 @@ func (c *Client) read() {
 	}
 }
 
-func (c *Client) write() {
+func (c *Client) write(r *Room) {
 	defer func() {
-		c.conn.Close()
+		r.leave <- c
 	}()
 	ticker := time.NewTicker(pingInterval)
 

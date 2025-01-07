@@ -171,7 +171,7 @@ func (m *Manager) ServeQuiz(w http.ResponseWriter, req *http.Request, u *entitie
 		currentRoom.leave <- client
 		logger.Debug()
 	}()
-	client.write()
-	go client.read()
+	client.write(currentRoom)
+	go client.read(currentRoom)
 
 }

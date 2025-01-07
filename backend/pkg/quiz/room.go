@@ -48,10 +48,13 @@ func (r *Room) addClient(c *Client) {
 func (r *Room) removeClient(c *Client) {
 	r.cMu.Lock()
 	defer r.cMu.Unlock()
-	delete(r.clients, c.user.UUID)
-	delete(r.game.Players, c.user.UUID)
-	close(c.receive)
-	// close receive chan?
+	if _, ok := r.clients[c.user.UUID]; ok {
+		// close connection
+		c.conn.Close()
+		delete(r.clients, c.user.UUID)
+		delete(r.game.Players, c.user.UUID)
+	}
+
 }
 
 func (r *Room) Run(m *Manager) {
@@ -72,11 +75,12 @@ func (r *Room) Run(m *Manager) {
 			}
 		case client := <-r.join:
 			logger.Debug("client joined")
-			r.addClient(client)
 			if len(r.clients) == 0 {
 				logger.Debug("zero")
 				r.createdAt = time.Now().Add(time.Hour * 2)
 			}
+			r.addClient(client)
+
 			if r.game.IsGame && client.isSpectator {
 				err := r.sendServerMessage(client.name + " joins as spectator")
 				if err != nil {
@@ -106,7 +110,6 @@ func (r *Room) Run(m *Manager) {
 			}
 
 		case client := <-r.leave:
-			r.removeClient(client)
 			r.sendServerMessage(client.name + " is leaving the room")
 			if len(r.clients) == 0 {
 				logger.Info("closing the room: ", r.Name)
