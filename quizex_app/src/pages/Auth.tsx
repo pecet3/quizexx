@@ -92,7 +92,7 @@ export const Auth: React.FC = () => {
   const renderRegisterForm = () => (
     <>
       <input
-        className="bg-gray-300 w-full border border-gray-300 rounded-md p-3 mb-4"
+        className="bg-gray-300 w-full placeholder:text-center border border-gray-300 rounded-md p-3 mb-4"
         type="text"
         placeholder="Name"
         value={formData.name}
@@ -126,7 +126,7 @@ export const Auth: React.FC = () => {
   const renderLoginForm = () => (
     <>
       <input
-        className="bg-gray-300 w-full border border-gray-300 rounded-md p-3 mb-4"
+        className="bg-gray-300 w-full placeholder:text-center border border-gray-300 rounded-md p-3 mb-4"
         type="email"
         placeholder="Email"
         value={formData.email}
@@ -153,9 +153,9 @@ export const Auth: React.FC = () => {
   const renderExchangeForm = () => (
     <>
       <input
-        className="bg-gray-300 w-full border border-gray-300 rounded-md p-3 mb-4"
+        className="bg-gray-300 w-full border placeholder:text-center  border-gray-300 rounded-md p-3 mb-4"
         type="text"
-        placeholder="Verification Code"
+        placeholder="Code"
         value={formData.code}
         onChange={(e) => setFormData({ ...formData, code: e.target.value })}
         maxLength={6}
@@ -173,13 +173,13 @@ export const Auth: React.FC = () => {
   );
 
   return (
-    <div className="flex flex-col items-center gap-4 justify-center h-screen pb-64">
+    <div className="flex flex-col items-center gap-4 justify-center  h-screen pb-64">
       <h1 className="text-2xl font-bold ">
         {currentStep === "register"
           ? "Sign Up"
           : currentStep === "login"
           ? "Sign In"
-          : "Verify Code"}
+          : null}
       </h1>
       <p> {message}</p>
       <div className="w-full max-w-md bg-white p-6 rounded-md shadow-md">

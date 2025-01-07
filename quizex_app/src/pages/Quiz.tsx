@@ -58,6 +58,9 @@ export const Quiz = () => {
     console.log("Selected answer:", answer);
   };
   function routeEvent(event: Event) {
+    console.log(event.type);
+
+    console.log(event.payload);
     if (event.type === undefined) {
       alert("no type field in the event");
     }
