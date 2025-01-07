@@ -11,6 +11,11 @@ export type Event = {
   payload: any;
 };
 
+export type RoundAction = {
+  uuid: string;
+  answer: string;
+  round: number;
+};
 export type SendMessageEvent = {
   userName: string;
   message: string;
@@ -41,6 +46,8 @@ export type ChatMessage = {
 
 export const Quiz = () => {
   const { roomName } = useParams<{ roomName: string }>();
+  const [ws, setWs] = useState<null | WebSocket>(null);
+
   const [isWaiting, setIsWaiting] = useState(true);
   const [users, setUsers] = useState<User[]>([]);
   const [currentUser, setCurrentUser] = useState<User | null>(null);
@@ -52,6 +59,12 @@ export const Quiz = () => {
 
   const handleReady = () => {
     setIsWaiting(false);
+    ws?.send(
+      JSON.stringify({
+        type: "ready_player",
+        payload: "",
+      })
+    );
   };
 
   const handleAnswer = (answer: number) => {
@@ -86,11 +99,10 @@ export const Quiz = () => {
         break;
     }
   }
-
   useEffect(() => {
     // Tworzenie połączenia WebSocket
     const ws = new WebSocket(`ws://localhost:9090/api/quiz/${roomName}`);
-
+    setWs(ws);
     ws.onopen = () => {
       console.log("connected with websockets!");
     };

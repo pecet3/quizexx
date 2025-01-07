@@ -88,7 +88,7 @@ func (m *Manager) removeRoom(uuid string) {
 
 	if room, ok := m.rooms[uuid]; ok {
 		for _, c := range room.clients {
-			room.leave <- c
+			room.removeClient(c)
 		}
 		close(room.join)
 		close(room.forward)

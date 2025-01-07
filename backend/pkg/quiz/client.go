@@ -26,10 +26,11 @@ type Client struct {
 	answer      int
 	points      int
 	roundsWon   []uint
+	lastActive  time.Time
 }
 
 func (c *Client) addPointsAndToggleIsAnswered(action RoundAction, r *Room) {
-	if c.name == action.Name {
+	if c.name == action.UUID {
 		c.answer = action.Answer
 		if action.Answer == c.room.game.Content[c.room.game.State.Round-1].CorrectAnswer && !c.isAnswered {
 			c.points = c.points + 10
@@ -52,12 +53,13 @@ func (c *Client) read(r *Room) {
 		return
 	}
 
-	c.conn.SetReadLimit(1024)
+	c.conn.SetReadLimit(4096)
 
 	c.conn.SetPongHandler(c.pongHandler)
 
 	for {
 		_, reqBytes, err := c.conn.ReadMessage()
+		logger.Debug(string(reqBytes))
 		if err != nil {
 			if websocket.IsUnexpectedCloseError(err, websocket.CloseGoingAway, websocket.CloseAbnormalClosure) {
 				logger.Error("ws err or user was too long inactive:", err)
@@ -117,6 +119,7 @@ func (c *Client) write(r *Room) {
 		case <-ticker.C:
 			if err := c.conn.WriteMessage(websocket.PingMessage, []byte(``)); err != nil {
 				logger.Error("write message error: ", err)
+
 				return
 			}
 		}

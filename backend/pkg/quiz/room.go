@@ -3,6 +3,7 @@ package quiz
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"strconv"
 	"strings"
 	"sync"
@@ -59,7 +60,7 @@ func (r *Room) removeClient(c *Client) {
 
 func (r *Room) Run(m *Manager) {
 	logger.Info(fmt.Sprintf(`Created a room: %s. creator: %d`, r.UUID, r.creatorID))
-	ticker := time.NewTicker(time.Second * 20)
+	ticker := time.NewTicker(time.Second * 1)
 	for {
 		select {
 		case <-ticker.C:
@@ -67,6 +68,16 @@ func (r *Room) Run(m *Manager) {
 				logger.Info(fmt.Sprintf(`No one is ine the room: %d. Closing...`, len(r.clients)))
 				defer m.removeRoom(r.Name)
 				return
+			}
+			for uuid, c := range r.clients {
+				if c.lastActive.After(time.Now().Add(time.Second * 10)) {
+					log.Println(uuid)
+
+				} else {
+					log.Println(uuid, 2323)
+
+				}
+				log.Println(c.lastActive)
 			}
 			r.sendServerMessage("test")
 		case msg := <-r.forward:
@@ -79,6 +90,7 @@ func (r *Room) Run(m *Manager) {
 				logger.Debug("zero")
 				r.createdAt = time.Now().Add(time.Hour * 2)
 			}
+			client.lastActive = time.Now()
 			r.addClient(client)
 
 			if r.game.IsGame && client.isSpectator {
@@ -122,6 +134,7 @@ func (r *Room) Run(m *Manager) {
 			if r.game.IsGame && client.isSpectator {
 				r.sendServerMessage(client.name + " joins as a spectator")
 			}
+			client.lastActive = time.Now()
 
 			client.isReady = true
 			r.sendServerMessage(client.name + " is ready!")
@@ -160,7 +173,7 @@ func (r *Room) Run(m *Manager) {
 			}
 
 			for _, client := range r.game.Players {
-				if client.name == actionParsed.Name {
+				if client.user.UUID == actionParsed.UUID {
 					if client.isSpectator {
 						return
 					}
@@ -172,6 +185,7 @@ func (r *Room) Run(m *Manager) {
 					}
 
 					client.addPointsAndToggleIsAnswered(*actionParsed, r)
+					client.lastActive = time.Now()
 					r.game.State.Actions = append(r.game.State.Actions, *actionParsed)
 					r.game.State.Score = r.game.NewScore()
 					r.game.SendPlayersAnswered()

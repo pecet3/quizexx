@@ -33,7 +33,7 @@ type GameState struct {
 }
 
 type RoundAction struct {
-	Name   string `json:"name"`
+	UUID   string `json:"uuid"`
 	Answer int    `json:"answer"`
 	Round  int    `json:"round"`
 }
