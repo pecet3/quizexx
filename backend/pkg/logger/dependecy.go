@@ -1,6 +1,7 @@
 package logger
 
 import (
+	"context"
 	"fmt"
 	"runtime"
 	"strconv"
@@ -9,9 +10,15 @@ import (
 )
 
 type Email struct {
-	Server string
+	SMTPHost     string
+	SMTPPort     int
+	Username     string
+	Password     string
+	FromAddress  string
+	ToAddresses  []string
+	Subject      string
+	BodyTemplate string
 }
-
 type Config struct {
 	IsDebugMode bool
 	Email       *Email
@@ -37,11 +44,31 @@ func New(c *Config) *Logger {
 	if c.Email != nil {
 		l.senders["email"] = c.Email
 	}
-
 	go func() {
-		time.Sleep(c.Duration)
-		for _, method := range l.senders {
-			method.Send(l)
+		for {
+			time.Sleep(c.Duration)
+			wg := sync.WaitGroup{}
+			for _, method := range l.senders {
+				wg.Add(1)
+				ctx, cancel := context.WithCancel(context.Background())
+				go func(m Sender) {
+					defer cancel()
+					defer wg.Done()
+					err := m.Send(ctx, l)
+					if c.IsDebugMode {
+						if err != nil {
+							debug("sending email err: ", err)
+							return
+						}
+						debug("sent email successful", err)
+					}
+				}(method)
+			}
+			wg.Wait()
+			l.clearCache()
+			if c.IsDebugMode {
+				debug("clear cache")
+			}
 		}
 	}()
 

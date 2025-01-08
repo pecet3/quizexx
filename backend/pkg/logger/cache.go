@@ -7,7 +7,7 @@ func (l *Logger) addCache(t time.Time, content string) {
 	defer l.cMu.Unlock()
 	l.cache[t] = content
 	if l.c.IsDebugMode {
-		debug("Saved to cache")
+		debug("added to cache")
 	}
 }
 
@@ -16,8 +16,5 @@ func (l *Logger) clearCache() {
 	defer l.cMu.Unlock()
 	for key, _ := range l.cache {
 		delete(l.cache, key)
-	}
-	if l.c.IsDebugMode {
-		debug("clearCacheLoop")
 	}
 }
