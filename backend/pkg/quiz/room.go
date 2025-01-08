@@ -50,9 +50,9 @@ func (r *Room) removeClient(c *Client) {
 	defer r.cMu.Unlock()
 	if _, ok := r.clients[c.user.UUID]; ok {
 		// close connection
-		c.conn.Close()
 		delete(r.clients, c.user.UUID)
 		delete(r.game.Players, c.user.UUID)
+
 	}
 
 }

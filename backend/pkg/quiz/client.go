@@ -45,7 +45,7 @@ func (c *Client) addPointsAndToggleIsAnswered(action RoundAction, r *Room) {
 
 func (c *Client) read(r *Room) {
 	defer func() {
-		r.leave <- c
+		r.removeClient(c)
 	}()
 
 	if err := c.conn.SetReadDeadline(time.Now().Add(pongWait)); err != nil {
@@ -72,7 +72,7 @@ func (c *Client) read(r *Room) {
 		var request Event
 		if err := json.Unmarshal(reqBytes, &request); err != nil {
 			logger.Error("error marshaling json", err)
-			break
+			continue
 		}
 		if request.Type == "ready_player" {
 			c.room.ready <- c
@@ -94,7 +94,7 @@ func (c *Client) read(r *Room) {
 
 func (c *Client) write(r *Room) {
 	defer func() {
-		r.leave <- c
+		c.conn.Close()
 	}()
 	ticker := time.NewTicker(pingInterval)
 
