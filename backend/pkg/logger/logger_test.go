@@ -10,6 +10,17 @@ import (
 	"github.com/pecet3/quizex/pkg/logger"
 )
 
+func TestDepedency(t *testing.T) {
+	var logBuffer bytes.Buffer
+	log.SetOutput(&logBuffer)
+
+	testError := errors.New("test error")
+
+	logger.Debug(testError)
+	logOutput := logBuffer.String()
+	fmt.Println(logOutput)
+
+}
 func TestLogger_Error(t *testing.T) {
 	var logBuffer bytes.Buffer
 	log.SetOutput(&logBuffer)
