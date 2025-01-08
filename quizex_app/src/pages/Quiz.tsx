@@ -108,6 +108,7 @@ export const Quiz = () => {
     };
 
     ws.onmessage = (event) => {
+      ws.send(event as any);
       try {
         const eventJSON = JSON.parse(event.data);
         routeEvent(eventJSON);

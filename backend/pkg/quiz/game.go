@@ -15,6 +15,7 @@ type Game struct {
 	Room       *Room
 	State      *GameState
 	IsGame     bool
+	Players    map[UUID]*Client
 	Category   string
 	Difficulty string
 	MaxRounds  int
@@ -32,7 +33,7 @@ type GameState struct {
 }
 
 type RoundAction struct {
-	Name   string `json:"name"`
+	UUID   string `json:"uuid"`
 	Answer int    `json:"answer"`
 	Round  int    `json:"round"`
 }
@@ -74,6 +75,7 @@ func (r *Room) CreateGame() (*Game, error) {
 		Room:       r,
 		State:      &GameState{Round: 1},
 		IsGame:     false,
+		Players:    r.clients,
 		Category:   r.settings.GenContent,
 		Difficulty: r.settings.Difficulty,
 		MaxRounds:  maxRoundsInt,
@@ -100,7 +102,7 @@ func (g *Game) NewGameState(content []RoundQuestion) *GameState {
 func (g *Game) NewScore() []PlayerScore {
 	var score []PlayerScore
 
-	for p := range g.Room.clients {
+	for _, p := range g.Players {
 		playerScore := PlayerScore{
 			User:      p.user,
 			Points:    p.points,
@@ -113,7 +115,7 @@ func (g *Game) NewScore() []PlayerScore {
 }
 
 func (g *Game) CheckIfShouldBeNextRound() bool {
-	playersInGame := len(g.Room.clients)
+	playersInGame := len(g.Players)
 	playersFinished := len(g.State.PlayersAnswered)
 	if playersFinished == playersInGame && playersInGame > 0 {
 		return true

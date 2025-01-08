@@ -5,17 +5,20 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/pecet3/quizex/data/dtos"
 	"github.com/pecet3/quizex/pkg/logger"
 )
 
+type UUID = string
 type Room struct {
 	Name string
 	UUID string
 
-	clients map[*Client]bool
+	clients map[UUID]*Client
+	cMu     sync.RWMutex
 	join    chan *Client
 	ready   chan *Client
 	leave   chan *Client
@@ -29,7 +32,7 @@ type Room struct {
 }
 
 func (r *Room) CheckIfEveryoneIsReady() bool {
-	for c := range r.clients {
+	for _, c := range r.clients {
 		if !c.isReady {
 			return false
 		}
@@ -38,22 +41,25 @@ func (r *Room) CheckIfEveryoneIsReady() bool {
 }
 
 func (r *Room) addClient(c *Client) {
-	r.clients[c] = true
+	r.cMu.Lock()
+	defer r.cMu.Unlock()
+	r.clients[c.user.UUID] = c
 }
-
 func (r *Room) removeClient(c *Client) {
-	if _, ok := r.clients[c]; ok {
-		logger.Debug("removing client", r.clients)
-
-		close(c.receive)
-		delete(r.clients, c)
+	r.cMu.Lock()
+	defer r.cMu.Unlock()
+	if _, ok := r.clients[c.user.UUID]; ok {
+		// close connection
 		c.conn.Close()
+		delete(r.clients, c.user.UUID)
+		delete(r.game.Players, c.user.UUID)
 	}
+
 }
 
 func (r *Room) Run(m *Manager) {
 	logger.Info(fmt.Sprintf(`Created a room: %s. creator: %d`, r.UUID, r.creatorID))
-	ticker := time.NewTicker(time.Second * 20)
+	ticker := time.NewTicker(time.Second * 1)
 	for {
 		select {
 		case <-ticker.C:
@@ -62,17 +68,21 @@ func (r *Room) Run(m *Manager) {
 				defer m.removeRoom(r.Name)
 				return
 			}
+
 			r.sendServerMessage("test")
 		case msg := <-r.forward:
-			for client := range r.clients {
+			for _, client := range r.clients {
 				client.receive <- msg
 			}
 		case client := <-r.join:
 			logger.Debug("client joined")
-			r.addClient(client)
 			if len(r.clients) == 0 {
+				logger.Debug("zero")
 				r.createdAt = time.Now().Add(time.Hour * 2)
 			}
+			client.lastActive = time.Now()
+			r.addClient(client)
+
 			if r.game.IsGame && client.isSpectator {
 				err := r.sendServerMessage(client.name + " joins as spectator")
 				if err != nil {
@@ -91,8 +101,6 @@ func (r *Room) Run(m *Manager) {
 			}
 			if r.game.IsGame {
 				_ = r.game.sendGameState()
-			} else {
-				_ = r.sendReadyStatus()
 			}
 			eventBytes, err := marshalEventToBytes[dtos.Settings](r.settings, "room_settings")
 			if err != nil {
@@ -111,14 +119,12 @@ func (r *Room) Run(m *Manager) {
 				return
 			}
 			logger.Debug(r.clients)
-			if !r.game.IsGame {
-				r.sendReadyStatus()
-			}
 
 		case client := <-r.ready:
 			if r.game.IsGame && client.isSpectator {
 				r.sendServerMessage(client.name + " joins as a spectator")
 			}
+			client.lastActive = time.Now()
 
 			client.isReady = true
 			r.sendServerMessage(client.name + " is ready!")
@@ -156,8 +162,8 @@ func (r *Room) Run(m *Manager) {
 				return
 			}
 
-			for client := range r.clients {
-				if client.name == actionParsed.Name {
+			for _, client := range r.game.Players {
+				if client.user.UUID == actionParsed.UUID {
 					if client.isSpectator {
 						return
 					}
@@ -169,6 +175,7 @@ func (r *Room) Run(m *Manager) {
 					}
 
 					client.addPointsAndToggleIsAnswered(*actionParsed, r)
+					client.lastActive = time.Now()
 					r.game.State.Actions = append(r.game.State.Actions, *actionParsed)
 					r.game.State.Score = r.game.NewScore()
 					r.game.SendPlayersAnswered()
@@ -197,7 +204,7 @@ func (r *Room) Run(m *Manager) {
 				time.Sleep(1800 * time.Millisecond)
 				_ = r.sendServerMessage("It's finish the game")
 
-				for client := range r.clients {
+				for _, client := range r.clients {
 					logger.Info("deleting client ", client.name)
 					close(client.receive)
 					// client.conn.Close()
@@ -244,7 +251,7 @@ func (r *Room) Run(m *Manager) {
 				if err != nil {
 					continue
 				}
-				for client := range r.clients {
+				for _, client := range r.game.Players {
 					if client.isAnswered {
 						client.isAnswered = false
 					}

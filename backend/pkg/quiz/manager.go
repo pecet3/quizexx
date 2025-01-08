@@ -33,7 +33,7 @@ func NewManager(d *data.Data) *Manager {
 func (m *Manager) newRoom(settings dtos.Settings, creatorID int) *Room {
 	r := &Room{
 		Name:          settings.Name,
-		clients:       make(map[*Client]bool),
+		clients:       make(map[UUID]*Client),
 		join:          make(chan *Client),
 		leave:         make(chan *Client),
 		ready:         make(chan *Client),
@@ -87,8 +87,8 @@ func (m *Manager) removeRoom(uuid string) {
 	defer m.mu.Unlock()
 
 	if room, ok := m.rooms[uuid]; ok {
-		for Client := range room.clients {
-			room.leave <- Client
+		for _, c := range room.clients {
+			room.removeClient(c)
 		}
 		close(room.join)
 		close(room.forward)
@@ -110,7 +110,7 @@ func (m *Manager) GetRoomsList() []*dtos.Room {
 		r := &dtos.Room{
 			UUID:       uuid,
 			Name:       room.Name,
-			Players:    len(room.clients),
+			Players:    len(room.game.Players),
 			MaxPlayers: 10,
 			Round:      room.game.State.Round,
 			MaxRounds:  room.game.MaxRounds,
@@ -169,8 +169,9 @@ func (m *Manager) ServeQuiz(w http.ResponseWriter, req *http.Request, u *entitie
 	currentRoom.join <- client
 	defer func() {
 		currentRoom.leave <- client
+		logger.Debug()
 	}()
-	client.write(currentRoom)
-	go client.read(currentRoom)
+	go client.write(currentRoom)
+	client.read(currentRoom)
 
 }
