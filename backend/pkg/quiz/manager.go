@@ -110,7 +110,7 @@ func (m *Manager) GetRoomsList() []*dtos.Room {
 		r := &dtos.Room{
 			UUID:       uuid,
 			Name:       room.Name,
-			Players:    len(room.game.Players),
+			Players:    len(room.clients),
 			MaxPlayers: 10,
 			Round:      room.game.State.Round,
 			MaxRounds:  room.game.MaxRounds,
@@ -169,9 +169,8 @@ func (m *Manager) ServeQuiz(w http.ResponseWriter, req *http.Request, u *entitie
 	currentRoom.join <- client
 	defer func() {
 		currentRoom.leave <- client
-		logger.Debug()
 	}()
-	client.write()
-	go client.read()
+	client.write(currentRoom)
+	go client.read(currentRoom)
 
 }

@@ -37,6 +37,20 @@ func (r *Room) CheckIfEveryoneIsReady() bool {
 	return true
 }
 
+func (r *Room) addClient(c *Client) {
+	r.clients[c] = true
+}
+
+func (r *Room) removeClient(c *Client) {
+	if _, ok := r.clients[c]; ok {
+		logger.Debug("removing client", r.clients)
+
+		close(c.receive)
+		delete(r.clients, c)
+		c.conn.Close()
+	}
+}
+
 func (r *Room) Run(m *Manager) {
 	logger.Info(fmt.Sprintf(`Created a room: %s. creator: %d`, r.UUID, r.creatorID))
 	ticker := time.NewTicker(time.Second * 20)
@@ -55,9 +69,8 @@ func (r *Room) Run(m *Manager) {
 			}
 		case client := <-r.join:
 			logger.Debug("client joined")
-			r.clients[client] = true
+			r.addClient(client)
 			if len(r.clients) == 0 {
-				logger.Debug("zero")
 				r.createdAt = time.Now().Add(time.Hour * 2)
 			}
 			if r.game.IsGame && client.isSpectator {
@@ -78,6 +91,8 @@ func (r *Room) Run(m *Manager) {
 			}
 			if r.game.IsGame {
 				_ = r.game.sendGameState()
+			} else {
+				_ = r.sendReadyStatus()
 			}
 			eventBytes, err := marshalEventToBytes[dtos.Settings](r.settings, "room_settings")
 			if err != nil {
@@ -89,9 +104,6 @@ func (r *Room) Run(m *Manager) {
 			}
 
 		case client := <-r.leave:
-			close(client.receive)
-			delete(r.game.Players, client)
-			delete(r.clients, client)
 			r.sendServerMessage(client.name + " is leaving the room")
 			if len(r.clients) == 0 {
 				logger.Info("closing the room: ", r.Name)
@@ -99,6 +111,9 @@ func (r *Room) Run(m *Manager) {
 				return
 			}
 			logger.Debug(r.clients)
+			if !r.game.IsGame {
+				r.sendReadyStatus()
+			}
 
 		case client := <-r.ready:
 			if r.game.IsGame && client.isSpectator {
@@ -141,7 +156,7 @@ func (r *Room) Run(m *Manager) {
 				return
 			}
 
-			for client := range r.game.Players {
+			for client := range r.clients {
 				if client.name == actionParsed.Name {
 					if client.isSpectator {
 						return
@@ -229,7 +244,7 @@ func (r *Room) Run(m *Manager) {
 				if err != nil {
 					continue
 				}
-				for client := range r.game.Players {
+				for client := range r.clients {
 					if client.isAnswered {
 						client.isAnswered = false
 					}

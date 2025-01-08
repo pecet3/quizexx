@@ -15,7 +15,6 @@ type Game struct {
 	Room       *Room
 	State      *GameState
 	IsGame     bool
-	Players    map[*Client]bool
 	Category   string
 	Difficulty string
 	MaxRounds  int
@@ -75,7 +74,6 @@ func (r *Room) CreateGame() (*Game, error) {
 		Room:       r,
 		State:      &GameState{Round: 1},
 		IsGame:     false,
-		Players:    r.clients,
 		Category:   r.settings.GenContent,
 		Difficulty: r.settings.Difficulty,
 		MaxRounds:  maxRoundsInt,
@@ -102,7 +100,7 @@ func (g *Game) NewGameState(content []RoundQuestion) *GameState {
 func (g *Game) NewScore() []PlayerScore {
 	var score []PlayerScore
 
-	for p := range g.Players {
+	for p := range g.Room.clients {
 		playerScore := PlayerScore{
 			User:      p.user,
 			Points:    p.points,
@@ -115,7 +113,7 @@ func (g *Game) NewScore() []PlayerScore {
 }
 
 func (g *Game) CheckIfShouldBeNextRound() bool {
-	playersInGame := len(g.Players)
+	playersInGame := len(g.Room.clients)
 	playersFinished := len(g.State.PlayersAnswered)
 	if playersFinished == playersInGame && playersInGame > 0 {
 		return true
