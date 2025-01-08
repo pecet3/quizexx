@@ -92,7 +92,7 @@ export const Auth: React.FC = () => {
   const renderRegisterForm = () => (
     <>
       <input
-        className="bg-gray-300 w-full placeholder:text-center border border-gray-300 rounded-md p-3 mb-4"
+        className="bg-gray-300 w-full  border border-gray-300 rounded-md p-3 mb-4"
         type="text"
         placeholder="Name"
         value={formData.name}

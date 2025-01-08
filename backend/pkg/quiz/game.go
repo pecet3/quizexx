@@ -15,7 +15,7 @@ type Game struct {
 	Room       *Room
 	State      *GameState
 	IsGame     bool
-	Players    map[UUID]*Client
+	Players    map[*Client]bool
 	Category   string
 	Difficulty string
 	MaxRounds  int
@@ -33,7 +33,7 @@ type GameState struct {
 }
 
 type RoundAction struct {
-	UUID   string `json:"uuid"`
+	Name   string `json:"name"`
 	Answer int    `json:"answer"`
 	Round  int    `json:"round"`
 }
@@ -102,7 +102,7 @@ func (g *Game) NewGameState(content []RoundQuestion) *GameState {
 func (g *Game) NewScore() []PlayerScore {
 	var score []PlayerScore
 
-	for _, p := range g.Players {
+	for p := range g.Players {
 		playerScore := PlayerScore{
 			User:      p.user,
 			Points:    p.points,
