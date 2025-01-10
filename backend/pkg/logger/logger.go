@@ -6,6 +6,27 @@ import (
 	"strconv"
 )
 
+func alert(args ...interface{}) {
+	pc, _, line, _ := runtime.Caller(1)
+	fn := runtime.FuncForPC(pc)
+	fName := fn.Name()
+	date := getCurrentDate()
+	time := getCurrentTime()
+
+	msg := fmt.Sprint(args...)
+	content := fmt.Sprintf(`[%s] %s %s (%s:%s)`,
+		formatTextExt(bold, blue, " ALERT"),
+		formatTextExt(dim, italic, date),
+		formatText(underline, time),
+		formatText(brightBlue, fName),
+		formatText(bold, strconv.Itoa(line)),
+	)
+	fmt.Println(content)
+	if len(args) > 0 {
+		fmt.Println("↳", formatText(bgBlue, formatTextExt(bold, brightYellow, msg)))
+	}
+
+}
 func debug(args ...interface{}) {
 	pc, _, line, _ := runtime.Caller(1)
 	fn := runtime.FuncForPC(pc)
