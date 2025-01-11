@@ -11,6 +11,36 @@ export type Event = {
   payload: any;
 };
 
+export type QuizSettings = {
+  name: string;
+  gen_content: string;
+  difficulty: string;
+  max_rounds: number;
+  language: string;
+};
+
+type GameState = {
+  round: number;
+  question: string;
+  answers: string[];
+  actions: RoundAction[];
+  score: PlayerScore[];
+  playersAnswered: string[];
+  roundWinners?: string[];
+};
+
+type PlayerScore = {
+  user: User;
+  points: number;
+  roundsWon: number[];
+  isAnswered: boolean;
+};
+
+type RoundQuestion = {
+  question: string;
+  answers: string[];
+  correctAnswer: number;
+};
 export type RoundAction = {
   uuid: string;
   answer: string;

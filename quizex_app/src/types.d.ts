@@ -1,4 +1,4 @@
-export interface User {
+interface User {
   uuid: string; 
   name: string; 
   email: string; 
@@ -6,13 +6,6 @@ export interface User {
   createdAt: Date; 
 }
 
-export type QuizSettings = {
-    name: string;
-    gen_content: string;
-    difficulty: string;
-    max_rounds: number;
-    language: string;
-};
 
 type Room = {
   uuid: string;
@@ -27,31 +20,3 @@ type Rooms = {
   rooms: Room[];
 };
 
-type GameState= {
-  round: number;
-  question: string;
-  answers: string[];
-  actions: RoundAction[];
-  score: PlayerScore[];
-  playersAnswered: string[];
-  roundWinners?: string[];
-}
-
-type  RoundAction = {
-  name: string;
-  answer: number;
-  round: number;
-}
-
-type  PlayerScore =  {
-  user: User;
-  points: number;
-  roundsWon: number[];
-  isAnswered: boolean;
-}
-
-type RoundQuestion = {
-  question: string;
-  answers: string[];
-  correctAnswer: number;
-}
