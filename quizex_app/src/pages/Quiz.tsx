@@ -76,11 +76,40 @@ export type ChatMessage = {
 
 export const Quiz = () => {
   const { roomName } = useParams<{ roomName: string }>();
-  const [ws, setWs] = useState<null | WebSocket>(null);
-  const [gameState, setGameState] = useState<null | GameState>(null);
   const [isWaiting, setIsWaiting] = useState(true);
+
+  const [ws, setWs] = useState<null | WebSocket>(null);
+  const [gameState, setGameState] = useState<GameState>({
+    round: 0,
+    question: "",
+    answers: [""],
+    actions: [
+      {
+        uuid: "",
+        answer: "",
+        round: 0,
+      },
+    ],
+    score: [
+      {
+        user: { name: "", points: 0 },
+        points: 0,
+        roundsWon: [1],
+        isAnswered: true,
+      },
+    ],
+    playersAnswered: ["", ""],
+    roundWinners: [""],
+  });
+
   const [users, setUsers] = useState<User[]>([]);
-  const [settings, setSettings] = useState<null | Settings>(null);
+  const [settings, setSettings] = useState<Settings>({
+    difficulty: "",
+    gen_content: "",
+    language: "",
+    max_rounds: 0,
+    name: "",
+  });
   const [currentUser, setCurrentUser] = useState<User | null>(null);
 
   const [category] = useState("Sample Category");
@@ -121,6 +150,7 @@ export const Quiz = () => {
       case "finish_game":
         break;
       case "room_settings":
+        setSettings(event.payload);
         break;
       case "players_answered":
         break;
@@ -134,7 +164,8 @@ export const Quiz = () => {
   // debug
   useEffect(() => {
     console.log("gamestate", gameState);
-  }, [gameState]);
+    console.log("settings", settings);
+  }, [gameState, settings]);
   useEffect(() => {
     const ws = new WebSocket(`ws://localhost:9090/api/quiz/${roomName}`);
     setWs(ws);
@@ -143,7 +174,6 @@ export const Quiz = () => {
     };
 
     ws.onmessage = (event) => {
-      ws.send(event as any);
       try {
         const eventJSON = JSON.parse(event.data);
         routeEvent(eventJSON);
