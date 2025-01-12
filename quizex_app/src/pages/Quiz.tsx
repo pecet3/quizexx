@@ -11,7 +11,7 @@ export type Event = {
   payload: any;
 };
 
-export type QuizSettings = {
+export type Settings = {
   name: string;
   gen_content: string;
   difficulty: string;
@@ -19,7 +19,7 @@ export type QuizSettings = {
   language: string;
 };
 
-type GameState = {
+export type GameState = {
   round: number;
   question: string;
   answers: string[];
@@ -77,9 +77,10 @@ export type ChatMessage = {
 export const Quiz = () => {
   const { roomName } = useParams<{ roomName: string }>();
   const [ws, setWs] = useState<null | WebSocket>(null);
-
+  const [gameState, setGameState] = useState<null | GameState>(null);
   const [isWaiting, setIsWaiting] = useState(true);
   const [users, setUsers] = useState<User[]>([]);
+  const [settings, setSettings] = useState<null | Settings>(null);
   const [currentUser, setCurrentUser] = useState<User | null>(null);
 
   const [category] = useState("Sample Category");
@@ -101,7 +102,7 @@ export const Quiz = () => {
     console.log("Selected answer:", answer);
   };
   function routeEvent(event: Event) {
-    console.log(event.type);
+    console.log("event type", event.type);
 
     console.log(event.payload);
     if (event.type === undefined) {
@@ -109,6 +110,7 @@ export const Quiz = () => {
     }
     switch (event.type) {
       case "update_gamestate":
+        setGameState(event.payload);
         break;
       case "update_players":
         break;
@@ -129,8 +131,11 @@ export const Quiz = () => {
         break;
     }
   }
+  // debug
   useEffect(() => {
-    // Tworzenie połączenia WebSocket
+    console.log("gamestate", gameState);
+  }, [gameState]);
+  useEffect(() => {
     const ws = new WebSocket(`ws://localhost:9090/api/quiz/${roomName}`);
     setWs(ws);
     ws.onopen = () => {
@@ -167,8 +172,8 @@ export const Quiz = () => {
       ) : (
         <>
           <GameDashboard
-            category={category}
-            round={round}
+            settings={settings!}
+            gameState={gameState!}
             question={question}
             answers={answers}
             users={users}

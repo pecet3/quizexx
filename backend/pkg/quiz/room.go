@@ -59,7 +59,7 @@ func (r *Room) removeClient(c *Client) {
 
 func (r *Room) Run(m *Manager) {
 	logger.Info(fmt.Sprintf(`Created a room: %s. creator: %d`, r.UUID, r.creatorID))
-	ticker := time.NewTicker(time.Second * 1)
+	ticker := time.NewTicker(time.Second * 20)
 	for {
 		select {
 		case <-ticker.C:
@@ -69,7 +69,6 @@ func (r *Room) Run(m *Manager) {
 				return
 			}
 
-			r.sendServerMessage("test")
 		case msg := <-r.forward:
 			for _, client := range r.clients {
 				client.receive <- msg
@@ -113,11 +112,6 @@ func (r *Room) Run(m *Manager) {
 
 		case client := <-r.leave:
 			r.sendServerMessage(client.name + " is leaving the room")
-			if len(r.clients) == 0 {
-				logger.Info("closing the room: ", r.Name)
-				m.removeRoom(r.Name)
-				return
-			}
 			logger.Debug(r.clients)
 
 		case client := <-r.ready:

@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Room, Rooms } from "../types";
 import { HiOutlineRefresh } from "react-icons/hi";
 
 export const RoomsList = () => {

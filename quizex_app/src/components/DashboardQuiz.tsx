@@ -1,6 +1,6 @@
 import React, { useState, FormEvent, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { User } from "../pages/Quiz";
+import { GameState, Settings, User } from "../pages/Quiz";
 
 export const Chat: React.FC = () => {
   const [message, setMessage] = useState("");
@@ -78,13 +78,13 @@ export const WaitingRoom: React.FC<{
 
 // Game Dashboard Component
 export const GameDashboard: React.FC<{
-  category: string;
-  round: number;
+  settings: Settings;
+  gameState: GameState;
   question: string;
   answers: string[];
   users: User[];
   onAnswer: (answer: number) => void;
-}> = ({ category, round, question, answers, users, onAnswer }) => {
+}> = ({ settings, gameState, question, answers, users, onAnswer }) => {
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
 
   const handleSubmit = (e: FormEvent) => {
@@ -99,12 +99,12 @@ export const GameDashboard: React.FC<{
       <div className="flex justify-between gap-2 z-10 m-0">
         <div className="text-2xl flex sm:flex-row flex-col items-center font-bold font-mono bg-gray-400 rounded-t-md p-1 border-2 border-black border-b-0">
           <span className="hidden sm:block">Category:</span>
-          <p className="text-blue-800 italic">{category}</p>
+          <p className="text-blue-800 italic">{settings.gen_content}</p>
         </div>
         <div className="text-2xl flex-col sm:flex-row flex items-center gap-1 sm:gap-2 font-black font-mono bg-gray-400 rounded-t-md p-0.5 sm:p-1 px-1 sm:px-2 border-2 border-black border-b-0">
           <div className="flex items-start m-auto gap-1">
             <p>Round: </p>
-            <p className="text-blue-800">{round}</p>
+            <p className="text-blue-800">{gameState.round}</p>
           </div>
         </div>
       </div>
