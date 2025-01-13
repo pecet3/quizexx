@@ -65,7 +65,12 @@ export const RoomsList = () => {
                   {room.round}/{room.max_rounds}
                 </td>
                 <td className="px-4 py-2 text-center">
-                  <button className="btn bg-teal-300 text-xs">Join</button>
+                  <Link
+                    to={`/quiz/${room.uuid}`}
+                    className="btn bg-teal-300 text-xs"
+                  >
+                    Join
+                  </Link>
                 </td>
               </tr>
             ))
