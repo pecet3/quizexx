@@ -80,11 +80,9 @@ export const WaitingRoom: React.FC<{
 export const GameDashboard: React.FC<{
   settings: Settings;
   gameState: GameState;
-  question: string;
-  answers: string[];
   users: User[];
   onAnswer: (answer: number) => void;
-}> = ({ settings, gameState, question, answers, users, onAnswer }) => {
+}> = ({ settings, gameState, users, onAnswer }) => {
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
 
   const handleSubmit = (e: FormEvent) => {
@@ -115,9 +113,9 @@ export const GameDashboard: React.FC<{
       >
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-gray-200 border-2 border-black p-2 sm:p-4 rounded-b-xl text-lg">
           <h3 className="sm:col-span-2 text-center font-bold text-2xl">
-            {question}
+            {gameState.question}
           </h3>
-          {answers.map((answer, idx) => (
+          {gameState.answers.map((answer, idx) => (
             <label
               key={idx}
               className={`has-[:checked]:rounded-lg has-[:checked]:scale-[1.01] ${

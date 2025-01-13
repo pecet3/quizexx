@@ -110,12 +110,6 @@ export const Quiz = () => {
     max_rounds: 0,
     name: "",
   });
-  const [currentUser, setCurrentUser] = useState<User | null>(null);
-
-  const [category] = useState("Sample Category");
-  const [round] = useState(1);
-  const [question] = useState("Sample Question?");
-  const [answers] = useState(["Answer A", "Answer B", "Answer C", "Answer D"]);
 
   const handleReady = () => {
     setIsWaiting(false);
@@ -204,8 +198,6 @@ export const Quiz = () => {
           <GameDashboard
             settings={settings!}
             gameState={gameState!}
-            question={question}
-            answers={answers}
             users={users}
             onAnswer={handleAnswer}
           />
