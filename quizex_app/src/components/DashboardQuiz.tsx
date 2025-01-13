@@ -49,32 +49,37 @@ export const Chat: React.FC = () => {
 // Waiting Room Component
 export const WaitingRoom: React.FC<{
   waitingState: WaitingState;
+  serverMessage: string;
+
   onReady: () => void;
-}> = ({ waitingState, onReady }) => {
+}> = ({ waitingState, serverMessage, onReady }) => {
   return (
-    <div className="flex flex-col justify-center items-center my-6">
-      <div className="paper paper-yellow max-w-md text-lg m-auto p-4 pt-8 shadow-md flex flex-col items-center">
-        <div className="top-tape"></div>
-        <ul className="grid grid-cols-2 text-xl">
-          {waitingState.players.map((user, idx) => (
-            <li key={idx}>{user.name}</li>
-          ))}
-        </ul>
-        <div className="flex gap-0.5">
-          <span className="text-2xl font-sans font-bold">[</span>
-          <p className="text-2xl font-sans font-bold">
-            {waitingState.players.length}
-          </p>
-          <span className="text-2xl font-sans font-bold">]</span>
+    <>
+      <div className="flex flex-col justify-center items-center my-6">
+        <div className="paper paper-yellow max-w-md text-lg m-auto p-4 pt-8 shadow-md flex flex-col items-center">
+          <div className="top-tape"></div>
+          <ul className="grid grid-cols-2 text-xl">
+            {waitingState.players.map((user, idx) => (
+              <li key={idx}>{user.name}</li>
+            ))}
+          </ul>
+          <div className="flex gap-0.5">
+            <span className="text-2xl font-sans font-bold">[</span>
+            <p className="text-2xl font-sans font-bold">
+              {waitingState.players.length}
+            </p>
+            <span className="text-2xl font-sans font-bold">]</span>
+          </div>
+          <button
+            onClick={onReady}
+            className="bg-teal-300 hover:shadow-none hover:rounded-xl border border-black hover:scale-[0.995] font-mono px-4 text-2xl duration-300 text-black rounded-lg m-auto py-2"
+          >
+            I am ready
+          </button>
         </div>
-        <button
-          onClick={onReady}
-          className="bg-teal-300 hover:shadow-none hover:rounded-xl border border-black hover:scale-[0.995] font-mono px-4 text-2xl duration-300 text-black rounded-lg m-auto py-2"
-        >
-          I am ready
-        </button>
       </div>
-    </div>
+      <p>{serverMessage}</p>
+    </>
   );
 };
 
@@ -82,9 +87,9 @@ export const WaitingRoom: React.FC<{
 export const GameDashboard: React.FC<{
   settings: Settings;
   gameState: GameState;
-  users: User[];
+  serverMessage: string;
   onAnswer: (answer: number) => void;
-}> = ({ settings, gameState, users, onAnswer }) => {
+}> = ({ settings, gameState, serverMessage, onAnswer }) => {
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
 
   const handleSubmit = (e: FormEvent) => {
@@ -140,7 +145,7 @@ export const GameDashboard: React.FC<{
         </div>
 
         <p className="font-mono text-xl sm:text-2xl font-bold italic bg-white p-2 rounded-xl bg-opacity-70">
-          Have a good game!
+          {serverMessage}
         </p>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
@@ -152,9 +157,9 @@ export const GameDashboard: React.FC<{
               </tr>
             </thead>
             <tbody className="flex flex-col [&_tr]:py-2 [&_tr]:gap-4 [&_tr]:flex [&_tr]:justify-between [&_td]:m-auto">
-              {users.map((user, idx) => (
+              {gameState.score.map((user, idx) => (
                 <tr key={idx}>
-                  <td>{user.name}</td>
+                  <td>{user.user.name}</td>
                   <td>{user.points}</td>
                 </tr>
               ))}

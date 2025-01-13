@@ -97,12 +97,11 @@ export const Quiz = () => {
   const [ws, setWs] = useState<null | WebSocket>(null);
   const [isWaiting, setIsWaiting] = useState(true);
 
+  const [serverMessage, setServerMessage] = useState("");
   const [gameState, setGameState] = useState<GameState>(defaultGameState);
   const [settings, setSettings] = useState<Settings>(defaultSettings);
   const [waitingState, setWaitingState] =
     useState<WaitingState>(defaultWaitingState);
-
-  const [users, setUsers] = useState<User[]>([]);
 
   const handleReady = () => {
     setIsWaiting(false);
@@ -131,6 +130,7 @@ export const Quiz = () => {
       case "update_players":
         break;
       case "server_message":
+        setServerMessage(event.payload.message);
         break;
       case "waiting_state":
         setWaitingState(event.payload);
@@ -186,13 +186,17 @@ export const Quiz = () => {
   return (
     <div className="p-2 bg-opacity-70 text-center m-auto">
       {isWaiting ? (
-        <WaitingRoom waitingState={waitingState} onReady={handleReady} />
+        <WaitingRoom
+          serverMessage={serverMessage}
+          waitingState={waitingState}
+          onReady={handleReady}
+        />
       ) : (
         <>
           <GameDashboard
             settings={settings!}
             gameState={gameState!}
-            users={users}
+            serverMessage={serverMessage}
             onAnswer={handleAnswer}
           />
           <Chat />
