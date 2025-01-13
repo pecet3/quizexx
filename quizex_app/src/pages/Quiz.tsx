@@ -73,43 +73,36 @@ export type ChatMessage = {
   message: string;
   date: string;
 };
-
+const defaultGameState = {
+  round: 0,
+  question: "",
+  answers: [],
+  actions: [],
+  score: [],
+  playersAnswered: [],
+  roundWinners: [],
+};
+const defaultSettings: Settings = {
+  difficulty: "",
+  gen_content: "",
+  language: "",
+  max_rounds: 0,
+  name: "",
+};
+const defaultWaitingState: WaitingState = {
+  players: [],
+};
 export const Quiz = () => {
   const { roomName } = useParams<{ roomName: string }>();
+  const [ws, setWs] = useState<null | WebSocket>(null);
   const [isWaiting, setIsWaiting] = useState(true);
 
-  const [ws, setWs] = useState<null | WebSocket>(null);
-  const [gameState, setGameState] = useState<GameState>({
-    round: 0,
-    question: "",
-    answers: [""],
-    actions: [
-      {
-        uuid: "",
-        answer: "",
-        round: 0,
-      },
-    ],
-    score: [
-      {
-        user: { name: "", points: 0 },
-        points: 0,
-        roundsWon: [1],
-        isAnswered: true,
-      },
-    ],
-    playersAnswered: ["", ""],
-    roundWinners: [""],
-  });
+  const [gameState, setGameState] = useState<GameState>(defaultGameState);
+  const [settings, setSettings] = useState<Settings>(defaultSettings);
+  const [waitingState, setWaitingState] =
+    useState<WaitingState>(defaultWaitingState);
 
   const [users, setUsers] = useState<User[]>([]);
-  const [settings, setSettings] = useState<Settings>({
-    difficulty: "",
-    gen_content: "",
-    language: "",
-    max_rounds: 0,
-    name: "",
-  });
 
   const handleReady = () => {
     setIsWaiting(false);
@@ -140,6 +133,7 @@ export const Quiz = () => {
       case "server_message":
         break;
       case "waiting_state":
+        setWaitingState(event.payload);
         break;
       case "finish_game":
         break;
@@ -192,7 +186,7 @@ export const Quiz = () => {
   return (
     <div className="p-2 bg-opacity-70 text-center m-auto">
       {isWaiting ? (
-        <WaitingRoom readyUsers={users} onReady={handleReady} />
+        <WaitingRoom waitingState={waitingState} onReady={handleReady} />
       ) : (
         <>
           <GameDashboard

@@ -1,6 +1,6 @@
 import React, { useState, FormEvent, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { GameState, Settings, User } from "../pages/Quiz";
+import { GameState, Settings, User, WaitingState } from "../pages/Quiz";
 
 export const Chat: React.FC = () => {
   const [message, setMessage] = useState("");
@@ -48,21 +48,23 @@ export const Chat: React.FC = () => {
 
 // Waiting Room Component
 export const WaitingRoom: React.FC<{
-  readyUsers: User[];
+  waitingState: WaitingState;
   onReady: () => void;
-}> = ({ readyUsers, onReady }) => {
+}> = ({ waitingState, onReady }) => {
   return (
     <div className="flex flex-col justify-center items-center my-6">
       <div className="paper paper-yellow max-w-md text-lg m-auto p-4 pt-8 shadow-md flex flex-col items-center">
         <div className="top-tape"></div>
         <ul className="grid grid-cols-2 text-xl">
-          {readyUsers.map((user, idx) => (
+          {waitingState.players.map((user, idx) => (
             <li key={idx}>{user.name}</li>
           ))}
         </ul>
         <div className="flex gap-0.5">
           <span className="text-2xl font-sans font-bold">[</span>
-          <p className="text-2xl font-sans font-bold">{readyUsers.length}</p>
+          <p className="text-2xl font-sans font-bold">
+            {waitingState.players.length}
+          </p>
           <span className="text-2xl font-sans font-bold">]</span>
         </div>
         <button
