@@ -125,7 +125,7 @@ func (r *Room) Run(m *Manager) {
 			r.sendReadyStatus()
 
 			if ok := r.CheckIfEveryoneIsReady(); ok {
-				err := r.sendServerMessage("⏳Creating a Game🎲 <br> Please be patient... ")
+				err := r.sendServerMessage("⏳Creating a Game🎲 Please be patient... ")
 				if err != nil {
 					logger.Info("send server msg err: ", err)
 					return
