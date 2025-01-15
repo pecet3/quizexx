@@ -2,7 +2,9 @@ package quiz
 
 import (
 	"context"
-	"log"
+	"time"
+
+	"github.com/pecet3/quizex/pkg/logger"
 )
 
 const (
@@ -10,7 +12,8 @@ const (
 )
 
 func fetchQuestionSet(ctx context.Context, category, maxRounds, difficulty, lang string) (string, error) {
-	log.Println("> Fetching Question Set")
+	logger.Debug("Fetching questions set")
+	time.Sleep(time.Second * 10)
 	// err := godotenv.Load(".env")
 
 	// if err != nil {
@@ -66,7 +69,5 @@ func fetchQuestionSet(ctx context.Context, category, maxRounds, difficulty, lang
 	// content := data["choices"].([]interface{})[0].(map[string]interface{})["message"].(map[string]interface{})["content"].(string)
 
 	content := `[ { "question": "Która marka samochodu pochodzi z Włoch?", "answers": ["Volkswagen", "Toyota", "Fiat", "Ford"], "correctAnswer": 2 }, { "question": "Jak nazywa się popularny model auta marki Mercedes-Benz?", "answers": ["Astra", "Passat", "Clio", "Klasa E"], "correctAnswer": 3 }, { "question": "Co oznacza skrót 'SUV' w motoryzacji?", "answers": ["Super Ultra Vitesse", "Sport Utility Vehicle", "Special Upgrade Version", "Society of United Vehicles"], "correctAnswer": 1 }, { "question": "Która marka samochodu pochodzi z Japonii?", "answers": ["BMW", "Honda", "Audi", "Chevrolet"], "correctAnswer": 1 } ]`
-	log.Println(content)
-
 	return content, nil
 }

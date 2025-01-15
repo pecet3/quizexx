@@ -3,7 +3,6 @@ package quiz
 import (
 	"context"
 	"encoding/json"
-	"log"
 	"strconv"
 	"time"
 
@@ -85,21 +84,7 @@ func (r *Room) CreateGame() (*Game, error) {
 	return newGame, nil
 }
 
-func (g *Game) NewGameState(content []RoundQuestion) *GameState {
-	log.Println("> New Game state in room: ", g.Room.Name)
-	g.Content = content
-	score := g.NewScore()
-	return &GameState{
-		Round:           g.State.Round,
-		Question:        g.Content[g.State.Round-1].Question,
-		Answers:         g.Content[g.State.Round-1].Answers,
-		Actions:         []RoundAction{},
-		Score:           score,
-		PlayersAnswered: []string{},
-	}
-}
-
-func (g *Game) NewScore() []PlayerScore {
+func (g *Game) newScore() []PlayerScore {
 	var score []PlayerScore
 
 	for _, p := range g.Players {
@@ -114,6 +99,19 @@ func (g *Game) NewScore() []PlayerScore {
 	return score
 }
 
+func (g *Game) newGameState(content []RoundQuestion) *GameState {
+	logger.Debug("> New Game state in room: ", g.Room.Name)
+	g.Content = content
+	score := g.newScore()
+	return &GameState{
+		Round:           g.State.Round,
+		Question:        g.Content[g.State.Round-1].Question,
+		Answers:         g.Content[g.State.Round-1].Answers,
+		Actions:         []RoundAction{},
+		Score:           score,
+		PlayersAnswered: []string{},
+	}
+}
 func (g *Game) CheckIfShouldBeNextRound() bool {
 	playersInGame := len(g.Players)
 	playersFinished := len(g.State.PlayersAnswered)

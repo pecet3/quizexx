@@ -125,9 +125,9 @@ func (r *Room) Run(m *Manager) {
 			r.sendReadyStatus()
 
 			if ok := r.CheckIfEveryoneIsReady(); ok {
-				err := r.sendServerMessage("⏳Creating a Game🎲 Please be patient... ")
+				err := r.sendServerMessage("Have a good game!")
 				if err != nil {
-					logger.Info("send server msg err: ", err)
+					logger.Error("send server msg err: ", err)
 					return
 				}
 				err = r.sendSettings()
@@ -135,12 +135,7 @@ func (r *Room) Run(m *Manager) {
 					logger.Info("send settings err: ", err)
 					return
 				}
-				r.game, err = r.CreateGame()
-				if err != nil {
-					logger.Info("create game err: ", err)
-					return
-				}
-				r.game.State = r.game.NewGameState(r.game.Content)
+				r.game.State = r.game.newGameState(r.game.Content)
 				r.game.IsGame = true
 				r.game.sendGameState()
 			}
@@ -171,7 +166,7 @@ func (r *Room) Run(m *Manager) {
 					client.addPointsAndToggleIsAnswered(*actionParsed, r)
 					client.lastActive = time.Now()
 					r.game.State.Actions = append(r.game.State.Actions, *actionParsed)
-					r.game.State.Score = r.game.NewScore()
+					r.game.State.Score = r.game.newScore()
 					r.game.SendPlayersAnswered()
 				}
 			}
@@ -229,7 +224,7 @@ func (r *Room) Run(m *Manager) {
 				}
 
 				if !isEndGame {
-					newState := r.game.NewGameState(r.game.Content)
+					newState := r.game.newGameState(r.game.Content)
 					r.game.State = newState
 				}
 				time.Sleep(1800 * time.Millisecond)

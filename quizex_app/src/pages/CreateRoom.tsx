@@ -1,8 +1,8 @@
 import { useEffect } from "react";
 import { MainWrapper } from "../components/MainWrapper";
 import { PaperWrapper } from "../components/PaperWrapper";
-import { QuizSettings } from "../types";
 import { useNavigate } from "react-router-dom";
+import { Settings } from "./Quiz";
 
 export const CreateRoom = () => {
   const nav = useNavigate();
@@ -13,7 +13,7 @@ export const CreateRoom = () => {
     const formData = new FormData(event.target);
     const maxRoundsStr = formData.get("maxRounds");
     const maxRounds = parseInt(maxRoundsStr as string);
-    const data: QuizSettings = {
+    const data: Settings = {
       name: formData.get("roomName") as string,
       gen_content: formData.get("category") as string,
       difficulty: formData.get("difficulty") as string,

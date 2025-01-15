@@ -98,7 +98,7 @@ export const Quiz = () => {
   const { roomName } = useParams<{ roomName: string }>();
   const [ws, setWs] = useState<null | WebSocket>(null);
   const [isWaiting, setIsWaiting] = useState(true);
-
+  const [err, setErr] = useState("");
   const [serverMessage, setServerMessage] = useState("");
   const [gameState, setGameState] = useState<GameState>(defaultGameState);
   const [settings, setSettings] = useState<Settings>(defaultSettings);
@@ -177,7 +177,7 @@ export const Quiz = () => {
     };
 
     ws.onclose = () => {
-      console.log("closed connection with websockets");
+      setErr("Something went wrong...");
     };
 
     return () => {
@@ -187,21 +187,27 @@ export const Quiz = () => {
 
   return (
     <div className="p-2 bg-opacity-70 text-center m-auto">
-      {isWaiting ? (
-        <WaitingRoom
-          serverMessage={serverMessage}
-          waitingState={waitingState}
-          onReady={handleReady}
-        />
+      {err != "" ? (
+        <p className="text-2xl my-64">{err}</p>
       ) : (
         <>
-          <Dashboard
-            settings={settings!}
-            gameState={gameState!}
-            serverMessage={serverMessage}
-            onAnswer={handleAnswer}
-          />
-          <Chat />
+          {isWaiting ? (
+            <WaitingRoom
+              serverMessage={serverMessage}
+              waitingState={waitingState}
+              onReady={handleReady}
+            />
+          ) : (
+            <>
+              <Dashboard
+                settings={settings!}
+                gameState={gameState!}
+                serverMessage={serverMessage}
+                onAnswer={handleAnswer}
+              />
+              <Chat />
+            </>
+          )}
         </>
       )}
     </div>
