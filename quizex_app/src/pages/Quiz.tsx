@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
-import { Chat, GameDashboard, WaitingRoom } from "../components/DashboardQuiz";
 import { useParams } from "react-router-dom";
+import { WaitingRoom } from "../components/quiz/WaitingRoom";
+import { Dashboard } from "../components/quiz/Dashboard";
+import { Chat } from "../components/quiz/Chat";
 
 export type User = {
   name: string;
@@ -193,7 +195,7 @@ export const Quiz = () => {
         />
       ) : (
         <>
-          <GameDashboard
+          <Dashboard
             settings={settings!}
             gameState={gameState!}
             serverMessage={serverMessage}
