@@ -147,10 +147,10 @@ func (r *Room) Run(m *Manager) {
 			}
 			var actionParsed *RoundAction
 			if err := json.Unmarshal(action, &actionParsed); err != nil {
-				logger.Info("Error marshaling game state:", err)
+				logger.Error("Error marshaling game state:", err)
 				return
 			}
-
+			logger.Debug(actionParsed)
 			for _, client := range r.game.Players {
 				if client.user.UUID == actionParsed.UUID {
 					if client.isSpectator {

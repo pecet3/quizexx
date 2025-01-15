@@ -2,7 +2,6 @@ package quiz
 
 import (
 	"context"
-	"time"
 
 	"github.com/pecet3/quizex/pkg/logger"
 )
@@ -13,7 +12,6 @@ const (
 
 func fetchQuestionSet(ctx context.Context, category, maxRounds, difficulty, lang string) (string, error) {
 	logger.Debug("Fetching questions set")
-	time.Sleep(time.Second * 10)
 	// err := godotenv.Load(".env")
 
 	// if err != nil {

@@ -1,6 +1,7 @@
 import React, { useState, FormEvent } from "react";
 
 import { GameState, Settings } from "../../pages/Quiz";
+import { LittlePaperWrapper, PaperWrapper } from "../PaperWrapper";
 
 export const Dashboard: React.FC<{
   settings: Settings;
@@ -67,22 +68,24 @@ export const Dashboard: React.FC<{
         </p>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-          <table className="text-xl table-fixed sm:order-none order-last bg-yellow-200 shadow-md shadow-gray-600">
-            <thead className="m-auto">
-              <tr className="flex justify-center border-b border-black font-mono font-black">
-                <th className="m-auto">Name</th>
-                <th className="m-auto">Points</th>
-              </tr>
-            </thead>
-            <tbody className="flex flex-col [&_tr]:py-2 [&_tr]:gap-4 [&_tr]:flex [&_tr]:justify-between [&_td]:m-auto">
-              {gameState.score.map((user, idx) => (
-                <tr key={idx}>
-                  <td>{user.user.name}</td>
-                  <td>{user.points}</td>
+          <LittlePaperWrapper>
+            <table className="w-full text-xl table-fixed sm:order-none order-last shadow-md">
+              <thead className="m-auto">
+                <tr className="flex justify-center border-b border-black font-mono font-black">
+                  <th className="m-auto">Name</th>
+                  <th className="m-auto">Points</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="flex flex-col [&_tr]:py-2 [&_tr]:gap-4 [&_tr]:flex [&_tr]:justify-between [&_td]:m-auto">
+                {gameState.score.map((user, idx) => (
+                  <tr key={idx}>
+                    <td>{user.user.name}</td>
+                    <td>{user.points}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </LittlePaperWrapper>
           <div className="flex flex-col items-center justify-center gap-0.5">
             <button
               type="submit"

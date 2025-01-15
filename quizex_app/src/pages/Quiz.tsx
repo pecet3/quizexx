@@ -4,6 +4,7 @@ import { WaitingRoom } from "../components/quiz/WaitingRoom";
 import { Dashboard } from "../components/quiz/Dashboard";
 import { Chat } from "../components/quiz/Chat";
 import { Error } from "../components/Error";
+import { useAuthContext } from "../context/authContext";
 
 export type User = {
   name: string;
@@ -46,7 +47,7 @@ type RoundQuestion = {
 };
 export type RoundAction = {
   uuid: string;
-  answer: string;
+  answer: number;
   round: number;
 };
 export type SendMessageEvent = {
@@ -96,6 +97,7 @@ const defaultWaitingState: WaitingState = {
   players: [],
 };
 export const Quiz = () => {
+  const { user } = useAuthContext();
   const { roomName } = useParams<{ roomName: string }>();
   const [ws, setWs] = useState<null | WebSocket>(null);
   const [isWaiting, setIsWaiting] = useState(true);
@@ -107,7 +109,6 @@ export const Quiz = () => {
     useState<WaitingState>(defaultWaitingState);
 
   const handleReady = () => {
-    setIsWaiting(false);
     ws?.send(
       JSON.stringify({
         type: "ready_player",
@@ -122,6 +123,17 @@ export const Quiz = () => {
 
   const handleAnswer = (answer: number) => {
     console.log("Selected answer:", answer);
+    const payload: RoundAction = {
+      answer,
+      round: gameState.round,
+      uuid: user.uuid,
+    };
+    ws?.send(
+      JSON.stringify({
+        type: "send_answer",
+        payload,
+      })
+    );
   };
   function routeEvent(event: Event) {
     console.log("event type", event.type);
