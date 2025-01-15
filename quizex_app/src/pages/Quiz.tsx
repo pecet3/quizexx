@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import { WaitingRoom } from "../components/quiz/WaitingRoom";
 import { Dashboard } from "../components/quiz/Dashboard";
 import { Chat } from "../components/quiz/Chat";
+import { Error } from "../components/Error";
 
 export type User = {
   name: string;
@@ -114,6 +115,10 @@ export const Quiz = () => {
       })
     );
   };
+  // checking if is game
+  useEffect(() => {
+    if (gameState.round !== 0) setIsWaiting(false);
+  }, [gameState]);
 
   const handleAnswer = (answer: number) => {
     console.log("Selected answer:", answer);
@@ -172,15 +177,15 @@ export const Quiz = () => {
       }
     };
 
-    ws.onerror = (error) => {
-      console.error(error);
-    };
-
-    ws.onclose = () => {
+    ws.onerror = () => {
       setErr("Something went wrong...");
     };
 
+    ws.onclose = () => {};
+
     return () => {
+      setErr("Something went wrong...");
+
       ws.close();
     };
   }, []);
@@ -188,7 +193,7 @@ export const Quiz = () => {
   return (
     <div className="p-2 bg-opacity-70 text-center m-auto">
       {err != "" ? (
-        <p className="text-2xl my-64">{err}</p>
+        <Error err={err} />
       ) : (
         <>
           {isWaiting ? (

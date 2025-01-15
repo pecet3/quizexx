@@ -11,7 +11,7 @@ export const ProtectedPage = ({ children }: { children: React.ReactNode }) => {
       (async function () {
         try {
           const result = await fetch("/api/auth/ping");
-          const data = await result.json;
+          const data = await result.json();
           if (result.ok) {
             setUser(data);
           }
