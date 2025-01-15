@@ -38,7 +38,7 @@ type ChatMessage struct {
 	Date    string `json:"date"`
 }
 
-func (g *Game) SendPlayersAnswered() error {
+func (g *Game) sendPlayersAnswered() error {
 	eventBytes, err := marshalEventToBytes(g.State.PlayersAnswered, "players_answered")
 	if err != nil {
 		return err

@@ -113,8 +113,9 @@ func (g *Game) newGameState(content []RoundQuestion) *GameState {
 	}
 }
 func (g *Game) CheckIfShouldBeNextRound() bool {
-	playersInGame := len(g.Players)
+	playersInGame := len(g.Room.clients)
 	playersFinished := len(g.State.PlayersAnswered)
+	logger.Debug(playersFinished, playersInGame)
 	if playersFinished == playersInGame && playersInGame > 0 {
 		return true
 	}

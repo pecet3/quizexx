@@ -128,12 +128,12 @@ func (r *Room) Run(m *Manager) {
 				err := r.sendServerMessage("Have a good game!")
 				if err != nil {
 					logger.Error("send server msg err: ", err)
-					return
+					continue
 				}
 				err = r.sendSettings()
 				if err != nil {
-					logger.Info("send settings err: ", err)
-					return
+					logger.Error("send settings err: ", err)
+					continue
 				}
 				r.game.State = r.game.newGameState(r.game.Content)
 				r.game.IsGame = true
@@ -143,36 +143,39 @@ func (r *Room) Run(m *Manager) {
 		case action := <-r.receiveAnswer:
 			if !r.game.IsGame {
 				logger.Info("is game: false, ", r.game.IsGame)
-				return
+				continue
 			}
 			var actionParsed *RoundAction
 			if err := json.Unmarshal(action, &actionParsed); err != nil {
 				logger.Error("Error marshaling game state:", err)
-				return
+				continue
 			}
-			logger.Debug(actionParsed)
+			logger.Debug(actionParsed.Answer)
 			for _, client := range r.game.Players {
 				if client.user.UUID == actionParsed.UUID {
 					if client.isSpectator {
-						return
+						continue
 					}
 					if !client.isAnswered {
 						err := r.sendServerMessage(client.name + " has answered")
 						if err != nil {
-							return
+							continue
 						}
 					}
+					if isGoodAnswer := client.checkAnswer(*actionParsed, r); isGoodAnswer {
+						client.points = client.points + 10
+						r.game.State.RoundWinners = append(r.game.State.RoundWinners, client.name)
+					}
 
-					client.addPointsAndToggleIsAnswered(*actionParsed, r)
 					client.lastActive = time.Now()
 					r.game.State.Actions = append(r.game.State.Actions, *actionParsed)
 					r.game.State.Score = r.game.newScore()
-					r.game.SendPlayersAnswered()
+					r.game.sendPlayersAnswered()
 				}
 			}
 
 			isNextRound := r.game.CheckIfShouldBeNextRound()
-
+			logger.Debug(isNextRound)
 			indexCurrentContent := r.game.Content[r.game.State.Round-1]
 			indexOkAnswr := indexCurrentContent.CorrectAnswer
 			strOkAnswr := indexCurrentContent.Answers[indexOkAnswr]
