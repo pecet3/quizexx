@@ -115,7 +115,6 @@ func (g *Game) newGameState(content []RoundQuestion) *GameState {
 func (g *Game) checkIfShouldBeNextRound() bool {
 	playersInGame := len(g.Room.clients)
 	playersFinished := len(g.State.PlayersAnswered)
-	logger.Debug(playersFinished, playersInGame)
 	if playersFinished == playersInGame && playersInGame > 0 {
 		return true
 	}
@@ -149,7 +148,7 @@ func (g *Game) toggleClientIsAnswered(c *Client, action *RoundAction) {
 		c.isAnswered = true
 	}
 }
-func (g *Game) findWinner() []*Client {
+func (g *Game) findWinner() []string {
 	highestScore := 0
 	for _, c := range g.Room.clients {
 		if highestScore < c.points {
@@ -157,10 +156,10 @@ func (g *Game) findWinner() []*Client {
 			continue
 		}
 	}
-	winners := []*Client{}
+	winners := []string{}
 	for _, c := range g.Room.clients {
 		if highestScore == c.points {
-			winners = append(winners, c)
+			winners = append(winners, c.user.Name)
 			continue
 		}
 	}
