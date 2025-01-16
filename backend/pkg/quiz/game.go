@@ -132,3 +132,21 @@ func (g *Game) CheckIfIsEndGame() bool {
 	}
 	return false
 }
+
+func (g *Game) checkAnswer(c *Client, action *RoundAction) bool {
+	isGoodAnswer := false
+	if c.user.UUID == action.UUID {
+		c.answer = action.Answer
+		if action.Answer == g.Content[g.State.Round-1].CorrectAnswer && !c.isAnswered {
+			isGoodAnswer = true
+		}
+	}
+	return isGoodAnswer
+}
+
+func (g *Game) toggleClientIsAnswered(c *Client, action *RoundAction) {
+	if action.Answer >= 0 && !c.isAnswered {
+		g.State.PlayersAnswered = append(c.room.game.State.PlayersAnswered, c.name)
+		c.isAnswered = true
+	}
+}

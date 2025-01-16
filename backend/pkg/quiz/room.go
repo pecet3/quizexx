@@ -58,8 +58,11 @@ func (r *Room) removeClient(c *Client) {
 }
 
 func (r *Room) Run(m *Manager) {
-	logger.Info(fmt.Sprintf(`Created a room: %s. creator: %d`, r.UUID, r.creatorID))
+	logger.Info(fmt.Sprintf(`Created a room: %s. creator user id: %d`, r.UUID, r.creatorID))
 	ticker := time.NewTicker(time.Second * 20)
+	defer func() {
+		ticker.Stop()
+	}()
 	for {
 		select {
 		case <-ticker.C:
@@ -74,10 +77,8 @@ func (r *Room) Run(m *Manager) {
 				client.receive <- msg
 			}
 		case client := <-r.join:
-			logger.Debug("client joined")
 			if len(r.clients) == 0 {
-				logger.Debug("zero")
-				r.createdAt = time.Now().Add(time.Hour * 2)
+				ticker.Reset(time.Second * 20)
 			}
 			client.lastActive = time.Now()
 			r.addClient(client)
@@ -162,15 +163,18 @@ func (r *Room) Run(m *Manager) {
 							continue
 						}
 					}
-					if isGoodAnswer := client.checkAnswer(*actionParsed, r); isGoodAnswer {
+					if isGoodAnswer := r.game.checkAnswer(client, actionParsed); isGoodAnswer {
 						client.points = client.points + 10
 						r.game.State.RoundWinners = append(r.game.State.RoundWinners, client.name)
 					}
-
+					r.game.toggleClientIsAnswered(client, actionParsed)
 					client.lastActive = time.Now()
 					r.game.State.Actions = append(r.game.State.Actions, *actionParsed)
 					r.game.State.Score = r.game.newScore()
-					r.game.sendPlayersAnswered()
+					if err := r.game.sendPlayersAnswered(); err != nil {
+						logger.Error(err)
+						continue
+					}
 				}
 			}
 
@@ -199,7 +203,7 @@ func (r *Room) Run(m *Manager) {
 				for _, client := range r.clients {
 					logger.Info("deleting client ", client.name)
 					close(client.receive)
-					// client.conn.Close()
+					client.conn.Close()
 				}
 				delete(m.rooms, r.Name)
 				return

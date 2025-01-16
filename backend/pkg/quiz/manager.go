@@ -169,7 +169,6 @@ func (m *Manager) ServeQuiz(w http.ResponseWriter, req *http.Request, u *entitie
 	currentRoom.join <- client
 	defer func() {
 		currentRoom.leave <- client
-		logger.Debug()
 	}()
 	go client.write(currentRoom)
 	client.read(currentRoom)

@@ -29,24 +29,6 @@ type Client struct {
 	lastActive  time.Time
 }
 
-func (c *Client) checkAnswer(action RoundAction, r *Room) bool {
-	isGoodAnswer := false
-	if c.user.UUID == action.UUID {
-		c.answer = action.Answer
-		logger.Debug(c.room.game.Content[c.room.game.State.Round-1].CorrectAnswer, c.room.game.Content[c.room.game.State.Round-1].Question)
-		logger.Debug(action.Answer)
-
-		if action.Answer == c.room.game.Content[c.room.game.State.Round-1].CorrectAnswer && !c.isAnswered {
-			isGoodAnswer = true
-		}
-		if action.Answer >= 0 && !c.isAnswered {
-			c.room.game.State.PlayersAnswered = append(c.room.game.State.PlayersAnswered, c.name)
-			c.isAnswered = true
-		}
-	}
-	return isGoodAnswer
-}
-
 func (c *Client) read(r *Room) {
 	defer func() {
 		r.removeClient(c)
