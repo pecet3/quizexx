@@ -78,7 +78,7 @@ func (m *Manager) CreateRoom(settings dtos.Settings, creatorID int) *Room {
 	newRoom := m.newRoom(settings, creatorID)
 	m.rooms[newRoom.Name] = newRoom
 
-	logger.Info("> Created a room with name: ", settings.Name)
+	logger.Info("Created a room with name: ", settings.Name)
 	return newRoom
 }
 
@@ -117,8 +117,8 @@ func (m *Manager) GetRoomsList() []*dtos.Room {
 var (
 	upgrader = &websocket.Upgrader{
 		CheckOrigin:     checkOrigin,
-		ReadBufferSize:  1024,
-		WriteBufferSize: 1024,
+		ReadBufferSize:  4096,
+		WriteBufferSize: 4096,
 	}
 )
 
@@ -162,9 +162,8 @@ func (m *Manager) ServeQuiz(w http.ResponseWriter, req *http.Request, u *entitie
 	currentRoom.join <- client
 	defer func() {
 		currentRoom.leave <- client
-
 	}()
-	go client.write(currentRoom)
+	go client.write()
 	client.read(currentRoom)
 
 }

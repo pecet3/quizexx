@@ -77,7 +77,7 @@ func (c *Client) read(r *Room) {
 	}
 }
 
-func (c *Client) write(r *Room) {
+func (c *Client) write() {
 	defer func() {
 		c.conn.Close()
 	}()

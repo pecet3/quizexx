@@ -34,7 +34,7 @@ func (r router) handleCreateRoom(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 	if room := r.quiz.GetRoom(dto.Name); room != nil {
-		http.Error(w, "Room with provided name already exists!", http.StatusFound)
+		http.Error(w, "Room with provided name already exists!", http.StatusForbidden)
 		return
 	}
 
