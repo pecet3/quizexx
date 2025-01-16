@@ -112,7 +112,7 @@ func (g *Game) newGameState(content []RoundQuestion) *GameState {
 		PlayersAnswered: []string{},
 	}
 }
-func (g *Game) CheckIfShouldBeNextRound() bool {
+func (g *Game) checkIfShouldBeNextRound() bool {
 	playersInGame := len(g.Room.clients)
 	playersFinished := len(g.State.PlayersAnswered)
 	logger.Debug(playersFinished, playersInGame)
@@ -122,10 +122,9 @@ func (g *Game) CheckIfShouldBeNextRound() bool {
 	return false
 }
 
-func (g *Game) CheckIfIsEndGame() bool {
-
+func (g *Game) checkIfIsEndGame() bool {
 	isEqualMaxAndCurrentRound := g.State.Round == g.MaxRounds
-	isNextRound := g.CheckIfShouldBeNextRound()
+	isNextRound := g.checkIfShouldBeNextRound()
 
 	if isEqualMaxAndCurrentRound && isNextRound {
 		return true

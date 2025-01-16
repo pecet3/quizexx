@@ -62,6 +62,16 @@ func (r *Room) Run(m *Manager) {
 	ticker := time.NewTicker(time.Second * 20)
 	defer func() {
 		ticker.Stop()
+		for _, client := range r.clients {
+			r.removeClient(client)
+		}
+		close(r.forward)
+		close(r.join)
+		close(r.leave)
+		close(r.ready)
+		close(r.receiveAnswer)
+		delete(m.rooms, r.Name)
+		logger.Info("Closing a room with name: ", r.Name)
 	}()
 	for {
 		select {
@@ -178,13 +188,14 @@ func (r *Room) Run(m *Manager) {
 				}
 			}
 
-			isNextRound := r.game.CheckIfShouldBeNextRound()
-			logger.Debug(isNextRound)
+			isNextRound := r.game.checkIfShouldBeNextRound()
 			indexCurrentContent := r.game.Content[r.game.State.Round-1]
 			indexOkAnswr := indexCurrentContent.CorrectAnswer
 			strOkAnswr := indexCurrentContent.Answers[indexOkAnswr]
 
-			isEndGame := r.game.CheckIfIsEndGame()
+			isEndGame := r.game.checkIfIsEndGame()
+			logger.Debug(isEndGame)
+
 			if isEndGame {
 				err := r.game.sendGameState()
 				if err != nil {
@@ -199,24 +210,14 @@ func (r *Room) Run(m *Manager) {
 				}
 				time.Sleep(1800 * time.Millisecond)
 				_ = r.sendServerMessage("It's finish the game")
-
-				for _, client := range r.clients {
-					logger.Info("deleting client ", client.name)
-					close(client.receive)
-					client.conn.Close()
-				}
-				delete(m.rooms, r.Name)
 				return
 			}
 
 			if isNextRound {
-				logger.Info("It was round: ", r.game.State.Round)
-
 				r.game.State.Round++
 
 				var err error
 				winnersStr := strings.Join(r.game.State.RoundWinners, ", ")
-				logger.Info("Round winners: ", len(r.game.State.RoundWinners))
 				if len(r.game.State.RoundWinners) == 0 {
 					err = r.sendServerMessage("No one wins this round")
 				}
@@ -227,6 +228,7 @@ func (r *Room) Run(m *Manager) {
 					err = r.sendServerMessage("This round win: " + winnersStr)
 				}
 				if err != nil {
+					logger.Error(err)
 					continue
 				}
 
@@ -242,7 +244,7 @@ func (r *Room) Run(m *Manager) {
 					continue
 				}
 
-				time.Sleep(2800 * time.Millisecond)
+				time.Sleep(2000 * time.Millisecond)
 				err = r.sendServerMessage("New round has began: " + strconv.Itoa(r.game.State.Round))
 				if err != nil {
 					continue
