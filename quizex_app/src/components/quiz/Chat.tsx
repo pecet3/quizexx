@@ -31,7 +31,7 @@ export const Chat: React.FC = () => {
         <input
           value={message}
           onChange={(e) => setMessage(e.target.value)}
-          className="p-1 rounded-md border border-black sm:w-[24rem] w-72"
+          className="p-1 rounded-md border bg-white border-black sm:w-[24rem] w-72"
         />
         <button
           type="submit"

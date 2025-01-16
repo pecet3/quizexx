@@ -52,7 +52,6 @@ func (r *Room) removeClient(c *Client) {
 		// close connection
 		delete(r.clients, c.user.UUID)
 		delete(r.game.Players, c.user.UUID)
-
 	}
 
 }
@@ -62,23 +61,13 @@ func (r *Room) Run(m *Manager) {
 	ticker := time.NewTicker(time.Second * 20)
 	defer func() {
 		ticker.Stop()
-		for _, client := range r.clients {
-			r.removeClient(client)
-		}
-		close(r.forward)
-		close(r.join)
-		close(r.leave)
-		close(r.ready)
-		close(r.receiveAnswer)
-		delete(m.rooms, r.Name)
-		logger.Info("Closing a room with name: ", r.Name)
+		m.removeRoom(r.Name)
 	}()
 	for {
 		select {
 		case <-ticker.C:
 			if len(r.clients) <= 0 {
 				logger.Info(fmt.Sprintf(`No one is ine the room: %d. Closing...`, len(r.clients)))
-				defer m.removeRoom(r.Name)
 				return
 			}
 

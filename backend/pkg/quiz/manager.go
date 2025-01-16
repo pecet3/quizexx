@@ -82,21 +82,14 @@ func (m *Manager) CreateRoom(settings dtos.Settings, creatorID int) *Room {
 	return newRoom
 }
 
-func (m *Manager) removeRoom(uuid string) {
+func (m *Manager) removeRoom(name string) {
 	m.mu.Lock()
 	defer m.mu.Unlock()
-
-	if room, ok := m.rooms[uuid]; ok {
+	if room, ok := m.rooms[name]; ok {
 		for _, c := range room.clients {
 			room.removeClient(c)
 		}
-		close(room.join)
-		close(room.forward)
-		close(room.ready)
-		close(room.receiveAnswer)
-		close(room.leave)
-
-		delete(m.rooms, uuid)
+		delete(m.rooms, name)
 		return
 	}
 }
@@ -169,6 +162,7 @@ func (m *Manager) ServeQuiz(w http.ResponseWriter, req *http.Request, u *entitie
 	currentRoom.join <- client
 	defer func() {
 		currentRoom.leave <- client
+
 	}()
 	go client.write(currentRoom)
 	client.read(currentRoom)
