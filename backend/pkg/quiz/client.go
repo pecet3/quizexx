@@ -79,7 +79,7 @@ func (c *Client) read(r *Room) {
 
 func (c *Client) write(r *Room) {
 	defer func() {
-		r.removeClient(c)
+		c.conn.Close()
 	}()
 	ticker := time.NewTicker(pingInterval)
 

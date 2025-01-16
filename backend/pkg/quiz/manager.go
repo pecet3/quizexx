@@ -142,9 +142,9 @@ func (m *Manager) ServeQuiz(w http.ResponseWriter, req *http.Request, u *entitie
 	}
 
 	isSpectator := false
-	if currentRoom.game.IsGame {
-		isSpectator = true
-	}
+	// if currentRoom.game.IsGame {
+	// 	isSpectator = true
+	// }
 	// to do if client exists,change only conn
 	client := &Client{
 		conn:        conn,
