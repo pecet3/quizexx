@@ -21,6 +21,17 @@ type Game struct {
 	Content    []RoundQuestion
 }
 
+type Player struct {
+	user        *entities.User
+	isReady     bool
+	isSpectator bool
+	isAnswered  bool
+	answer      int
+	points      int
+	roundsWon   []uint
+	lastActive  time.Time
+}
+
 type GameState struct {
 	Round           int           `json:"round"`
 	Question        string        `json:"question"`

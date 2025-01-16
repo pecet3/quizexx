@@ -52,7 +52,7 @@ func (g *Game) sendPlayersAnswered() error {
 	return nil
 }
 
-func (r *Room) SendIsSpectator() error {
+func (r *Room) sendIsSpectator() error {
 	eventBytes, err := marshalEventToBytes(true, "")
 	if err != nil {
 		return err
@@ -65,7 +65,7 @@ func (r *Room) SendIsSpectator() error {
 	}
 	return nil
 }
-func (r *Room) SendIsFinish() error {
+func (r *Room) sendIsFinish() error {
 	eventBytes, err := marshalEventToBytes(true, "finish_game")
 	if err != nil {
 		return err

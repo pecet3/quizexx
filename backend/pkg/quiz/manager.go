@@ -146,6 +146,7 @@ func (m *Manager) ServeQuiz(w http.ResponseWriter, req *http.Request, u *entitie
 	// 	isSpectator = true
 	// }
 	// to do if client exists,change only conn
+
 	client := &Client{
 		conn:        conn,
 		receive:     make(chan []byte),

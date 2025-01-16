@@ -31,7 +31,7 @@ type Room struct {
 	createdAt     time.Time
 }
 
-func (r *Room) CheckIfEveryoneIsReady() bool {
+func (r *Room) checkIfEveryoneIsReady() bool {
 	for _, c := range r.clients {
 		if !c.isReady {
 			return false
@@ -48,12 +48,7 @@ func (r *Room) addClient(c *Client) {
 func (r *Room) removeClient(c *Client) {
 	r.cMu.Lock()
 	defer r.cMu.Unlock()
-	if _, ok := r.clients[c.user.UUID]; ok {
-		// close connection
-		delete(r.clients, c.user.UUID)
-		delete(r.game.Players, c.user.UUID)
-	}
-
+	delete(r.clients, c.user.UUID)
 }
 
 func (r *Room) Run(m *Manager) {
@@ -93,13 +88,15 @@ func (r *Room) Run(m *Manager) {
 					return
 				}
 			}
-			err := r.sendSettings()
-			if err != nil {
+			if err := r.sendSettings(); err != nil {
 				logger.Info("run err send settings")
 				return
 			}
 			if r.game.IsGame {
-				_ = r.game.sendGameState()
+				if err := r.game.sendGameState(); err != nil {
+					logger.Error(err)
+					continue
+				}
 			}
 			eventBytes, err := marshalEventToBytes[dtos.Settings](r.settings, "room_settings")
 			if err != nil {
@@ -112,18 +109,29 @@ func (r *Room) Run(m *Manager) {
 
 		case client := <-r.leave:
 			r.sendServerMessage(client.name + " is leaving the room")
-
+			if !r.game.IsGame {
+				if err := r.sendReadyStatus(); err != nil {
+					logger.Error(err)
+					continue
+				}
+			}
 		case client := <-r.ready:
 			if r.game.IsGame && client.isSpectator {
-				r.sendServerMessage(client.name + " joins as a spectator")
+				if err := r.sendServerMessage(client.name + " joins as a spectator"); err != nil {
+					logger.Error(err)
+					continue
+				}
 			}
 			client.lastActive = time.Now()
 
 			client.isReady = true
-			r.sendServerMessage(client.name + " is ready!")
+			if err := r.sendServerMessage(client.name + " is ready!"); err != nil {
+				logger.Error(err)
+				continue
+			}
 			r.sendReadyStatus()
 
-			if ok := r.CheckIfEveryoneIsReady(); ok {
+			if ok := r.checkIfEveryoneIsReady(); ok {
 				err := r.sendServerMessage("Have a good game!")
 				if err != nil {
 					logger.Error("send server msg err: ", err)
@@ -136,7 +144,10 @@ func (r *Room) Run(m *Manager) {
 				}
 				r.game.State = r.game.newGameState(r.game.Content)
 				r.game.IsGame = true
-				r.game.sendGameState()
+				if err := r.game.sendGameState(); err != nil {
+					logger.Error(err)
+					continue
+				}
 			}
 
 		case action := <-r.receiveAnswer:
@@ -179,7 +190,7 @@ func (r *Room) Run(m *Manager) {
 			indexCurrentContent := r.game.Content[r.game.State.Round-1]
 			indexOkAnswr := indexCurrentContent.CorrectAnswer
 			strOkAnswr := indexCurrentContent.Answers[indexOkAnswr]
-
+			logger.Debug(r.game.Players)
 			isEndGame := r.game.checkIfIsEndGame()
 			if isEndGame {
 				err := r.game.sendGameState()
@@ -239,24 +250,28 @@ func (r *Room) Run(m *Manager) {
 					r.game.State = newState
 				}
 				time.Sleep(1800 * time.Millisecond)
-				r.game.sendGameState()
-
 				err = r.sendServerMessage("The correct answer was: " + strOkAnswr)
 				if err != nil {
+					logger.Error(err)
 					continue
 				}
 
-				time.Sleep(2000 * time.Millisecond)
-				err = r.sendServerMessage("New round has began: " + strconv.Itoa(r.game.State.Round))
+				time.Sleep(3000 * time.Millisecond)
+				err = r.sendServerMessage("Round " + strconv.Itoa(r.game.State.Round) + " just started!")
 				if err != nil {
+					logger.Error(err)
 					continue
 				}
+
 				for _, client := range r.game.Players {
 					if client.isAnswered {
 						client.isAnswered = false
 					}
 				}
-
+				if err = r.game.sendGameState(); err != nil {
+					logger.Error(err)
+					continue
+				}
 			}
 		}
 	}

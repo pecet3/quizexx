@@ -1,10 +1,11 @@
 import { useState } from "react";
 import { MainWrapper } from "../components/MainWrapper";
-import { PaperWrapper } from "../components/PaperWrapper";
 import { useNavigate } from "react-router-dom";
 import { Settings } from "./Quiz";
 import { Error } from "../components/Error";
 import { RoomCreator } from "../components/RoomCreator";
+
+// to do : better error handling in UI
 
 export const CreateRoom = () => {
   const nav = useNavigate();
