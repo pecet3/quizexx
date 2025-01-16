@@ -49,7 +49,7 @@ export const Dashboard: React.FC<{
                 ["bg-blue-200", "bg-red-200", "bg-green-200", "bg-purple-200"][
                   idx
                 ]
-              } duration-300 has-[:checked]:bg-gray-700 has-[:checked]:ring hover:scale-[1.03] ring-teal-500 has-[:checked]:text-white cursor-pointer flex justify-center items-center rounded-md hover:rounded-lg p-1 border border-black`}
+              } duration-300 has-[:checked]:bg-gray-700 has-[:checked]:ring hover:scale-[1.025] hover:shadow-md hover:shadow-gray-400 ring-teal-500 has-[:checked]:text-white cursor-pointer flex justify-center items-center rounded-md hover:rounded-lg p-1 border border-black`}
             >
               <input
                 type="radio"
@@ -68,7 +68,15 @@ export const Dashboard: React.FC<{
           {serverMessage}
         </p>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+          <div className="sm:order-1  flex flex-col items-center justify-center gap-0.5">
+            <button
+              type="submit"
+              className="bg-teal-300 hover:scale-[1.025] hover:shadow-lg hover:shadow-gray-500 hover:rounded-xl border-2 border-black font-mono font-semibold px-4 text-3xl duration-300 text-black rounded-lg m-auto py-2"
+            >
+              Send answer
+            </button>
+          </div>
           <LittlePaperWrapper>
             <table className="w-full text-xl table-fixed sm:order-none order-last">
               <thead className="">
@@ -87,14 +95,6 @@ export const Dashboard: React.FC<{
               </tbody>
             </table>
           </LittlePaperWrapper>
-          <div className="flex flex-col items-center justify-center gap-0.5">
-            <button
-              type="submit"
-              className="bg-teal-300 hover:scale-[1.03] hover:rounded-xl border-2 border-black font-mono font-semibold px-4 text-3xl duration-300 text-black rounded-lg m-auto py-2"
-            >
-              Send the answer
-            </button>
-          </div>
         </div>
       </form>
     </div>
