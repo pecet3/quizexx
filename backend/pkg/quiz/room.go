@@ -112,7 +112,6 @@ func (r *Room) Run(m *Manager) {
 
 		case client := <-r.leave:
 			r.sendServerMessage(client.name + " is leaving the room")
-			logger.Debug(r.clients)
 
 		case client := <-r.ready:
 			if r.game.IsGame && client.isSpectator {
@@ -150,7 +149,6 @@ func (r *Room) Run(m *Manager) {
 				logger.Error("Error marshaling game state:", err)
 				continue
 			}
-			logger.Debug(actionParsed.Answer)
 			for _, client := range r.game.Players {
 				if client.user.UUID == actionParsed.UUID {
 					if client.isSpectator {
@@ -183,22 +181,26 @@ func (r *Room) Run(m *Manager) {
 			strOkAnswr := indexCurrentContent.Answers[indexOkAnswr]
 
 			isEndGame := r.game.checkIfIsEndGame()
-			logger.Debug(isEndGame)
-
 			if isEndGame {
 				err := r.game.sendGameState()
 				if err != nil {
-					logger.Info("finish game err send game", err)
+					logger.Error("finish game err send game", err)
 					continue
 				}
 
-				err = r.sendServerMessage("The correct answer was: " + strOkAnswr)
-				if err != nil {
-					logger.Info("finish game err", err)
+				if err = r.sendServerMessage("The correct answer was: " + strOkAnswr); err != nil {
+					logger.Error("finish game err", err)
 					continue
 				}
 				time.Sleep(1800 * time.Millisecond)
-				_ = r.sendServerMessage("It's finish the game")
+				if err = r.sendServerMessage("It's finish the game" + strOkAnswr); err != nil {
+					logger.Error("finish game err", err)
+					continue
+				}
+				time.Sleep(1800 * time.Millisecond)
+				winners := r.game.findWinner()
+				logger.Debug(winners)
+				time.Sleep(120 * time.Second)
 				return
 			}
 

@@ -45,13 +45,12 @@ func (c *Client) read(r *Room) {
 
 	for {
 		_, reqBytes, err := c.conn.ReadMessage()
-		logger.Debug(string(reqBytes))
 		if err != nil {
 			if websocket.IsUnexpectedCloseError(err, websocket.CloseGoingAway, websocket.CloseAbnormalClosure) {
 				logger.Error("ws err or user was too long inactive:", err)
 				return
 			}
-			logger.Error("leave:", err)
+			logger.Error(err)
 			return
 		}
 
@@ -80,7 +79,7 @@ func (c *Client) read(r *Room) {
 
 func (c *Client) write(r *Room) {
 	defer func() {
-		c.conn.Close()
+		r.removeClient(c)
 	}()
 	ticker := time.NewTicker(pingInterval)
 

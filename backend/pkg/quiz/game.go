@@ -149,3 +149,20 @@ func (g *Game) toggleClientIsAnswered(c *Client, action *RoundAction) {
 		c.isAnswered = true
 	}
 }
+func (g *Game) findWinner() []*Client {
+	highestScore := 0
+	for _, c := range g.Room.clients {
+		if highestScore < c.points {
+			highestScore = c.points
+			continue
+		}
+	}
+	winners := []*Client{}
+	for _, c := range g.Room.clients {
+		if highestScore == c.points {
+			winners = append(winners, c)
+			continue
+		}
+	}
+	return winners
+}
