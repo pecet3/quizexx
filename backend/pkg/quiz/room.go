@@ -155,7 +155,7 @@ func (r *Room) Run(m *Manager) {
 						continue
 					}
 					if !client.isAnswered {
-						err := r.sendServerMessage(client.name + " has answered")
+						err := r.sendServerMessage(client.name + " just answered")
 						if err != nil {
 							continue
 						}
@@ -193,15 +193,26 @@ func (r *Room) Run(m *Manager) {
 					continue
 				}
 				time.Sleep(1800 * time.Millisecond)
-				if err = r.sendServerMessage("It's finish the game" + strOkAnswr); err != nil {
+				if err = r.sendServerMessage("It's finish the game"); err != nil {
 					logger.Error("finish game err", err)
 					continue
 				}
 				time.Sleep(1800 * time.Millisecond)
 				winners := r.game.findWinner()
+				winnersStr := strings.Join(winners, ", ")
+				if len(winners) == 1 && len(winners) > 0 {
+					if err = r.sendServerMessage("This game wins: " + winnersStr); err != nil {
+						logger.Error("finish game err", err)
+						continue
+					}
+				} else {
+					if err = r.sendServerMessage("This game win: " + winnersStr); err != nil {
+						logger.Error("finish game err", err)
+						continue
+					}
+				}
 				logger.Debug(winners)
-				time.Sleep(120 * time.Second)
-				return
+				continue
 			}
 
 			if isNextRound {
