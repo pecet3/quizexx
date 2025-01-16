@@ -20,8 +20,8 @@ export const LittlePaperWrapper = ({
       className="paper paper-yellow 
      shadow-lg shadow-gray-100"
     >
-      <div className="tape-section"></div>
-      {children}
+      <div className="top-tape"></div>
+      <div className="pt-10 p-2"> {children}</div>
     </div>
   );
 };

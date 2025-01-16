@@ -69,14 +69,14 @@ export const Dashboard: React.FC<{
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
           <LittlePaperWrapper>
-            <table className="w-full text-xl table-fixed sm:order-none order-last shadow-md">
-              <thead className="m-auto">
-                <tr className="flex justify-center border-b border-black font-mono font-black">
+            <table className="w-full text-xl table-fixed sm:order-none order-last">
+              <thead className="">
+                <tr className="border-b border-black font-mono font-black">
                   <th className="m-auto">Name</th>
                   <th className="m-auto">Points</th>
                 </tr>
               </thead>
-              <tbody className="flex flex-col [&_tr]:py-2 [&_tr]:gap-4 [&_tr]:flex [&_tr]:justify-between [&_td]:m-auto">
+              <tbody className="">
                 {gameState.score.map((user, idx) => (
                   <tr key={idx}>
                     <td>{user.user.name}</td>

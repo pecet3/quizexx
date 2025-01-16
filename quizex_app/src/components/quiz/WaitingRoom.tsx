@@ -9,9 +9,9 @@ export const WaitingRoom: React.FC<{
   return (
     <>
       <div className="flex flex-col justify-center items-center my-6">
-        <div className="paper paper-yellow max-w-md text-lg m-auto p-4 pt-8 shadow-md flex flex-col items-center">
+        <div className="paper paper-yellow max-w-xs w-full text-lg m-auto p-4 pt-8 shadow-md gap-2 flex flex-col items-center">
           <div className="top-tape"></div>
-          <ul className="grid grid-cols-2 text-xl">
+          <ul className="grid grid-cols-2 text-xl w-full">
             {waitingState.players.map((user, idx) => (
               <li key={idx}>
                 {user.name} {user.is_ready ? "✔" : "❌"}
