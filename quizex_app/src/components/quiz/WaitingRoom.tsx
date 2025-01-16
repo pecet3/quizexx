@@ -14,14 +14,14 @@ export const WaitingRoom: React.FC<{
           <ul className="grid grid-cols-2 text-xl">
             {waitingState.players.map((user, idx) => (
               <li key={idx}>
-                {user.name} {user.isReady ? "✔" : "❌"}
+                {user.name} {user.is_ready ? "✔" : "❌"}
               </li>
             ))}
           </ul>
           <div className="flex gap-0.5">
             <span className="text-2xl font-sans font-bold">[</span>
             <p className="text-2xl font-sans font-bold">
-              {waitingState.players.filter((u) => u.isReady).length} /
+              {waitingState.players.filter((u) => u.is_ready).length} /
               {waitingState.players.length}
             </p>
             <span className="text-2xl font-sans font-bold">]</span>

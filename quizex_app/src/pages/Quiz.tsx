@@ -57,7 +57,7 @@ export type SendMessageEvent = {
 
 export type WaitingPlayer = {
   name: string;
-  isReady: boolean;
+  is_ready: boolean;
 };
 
 export type WaitingState = {
