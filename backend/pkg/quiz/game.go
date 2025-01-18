@@ -14,7 +14,7 @@ type Game struct {
 	Room       *Room
 	State      *GameState
 	IsGame     bool
-	Players    map[UUID]*Client
+	Players    map[UUID]*Player
 	Category   string
 	Difficulty string
 	MaxRounds  int
@@ -85,7 +85,7 @@ func (r *Room) CreateGame() (*Game, error) {
 		Room:       r,
 		State:      &GameState{Round: 1},
 		IsGame:     false,
-		Players:    r.clients,
+		Players:    make(map[UUID]*Player),
 		Category:   r.settings.GenContent,
 		Difficulty: r.settings.Difficulty,
 		MaxRounds:  maxRoundsInt,
@@ -142,33 +142,33 @@ func (g *Game) checkIfIsEndGame() bool {
 	return false
 }
 
-func (g *Game) checkAnswer(c *Client, action *RoundAction) bool {
+func (g *Game) checkAnswer(p *Player, action *RoundAction) bool {
 	isGoodAnswer := false
-	if c.user.UUID == action.UUID {
-		c.answer = action.Answer
-		if action.Answer == g.Content[g.State.Round-1].CorrectAnswer && !c.isAnswered {
+	if p.user.UUID == action.UUID {
+		p.answer = action.Answer
+		if action.Answer == g.Content[g.State.Round-1].CorrectAnswer && !p.isAnswered {
 			isGoodAnswer = true
 		}
 	}
 	return isGoodAnswer
 }
 
-func (g *Game) toggleClientIsAnswered(c *Client, action *RoundAction) {
-	if action.Answer >= 0 && !c.isAnswered {
-		g.State.PlayersAnswered = append(c.room.game.State.PlayersAnswered, c.name)
-		c.isAnswered = true
+func (g *Game) toggleClientIsAnswered(p *Player, action *RoundAction) {
+	if action.Answer >= 0 && !p.isAnswered {
+		g.State.PlayersAnswered = append(g.State.PlayersAnswered, p.user.Name)
+		p.isAnswered = true
 	}
 }
 func (g *Game) findWinner() []string {
 	highestScore := 0
-	for _, c := range g.Room.clients {
+	for _, c := range g.Room.game.Players {
 		if highestScore < c.points {
 			highestScore = c.points
 			continue
 		}
 	}
 	winners := []string{}
-	for _, c := range g.Room.clients {
+	for _, c := range g.Room.game.Players {
 		if highestScore == c.points {
 			winners = append(winners, c.user.Name)
 			continue

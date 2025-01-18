@@ -33,7 +33,7 @@ type Room struct {
 
 func (r *Room) checkIfEveryoneIsReady() bool {
 	for _, c := range r.clients {
-		if !c.isReady {
+		if !c.player.isReady {
 			return false
 		}
 	}
@@ -43,6 +43,14 @@ func (r *Room) checkIfEveryoneIsReady() bool {
 func (r *Room) addClient(c *Client) {
 	r.cMu.Lock()
 	defer r.cMu.Unlock()
+	if p, ok := r.game.Players[c.user.UUID]; ok {
+		c.player = p
+	} else {
+		c.player.user = c.user
+		r.game.Players[c.user.UUID] = &Player{
+			user: c.user,
+		}
+	}
 	r.clients[c.user.UUID] = c
 }
 func (r *Room) removeClient(c *Client) {
@@ -74,16 +82,15 @@ func (r *Room) Run(m *Manager) {
 			if len(r.clients) == 0 {
 				ticker.Reset(time.Second * 20)
 			}
-			client.lastActive = time.Now()
 			r.addClient(client)
 
-			if r.game.IsGame && client.isSpectator {
-				err := r.sendServerMessage(client.name + " joins as spectator")
+			if r.game.IsGame && client.player.isSpectator {
+				err := r.sendServerMessage(client.user.Name + " joins as spectator")
 				if err != nil {
 					return
 				}
 			} else {
-				err := r.sendServerMessage(client.name + " joins the game")
+				err := r.sendServerMessage(client.user.Name + " joins the game")
 				if err != nil {
 					return
 				}
@@ -103,12 +110,12 @@ func (r *Room) Run(m *Manager) {
 				return
 			}
 			client.receive <- eventBytes
-			if !r.game.IsGame && !client.isSpectator {
+			if !r.game.IsGame && !client.player.isSpectator {
 				r.sendReadyStatus()
 			}
 
 		case client := <-r.leave:
-			r.sendServerMessage(client.name + " is leaving the room")
+			r.sendServerMessage(client.user.Name + " is leaving the room")
 			if !r.game.IsGame {
 				if err := r.sendReadyStatus(); err != nil {
 					logger.Error(err)
@@ -116,16 +123,16 @@ func (r *Room) Run(m *Manager) {
 				}
 			}
 		case client := <-r.ready:
-			if r.game.IsGame && client.isSpectator {
-				if err := r.sendServerMessage(client.name + " joins as a spectator"); err != nil {
+			if r.game.IsGame && client.player.isSpectator {
+				if err := r.sendServerMessage(client.player.user.Name + " joins as a spectator"); err != nil {
 					logger.Error(err)
 					continue
 				}
 			}
-			client.lastActive = time.Now()
+			client.player.lastActive = time.Now()
 
-			client.isReady = true
-			if err := r.sendServerMessage(client.name + " is ready!"); err != nil {
+			client.player.isReady = true
+			if err := r.sendServerMessage(client.user.Name + " is ready!"); err != nil {
 				logger.Error(err)
 				continue
 			}
@@ -160,23 +167,23 @@ func (r *Room) Run(m *Manager) {
 				logger.Error("Error marshaling game state:", err)
 				continue
 			}
-			for _, client := range r.game.Players {
-				if client.user.UUID == actionParsed.UUID {
-					if client.isSpectator {
+			for _, player := range r.game.Players {
+				if player.user.UUID == actionParsed.UUID {
+					if player.isSpectator {
 						continue
 					}
-					if !client.isAnswered {
-						err := r.sendServerMessage(client.name + " just answered")
+					if !player.isAnswered {
+						err := r.sendServerMessage(player.user.Name + " just answered")
 						if err != nil {
 							continue
 						}
 					}
-					if isGoodAnswer := r.game.checkAnswer(client, actionParsed); isGoodAnswer {
-						client.points = client.points + 10
-						r.game.State.RoundWinners = append(r.game.State.RoundWinners, client.name)
+					if isGoodAnswer := r.game.checkAnswer(player, actionParsed); isGoodAnswer {
+						player.points = player.points + 10
+						r.game.State.RoundWinners = append(r.game.State.RoundWinners, player.user.Name)
 					}
-					r.game.toggleClientIsAnswered(client, actionParsed)
-					client.lastActive = time.Now()
+					r.game.toggleClientIsAnswered(player, actionParsed)
+					player.lastActive = time.Now()
 					r.game.State.Actions = append(r.game.State.Actions, *actionParsed)
 					r.game.State.Score = r.game.newScore()
 					if err := r.game.sendPlayersAnswered(); err != nil {

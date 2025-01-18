@@ -15,18 +15,11 @@ var (
 )
 
 type Client struct {
-	user        *entities.User
-	name        string
-	conn        *websocket.Conn
-	receive     chan []byte
-	room        *Room
-	isReady     bool
-	isSpectator bool
-	isAnswered  bool
-	answer      int
-	points      int
-	roundsWon   []uint
-	lastActive  time.Time
+	user    *entities.User
+	conn    *websocket.Conn
+	receive chan []byte
+	room    *Room
+	player  *Player
 }
 
 func (c *Client) read(r *Room) {

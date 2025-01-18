@@ -98,8 +98,8 @@ func (r *Room) sendReadyStatus() error {
 
 	for _, c := range r.clients {
 		RoomClient := WaitingPlayer{
-			Name:    c.name,
-			IsReady: c.isReady,
+			Name:    c.user.Name,
+			IsReady: c.player.isReady,
 		}
 		readyClients = append(readyClients, RoomClient)
 	}

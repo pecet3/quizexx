@@ -141,23 +141,18 @@ func (m *Manager) ServeQuiz(w http.ResponseWriter, req *http.Request, u *entitie
 		return
 	}
 
-	isSpectator := false
+	// isSpectator := false
 	// if currentRoom.game.IsGame {
 	// 	isSpectator = true
 	// }
 	// to do if client exists,change only conn
 
 	client := &Client{
-		conn:        conn,
-		receive:     make(chan []byte),
-		room:        currentRoom,
-		name:        u.Name,
-		answer:      -1,
-		points:      0,
-		isReady:     false,
-		isSpectator: isSpectator,
-		isAnswered:  false,
-		user:        u,
+		conn:    conn,
+		receive: make(chan []byte),
+		room:    currentRoom,
+		player:  &Player{},
+		user:    u,
 	}
 
 	currentRoom.join <- client
