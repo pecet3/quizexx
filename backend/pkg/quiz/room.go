@@ -197,7 +197,6 @@ func (r *Room) Run(m *Manager) {
 			indexCurrentContent := r.game.Content[r.game.State.Round-1]
 			indexOkAnswr := indexCurrentContent.CorrectAnswer
 			strOkAnswr := indexCurrentContent.Answers[indexOkAnswr]
-			logger.Debug(r.game.Players)
 			isEndGame := r.game.checkIfIsEndGame()
 			if isEndGame {
 				err := r.game.sendGameState()
@@ -206,7 +205,7 @@ func (r *Room) Run(m *Manager) {
 					continue
 				}
 
-				if err = r.sendServerMessage("The correct answer was: " + strOkAnswr); err != nil {
+				if err = r.sendServerMessage("The correct answer is: " + strOkAnswr); err != nil {
 					logger.Error("finish game err", err)
 					continue
 				}
@@ -257,7 +256,7 @@ func (r *Room) Run(m *Manager) {
 					r.game.State = newState
 				}
 				time.Sleep(1800 * time.Millisecond)
-				err = r.sendServerMessage("The correct answer was: " + strOkAnswr)
+				err = r.sendServerMessage("The correct answer is: " + strOkAnswr)
 				if err != nil {
 					logger.Error(err)
 					continue
