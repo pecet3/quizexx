@@ -18,14 +18,7 @@ const (
 	apiEndpoint = "https://api.openai.com/v1/chat/completions"
 )
 
-func removeCodeMarkers(input string) string {
-	input = strings.ReplaceAll(input, "```json", "")
-	input = strings.ReplaceAll(input, "```", "")
-	return input
-}
-
 func fetchFromGPT(ctx context.Context, prompt string) (string, error) {
-	logger.Debug("Fetching questions set")
 	if err := godotenv.Load(".env"); err != nil {
 		logger.Error(err)
 		return "", err
@@ -34,9 +27,10 @@ func fetchFromGPT(ctx context.Context, prompt string) (string, error) {
 	apiKey := os.Getenv("GPT_KEY")
 
 	reqBody, err := json.Marshal(map[string]interface{}{
-		"model":      "gpt-4o-mini",
-		"messages":   []interface{}{map[string]interface{}{"role": "system", "content": prompt}},
-		"max_tokens": 1200,
+		"model":       "gpt-4o-mini",
+		"messages":    []interface{}{map[string]interface{}{"role": "system", "content": prompt}},
+		"max_tokens":  1200,
+		"temperature": 0.8,
 	})
 	if err != nil {
 		return "", err
@@ -65,7 +59,7 @@ func fetchFromGPT(ctx context.Context, prompt string) (string, error) {
 
 	content := data["choices"].([]interface{})[0].(map[string]interface{})["message"].(map[string]interface{})["content"].(string)
 
-	out := removeCodeMarkers(content)
-	logger.Debug(out)
-	return out, nil
+	content = strings.ReplaceAll(content, "```json", "")
+	content = strings.ReplaceAll(content, "```", "")
+	return content, nil
 }
