@@ -6,6 +6,7 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/pecet3/quizex/data/dtos"
 	"github.com/pecet3/quizex/data/entities"
 	"github.com/pecet3/quizex/pkg/logger"
 )
@@ -18,7 +19,7 @@ type Game struct {
 	Category   string
 	Difficulty string
 	MaxRounds  int
-	Content    []RoundQuestion
+	Content    GameContent
 }
 
 type Player struct {
@@ -54,32 +55,41 @@ type PlayerScore struct {
 	RoundsWon  []uint         `json:"rounds_won"`
 	IsAnswered bool           `json:"is_answered"`
 }
+
+type GameContent = []RoundQuestion
 type RoundQuestion struct {
 	Question      string   `json:"question"`
 	Answers       []string `json:"answers"`
 	CorrectAnswer int      `json:"correct_answer"`
 }
 
-func (r *Room) CreateGame() (*Game, error) {
-	logger.Info("Creating a game in room: ", r.settings.Name)
-	maxRoundsInt := r.settings.MaxRounds
-	maxRoundsStr := strconv.Itoa(r.settings.MaxRounds)
-
-	difficulty := r.settings.Difficulty
-	category := r.settings.GenContent
-	lang := r.settings.Language
+func (g *Game) getGameContent(s dtos.Settings) error {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*60)
 	defer cancel()
-	content, err := fetchQuestionSet(ctx, category, maxRoundsStr, difficulty, lang)
-	if err != nil {
-		return nil, err
-	}
-	var questions []RoundQuestion
+	options := "Options for this quiz:" +
+		" category: " + s.GenContent +
+		", diffuculty:" + s.Difficulty +
+		", content language: " + s.Difficulty
+	prompt := "return json for quiz game with " +
+		strconv.Itoa(s.MaxRounds) + " questions." +
+		options +
+		" You have to return correct struct. This is just array of objects. Nothing more, start struct: [{ question, 4x answers, correct_answer(index)}] "
 
-	err = json.Unmarshal([]byte(content), &questions)
+	contentStr, err := fetchFromGPT(ctx, prompt)
 	if err != nil {
-		return nil, err
+		return err
 	}
+	var content GameContent
+
+	err = json.Unmarshal([]byte(contentStr), &content)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (r *Room) CreateGame() (*Game, error) {
+	logger.Info("Creating a game in room: ", r.settings.Name)
 
 	newGame := &Game{
 		Room:       r,
@@ -88,8 +98,11 @@ func (r *Room) CreateGame() (*Game, error) {
 		Players:    make(map[UUID]*Player),
 		Category:   r.settings.GenContent,
 		Difficulty: r.settings.Difficulty,
-		MaxRounds:  maxRoundsInt,
-		Content:    questions,
+		MaxRounds:  r.settings.MaxRounds,
+		Content:    nil,
+	}
+	if err := newGame.getGameContent(r.settings); err != nil {
+		return nil, err
 	}
 	r.game = newGame
 	return newGame, nil

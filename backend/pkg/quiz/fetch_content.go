@@ -1,71 +1,74 @@
 package quiz
 
 import (
+	"bytes"
 	"context"
+	"encoding/json"
+	"net/http"
+	"os"
+	"strings"
+	"time"
 
+	"github.com/joho/godotenv"
 	"github.com/pecet3/quizex/pkg/logger"
 )
 
 const (
+	testContent = `[ { "question": "Która marka samochodu pochodzi z Włoch?", "answers": ["Volkswagen", "Toyota", "Fiat", "Ford"], "correct_answer": 2 }, { "question": "Jak nazywa się popularny model auta marki Mercedes-Benz?", "answers": ["Astra", "Passat", "Clio", "Klasa E"], "correct_answer": 3 }, { "question": "Co oznacza skrót 'SUV' w motoryzacji?", "answers": ["Super Ultra Vitesse", "Sport Utility Vehicle", "Special Upgrade Version", "Society of United Vehicles"], "correct_answer": 1 }, { "question": "Która marka samochodu pochodzi z Japonii?", "answers": ["BMW", "Honda", "Audi", "Chevrolet"], "correct_answer": 1 } ]`
+
 	apiEndpoint = "https://api.openai.com/v1/chat/completions"
 )
 
-func fetchQuestionSet(ctx context.Context, category, maxRounds, difficulty, lang string) (string, error) {
+func removeCodeMarkers(input string) string {
+	input = strings.ReplaceAll(input, "```json", "")
+	input = strings.ReplaceAll(input, "```", "")
+	return input
+}
+
+func fetchFromGPT(ctx context.Context, prompt string) (string, error) {
 	logger.Debug("Fetching questions set")
-	// err := godotenv.Load(".env")
+	if err := godotenv.Load(".env"); err != nil {
+		logger.Error(err)
+		return "", err
+	}
 
-	// if err != nil {
-	// 	fmt.Println("error env")
-	// }
+	apiKey := os.Getenv("GPT_KEY")
 
-	// apiKey := os.Getenv("GPT_KEY")
-	// log.Println(apiKey[:16])
+	ctx, cancel := context.WithTimeout(ctx, 10*time.Second)
+	defer cancel()
 
-	// options := "Options for this quiz:" +
-	// 	" category: " + category +
-	// 	", diffuculty:" + difficulty +
-	// 	", content language: " + lang
+	reqBody, err := json.Marshal(map[string]interface{}{
+		"model":      "gpt-4o-mini",
+		"messages":   []interface{}{map[string]interface{}{"role": "system", "content": prompt}},
+		"max_tokens": 1200,
+	})
+	if err != nil {
+		return "", err
+	}
 
-	// prompt := "return json for quiz game with " +
-	// 	maxRounds + " questions." +
-	// 	options +
-	// 	" You have to return correct struct. This is just array of objects. Nothing more, start struct: [{ question, 4x answers, correct_answer(index)}] "
+	req, err := http.NewRequestWithContext(ctx, "POST", apiEndpoint, bytes.NewBuffer(reqBody))
+	if err != nil {
+		return "", err
+	}
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Authorization", "Bearer "+apiKey)
 
-	// ctx, cancel := context.WithTimeout(ctx, 10*time.Second)
-	// defer cancel()
+	client := &http.Client{}
+	response, err := client.Do(req)
+	if err != nil {
+		return "", err
+	}
+	defer response.Body.Close()
 
-	// reqBody, err := json.Marshal(map[string]interface{}{
-	// 	"model":      "gpt-4o-mini",
-	// 	"messages":   []interface{}{map[string]interface{}{"role": "system", "content": prompt}},
-	// 	"max_tokens": 1200,
-	// })
-	// if err != nil {
-	// 	return "", err
-	// }
+	var data map[string]interface{}
 
-	// req, err := http.NewRequestWithContext(ctx, "POST", apiEndpoint, bytes.NewBuffer(reqBody))
-	// if err != nil {
-	// 	return "", err
-	// }
-	// req.Header.Set("Content-Type", "application/json")
-	// req.Header.Set("Authorization", "Bearer "+apiKey)
+	err = json.NewDecoder(response.Body).Decode(&data)
+	if err != nil {
+		return "", err
+	}
 
-	// client := &http.Client{}
-	// response, err := client.Do(req)
-	// if err != nil {
-	// 	return "", err
-	// }
-	// defer response.Body.Close()
+	content := data["choices"].([]interface{})[0].(map[string]interface{})["message"].(map[string]interface{})["content"].(string)
 
-	// var data map[string]interface{}
-
-	// err = json.NewDecoder(response.Body).Decode(&data)
-	// if err != nil {
-	// 	return "", err
-	// }
-
-	// content := data["choices"].([]interface{})[0].(map[string]interface{})["message"].(map[string]interface{})["content"].(string)
-
-	content := `[ { "question": "Która marka samochodu pochodzi z Włoch?", "answers": ["Volkswagen", "Toyota", "Fiat", "Ford"], "correct_answer": 2 }, { "question": "Jak nazywa się popularny model auta marki Mercedes-Benz?", "answers": ["Astra", "Passat", "Clio", "Klasa E"], "correct_answer": 3 }, { "question": "Co oznacza skrót 'SUV' w motoryzacji?", "answers": ["Super Ultra Vitesse", "Sport Utility Vehicle", "Special Upgrade Version", "Society of United Vehicles"], "correct_answer": 1 }, { "question": "Która marka samochodu pochodzi z Japonii?", "answers": ["BMW", "Honda", "Audi", "Chevrolet"], "correct_answer": 1 } ]`
-	return content, nil
+	out := removeCodeMarkers(content)
+	return out, nil
 }
