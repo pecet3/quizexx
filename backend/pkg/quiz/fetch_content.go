@@ -7,7 +7,6 @@ import (
 	"net/http"
 	"os"
 	"strings"
-	"time"
 
 	"github.com/joho/godotenv"
 	"github.com/pecet3/quizex/pkg/logger"
@@ -33,9 +32,6 @@ func fetchFromGPT(ctx context.Context, prompt string) (string, error) {
 	}
 
 	apiKey := os.Getenv("GPT_KEY")
-
-	ctx, cancel := context.WithTimeout(ctx, 10*time.Second)
-	defer cancel()
 
 	reqBody, err := json.Marshal(map[string]interface{}{
 		"model":      "gpt-4o-mini",
@@ -70,5 +66,6 @@ func fetchFromGPT(ctx context.Context, prompt string) (string, error) {
 	content := data["choices"].([]interface{})[0].(map[string]interface{})["message"].(map[string]interface{})["content"].(string)
 
 	out := removeCodeMarkers(content)
+	logger.Debug(out)
 	return out, nil
 }

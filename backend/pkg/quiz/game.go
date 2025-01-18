@@ -85,6 +85,7 @@ func (g *Game) getGameContent(s dtos.Settings) error {
 	if err != nil {
 		return err
 	}
+	g.Content = content
 	return nil
 }
 
