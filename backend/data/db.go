@@ -20,9 +20,12 @@ func newDb() *sql.DB {
 		log.Fatalf("Failed to ping database: %v", err)
 	}
 
-	prepareList := [2]string{
+	prepareList := [5]string{
 		entities.UsersTable,
 		entities.SessionsTable,
+		entities.GameContentTable,
+		entities.GameContentRoundTable,
+		entities.GameContentAnswerTable,
 	}
 
 	for _, table := range prepareList {

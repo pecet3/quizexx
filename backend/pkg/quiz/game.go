@@ -16,6 +16,7 @@ type Game struct {
 	State      *GameState
 	IsGame     bool
 	Players    map[UUID]*Player
+	Language   string
 	Category   string
 	Difficulty string
 	MaxRounds  int
@@ -69,7 +70,7 @@ func (g *Game) getGameContent(s dtos.Settings) error {
 	options := "Options for this quiz:" +
 		" category: " + s.GenContent +
 		", diffuculty:" + s.Difficulty +
-		", content language: " + s.Difficulty
+		", content language: " + s.Language
 	prompt := "return json for quiz game with " +
 		strconv.Itoa(s.MaxRounds) + " questions." +
 		options +
@@ -100,6 +101,7 @@ func (r *Room) CreateGame() (*Game, error) {
 		Category:   r.settings.GenContent,
 		Difficulty: r.settings.Difficulty,
 		MaxRounds:  r.settings.MaxRounds,
+		Language:   r.settings.Language,
 		Content:    nil,
 	}
 	if err := newGame.getGameContent(r.settings); err != nil {

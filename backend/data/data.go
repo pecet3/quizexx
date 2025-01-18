@@ -10,9 +10,10 @@ import (
 const PREFIX = "/v1"
 
 type Data struct {
-	Db      *sql.DB
-	User    entities.User
-	Session entities.Session
+	Db          *sql.DB
+	User        entities.User
+	Session     entities.Session
+	GameContent entities.GameContent
 }
 
 func New() *Data {
@@ -20,5 +21,9 @@ func New() *Data {
 		Db:      newDb(),
 		User:    entities.User{},
 		Session: entities.Session{},
+		GameContent: entities.GameContent{
+			Round:  entities.GameContentRound{},
+			Answer: entities.GameContentAnswer{},
+		},
 	}
 }

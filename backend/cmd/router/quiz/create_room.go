@@ -47,5 +47,6 @@ func (r router) handleCreateRoom(w http.ResponseWriter, req *http.Request) {
 	}
 
 	go room.Run(r.quiz)
+
 	logger.Debug(game.Content)
 }
