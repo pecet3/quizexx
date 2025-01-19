@@ -30,7 +30,7 @@ func NewManager(d *data.Data) *Manager {
 	}
 }
 
-func (m *Manager) newRoom(settings dtos.Settings, creatorID int) *Room {
+func (m *Manager) newRoom(settings *dtos.Settings, creatorID int) *Room {
 	r := &Room{
 		Name:          settings.Name,
 		clients:       make(map[UUID]*Client),
@@ -40,7 +40,7 @@ func (m *Manager) newRoom(settings dtos.Settings, creatorID int) *Room {
 		forward:       make(chan []byte),
 		receiveAnswer: make(chan []byte),
 		game:          &Game{},
-		settings:      settings,
+		settings:      *settings,
 		creatorID:     creatorID,
 		createdAt:     time.Now(),
 		UUID:          uuid.NewString(),
@@ -67,7 +67,7 @@ func (m *Manager) CheckUserHasRoom(uID int) bool {
 	r := m.getRoomByUserID(uID)
 	return r != nil
 }
-func (m *Manager) CreateRoom(settings dtos.Settings, creatorID int) *Room {
+func (m *Manager) CreateRoom(settings *dtos.Settings, creatorID int) *Room {
 	m.mu.Lock()
 	defer m.mu.Unlock()
 

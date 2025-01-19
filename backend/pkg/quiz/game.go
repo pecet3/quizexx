@@ -6,12 +6,14 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/google/uuid"
 	"github.com/pecet3/quizex/data/dtos"
 	"github.com/pecet3/quizex/data/entities"
 	"github.com/pecet3/quizex/pkg/logger"
 )
 
 type Game struct {
+	UUID        string
 	Room        *Room
 	State       *GameState
 	IsGame      bool
@@ -97,6 +99,7 @@ func (r *Room) CreateGame() (*Game, error) {
 	logger.Info("Creating a game in room: ", r.settings.Name)
 
 	newGame := &Game{
+		UUID:       uuid.NewString(),
 		Room:       r,
 		State:      &GameState{Round: 1},
 		IsGame:     false,

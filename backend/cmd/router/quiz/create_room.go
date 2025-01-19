@@ -39,15 +39,20 @@ func (r router) handleCreateRoom(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	room := r.quiz.CreateRoom(*dto, u.ID)
+	room := r.quiz.CreateRoom(dto, u.ID)
 	game, err := room.CreateGame()
-
+	if err != nil {
+		logger.Error(err)
+		http.Error(w, "", http.StatusInternalServerError)
+		return
+	}
 	go room.Run(r.quiz)
 
 	logger.Debug(game.Content)
 
 	go func() {
 		gc := entities.GameContent{
+			UUID:        game.UUID,
 			MaxRounds:   game.MaxRounds,
 			Category:    game.Category,
 			GenContent:  game.Category,

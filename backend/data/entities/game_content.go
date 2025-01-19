@@ -3,8 +3,6 @@ package entities
 import (
 	"database/sql"
 	"errors"
-
-	"github.com/google/uuid"
 )
 
 type GameContent struct {
@@ -34,7 +32,6 @@ CREATE TABLE IF NOT EXISTS game_contents (
 );`
 
 func (gc *GameContent) Add(db *sql.DB) (int, error) {
-	gc.UUID = uuid.NewString()
 	query := `INSERT INTO game_contents (uuid, max_rounds, category, gen_content, language, difficulty, content_json, created_at)
               VALUES (?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)`
 
