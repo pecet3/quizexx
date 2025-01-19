@@ -27,7 +27,7 @@ type User struct {
 	Email     string    `json:"email"`
 	Salt      string    `json:"-"`
 	ImageUrl  string    `json:"image_url"`
-	IsDraft   bool      `json:"-"`
+	IsDraft   bool      `json:"is_draft"`
 	CreatedAt time.Time `json:"created_at"`
 }
 

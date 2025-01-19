@@ -10,7 +10,6 @@ type GameContentAnswer struct {
 	IsCorrect          bool
 	Content            string
 	GameContentRoundID int
-	GameContentID      int
 }
 
 const GameContentAnswerTable = `
@@ -19,16 +18,14 @@ CREATE TABLE IF NOT EXISTS game_content_answers (
     is_correct BOOLEAN NOT NULL,
     content TEXT NOT NULL,
     game_content_round_id INTEGER NOT NULL,
-    game_content_id INTEGER NOT NULL,
-    FOREIGN KEY (game_content_round_id) REFERENCES game_content_rounds(id),
-    FOREIGN KEY (game_content_id) REFERENCES game_contents(id)
+    FOREIGN KEY (game_content_round_id) REFERENCES game_content_rounds(id)
 );`
 
 func (gca *GameContentAnswer) Add(db *sql.DB) (int, error) {
-	query := `INSERT INTO game_content_answers (is_correct, content, game_content_round_id, game_content_id)
+	query := `INSERT INTO game_content_answers (is_correct, content, game_content_round_id)
               VALUES (?, ?, ?, ?)`
 
-	result, err := db.Exec(query, gca.IsCorrect, gca.Content, gca.GameContentRoundID, gca.GameContentID)
+	result, err := db.Exec(query, gca.IsCorrect, gca.Content, gca.GameContentRoundID)
 	if err != nil {
 		return 0, err
 	}
@@ -47,7 +44,7 @@ func (gca *GameContentAnswer) Update(db *sql.DB) error {
 	return err
 }
 
-func DeleteGameContentAnswerById(db *sql.DB, id int) error {
+func (gca *GameContent) DeleteGameContentAnswerById(db *sql.DB, id int) error {
 	query := `DELETE FROM game_content_answers WHERE id = ?`
 	result, err := db.Exec(query, id)
 	if err != nil {

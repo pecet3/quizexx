@@ -40,11 +40,6 @@ type PlayerScore = {
   isAnswered: boolean;
 };
 
-type RoundQuestion = {
-  question: string;
-  answers: string[];
-  correctAnswer: number;
-};
 export type RoundAction = {
   uuid: string;
   answer: number;
@@ -75,7 +70,7 @@ export type PlayersAnswered = {
 export type ChatMessage = {
   name: string;
   message: string;
-  date: string;
+  date: Date;
 };
 const defaultGameState = {
   round: 0,
@@ -101,10 +96,13 @@ export const Quiz = () => {
   const { roomName } = useParams<{ roomName: string }>();
   const [ws, setWs] = useState<null | WebSocket>(null);
   const [isWaiting, setIsWaiting] = useState(true);
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
+
   const [err, setErr] = useState("");
   const [serverMessage, setServerMessage] = useState("");
   const [gameState, setGameState] = useState<GameState>(defaultGameState);
   const [settings, setSettings] = useState<Settings>(defaultSettings);
+
   const [waitingState, setWaitingState] =
     useState<WaitingState>(defaultWaitingState);
 
@@ -122,11 +120,27 @@ export const Quiz = () => {
   }, [gameState]);
 
   const handleAnswer = (answer: number) => {
+    if (!user) return;
     console.log("Selected answer:", answer);
     const payload: RoundAction = {
       answer,
+
       round: gameState.round,
       uuid: user.uuid,
+    };
+    ws?.send(
+      JSON.stringify({
+        type: "send_answer",
+        payload,
+      })
+    );
+  };
+  const handleMessage = (message: string) => {
+    if (!user) return;
+    const payload: ChatMessage = {
+      message,
+      name: user.name,
+      date: new Date(),
     };
     ws?.send(
       JSON.stringify({
@@ -162,6 +176,7 @@ export const Quiz = () => {
       case "players_answered":
         break;
       case "chat_message":
+        setMessages(event.payload);
         break;
       default:
         console.log(event.type);
@@ -222,7 +237,7 @@ export const Quiz = () => {
                 serverMessage={serverMessage}
                 onAnswer={handleAnswer}
               />
-              <Chat />
+              <Chat onMessage={handleMessage} messages={messages} />
             </>
           )}
         </>

@@ -12,15 +12,16 @@ import (
 )
 
 type Game struct {
-	Room       *Room
-	State      *GameState
-	IsGame     bool
-	Players    map[UUID]*Player
-	Language   string
-	Category   string
-	Difficulty string
-	MaxRounds  int
-	Content    GameContent
+	Room        *Room
+	State       *GameState
+	IsGame      bool
+	Players     map[UUID]*Player
+	Language    string
+	Category    string
+	Difficulty  string
+	MaxRounds   int
+	ContentJSON string
+	Content     GameContent
 }
 
 type Player struct {
@@ -58,6 +59,7 @@ type PlayerScore struct {
 }
 
 type GameContent = []RoundQuestion
+
 type RoundQuestion struct {
 	Question      string   `json:"question"`
 	Answers       []string `json:"answers"`
@@ -76,17 +78,18 @@ func (g *Game) getGameContent(s dtos.Settings) error {
 		options +
 		" You have to return correct struct. This is just array of objects. Nothing more, start struct: [{ question, 4x answers, correct_answer(index)}] "
 
-	contentStr, err := fetchFromGPT(ctx, prompt)
+	rawJSON, err := fetchFromGPT(ctx, prompt)
 	if err != nil {
 		return err
 	}
 	var content GameContent
 
-	err = json.Unmarshal([]byte(contentStr), &content)
-	if err != nil {
+	if err = json.Unmarshal([]byte(rawJSON), &content); err != nil {
 		return err
 	}
 	g.Content = content
+	g.ContentJSON = rawJSON
+
 	return nil
 }
 

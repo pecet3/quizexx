@@ -19,6 +19,7 @@ export const RoomCreator: React.FC<{
           placeholder="Room Name"
           required
         />
+        <p className="italic text-xl max-w-sm">Category can be anything... </p>
         <input
           type="text"
           id="categoryInput"
@@ -27,19 +28,12 @@ export const RoomCreator: React.FC<{
           placeholder="Category of Questions"
           required
         />
-        <button id="randomCategory" className="text-sm py-2" type="button">
+        <button id="randomCategory" className="text-sm" type="button">
           [Get random category]
         </button>
-        <p className="font-mono text-lg max-w-sm">
-          Category can be anything,{" "}
-          <b className="font-bold underline">
-            Quizex is connected with Chat-GPT-3.5
-          </b>
-          . Based on the provided category, questions are prepared.
-        </p>
-        <label className="rounded-lg font-mono text-xl font-bold underline">
+        <label className="rounded-lg text-lg font-bold underline">
           Difficulty Level:
-        </label>{" "}
+        </label>
         <select
           id="difficulty"
           name="difficulty"
@@ -54,8 +48,11 @@ export const RoomCreator: React.FC<{
           <option value="hard" className="text-center">
             Hard
           </option>
+          <option value="veryhard" className="text-center">
+            Very Hard
+          </option>
         </select>
-        <div className="flex sm:flex-row flex-col gap-4">
+        <div className="flex font-mono sm:flex-row flex-col gap-4">
           <div className="flex flex-col">
             <label className="rounded-lg font-mono text-xl font-bold underline">
               Rounds:

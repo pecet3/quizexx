@@ -60,7 +60,7 @@ func (c *Client) read(r *Room) {
 			err := json.Unmarshal(request.Payload, &actionPlayer)
 			if err != nil {
 				logger.Error("Error marshaling game state:", err)
-				return
+				continue
 			}
 			c.room.receiveAnswer <- request.Payload
 		}

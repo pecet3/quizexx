@@ -41,6 +41,7 @@ func (r router) handleExchange(w http.ResponseWriter, req *http.Request) {
 		http.Error(w, "Your account is blocked due the security reasones.", http.StatusBadRequest)
 		return
 	}
+
 	es.ExchangeCounter += 1
 
 	if es.IsRegister {

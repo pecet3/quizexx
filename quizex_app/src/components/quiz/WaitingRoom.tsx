@@ -3,7 +3,6 @@ import { WaitingState } from "../../pages/Quiz";
 export const WaitingRoom: React.FC<{
   waitingState: WaitingState;
   serverMessage: string;
-
   onReady: () => void;
 }> = ({ waitingState, serverMessage, onReady }) => {
   return (

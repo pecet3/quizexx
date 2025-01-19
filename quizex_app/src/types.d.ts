@@ -2,7 +2,8 @@ interface User {
   uuid: string; 
   name: string; 
   email: string; 
-  image_url: string; 
+  image_url: string;
+  is_draft: boolean;
   createdAt: Date; 
 }
 

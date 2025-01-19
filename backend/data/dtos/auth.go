@@ -1,6 +1,9 @@
 package dtos
 
 import (
+	"encoding/json"
+	"io"
+
 	"github.com/go-playground/validator/v10"
 )
 
@@ -34,9 +37,16 @@ type Login struct {
 	Email string `json:"email" validate:"required,email"`
 }
 
-func (r Login) Validate(v *validator.Validate) error {
+func (r *Login) Validate(v *validator.Validate) error {
 	err := v.Struct(r)
 	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (r Login) Send(w io.Writer) error {
+	if err := json.NewEncoder(w).Encode(&r); err != nil {
 		return err
 	}
 	return nil
