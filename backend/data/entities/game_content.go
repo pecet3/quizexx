@@ -5,6 +5,7 @@ import (
 	"errors"
 )
 
+// Fix this table, add CreatorID
 type GameContent struct {
 	ID          int
 	UUID        string

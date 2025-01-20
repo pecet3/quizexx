@@ -18,10 +18,7 @@ type Game struct {
 	State       *GameState
 	IsGame      bool
 	Players     map[UUID]*Player
-	Language    string
-	Category    string
-	Difficulty  string
-	MaxRounds   int
+	Settings    *dtos.Settings
 	ContentJSON string
 	Content     GameContent
 }
@@ -68,7 +65,7 @@ type RoundQuestion struct {
 	CorrectAnswer int      `json:"correct_answer"`
 }
 
-func (g *Game) getGameContent(s dtos.Settings) error {
+func (g *Game) getGameContent(s *dtos.Settings) error {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*60)
 	defer cancel()
 	options := "Options for this quiz:" +
@@ -80,10 +77,17 @@ func (g *Game) getGameContent(s dtos.Settings) error {
 		options +
 		" You have to return correct struct. This is just array of objects. Nothing more, start struct: [{ question, 4x answers, correct_answer(index)}] "
 
-	rawJSON, err := fetchFromGPT(ctx, prompt)
+	rawJSON := ""
+	var err error
+	if s.Name == "test" {
+		rawJSON, _ = fakeFetchFromGPT()
+	} else {
+		rawJSON, err = fetchFromGPT(ctx, prompt)
+	}
 	if err != nil {
 		return err
 	}
+
 	var content GameContent
 
 	if err = json.Unmarshal([]byte(rawJSON), &content); err != nil {
@@ -95,22 +99,19 @@ func (g *Game) getGameContent(s dtos.Settings) error {
 	return nil
 }
 
-func (r *Room) CreateGame() (*Game, error) {
-	logger.Info("Creating a game in room: ", r.settings.Name)
+func (r *Room) CreateGame(settings *dtos.Settings) (*Game, error) {
+	logger.Info("Creating a game in room: ", r.Name)
 
 	newGame := &Game{
-		UUID:       uuid.NewString(),
-		Room:       r,
-		State:      &GameState{Round: 1},
-		IsGame:     false,
-		Players:    make(map[UUID]*Player),
-		Category:   r.settings.GenContent,
-		Difficulty: r.settings.Difficulty,
-		MaxRounds:  r.settings.MaxRounds,
-		Language:   r.settings.Language,
-		Content:    nil,
+		UUID:     uuid.NewString(),
+		Room:     r,
+		State:    &GameState{Round: 1},
+		IsGame:   false,
+		Players:  make(map[UUID]*Player),
+		Settings: settings,
+		Content:  nil,
 	}
-	if err := newGame.getGameContent(r.settings); err != nil {
+	if err := newGame.getGameContent(settings); err != nil {
 		return nil, err
 	}
 	r.game = newGame
@@ -155,7 +156,7 @@ func (g *Game) checkIfShouldBeNextRound() bool {
 }
 
 func (g *Game) checkIfIsEndGame() bool {
-	isEqualMaxAndCurrentRound := g.State.Round == g.MaxRounds
+	isEqualMaxAndCurrentRound := g.State.Round == g.Settings.MaxRounds
 	isNextRound := g.checkIfShouldBeNextRound()
 
 	if isEqualMaxAndCurrentRound && isNextRound {

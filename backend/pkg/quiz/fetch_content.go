@@ -63,3 +63,6 @@ func fetchFromGPT(ctx context.Context, prompt string) (string, error) {
 	content = strings.ReplaceAll(content, "```", "")
 	return content, nil
 }
+func fakeFetchFromGPT() (string, error) {
+	return testContent, nil
+}

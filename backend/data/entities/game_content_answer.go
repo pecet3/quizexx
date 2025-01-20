@@ -23,7 +23,7 @@ CREATE TABLE IF NOT EXISTS game_content_answers (
 
 func (gca *GameContentAnswer) Add(db *sql.DB) (int, error) {
 	query := `INSERT INTO game_content_answers (is_correct, content, game_content_round_id)
-              VALUES (?, ?, ?, ?)`
+              VALUES (?, ?, ?)`
 
 	result, err := db.Exec(query, gca.IsCorrect, gca.Content, gca.GameContentRoundID)
 	if err != nil {

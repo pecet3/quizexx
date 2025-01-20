@@ -39,8 +39,8 @@ func (r router) handleCreateRoom(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	room := r.quiz.CreateRoom(dto, u.ID)
-	game, err := room.CreateGame()
+	room := r.quiz.CreateRoom(dto.Name, u.ID)
+	game, err := room.CreateGame(dto)
 	if err != nil {
 		logger.Error(err)
 		http.Error(w, "", http.StatusInternalServerError)
@@ -50,48 +50,45 @@ func (r router) handleCreateRoom(w http.ResponseWriter, req *http.Request) {
 
 	logger.Debug(game.Content)
 
-	go func() {
-		gc := entities.GameContent{
-			UUID:        game.UUID,
-			MaxRounds:   game.MaxRounds,
-			Category:    game.Category,
-			GenContent:  game.Category,
-			ContentJSON: game.ContentJSON,
+	gc := entities.GameContent{
+		UUID:        game.UUID,
+		MaxRounds:   dto.MaxRounds,
+		Category:    dto.GenContent,
+		GenContent:  dto.GenContent,
+		ContentJSON: game.ContentJSON,
+	}
+	gcID, err := gc.Add(r.d.Db)
+
+	for i, round := range game.Content {
+		gcr := entities.GameContentRound{
+			QuestionContent:    round.Question,
+			Round:              i + 1,
+			CorrectAnswerIndex: round.CorrectAnswer,
+			GameContentID:      gcID,
 		}
-		gcID, err := gc.Add(r.d.Db)
+		gcrID, err := gcr.Add(r.d.Db)
 
-		for i, round := range game.Content {
-			gcr := entities.GameContentRound{
-				QuestionContent:    round.Question,
-				Round:              i + 1,
-				CorrectAnswerIndex: round.CorrectAnswer,
-				GameContentID:      gcID,
+		for i := 0; i < 4; i++ {
+			isCorrect := false
+			if round.CorrectAnswer == i {
+				isCorrect = true
 			}
-			gcrID, err := gcr.Add(r.d.Db)
-
-			for i := 0; i < 4; i++ {
-				isCorrect := false
-				if round.CorrectAnswer == i {
-					isCorrect = true
-				}
-				gca := entities.GameContentAnswer{
-					IsCorrect:          isCorrect,
-					GameContentRoundID: gcrID,
-					Content:            round.Answers[i],
-				}
-				_, err = gca.Add(r.d.Db)
+			gca := entities.GameContentAnswer{
+				IsCorrect:          isCorrect,
+				GameContentRoundID: gcrID,
+				Content:            round.Answers[i],
 			}
-			if err != nil {
-				logger.Error(err)
-				http.Error(w, "", http.StatusInternalServerError)
-				return
-			}
+			_, err = gca.Add(r.d.Db)
 		}
 		if err != nil {
 			logger.Error(err)
 			http.Error(w, "", http.StatusInternalServerError)
 			return
 		}
-	}()
-
+	}
+	if err != nil {
+		logger.Error(err)
+		http.Error(w, "", http.StatusInternalServerError)
+		return
+	}
 }

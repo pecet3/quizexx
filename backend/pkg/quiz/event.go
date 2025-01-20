@@ -80,7 +80,7 @@ func (r *Room) sendIsFinish() error {
 }
 
 func (r *Room) sendSettings() error {
-	eventBytes, err := marshalEventToBytes(r.settings, "room_settings")
+	eventBytes, err := marshalEventToBytes(r.game.Settings, "room_settings")
 	if err != nil {
 		return err
 	}

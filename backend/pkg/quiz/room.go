@@ -8,7 +8,6 @@ import (
 	"sync"
 	"time"
 
-	"github.com/pecet3/quizex/data/dtos"
 	"github.com/pecet3/quizex/pkg/logger"
 )
 
@@ -26,7 +25,6 @@ type Room struct {
 	forward       chan []byte
 	receiveAnswer chan []byte
 	game          *Game
-	settings      dtos.Settings
 	creatorID     int
 	createdAt     time.Time
 }
@@ -105,11 +103,9 @@ func (r *Room) Run(m *Manager) {
 					continue
 				}
 			}
-			eventBytes, err := marshalEventToBytes[dtos.Settings](r.settings, "room_settings")
-			if err != nil {
+			if err := r.sendSettings(); err != nil {
 				return
 			}
-			client.receive <- eventBytes
 			if !r.game.IsGame && !client.player.isSpectator {
 				r.sendReadyStatus()
 			}

@@ -30,9 +30,8 @@ func NewManager(d *data.Data) *Manager {
 	}
 }
 
-func (m *Manager) newRoom(settings *dtos.Settings, creatorID int) *Room {
+func (m *Manager) newRoom(name string, creatorID int) *Room {
 	r := &Room{
-		Name:          settings.Name,
 		clients:       make(map[UUID]*Client),
 		join:          make(chan *Client),
 		leave:         make(chan *Client),
@@ -40,10 +39,10 @@ func (m *Manager) newRoom(settings *dtos.Settings, creatorID int) *Room {
 		forward:       make(chan []byte),
 		receiveAnswer: make(chan []byte),
 		game:          &Game{},
-		settings:      *settings,
 		creatorID:     creatorID,
 		createdAt:     time.Now(),
 		UUID:          uuid.NewString(),
+		Name:          name,
 	}
 	return r
 }
@@ -67,18 +66,18 @@ func (m *Manager) CheckUserHasRoom(uID int) bool {
 	r := m.getRoomByUserID(uID)
 	return r != nil
 }
-func (m *Manager) CreateRoom(settings *dtos.Settings, creatorID int) *Room {
+func (m *Manager) CreateRoom(name string, creatorID int) *Room {
 	m.mu.Lock()
 	defer m.mu.Unlock()
 
-	if existingRoom, ok := m.rooms[settings.Name]; ok {
+	if existingRoom, ok := m.rooms[name]; ok {
 		return existingRoom
 	}
 
-	newRoom := m.newRoom(settings, creatorID)
-	m.rooms[newRoom.Name] = newRoom
+	newRoom := m.newRoom(name, creatorID)
+	m.rooms[name] = newRoom
 
-	logger.Info("Created a room with name: ", settings.Name)
+	logger.Info("Created a room with name: ", name)
 	return newRoom
 }
 
@@ -106,7 +105,7 @@ func (m *Manager) GetRoomsList() []*dtos.Room {
 			Players:    len(room.game.Players),
 			MaxPlayers: 10,
 			Round:      room.game.State.Round,
-			MaxRounds:  room.game.MaxRounds,
+			MaxRounds:  room.game.Settings.MaxRounds,
 		}
 		rooms = append(rooms, r)
 	}
