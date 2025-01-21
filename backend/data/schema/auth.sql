@@ -1,8 +1,8 @@
 create table if not exists users (
     id integer primary key autoincrement,
     uuid text not null,
-    name text default '',
-    email text not null unique,
+    name text not null default '',
+    email text unique,
     salt text not null,
     image_url text default "/api/img/avatar.png",
 	is_draft bool default true,
@@ -16,6 +16,7 @@ create table if not exists sessions (
 	expiry timestamp not null,
 	token text default '',
 	activate_code text default '',
+	refresh_token text not null,
 	user_ip text default '',
 	type text not null,
 	post_suspend_expiry timestamp,

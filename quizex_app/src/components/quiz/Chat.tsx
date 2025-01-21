@@ -21,7 +21,16 @@ export const Chat: React.FC<{
       </div>
       <ul className="flex flex-col gap-1 h-64 sm:h-80 break-words overflow-y-scroll text-sm sm:text-base p-0.5 border-b border-gray-400">
         {messages.map((msg, idx) => (
-          <li key={idx}>{msg.message}</li>
+          <li
+            key={idx}
+            className="flex flex-col justify-center w-full bg-white p-0.5 rounded-lg"
+          >
+            <span className="flex items-center justify-between font-mono">
+              <p className="self-start font-bold">{msg.name}</p>
+              <p className="self-start italic">{msg.date.toString()}</p>
+            </span>
+            <p>{msg.message}</p>
+          </li>
         ))}
       </ul>
       <div className="flex gap-2 m-auto justify-between">

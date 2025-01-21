@@ -16,9 +16,9 @@ type Data struct {
 	GameContent entities.GameContent
 }
 
-func New() *Data {
+func NewData() *Data {
 	return &Data{
-		Db:      newDb(),
+		Db:      NewSQLite(),
 		User:    entities.User{},
 		Session: entities.Session{},
 		GameContent: entities.GameContent{

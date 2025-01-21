@@ -1,7 +1,6 @@
 package quiz
 
 import (
-	"encoding/json"
 	"fmt"
 	"strconv"
 	"strings"
@@ -23,7 +22,7 @@ type Room struct {
 	leave   chan *Client
 
 	forward       chan []byte
-	receiveAnswer chan []byte
+	receiveAnswer chan *RoundAction
 	game          *Game
 	creatorID     int
 	createdAt     time.Time
@@ -45,8 +44,10 @@ func (r *Room) addClient(c *Client) {
 		c.player = p
 	} else {
 		c.player.user = c.user
-		r.game.Players[c.user.UUID] = &Player{
-			user: c.user,
+		if !r.game.IsGame {
+			r.game.Players[c.user.UUID] = &Player{
+				user: c.user,
+			}
 		}
 	}
 	r.clients[c.user.UUID] = c
@@ -54,7 +55,32 @@ func (r *Room) addClient(c *Client) {
 func (r *Room) removeClient(c *Client) {
 	r.cMu.Lock()
 	defer r.cMu.Unlock()
+	if _, ok := r.game.Players[c.user.UUID]; ok {
+		if !r.game.IsGame {
+			delete(r.game.Players, c.user.UUID)
+		}
+	}
 	delete(r.clients, c.user.UUID)
+}
+
+func (r *Room) checkWaitRoom() error {
+	if ok := r.checkIfEveryoneIsReady(); ok {
+		err := r.sendServerMessage("Have a good game!")
+		if err != nil {
+			return err
+		}
+		err = r.sendSettings()
+		if err != nil {
+			return err
+
+		}
+		r.game.State = r.game.newGameState(r.game.Content)
+		r.game.IsGame = true
+		if err := r.game.sendGameState(); err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 func (r *Room) Run(m *Manager) {
@@ -64,6 +90,15 @@ func (r *Room) Run(m *Manager) {
 		ticker.Stop()
 		m.removeRoom(r.Name)
 	}()
+
+	go func(r *Room) {
+		for {
+			msg := <-r.forward
+			for _, client := range r.clients {
+				client.receive <- msg
+			}
+		}
+	}(r)
 	for {
 		select {
 		case <-ticker.C:
@@ -71,31 +106,28 @@ func (r *Room) Run(m *Manager) {
 				logger.Info(fmt.Sprintf(`No one is ine the room: %d. Closing...`, len(r.clients)))
 				return
 			}
-
-		case msg := <-r.forward:
-			for _, client := range r.clients {
-				client.receive <- msg
-			}
 		case client := <-r.join:
 			if len(r.clients) == 0 {
 				ticker.Reset(time.Second * 20)
 			}
 			r.addClient(client)
 
-			if r.game.IsGame && client.player.isSpectator {
+			if r.game.IsGame && client.isSpectator {
 				err := r.sendServerMessage(client.user.Name + " joins as spectator")
 				if err != nil {
-					return
+					continue
 				}
 			} else {
 				err := r.sendServerMessage(client.user.Name + " joins the game")
 				if err != nil {
-					return
+					continue
+
 				}
 			}
 			if err := r.sendSettings(); err != nil {
 				logger.Info("run err send settings")
-				return
+				continue
+
 			}
 			if r.game.IsGame {
 				if err := r.game.sendGameState(); err != nil {
@@ -104,9 +136,9 @@ func (r *Room) Run(m *Manager) {
 				}
 			}
 			if err := r.sendSettings(); err != nil {
-				return
+				continue
 			}
-			if !r.game.IsGame && !client.player.isSpectator {
+			if !r.game.IsGame && !client.isSpectator {
 				r.sendReadyStatus()
 			}
 
@@ -118,8 +150,12 @@ func (r *Room) Run(m *Manager) {
 					continue
 				}
 			}
+			if err := r.checkWaitRoom(); err != nil {
+				logger.Error(err)
+				continue
+			}
 		case client := <-r.ready:
-			if r.game.IsGame && client.player.isSpectator {
+			if r.game.IsGame && client.isSpectator {
 				if err := r.sendServerMessage(client.player.user.Name + " joins as a spectator"); err != nil {
 					logger.Error(err)
 					continue
@@ -134,23 +170,9 @@ func (r *Room) Run(m *Manager) {
 			}
 			r.sendReadyStatus()
 
-			if ok := r.checkIfEveryoneIsReady(); ok {
-				err := r.sendServerMessage("Have a good game!")
-				if err != nil {
-					logger.Error("send server msg err: ", err)
-					continue
-				}
-				err = r.sendSettings()
-				if err != nil {
-					logger.Error("send settings err: ", err)
-					continue
-				}
-				r.game.State = r.game.newGameState(r.game.Content)
-				r.game.IsGame = true
-				if err := r.game.sendGameState(); err != nil {
-					logger.Error(err)
-					continue
-				}
+			if err := r.checkWaitRoom(); err != nil {
+				logger.Error(err)
+				continue
 			}
 
 		case action := <-r.receiveAnswer:
@@ -158,29 +180,22 @@ func (r *Room) Run(m *Manager) {
 				logger.Info("is game: false, ", r.game.IsGame)
 				continue
 			}
-			var actionParsed *RoundAction
-			if err := json.Unmarshal(action, &actionParsed); err != nil {
-				logger.Error("Error marshaling game state:", err)
-				continue
-			}
+
 			for _, player := range r.game.Players {
-				if player.user.UUID == actionParsed.UUID {
-					if player.isSpectator {
-						continue
-					}
+				if player.user.UUID == action.UUID {
 					if !player.isAnswered {
 						err := r.sendServerMessage(player.user.Name + " just answered")
 						if err != nil {
 							continue
 						}
 					}
-					if isGoodAnswer := r.game.checkAnswer(player, actionParsed); isGoodAnswer {
+					if isGoodAnswer := r.game.checkAnswer(player, action); isGoodAnswer {
 						player.points = player.points + 10
 						r.game.State.RoundWinners = append(r.game.State.RoundWinners, player.user.Name)
 					}
-					r.game.toggleClientIsAnswered(player, actionParsed)
+					r.game.toggleClientIsAnswered(player, action)
 					player.lastActive = time.Now()
-					r.game.State.Actions = append(r.game.State.Actions, *actionParsed)
+					r.game.State.Actions = append(r.game.State.Actions, *action)
 					r.game.State.Score = r.game.newScore()
 					if err := r.game.sendPlayersAnswered(); err != nil {
 						logger.Error(err)
@@ -214,23 +229,23 @@ func (r *Room) Run(m *Manager) {
 				winners := r.game.findWinner()
 				winnersStr := strings.Join(winners, ", ")
 				if len(winners) == 1 && len(winners) > 0 {
-					if err = r.sendServerMessage("This game wins: " + winnersStr); err != nil {
+					if err = r.sendServerMessage("The game wins: " + winnersStr); err != nil {
 						logger.Error("finish game err", err)
 						continue
 					}
 				} else {
-					if err = r.sendServerMessage("This game win: " + winnersStr); err != nil {
+					if err = r.sendServerMessage("The game win: " + winnersStr); err != nil {
 						logger.Error("finish game err", err)
 						continue
 					}
 				}
+				r.game.IsGame = false
 				logger.Debug(winners)
 				continue
 			}
 
 			if isNextRound {
 				r.game.State.Round++
-
 				var err error
 				winnersStr := strings.Join(r.game.State.RoundWinners, ", ")
 				if len(r.game.State.RoundWinners) == 0 {
@@ -241,6 +256,14 @@ func (r *Room) Run(m *Manager) {
 				}
 				if len(r.game.State.RoundWinners) >= 2 {
 					err = r.sendServerMessage("This round win: " + winnersStr)
+				} else if len(r.game.State.RoundWinners) == len(r.game.Players) {
+					for _, p := range r.game.Players {
+						if p.points == 0 {
+							continue
+						}
+						p.points -= 5
+					}
+					err = r.sendServerMessage("This round win everyone!")
 				}
 				if err != nil {
 					logger.Error(err)

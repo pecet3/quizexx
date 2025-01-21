@@ -24,14 +24,13 @@ type Game struct {
 }
 
 type Player struct {
-	user        *entities.User
-	isReady     bool
-	isSpectator bool
-	isAnswered  bool
-	answer      int
-	points      int
-	roundsWon   []uint
-	lastActive  time.Time
+	user       *entities.User
+	isReady    bool
+	isAnswered bool
+	answer     int
+	points     int
+	roundsWon  []uint
+	lastActive time.Time
 }
 
 type GameState struct {
@@ -147,7 +146,7 @@ func (g *Game) newGameState(content []RoundQuestion) *GameState {
 	}
 }
 func (g *Game) checkIfShouldBeNextRound() bool {
-	playersInGame := len(g.Room.clients)
+	playersInGame := len(g.Room.game.Players)
 	playersFinished := len(g.State.PlayersAnswered)
 	if playersFinished == playersInGame && playersInGame > 0 {
 		return true

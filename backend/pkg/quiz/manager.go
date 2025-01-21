@@ -37,7 +37,7 @@ func (m *Manager) newRoom(name string, creatorID int) *Room {
 		leave:         make(chan *Client),
 		ready:         make(chan *Client),
 		forward:       make(chan []byte),
-		receiveAnswer: make(chan []byte),
+		receiveAnswer: make(chan *RoundAction),
 		game:          &Game{},
 		creatorID:     creatorID,
 		createdAt:     time.Now(),
@@ -102,8 +102,8 @@ func (m *Manager) GetRoomsList() []*dtos.Room {
 		r := &dtos.Room{
 			UUID:       uuid,
 			Name:       room.Name,
-			Players:    len(room.game.Players),
-			MaxPlayers: 10,
+			Players:    len(room.clients),
+			MaxPlayers: 32,
 			Round:      room.game.State.Round,
 			MaxRounds:  room.game.Settings.MaxRounds,
 		}
@@ -140,18 +140,19 @@ func (m *Manager) ServeQuiz(w http.ResponseWriter, req *http.Request, u *entitie
 		return
 	}
 
-	// isSpectator := false
-	// if currentRoom.game.IsGame {
-	// 	isSpectator = true
-	// }
+	isSpectator := false
+	if _, ok := currentRoom.game.Players[u.UUID]; !ok && currentRoom.game.IsGame {
+		isSpectator = true
+	}
 	// to do if client exists,change only conn
 
 	client := &Client{
-		conn:    conn,
-		receive: make(chan []byte),
-		room:    currentRoom,
-		player:  &Player{},
-		user:    u,
+		conn:        conn,
+		receive:     make(chan []byte),
+		room:        currentRoom,
+		player:      &Player{},
+		isSpectator: isSpectator,
+		user:        u,
 	}
 
 	currentRoom.join <- client

@@ -86,12 +86,14 @@ export const Dashboard: React.FC<{
                 </tr>
               </thead>
               <tbody className="">
-                {gameState.score.map((user, idx) => (
-                  <tr key={idx}>
-                    <td>{user.user.name}</td>
-                    <td>{user.points}</td>
-                  </tr>
-                ))}
+                {gameState.score && gameState.score.length > 0
+                  ? gameState.score.map((user, idx) => (
+                      <tr key={idx}>
+                        <td>{user.user.name}</td>
+                        <td>{user.points}</td>
+                      </tr>
+                    ))
+                  : null}
               </tbody>
             </table>
           </LittlePaperWrapper>

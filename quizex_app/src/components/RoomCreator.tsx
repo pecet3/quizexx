@@ -25,7 +25,7 @@ export const RoomCreator: React.FC<{
           id="categoryInput"
           name="category"
           className="p-0.5 text-2xl rounded-sm font m-auto border border-black bg-white placeholder:text-gray-400 placeholder:text-center text-black text-center"
-          placeholder="Category of Questions"
+          placeholder="Quiz Category"
           required
         />
         <button id="randomCategory" className="text-sm" type="button">

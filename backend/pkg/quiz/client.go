@@ -15,11 +15,12 @@ var (
 )
 
 type Client struct {
-	user    *entities.User
-	conn    *websocket.Conn
-	receive chan []byte
-	room    *Room
-	player  *Player
+	user        *entities.User
+	conn        *websocket.Conn
+	isSpectator bool
+	receive     chan []byte
+	room        *Room
+	player      *Player
 }
 
 func (c *Client) read(r *Room) {
@@ -56,15 +57,22 @@ func (c *Client) read(r *Room) {
 			c.room.ready <- c
 		}
 		if request.Type == "send_answer" {
-			var actionPlayer *RoundAction
-			err := json.Unmarshal(request.Payload, &actionPlayer)
+			var action *RoundAction
+			err := json.Unmarshal(request.Payload, &action)
 			if err != nil {
 				logger.Error("Error marshaling game state:", err)
 				continue
 			}
-			c.room.receiveAnswer <- request.Payload
+			c.room.receiveAnswer <- action
 		}
 		if request.Type == "chat_message" {
+			var msg ChatMessage
+			err := json.Unmarshal(request.Payload, &msg)
+			if err != nil || msg.Name != c.user.Name {
+				logger.Error("Error marshaling game state:", err)
+				continue
+			}
+
 			c.room.forward <- reqBytes
 		}
 	}

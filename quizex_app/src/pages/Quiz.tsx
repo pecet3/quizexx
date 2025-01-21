@@ -72,12 +72,22 @@ export type ChatMessage = {
   message: string;
   date: Date;
 };
-const defaultGameState = {
+const defaultGameState: GameState = {
   round: 0,
   question: "",
-  answers: [],
+  answers: [""],
   actions: [],
-  score: [],
+  score: [
+    {
+      isAnswered: false,
+      points: 0,
+      roundsWon: [0],
+      user: {
+        name: "",
+        points: 0,
+      },
+    },
+  ],
   playersAnswered: [],
   roundWinners: [],
 };
@@ -144,7 +154,7 @@ export const Quiz = () => {
     };
     ws?.send(
       JSON.stringify({
-        type: "send_answer",
+        type: "chat_message",
         payload,
       })
     );
@@ -176,7 +186,7 @@ export const Quiz = () => {
       case "players_answered":
         break;
       case "chat_message":
-        setMessages(event.payload);
+        setMessages((prev) => [...prev, event.payload]);
         break;
       default:
         console.log(event.type);

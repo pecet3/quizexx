@@ -22,7 +22,7 @@ func runAPI() {
 	utils.LoadEnv()
 
 	mux := http.NewServeMux()
-	data := data.New()
+	data := data.NewData()
 
 	app := repos.App{
 		Srv:       mux,
