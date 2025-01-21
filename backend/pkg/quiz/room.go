@@ -2,11 +2,11 @@ package quiz
 
 import (
 	"fmt"
-	"strconv"
-	"strings"
 	"sync"
 	"time"
 
+	"github.com/google/uuid"
+	"github.com/pecet3/quizex/data/dtos"
 	"github.com/pecet3/quizex/pkg/logger"
 )
 
@@ -23,9 +23,31 @@ type Room struct {
 
 	forward       chan []byte
 	receiveAnswer chan *RoundAction
-	game          *Game
-	creatorID     int
-	createdAt     time.Time
+	timeLeft      chan bool
+
+	game      *Game
+	creatorID int
+	createdAt time.Time
+}
+
+func (r *Room) CreateGame(settings *dtos.Settings) (*Game, error) {
+	logger.Info("Creating a game in room: ", r.Name)
+
+	newGame := &Game{
+		UUID:             uuid.NewString(),
+		Room:             r,
+		State:            &GameState{Round: 1},
+		IsGame:           false,
+		Players:          make(map[UUID]*Player),
+		Settings:         settings,
+		Content:          nil,
+		SecLeftForAnswer: 30,
+	}
+	if err := newGame.getGameContent(settings); err != nil {
+		return nil, err
+	}
+	r.game = newGame
+	return newGame, nil
 }
 
 func (r *Room) checkIfEveryoneIsReady() bool {
@@ -86,6 +108,7 @@ func (r *Room) checkWaitRoom() error {
 func (r *Room) Run(m *Manager) {
 	logger.Info(fmt.Sprintf(`Created a room: %s. creator user id: %d`, r.UUID, r.creatorID))
 	ticker := time.NewTicker(time.Second * 20)
+	heartBeat := time.NewTicker(time.Second * 1)
 	defer func() {
 		ticker.Stop()
 		m.removeRoom(r.Name)
@@ -93,9 +116,21 @@ func (r *Room) Run(m *Manager) {
 
 	go func(r *Room) {
 		for {
-			msg := <-r.forward
-			for _, client := range r.clients {
-				client.receive <- msg
+			select {
+			case msg := <-r.forward:
+				for _, client := range r.clients {
+					client.receive <- msg
+				}
+			case <-heartBeat.C:
+				if !r.game.IsGame {
+					continue
+				}
+				counter := r.game.GetSecLeftForAnswer()
+				r.game.UpdateSecLeftForAnswer(counter - 1)
+				r.sendTimeForAnswer(counter)
+				if counter <= 0 {
+					r.timeLeft <- true
+				}
 			}
 		}
 	}(r)
@@ -177,7 +212,6 @@ func (r *Room) Run(m *Manager) {
 
 		case action := <-r.receiveAnswer:
 			if !r.game.IsGame {
-				logger.Info("is game: false, ", r.game.IsGame)
 				continue
 			}
 
@@ -204,100 +238,27 @@ func (r *Room) Run(m *Manager) {
 				}
 			}
 
-			isNextRound := r.game.checkIfShouldBeNextRound()
-			indexCurrentContent := r.game.Content[r.game.State.Round-1]
-			indexOkAnswr := indexCurrentContent.CorrectAnswer
-			strOkAnswr := indexCurrentContent.Answers[indexOkAnswr]
-			isEndGame := r.game.checkIfIsEndGame()
-			if isEndGame {
-				err := r.game.sendGameState()
-				if err != nil {
-					logger.Error("finish game err send game", err)
-					continue
-				}
-
-				if err = r.sendServerMessage("The correct answer is: " + strOkAnswr); err != nil {
-					logger.Error("finish game err", err)
-					continue
-				}
-				time.Sleep(1800 * time.Millisecond)
-				if err = r.sendServerMessage("It's finish the game"); err != nil {
-					logger.Error("finish game err", err)
-					continue
-				}
-				time.Sleep(1800 * time.Millisecond)
-				winners := r.game.findWinner()
-				winnersStr := strings.Join(winners, ", ")
-				if len(winners) == 1 && len(winners) > 0 {
-					if err = r.sendServerMessage("The game wins: " + winnersStr); err != nil {
-						logger.Error("finish game err", err)
-						continue
-					}
-				} else {
-					if err = r.sendServerMessage("The game win: " + winnersStr); err != nil {
-						logger.Error("finish game err", err)
-						continue
-					}
-				}
-				r.game.IsGame = false
-				logger.Debug(winners)
+			if err := r.game.performRound(); err != nil {
+				logger.Error(err)
 				continue
 			}
-
-			if isNextRound {
-				r.game.State.Round++
-				var err error
-				winnersStr := strings.Join(r.game.State.RoundWinners, ", ")
-				if len(r.game.State.RoundWinners) == 0 {
-					err = r.sendServerMessage("No one wins this round")
-				}
-				if len(r.game.State.RoundWinners) == 1 {
-					err = r.sendServerMessage("This round wins " + winnersStr)
-				}
-				if len(r.game.State.RoundWinners) >= 2 {
-					err = r.sendServerMessage("This round win: " + winnersStr)
-				} else if len(r.game.State.RoundWinners) == len(r.game.Players) {
-					for _, p := range r.game.Players {
-						if p.points == 0 {
-							continue
-						}
-						p.points -= 5
-					}
-					err = r.sendServerMessage("This round win everyone!")
-				}
-				if err != nil {
-					logger.Error(err)
+		case isTimeLeft := <-r.timeLeft:
+			if isTimeLeft {
+				if !r.game.IsGame {
 					continue
 				}
-
-				if !isEndGame {
-					newState := r.game.newGameState(r.game.Content)
-					r.game.State = newState
-				}
-				time.Sleep(1800 * time.Millisecond)
-				err = r.sendServerMessage("The correct answer is: " + strOkAnswr)
+				err := r.sendServerMessage("Time for answer left!")
 				if err != nil {
-					logger.Error(err)
 					continue
 				}
+				r.game.UpdateSecLeftForAnswer(30)
 
-				time.Sleep(3000 * time.Millisecond)
-				err = r.sendServerMessage("Round " + strconv.Itoa(r.game.State.Round) + " just started!")
-				if err != nil {
-					logger.Error(err)
-					continue
-				}
-
-				for _, client := range r.game.Players {
-					if client.isAnswered {
-						client.isAnswered = false
-					}
-				}
-				if err = r.game.sendGameState(); err != nil {
+				if err := r.game.performRound(); err != nil {
 					logger.Error(err)
 					continue
 				}
 			}
+
 		}
 	}
 }

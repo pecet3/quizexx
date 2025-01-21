@@ -107,6 +107,7 @@ export const Quiz = () => {
   const [ws, setWs] = useState<null | WebSocket>(null);
   const [isWaiting, setIsWaiting] = useState(true);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const [timer, setTimer] = useState(0);
 
   const [err, setErr] = useState("");
   const [serverMessage, setServerMessage] = useState("");
@@ -188,6 +189,10 @@ export const Quiz = () => {
       case "chat_message":
         setMessages((prev) => [...prev, event.payload]);
         break;
+      case "set_timer":
+        setTimer(event.payload);
+        break;
+      case "update_players":
       default:
         console.log(event.type);
         break;
@@ -246,6 +251,7 @@ export const Quiz = () => {
                 gameState={gameState!}
                 serverMessage={serverMessage}
                 onAnswer={handleAnswer}
+                timer={timer}
               />
               <Chat onMessage={handleMessage} messages={messages} />
             </>

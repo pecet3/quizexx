@@ -52,8 +52,8 @@ func (g *Game) sendPlayersAnswered() error {
 	return nil
 }
 
-func (r *Room) sendIsSpectator() error {
-	eventBytes, err := marshalEventToBytes(true, "")
+func (r *Room) sendTimeForAnswer(t int) error {
+	eventBytes, err := marshalEventToBytes(t, "set_timer")
 	if err != nil {
 		return err
 	}

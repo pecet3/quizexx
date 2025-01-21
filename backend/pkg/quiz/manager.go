@@ -32,17 +32,20 @@ func NewManager(d *data.Data) *Manager {
 
 func (m *Manager) newRoom(name string, creatorID int) *Room {
 	r := &Room{
-		clients:       make(map[UUID]*Client),
-		join:          make(chan *Client),
-		leave:         make(chan *Client),
-		ready:         make(chan *Client),
+		clients: make(map[UUID]*Client),
+		join:    make(chan *Client),
+		leave:   make(chan *Client),
+		ready:   make(chan *Client),
+
 		forward:       make(chan []byte),
 		receiveAnswer: make(chan *RoundAction),
-		game:          &Game{},
-		creatorID:     creatorID,
-		createdAt:     time.Now(),
-		UUID:          uuid.NewString(),
-		Name:          name,
+		timeLeft:      make(chan bool),
+
+		game:      &Game{},
+		creatorID: creatorID,
+		createdAt: time.Now(),
+		UUID:      uuid.NewString(),
+		Name:      name,
 	}
 	return r
 }

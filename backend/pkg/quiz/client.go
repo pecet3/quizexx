@@ -61,7 +61,7 @@ func (c *Client) read(r *Room) {
 			err := json.Unmarshal(request.Payload, &action)
 			if err != nil {
 				logger.Error("Error marshaling game state:", err)
-				continue
+				return
 			}
 			c.room.receiveAnswer <- action
 		}
@@ -70,7 +70,7 @@ func (c *Client) read(r *Room) {
 			err := json.Unmarshal(request.Payload, &msg)
 			if err != nil || msg.Name != c.user.Name {
 				logger.Error("Error marshaling game state:", err)
-				continue
+				return
 			}
 
 			c.room.forward <- reqBytes

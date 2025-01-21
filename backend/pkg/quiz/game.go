@@ -4,23 +4,26 @@ import (
 	"context"
 	"encoding/json"
 	"strconv"
+	"strings"
+	"sync"
 	"time"
 
-	"github.com/google/uuid"
 	"github.com/pecet3/quizex/data/dtos"
 	"github.com/pecet3/quizex/data/entities"
 	"github.com/pecet3/quizex/pkg/logger"
 )
 
 type Game struct {
-	UUID        string
-	Room        *Room
-	State       *GameState
-	IsGame      bool
-	Players     map[UUID]*Player
-	Settings    *dtos.Settings
-	ContentJSON string
-	Content     GameContent
+	UUID             string
+	Room             *Room
+	State            *GameState
+	IsGame           bool
+	Players          map[UUID]*Player
+	Settings         *dtos.Settings
+	ContentJSON      string
+	Content          GameContent
+	SecLeftForAnswer int
+	SecLeftMu        sync.RWMutex
 }
 
 type Player struct {
@@ -64,6 +67,18 @@ type RoundQuestion struct {
 	CorrectAnswer int      `json:"correct_answer"`
 }
 
+func (g *Game) UpdateSecLeftForAnswer(sec int) {
+	g.SecLeftMu.Lock()
+	defer g.SecLeftMu.Unlock()
+	g.SecLeftForAnswer = sec
+
+}
+func (g *Game) GetSecLeftForAnswer() int {
+	g.SecLeftMu.Lock()
+	defer g.SecLeftMu.Unlock()
+	return g.SecLeftForAnswer
+}
+
 func (g *Game) getGameContent(s *dtos.Settings) error {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*60)
 	defer cancel()
@@ -98,25 +113,6 @@ func (g *Game) getGameContent(s *dtos.Settings) error {
 	return nil
 }
 
-func (r *Room) CreateGame(settings *dtos.Settings) (*Game, error) {
-	logger.Info("Creating a game in room: ", r.Name)
-
-	newGame := &Game{
-		UUID:     uuid.NewString(),
-		Room:     r,
-		State:    &GameState{Round: 1},
-		IsGame:   false,
-		Players:  make(map[UUID]*Player),
-		Settings: settings,
-		Content:  nil,
-	}
-	if err := newGame.getGameContent(settings); err != nil {
-		return nil, err
-	}
-	r.game = newGame
-	return newGame, nil
-}
-
 func (g *Game) newScore() []PlayerScore {
 	var score []PlayerScore
 
@@ -145,7 +141,7 @@ func (g *Game) newGameState(content []RoundQuestion) *GameState {
 		PlayersAnswered: []string{},
 	}
 }
-func (g *Game) checkIfShouldBeNextRound() bool {
+func (g *Game) checkIfAllPlayerAnswered() bool {
 	playersInGame := len(g.Room.game.Players)
 	playersFinished := len(g.State.PlayersAnswered)
 	if playersFinished == playersInGame && playersInGame > 0 {
@@ -156,7 +152,7 @@ func (g *Game) checkIfShouldBeNextRound() bool {
 
 func (g *Game) checkIfIsEndGame() bool {
 	isEqualMaxAndCurrentRound := g.State.Round == g.Settings.MaxRounds
-	isNextRound := g.checkIfShouldBeNextRound()
+	isNextRound := g.checkIfAllPlayerAnswered()
 
 	if isEqualMaxAndCurrentRound && isNextRound {
 		return true
@@ -197,4 +193,101 @@ func (g *Game) findWinner() []string {
 		}
 	}
 	return winners
+}
+
+func (g *Game) performRound() error {
+	isNextRound := g.checkIfAllPlayerAnswered()
+	isEndGame := g.checkIfIsEndGame()
+	indexCurrentContent := g.Content[g.State.Round-1]
+	indexOkAnswr := indexCurrentContent.CorrectAnswer
+	strOkAnswr := indexCurrentContent.Answers[indexOkAnswr]
+	if isEndGame {
+		err := g.sendGameState()
+		if err != nil {
+			logger.Error("finish game err send game", err)
+			return err
+		}
+
+		if err = g.Room.sendServerMessage("The correct answer is: " + strOkAnswr); err != nil {
+			logger.Error("finish game err", err)
+			return err
+		}
+		time.Sleep(1800 * time.Millisecond)
+		if err = g.Room.sendServerMessage("It's finish the game"); err != nil {
+			logger.Error("finish game err", err)
+			return err
+		}
+		time.Sleep(1800 * time.Millisecond)
+		winners := g.findWinner()
+		winnersStr := strings.Join(winners, ", ")
+		if len(winners) == 1 && len(winners) > 0 {
+			if err = g.Room.sendServerMessage("The game wins: " + winnersStr); err != nil {
+				logger.Error("finish game err", err)
+				return err
+			}
+		} else {
+			if err = g.Room.sendServerMessage("The game win: " + winnersStr); err != nil {
+				logger.Error("finish game err", err)
+				return err
+			}
+		}
+		g.IsGame = false
+		return err
+	}
+	logger.Debug()
+
+	if isNextRound {
+		g.State.Round++
+		var err error
+		winnersStr := strings.Join(g.State.RoundWinners, ", ")
+		if len(g.State.RoundWinners) == len(g.Players) {
+			for _, p := range g.Players {
+				if p.points == 0 {
+					continue
+				}
+				p.points -= 5
+			}
+			err = g.Room.sendServerMessage("This round win everyone!")
+		} else if len(g.State.RoundWinners) == 0 {
+			err = g.Room.sendServerMessage("No one wins this round")
+		} else if len(g.State.RoundWinners) == 1 {
+			err = g.Room.sendServerMessage("This round wins " + winnersStr)
+		} else if len(g.State.RoundWinners) >= 2 && len(g.State.RoundWinners) == len(g.Players) {
+			err = g.Room.sendServerMessage("This round win: " + winnersStr)
+		}
+
+		if err != nil {
+			logger.Error(err)
+			return err
+		}
+		if !isEndGame {
+			newState := g.newGameState(g.Content)
+			g.State = newState
+		}
+		time.Sleep(1800 * time.Millisecond)
+		err = g.Room.sendServerMessage("The correct answer is: " + strOkAnswr)
+		if err != nil {
+			logger.Error(err)
+			return err
+		}
+
+		time.Sleep(3000 * time.Millisecond)
+
+		err = g.Room.sendServerMessage("Round " + strconv.Itoa(g.State.Round) + " just started!")
+		if err != nil {
+			logger.Error(err)
+			return err
+		}
+
+		for _, client := range g.Players {
+			if client.isAnswered {
+				client.isAnswered = false
+			}
+		}
+		if err = g.sendGameState(); err != nil {
+			logger.Error(err)
+			return err
+		}
+	}
+	return nil
 }

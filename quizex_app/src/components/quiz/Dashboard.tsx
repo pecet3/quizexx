@@ -1,16 +1,15 @@
-import React, { useState, FormEvent } from "react";
+import React, { useState, FormEvent, useEffect } from "react";
 
 import { GameState, Settings } from "../../pages/Quiz";
 import { LittlePaperWrapper, PaperWrapper } from "../PaperWrapper";
-
 export const Dashboard: React.FC<{
   settings: Settings;
   gameState: GameState;
   serverMessage: string;
+  timer: number;
   onAnswer: (answer: number) => void;
-}> = ({ settings, gameState, serverMessage, onAnswer }) => {
+}> = ({ settings, gameState, serverMessage, timer, onAnswer }) => {
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
-
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
     if (selectedAnswer !== null) {
@@ -70,6 +69,7 @@ export const Dashboard: React.FC<{
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
           <div className="sm:order-1  flex flex-col items-center justify-center gap-0.5">
+            <p className="font-bold text-2xl">Time Left: {timer}</p>
             <button
               type="submit"
               className="bg-teal-300 hover:scale-[1.025] hover:shadow-lg hover:shadow-gray-500 hover:rounded-xl border-2 border-black font-mono font-semibold px-4 text-3xl duration-300 text-black rounded-lg m-auto py-2"
