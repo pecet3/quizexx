@@ -214,50 +214,52 @@ func (r *Room) Run(m *Manager) {
 			if !r.game.IsGame {
 				continue
 			}
-
-			for _, player := range r.game.Players {
-				if player.user.UUID == action.UUID {
-					if !player.isAnswered {
-						err := r.sendServerMessage(player.user.Name + " just answered")
-						if err != nil {
-							continue
-						}
-					}
-					if isGoodAnswer := r.game.checkAnswer(player, action); isGoodAnswer {
-						player.points = player.points + 10
-						r.game.State.RoundWinners = append(r.game.State.RoundWinners, player.user.Name)
-					}
-					r.game.toggleClientIsAnswered(player, action)
-					player.lastActive = time.Now()
-					r.game.State.Actions = append(r.game.State.Actions, *action)
-					r.game.State.Score = r.game.newScore()
-					if err := r.game.sendPlayersAnswered(); err != nil {
-						logger.Error(err)
+			if player, ok := r.game.Players[action.UUID]; ok {
+				if !player.isAnswered {
+					err := r.sendServerMessage(player.user.Name + " just answered")
+					if err != nil {
 						continue
 					}
 				}
-			}
-
-			if err := r.game.performRound(); err != nil {
-				logger.Error(err)
-				continue
-			}
-		case isTimeLeft := <-r.timeLeft:
-			if isTimeLeft {
-				if !r.game.IsGame {
-					continue
+				if isGoodAnswer := r.game.checkAnswer(player, action); isGoodAnswer {
+					player.points = player.points + 10
+					r.game.State.RoundWinners = append(r.game.State.RoundWinners, player.user.Name)
 				}
-				err := r.sendServerMessage("Time for answer left!")
-				if err != nil {
-					continue
-				}
-				r.game.UpdateSecLeftForAnswer(30)
-
-				if err := r.game.performRound(); err != nil {
+				r.game.toggleClientIsAnswered(player, action)
+				player.lastActive = time.Now()
+				r.game.State.Actions = append(r.game.State.Actions, *action)
+				r.game.State.Score = r.game.newScore()
+				if err := r.game.sendPlayersAnswered(); err != nil {
 					logger.Error(err)
 					continue
 				}
+				heartBeat.Stop()
+				r.game.UpdateSecLeftForAnswer(30)
+
+				if err := r.game.performRound(false); err != nil {
+					logger.Error(err)
+					continue
+				}
+				heartBeat.Reset(time.Second * 1)
 			}
+
+		case <-r.timeLeft:
+			heartBeat.Stop()
+			if !r.game.IsGame {
+				continue
+			}
+			err := r.sendServerMessage("Time for answer left!")
+			if err != nil {
+				continue
+			}
+			r.game.UpdateSecLeftForAnswer(30)
+			r.game.State.Score = r.game.newScore()
+
+			if err := r.game.performRound(true); err != nil {
+				logger.Error(err)
+				continue
+			}
+			heartBeat.Reset(time.Second * 1)
 
 		}
 	}

@@ -195,7 +195,22 @@ func (g *Game) findWinner() []string {
 	return winners
 }
 
-func (g *Game) performRound() error {
+// func (g *Game) countPoints() bool {
+// 	isEveryoneAnsweredGood := false
+// 	if len(g.State.RoundWinners) == len(g.Players) {
+// 		for _, p := range g.Players {
+// 			if p.points == 0 {
+// 				continue
+// 			}
+// 			p.points += 5
+// 		}
+// 		isEveryoneAnsweredGood = true
+// 		return isEveryoneAnsweredGood
+// 	}
+// 	return isEveryoneAnsweredGood
+// }
+
+func (g *Game) performRound(isTimeout bool) error {
 	isNextRound := g.checkIfAllPlayerAnswered()
 	isEndGame := g.checkIfIsEndGame()
 	indexCurrentContent := g.Content[g.State.Round-1]
@@ -234,12 +249,13 @@ func (g *Game) performRound() error {
 		g.IsGame = false
 		return err
 	}
-	logger.Debug()
 
-	if isNextRound {
+	if isNextRound || isTimeout {
 		g.State.Round++
 		var err error
 		winnersStr := strings.Join(g.State.RoundWinners, ", ")
+		logger.Debug(len(g.State.RoundWinners))
+		logger.Debug(g.State.RoundWinners)
 		if len(g.State.RoundWinners) == len(g.Players) {
 			for _, p := range g.Players {
 				if p.points == 0 {
