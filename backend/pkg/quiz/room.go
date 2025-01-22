@@ -222,12 +222,11 @@ func (r *Room) Run(m *Manager) {
 					}
 				}
 				if isGoodAnswer := r.game.checkAnswer(player, action); isGoodAnswer {
-					player.points = player.points + 10
-					r.game.State.RoundWinners = append(r.game.State.RoundWinners, player.user.Name)
+					r.game.State.RoundWinners = append(r.game.State.RoundWinners, player.user.UUID)
 				}
 				r.game.toggleClientIsAnswered(player, action)
 				player.lastActive = time.Now()
-				r.game.State.Actions = append(r.game.State.Actions, *action)
+				r.game.State.Actions = append(r.game.State.Actions, action)
 				r.game.State.Score = r.game.newScore()
 				if err := r.game.sendPlayersAnswered(); err != nil {
 					logger.Error(err)
