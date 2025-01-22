@@ -10,7 +10,14 @@ import (
 	"github.com/pecet3/quizex/pkg/logger"
 )
 
-const HEARTBEAT_DURATION = time.Second * 1
+const (
+	HEARTBEAT_DURATION      = time.Second * 1
+	NOBODYCHECKING_DURATION = time.Second * 30
+
+	// time for reading
+	TFR_SHORT_DURATION = time.Millisecond * 1800
+	TFR_LONG_DURATION  = time.Millisecond * 2500
+)
 
 type UUID = string
 type Room struct {
@@ -109,10 +116,12 @@ func (r *Room) checkWaitRoom() error {
 
 func (r *Room) Run(m *Manager) {
 	logger.Info(fmt.Sprintf(`Created a room: %s. creator user id: %d`, r.UUID, r.creatorID))
-	ticker := time.NewTicker(time.Second * 20)
-	heartBeat := time.NewTicker(HEARTBEAT_DURATION)
+
+	nobodyCheckingT := time.NewTicker(NOBODYCHECKING_DURATION)
+	heartBeatT := time.NewTicker(HEARTBEAT_DURATION)
 	defer func() {
-		ticker.Stop()
+		nobodyCheckingT.Stop()
+		heartBeatT.Stop()
 		m.removeRoom(r.Name)
 	}()
 
@@ -123,14 +132,14 @@ func (r *Room) Run(m *Manager) {
 				for _, client := range r.clients {
 					client.receive <- msg
 				}
-			case <-heartBeat.C:
+			case <-heartBeatT.C:
 				if !r.game.IsGame {
 					continue
 				}
 				counter := r.game.GetSecLeftForAnswer()
 				r.game.UpdateSecLeftForAnswer(counter - 1)
 				r.sendTimeForAnswer(counter)
-				if counter <= 0 {
+				if counter < 0 {
 					r.timeLeft <- true
 				}
 			}
@@ -138,14 +147,14 @@ func (r *Room) Run(m *Manager) {
 	}(r)
 	for {
 		select {
-		case <-ticker.C:
+		case <-nobodyCheckingT.C:
 			if len(r.clients) <= 0 {
 				logger.Info(fmt.Sprintf(`No one is ine the room: %d. Closing...`, len(r.clients)))
 				return
 			}
 		case client := <-r.join:
 			if len(r.clients) == 0 {
-				ticker.Reset(time.Second * 20)
+				nobodyCheckingT.Reset(time.Second * 20)
 			}
 			r.addClient(client)
 
@@ -236,7 +245,7 @@ func (r *Room) Run(m *Manager) {
 					continue
 				}
 
-				if err := r.game.performRound(heartBeat, false); err != nil {
+				if err := r.game.performRound(heartBeatT, false); err != nil {
 					logger.Error(err)
 					continue
 				}
@@ -250,8 +259,8 @@ func (r *Room) Run(m *Manager) {
 			if err != nil {
 				continue
 			}
-
-			if err := r.game.performRound(heartBeat, true); err != nil {
+			time.Sleep(TFR_SHORT_DURATION)
+			if err := r.game.performRound(heartBeatT, true); err != nil {
 				logger.Error(err)
 				continue
 			}
