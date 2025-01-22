@@ -10,6 +10,8 @@ import (
 	"github.com/pecet3/quizex/pkg/logger"
 )
 
+const HEARTBEAT_DURATION = time.Second * 1
+
 type UUID = string
 type Room struct {
 	Name string
@@ -108,7 +110,7 @@ func (r *Room) checkWaitRoom() error {
 func (r *Room) Run(m *Manager) {
 	logger.Info(fmt.Sprintf(`Created a room: %s. creator user id: %d`, r.UUID, r.creatorID))
 	ticker := time.NewTicker(time.Second * 20)
-	heartBeat := time.NewTicker(time.Second * 1)
+	heartBeat := time.NewTicker(HEARTBEAT_DURATION)
 	defer func() {
 		ticker.Stop()
 		m.removeRoom(r.Name)
@@ -220,6 +222,8 @@ func (r *Room) Run(m *Manager) {
 					if err != nil {
 						continue
 					}
+				} else {
+					continue
 				}
 				if isGoodAnswer := r.game.checkAnswer(player, action); isGoodAnswer {
 					r.game.State.RoundWinners = append(r.game.State.RoundWinners, player.user.UUID)
@@ -227,23 +231,18 @@ func (r *Room) Run(m *Manager) {
 				r.game.toggleClientIsAnswered(player, action)
 				player.lastActive = time.Now()
 				r.game.State.Actions = append(r.game.State.Actions, action)
-				r.game.State.Score = r.game.newScore()
 				if err := r.game.sendPlayersAnswered(); err != nil {
 					logger.Error(err)
 					continue
 				}
-				heartBeat.Stop()
-				r.game.UpdateSecLeftForAnswer(30)
 
-				if err := r.game.performRound(false); err != nil {
+				if err := r.game.performRound(heartBeat, false); err != nil {
 					logger.Error(err)
 					continue
 				}
-				heartBeat.Reset(time.Second * 1)
 			}
 
 		case <-r.timeLeft:
-			heartBeat.Stop()
 			if !r.game.IsGame {
 				continue
 			}
@@ -251,15 +250,11 @@ func (r *Room) Run(m *Manager) {
 			if err != nil {
 				continue
 			}
-			r.game.UpdateSecLeftForAnswer(30)
-			r.game.State.Score = r.game.newScore()
 
-			if err := r.game.performRound(true); err != nil {
+			if err := r.game.performRound(heartBeat, true); err != nil {
 				logger.Error(err)
 				continue
 			}
-			heartBeat.Reset(time.Second * 1)
-
 		}
 	}
 }

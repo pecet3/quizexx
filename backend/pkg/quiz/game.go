@@ -115,7 +115,6 @@ func (g *Game) getGameContent(s *dtos.Settings) error {
 
 func (g *Game) newScore() []*PlayerScore {
 	var score []*PlayerScore
-
 	for _, p := range g.Players {
 		playerScore := &PlayerScore{
 			User:      p.user,
@@ -153,9 +152,9 @@ func (g *Game) checkIfAllPlayerAnswered() bool {
 
 func (g *Game) checkIfisLastRound() bool {
 	isEqualMaxAndCurrentRound := g.State.Round == g.Settings.MaxRounds
-	isNextRound := g.checkIfAllPlayerAnswered()
+	isEveryoneAnswered := g.checkIfAllPlayerAnswered()
 
-	if isEqualMaxAndCurrentRound && isNextRound {
+	if isEqualMaxAndCurrentRound && isEveryoneAnswered {
 		return true
 	}
 	return false
@@ -182,7 +181,7 @@ func (g *Game) toggleClientIsAnswered(p *Player, action *RoundAction) {
 		p.isAnswered = true
 	}
 }
-func (g *Game) findWinner() []string {
+func (g *Game) findWinners() []string {
 	highestScore := 0
 	for _, c := range g.Players {
 		if highestScore < c.points {
@@ -217,16 +216,16 @@ func (g *Game) countPoints() bool {
 	return isEveryoneAnsweredGood
 }
 
-func (g *Game) performRound(isTimeout bool) error {
-	isNextRound := g.checkIfAllPlayerAnswered()
+func (g *Game) performRound(hb *time.Ticker, isTimeout bool) error {
+	isEveryoneAnswered := g.checkIfAllPlayerAnswered()
 	isLastRound := g.checkIfIsLastRound()
+
 	indexCurrentContent := g.Content[g.State.Round-1]
 	indexOkAnswr := indexCurrentContent.CorrectAnswer
 	strOkAnswr := indexCurrentContent.Answers[indexOkAnswr]
-	if isNextRound || isTimeout {
-		if !isLastRound {
-			g.State.Round++
-		}
+
+	if isEveryoneAnswered || isTimeout {
+		hb.Stop()
 		var err error
 		winnersStr := strings.Join(g.State.RoundWinners, ", ")
 		logger.Debug(len(g.State.RoundWinners))
@@ -240,12 +239,13 @@ func (g *Game) performRound(isTimeout bool) error {
 		} else if len(g.State.RoundWinners) >= 2 && len(g.State.RoundWinners) == len(g.Players) {
 			err = g.Room.sendServerMessage("This round win: " + winnersStr)
 		}
-
 		if err != nil {
 			logger.Error(err)
 			return err
 		}
-
+		if !isLastRound {
+			g.State.Round++
+		}
 		newState := g.newGameState(g.Content)
 		g.State = newState
 
@@ -265,16 +265,16 @@ func (g *Game) performRound(isTimeout bool) error {
 		}
 
 		for _, client := range g.Players {
-			if client.isAnswered {
-				client.isAnswered = false
-			}
+			client.isAnswered = false
 		}
 		if err = g.sendGameState(); err != nil {
 			logger.Error(err)
 			return err
 		}
+		g.UpdateSecLeftForAnswer(30)
+		hb.Reset(HEARTBEAT_DURATION)
 	}
-	if isLastRound {
+	if isLastRound && isEveryoneAnswered || isLastRound && isTimeout {
 		g.countPoints()
 		g.sendGameState()
 		if err := g.Room.sendServerMessage("It's finish the game"); err != nil {
@@ -282,10 +282,10 @@ func (g *Game) performRound(isTimeout bool) error {
 			return err
 		}
 		time.Sleep(1800 * time.Millisecond)
-		winners := g.findWinner()
+		winners := g.findWinners()
 		winnersStr := strings.Join(winners, ", ")
 		if len(winners) == 1 && len(winners) > 0 {
-			if err := g.Room.sendServerMessage("The game wins: " + winnersStr + strconv.Itoa(g.State.Score[0].Points)); err != nil {
+			if err := g.Room.sendServerMessage("The game wins: " + winnersStr); err != nil {
 				logger.Error("finish game err", err)
 				return err
 			}
@@ -297,5 +297,6 @@ func (g *Game) performRound(isTimeout bool) error {
 		}
 		g.IsGame = false
 	}
+
 	return nil
 }
