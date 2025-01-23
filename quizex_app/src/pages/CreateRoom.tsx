@@ -2,19 +2,17 @@ import { useState } from "react";
 import { MainWrapper } from "../components/MainWrapper";
 import { useNavigate } from "react-router-dom";
 import { Settings } from "./Quiz";
-import { Error } from "../components/Error";
 import { RoomCreator } from "../components/RoomCreator";
 
-// to do : better error handling in UI
+// to do : better msgor handling in UI
 
 export const CreateRoom = () => {
   const nav = useNavigate();
-  const [isLoading, setIsLoading] = useState(false);
-  const [err, setErr] = useState("");
+  const [msg, setMsg] = useState("");
 
   const handleSubmit = async (event: any) => {
     event.preventDefault();
-    setIsLoading(true);
+    setMsg("Creating a game, please be patient");
     const formData = new FormData(event.target);
     const maxRoundsStr = formData.get("maxRounds");
     const maxRounds = parseInt(maxRoundsStr as string);
@@ -38,35 +36,22 @@ export const CreateRoom = () => {
       const result = await response.json;
       console.log("Room created successfully:", result);
       nav(`/quiz/${data.name}`);
-      setIsLoading(false);
+      setMsg("");
       return;
     }
     if (response.status === 403) {
-      setErr("Room with this name already exists!");
-      setIsLoading(false);
+      setMsg("Room with this name already exists!");
       return;
     } else {
-      setErr("Something went wrong...");
-      setIsLoading(false);
+      setMsg("Something went wrong...");
     }
   };
 
   return (
     <MainWrapper>
       <section className="section">
-        {err != "" ? (
-          <Error err={err} />
-        ) : (
-          <>
-            {isLoading ? (
-              <p className="my-64 text-2xl">
-                Creating a game, please be patient
-              </p>
-            ) : (
-              <RoomCreator onSubmit={handleSubmit} />
-            )}
-          </>
-        )}
+        <RoomCreator onSubmit={handleSubmit} />
+        <p className="text-xl my-2">{msg}</p>
       </section>
     </MainWrapper>
   );
