@@ -60,6 +60,9 @@ func (r *Room) CreateGame(settings *dtos.Settings) (*Game, error) {
 }
 
 func (r *Room) checkIfEveryoneIsReady() bool {
+	if len(r.clients) <= 0 {
+		return false
+	}
 	for _, c := range r.clients {
 		if !c.player.isReady {
 			return false
