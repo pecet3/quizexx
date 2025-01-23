@@ -78,8 +78,6 @@ export const Auth: React.FC = () => {
       });
 
       if (response.data) {
-        alert("Authentication successful!");
-        console.log(response.data);
         navigate("/");
       }
     } catch (error: any) {
