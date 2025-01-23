@@ -23,3 +23,4 @@ frontend
 *.njsproj
 *.sln
 *.sw?
+.db

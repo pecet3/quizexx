@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
 const API_URL = "/api";
@@ -35,9 +34,15 @@ export const Auth: React.FC = () => {
   const handleRegister = async () => {
     try {
       setLoading(true);
-      const response = await axios.post(`${API_URL}${PREFIX}/register`, {
-        name: formData.name,
-        email: formData.email,
+      const response = await fetch(`${API_URL}${PREFIX}/register`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email,
+        }),
       });
 
       if (response.status === 200) {
@@ -54,16 +59,25 @@ export const Auth: React.FC = () => {
   const handleLogin = async () => {
     try {
       setLoading(true);
-      const response = await axios.post(`${API_URL}${PREFIX}/login`, {
-        email: formData.email,
+      const response = await fetch(`${API_URL}${PREFIX}/login`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: formData.email,
+        }),
       });
 
-      if (response.status === 200) {
+      if (response.ok) {
         setMessage("Please check your email for verification code.");
         setCurrentStep("exchange");
+      } else {
+        const errorData = await response.json();
+        alert(errorData.message || "Login failed");
       }
     } catch (error: any) {
-      alert(error.response?.data?.message || "Login failed");
+      alert(error.message || "Login failed");
     } finally {
       setLoading(false);
     }
@@ -72,16 +86,25 @@ export const Auth: React.FC = () => {
   const handleExchange = async () => {
     try {
       setLoading(true);
-      const response = await axios.post(`${API_URL}${PREFIX}/exchange`, {
-        email: formData.email,
-        code: formData.code,
+      const response = await fetch(`${API_URL}${PREFIX}/exchange`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: formData.email,
+          code: formData.code,
+        }),
       });
 
-      if (response.data) {
+      if (response.ok) {
         navigate("/");
+      } else {
+        const errorData = await response.json();
+        alert(errorData.message || "Code verification failed");
       }
     } catch (error: any) {
-      alert(error.response?.data?.message || "Code verification failed");
+      alert(error.message || "Code verification failed");
     } finally {
       setLoading(false);
     }
@@ -124,7 +147,7 @@ export const Auth: React.FC = () => {
   const renderLoginForm = () => (
     <>
       <input
-        className="bg-gray-300 w-full placeholder:text-center border border-gray-300 rounded-md p-3 mb-4"
+        className="bg-gray-300 w-full border border-gray-300 rounded-md p-3 mb-4"
         type="email"
         placeholder="Email"
         value={formData.email}
@@ -151,7 +174,7 @@ export const Auth: React.FC = () => {
   const renderExchangeForm = () => (
     <>
       <input
-        className="bg-gray-300 w-full border placeholder:text-center  border-gray-300 rounded-md p-3 mb-4"
+        className="bg-gray-300 w-full border border-gray-300 rounded-md p-3 mb-4"
         type="text"
         placeholder="Code"
         value={formData.code}
@@ -179,7 +202,7 @@ export const Auth: React.FC = () => {
           ? "Sign In"
           : null}
       </h1>
-      <p> {message}</p>
+      <p className="text-xl"> {message}</p>
       <div className="w-full max-w-md bg-white p-6 rounded-md shadow-md">
         {currentStep === "register" && renderRegisterForm()}
         {currentStep === "login" && renderLoginForm()}
