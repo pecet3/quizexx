@@ -249,14 +249,14 @@ func (g *Game) performRound(hb *time.Ticker, isTimeout bool) error {
 		newState := g.newGameState(g.Content)
 		g.State = newState
 
-		time.Sleep(1800 * time.Millisecond)
+		time.Sleep(TFR_SHORT_DURATION)
 		err = g.Room.sendServerMessage("The correct answer is: " + strOkAnswr)
 		if err != nil {
 			logger.Error(err)
 			return err
 		}
 
-		time.Sleep(3000 * time.Millisecond)
+		time.Sleep(TFR_LONG_DURATION)
 
 		err = g.Room.sendServerMessage("Round " + strconv.Itoa(g.State.Round) + " just started!")
 		if err != nil {
@@ -271,8 +271,7 @@ func (g *Game) performRound(hb *time.Ticker, isTimeout bool) error {
 			logger.Error(err)
 			return err
 		}
-		g.UpdateSecLeftForAnswer(30)
-		hb.Reset(HEARTBEAT_DURATION)
+
 	}
 	if isLastRound && isEveryoneAnswered || isLastRound && isTimeout {
 		g.countPoints()
@@ -281,7 +280,7 @@ func (g *Game) performRound(hb *time.Ticker, isTimeout bool) error {
 			logger.Error("finish game err", err)
 			return err
 		}
-		time.Sleep(1800 * time.Millisecond)
+		time.Sleep(TFR_LONG_DURATION)
 		winners := g.findWinners()
 		winnersStr := strings.Join(winners, ", ")
 		if len(winners) == 1 && len(winners) > 0 {
@@ -296,6 +295,9 @@ func (g *Game) performRound(hb *time.Ticker, isTimeout bool) error {
 			}
 		}
 		g.IsGame = false
+	} else {
+		g.UpdateSecLeftForAnswer(30)
+		hb.Reset(HEARTBEAT_DURATION)
 	}
 
 	return nil
