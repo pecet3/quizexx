@@ -16,12 +16,15 @@ export const CreateRoom = () => {
     const formData = new FormData(event.target);
     const maxRoundsStr = formData.get("maxRounds");
     const maxRounds = parseInt(maxRoundsStr as string);
+    const secForAnswerStr = formData.get("sec_for_answer");
+    const secForAnswer = parseInt(secForAnswerStr as string);
     const data: Settings = {
       name: formData.get("roomName") as string,
       gen_content: formData.get("category") as string,
       difficulty: formData.get("difficulty") as string,
       max_rounds: maxRounds,
       language: formData.get("lang") as string,
+      sec_for_answer: secForAnswer,
     };
 
     const response = await fetch("/api/quiz/rooms", {

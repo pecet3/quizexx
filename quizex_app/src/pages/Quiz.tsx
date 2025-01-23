@@ -21,6 +21,7 @@ export type Settings = {
   difficulty: string;
   max_rounds: number;
   language: string;
+  sec_for_answer: number;
 };
 
 export type GameState = {
@@ -96,6 +97,7 @@ const defaultSettings: Settings = {
   gen_content: "",
   language: "",
   max_rounds: 0,
+  sec_for_answer: 0,
   name: "",
 };
 const defaultWaitingState: WaitingState = {
