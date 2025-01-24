@@ -1,7 +1,9 @@
-import React, { useState, FormEvent, useEffect } from "react";
+import React, { useState, FormEvent } from "react";
 
 import { GameState, Settings } from "../../pages/Quiz";
-import { LittlePaperWrapper, PaperWrapper } from "../PaperWrapper";
+import { LittlePaperWrapper } from "../PaperWrapper";
+import { RxLapTimer } from "react-icons/rx";
+import { IoCheckmark } from "react-icons/io5";
 export const Dashboard: React.FC<{
   settings: Settings;
   gameState: GameState;
@@ -69,7 +71,12 @@ export const Dashboard: React.FC<{
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
           <div className="sm:order-1  flex flex-col items-center justify-center gap-0.5">
-            <p className="font-bold text-2xl">Time Left: {timer}</p>
+            <div className="font-bold text-2xl flex items-center gap-1.5 bg-white rounded-lg px-2 py-1">
+              <RxLapTimer size={28} className="" />
+              <p className={`w-6 ${timer <= 3 ? "text-red-500" : ""}`}>
+                {timer}
+              </p>
+            </div>
             <button
               type="submit"
               className="bg-teal-300 hover:scale-[1.025] hover:shadow-lg hover:shadow-gray-500 hover:rounded-xl border-2 border-black font-mono font-semibold px-4 text-3xl duration-300 text-black rounded-lg m-auto py-2"
@@ -87,10 +94,17 @@ export const Dashboard: React.FC<{
               </thead>
               <tbody className="">
                 {gameState.score && gameState.score.length > 0
-                  ? gameState.score.map((user, idx) => (
+                  ? gameState.score.map((player, idx) => (
                       <tr key={idx}>
-                        <td>{user.user.name}</td>
-                        <td>{user.points}</td>
+                        <td className="flex items-center justify-center">
+                          {player.user.name}
+                          {gameState.players_answered.includes(
+                            player.user.uuid
+                          ) ? (
+                            <IoCheckmark size={26} />
+                          ) : null}
+                        </td>
+                        <td>{player.points}</td>
                       </tr>
                     ))
                   : null}

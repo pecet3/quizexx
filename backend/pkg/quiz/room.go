@@ -12,7 +12,7 @@ import (
 
 const (
 	HEARTBEAT_DURATION      = time.Second * 1
-	NOBODYCHECKING_DURATION = time.Second * 30
+	NOBODYCHECKING_DURATION = time.Second * 10
 
 	// time for reading
 	TFR_SHORT_DURATION = time.Millisecond * 1800
@@ -122,12 +122,12 @@ func (r *Room) Run(m *Manager) {
 
 	nobodyCheckingT := time.NewTicker(NOBODYCHECKING_DURATION)
 	heartBeatT := time.NewTicker(HEARTBEAT_DURATION)
+
 	defer func() {
 		nobodyCheckingT.Stop()
 		heartBeatT.Stop()
 		m.removeRoom(r.Name)
 	}()
-
 	go func(r *Room) {
 		for {
 			select {
@@ -149,7 +149,9 @@ func (r *Room) Run(m *Manager) {
 					r.game.updateSecLeftForAnswer(-1)
 					r.timeLeft <- true
 				}
+
 			}
+
 		}
 	}(r)
 

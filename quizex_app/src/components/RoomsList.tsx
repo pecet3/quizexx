@@ -14,10 +14,9 @@ export const RoomsList = () => {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       const data: Rooms = await response.json();
-      if (!data.rooms) return;
-      if (data.rooms.length > 0) {
-        setRooms(data.rooms);
-      }
+      console.log(data);
+
+      setRooms(data.rooms);
     } catch (error) {
       console.error("Error fetching rooms:", error);
     } finally {
@@ -54,7 +53,7 @@ export const RoomsList = () => {
           </tr>
         </thead>
         <tbody>
-          {rooms.length > 0 ? (
+          {rooms ? (
             rooms.map((room: Room) => (
               <tr key={room.uuid} className="border-b border-black w-full">
                 <td className="px-4 py-2 w-64">{room.name}</td>

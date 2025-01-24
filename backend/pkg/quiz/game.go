@@ -177,7 +177,7 @@ func (g *Game) checkAnswer(p *Player, action *RoundAction) bool {
 
 func (g *Game) toggleClientIsAnswered(p *Player, action *RoundAction) {
 	if action.Answer >= 0 && !p.isAnswered {
-		g.State.PlayersAnswered = append(g.State.PlayersAnswered, p.user.Name)
+		g.State.PlayersAnswered = append(g.State.PlayersAnswered, p.user.UUID)
 		p.isAnswered = true
 	}
 }

@@ -6,9 +6,11 @@ import { Chat } from "../components/quiz/Chat";
 import { Error } from "../components/Error";
 import { useAuthContext } from "../context/authContext";
 
-export type User = {
+export type Player = {
   name: string;
   points: number;
+  is_answered: boolean;
+  user: User;
 };
 export type Event = {
   type: string;
@@ -30,7 +32,7 @@ export type GameState = {
   answers: string[];
   actions: RoundAction[];
   score: PlayerScore[];
-  playersAnswered: string[];
+  players_answered: string[];
   roundWinners?: string[];
 };
 
@@ -85,11 +87,15 @@ const defaultGameState: GameState = {
       roundsWon: [0],
       user: {
         name: "",
-        points: 0,
+        createdAt: new Date(),
+        email: "",
+        image_url: "",
+        is_draft: false,
+        uuid: "",
       },
     },
   ],
-  playersAnswered: [],
+  players_answered: [],
   roundWinners: [],
 };
 const defaultSettings: Settings = {
@@ -187,6 +193,11 @@ export const Quiz = () => {
         setSettings(event.payload);
         break;
       case "players_answered":
+        setGameState((prev) => ({
+          ...prev,
+          players_answered: event.payload,
+        }));
+
         break;
       case "chat_message":
         setMessages((prev) => [...prev, event.payload]);

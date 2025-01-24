@@ -92,8 +92,8 @@ func (m *Manager) removeRoom(name string) {
 			room.removeClient(c)
 		}
 		delete(m.rooms, name)
-		return
 	}
+	logger.Debug(m.rooms)
 }
 func (m *Manager) GetRoomsList() []*dtos.Room {
 	m.mu.Lock()
