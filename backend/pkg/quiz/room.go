@@ -50,7 +50,7 @@ func (r *Room) CreateGame(settings *dtos.Settings) (*Game, error) {
 		Players:          make(map[UUID]*Player),
 		Settings:         settings,
 		Content:          nil,
-		SecLeftForAnswer: 30,
+		SecLeftForAnswer: settings.SecForAnswer,
 	}
 	if err := newGame.getGameContent(settings); err != nil {
 		return nil, err
@@ -140,10 +140,14 @@ func (r *Room) Run(m *Manager) {
 					continue
 				}
 				counter := r.game.GetSecLeftForAnswer()
+				// to fix
 				r.game.UpdateSecLeftForAnswer(counter - 1)
 				r.sendTimeForAnswer(counter)
-				if counter < 0 {
+
+				if counter == 0 {
 					r.timeLeft <- true
+					r.game.UpdateSecLeftForAnswer(10)
+
 				}
 			}
 		}

@@ -8,7 +8,6 @@ import { ProtectedPage } from "./components/Protected";
 import { Quiz } from "./pages/Quiz";
 import { useAuthContext } from "./context/authContext";
 import { useEffect } from "react";
-import axios from "axios";
 
 function App() {
   const { setUser, user } = useAuthContext();
@@ -18,10 +17,10 @@ function App() {
     if (!user) {
       (async function () {
         try {
-          const result = await axios.get("/api/auth/ping");
-          if (result.data) {
-            console.log(result.data);
-            setUser(result.data);
+          const result = await fetch("/api/auth/ping");
+          if (result.status === 200) {
+            const data = await result.json();
+            setUser(data);
           }
         } catch (err: any) {
           navigate("/auth");

@@ -1,4 +1,6 @@
+import { FaCheck } from "react-icons/fa";
 import { WaitingState } from "../../pages/Quiz";
+import { IoCheckbox, IoCheckmark, IoClose } from "react-icons/io5";
 
 export const WaitingRoom: React.FC<{
   waitingState: WaitingState;
@@ -7,13 +9,18 @@ export const WaitingRoom: React.FC<{
 }> = ({ waitingState, serverMessage, onReady }) => {
   return (
     <>
-      <div className="flex flex-col justify-center items-center my-6">
+      <div className="flex flex-col justify-center items-center my-6 mt-16">
         <div className="paper paper-yellow max-w-xs w-full text-lg m-auto p-4 pt-8 shadow-md gap-2 flex flex-col items-center">
           <div className="top-tape"></div>
           <ul className="grid grid-cols-2 text-xl w-full">
             {waitingState.players.map((user, idx) => (
-              <li key={idx}>
-                {user.name} {user.is_ready ? "✔" : "❌"}
+              <li key={idx} className="flex items-center gap-0.5">
+                {user.is_ready ? (
+                  <IoCheckmark size={26} />
+                ) : (
+                  <IoClose size={26} />
+                )}
+                {user.name}
               </li>
             ))}
           </ul>
@@ -33,7 +40,7 @@ export const WaitingRoom: React.FC<{
           </button>
         </div>
       </div>
-      <p>{serverMessage}</p>
+      <p className="text-2xl">{serverMessage}</p>
     </>
   );
 };
