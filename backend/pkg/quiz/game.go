@@ -67,13 +67,13 @@ type RoundQuestion struct {
 	CorrectAnswer int      `json:"correct_answer"`
 }
 
-func (g *Game) UpdateSecLeftForAnswer(sec int) {
+func (g *Game) updateSecLeftForAnswer(sec int) {
 	g.SecLeftMu.Lock()
 	defer g.SecLeftMu.Unlock()
 	g.SecLeftForAnswer = sec
 
 }
-func (g *Game) GetSecLeftForAnswer() int {
+func (g *Game) getSecLeftForAnswer() int {
 	g.SecLeftMu.Lock()
 	defer g.SecLeftMu.Unlock()
 	return g.SecLeftForAnswer
@@ -296,7 +296,7 @@ func (g *Game) performRound(hb *time.Ticker, isTimeout bool) error {
 		}
 		g.IsGame = false
 	} else {
-		g.UpdateSecLeftForAnswer(30)
+		g.updateSecLeftForAnswer(g.Settings.SecForAnswer)
 		hb.Reset(HEARTBEAT_DURATION)
 	}
 

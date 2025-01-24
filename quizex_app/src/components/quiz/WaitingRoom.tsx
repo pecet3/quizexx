@@ -1,6 +1,5 @@
-import { FaCheck } from "react-icons/fa";
 import { WaitingState } from "../../pages/Quiz";
-import { IoCheckbox, IoCheckmark, IoClose } from "react-icons/io5";
+import { IoCheckmark, IoClose } from "react-icons/io5";
 
 export const WaitingRoom: React.FC<{
   waitingState: WaitingState;

@@ -139,19 +139,20 @@ func (r *Room) Run(m *Manager) {
 				if !r.game.IsGame {
 					continue
 				}
-				counter := r.game.GetSecLeftForAnswer()
+				counter := r.game.getSecLeftForAnswer()
 				// to fix
-				r.game.UpdateSecLeftForAnswer(counter - 1)
-				r.sendTimeForAnswer(counter)
-
+				r.game.updateSecLeftForAnswer(counter - 1)
+				if counter >= 0 {
+					r.sendTimeForAnswer(counter)
+				}
 				if counter == 0 {
+					r.game.updateSecLeftForAnswer(-1)
 					r.timeLeft <- true
-					r.game.UpdateSecLeftForAnswer(10)
-
 				}
 			}
 		}
 	}(r)
+
 	for {
 		select {
 		case <-nobodyCheckingT.C:
