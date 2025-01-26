@@ -42,6 +42,7 @@ func (ml *MagicLink) NewSessionLogin(
 }
 
 func (ml *MagicLink) NewSessionRegister(
+	uID int,
 	name,
 	email string) (*EmailSession, string) {
 	expiresAt := time.Now().Add(time.Minute * ExpirySec)
@@ -50,7 +51,7 @@ func (ml *MagicLink) NewSessionRegister(
 		Expiry:       expiresAt,
 		ActivateCode: code,
 		IsRegister:   true,
-		UserID:       -1,
+		UserID:       uID,
 		UserName:     name,
 		UserEmail:    email,
 	}

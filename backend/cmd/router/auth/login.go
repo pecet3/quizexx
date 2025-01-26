@@ -27,6 +27,7 @@ func (r router) handleLogin(w http.ResponseWriter, req *http.Request) {
 	}
 	u, err := r.d.GetUserByEmail(context.Background(), sql.NullString{
 		String: dto.Email,
+		Valid:  true,
 	})
 	if u.ID == 0 || err != nil {
 		logger.Error(err)

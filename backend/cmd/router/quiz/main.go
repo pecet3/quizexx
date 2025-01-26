@@ -4,8 +4,8 @@ import (
 	"net/http"
 
 	"github.com/go-playground/validator/v10"
+	"github.com/pecet3/quizex/cmd/router/repos"
 	"github.com/pecet3/quizex/data"
-	"github.com/pecet3/quizex/data/repos"
 	"github.com/pecet3/quizex/pkg/auth"
 	"github.com/pecet3/quizex/pkg/logger"
 	"github.com/pecet3/quizex/pkg/quiz"
@@ -39,11 +39,10 @@ func Run(
 
 func (r router) handleQuiz(w http.ResponseWriter, req *http.Request) {
 	u, err := r.auth.GetContextUser(req)
-	us := u.ToDto(r.d)
 	if err != nil {
 		logger.Error(err)
 		http.Error(w, "", http.StatusUnauthorized)
 		return
 	}
-	r.quiz.ServeQuiz(w, req, us)
+	r.quiz.ServeQuiz(w, req, u.ToDto(r.d))
 }

@@ -4,8 +4,9 @@ create table if not exists users (
     name text not null not null,
     email text unique,
     salt text not null,
-    image_url text default "/api/img/avatar.png",
+    image_url text not null,
 	is_draft bool not null,
+    age integer,
     created_at timestamp default current_timestamp
 );
 

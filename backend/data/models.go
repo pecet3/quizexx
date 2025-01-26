@@ -10,15 +10,16 @@ import (
 )
 
 type GameContent struct {
-	ID          int64       `json:"id"`
-	Uuid        string      `json:"uuid"`
-	MaxRounds   int64       `json:"max_rounds"`
-	Category    string      `json:"category"`
-	GenContent  string      `json:"gen_content"`
-	Language    string      `json:"language"`
-	Difficulty  string      `json:"difficulty"`
-	ContentJson string      `json:"content_json"`
-	UserID      interface{} `json:"user_id"`
+	ID          int64        `json:"id"`
+	Uuid        string       `json:"uuid"`
+	MaxRounds   int64        `json:"max_rounds"`
+	Category    string       `json:"category"`
+	GenContent  string       `json:"gen_content"`
+	Language    string       `json:"language"`
+	Difficulty  string       `json:"difficulty"`
+	ContentJson string       `json:"content_json"`
+	UserID      int64        `json:"user_id"`
+	CreatedAt   sql.NullTime `json:"created_at"`
 }
 
 type GameContentAnswer struct {
@@ -34,6 +35,16 @@ type GameContentRound struct {
 	QuestionContent    string `json:"question_content"`
 	CorrectAnswerIndex int64  `json:"correct_answer_index"`
 	GameContentID      int64  `json:"game_content_id"`
+}
+
+type GameUser struct {
+	ID        int64        `json:"id"`
+	UserID    int64        `json:"user_id"`
+	Level     int64        `json:"level"`
+	Exp       int64        `json:"exp"`
+	GamesWins int64        `json:"games_wins"`
+	RoundWins int64        `json:"round_wins"`
+	CreatedAt sql.NullTime `json:"created_at"`
 }
 
 type Session struct {
@@ -56,8 +67,7 @@ type User struct {
 	Name      string         `json:"name"`
 	Email     sql.NullString `json:"email"`
 	Salt      string         `json:"salt"`
-	ImageUrl  interface{}    `json:"image_url"`
+	ImageUrl  string         `json:"image_url"`
 	IsDraft   bool           `json:"is_draft"`
 	CreatedAt sql.NullTime   `json:"created_at"`
-	Age       int64          `json:"age"`
 }

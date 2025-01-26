@@ -13,9 +13,9 @@ import (
 
 const addSession = `-- name: AddSession :one
 INSERT INTO sessions (
-    user_id, email, expiry, token, activate_code, user_ip, type, post_suspend_expiry, is_expired
+    user_id, email, expiry, token, refresh_token, activate_code, user_ip, type, post_suspend_expiry, is_expired
 ) VALUES (
-    ?, ?, ?, ?, ?, ?, ?, ?, ?
+    ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
 )
 RETURNING id, user_id, email, expiry, token, activate_code, refresh_token, user_ip, type, post_suspend_expiry, is_expired
 `
@@ -25,6 +25,7 @@ type AddSessionParams struct {
 	Email             string       `json:"email"`
 	Expiry            time.Time    `json:"expiry"`
 	Token             string       `json:"token"`
+	RefreshToken      string       `json:"refresh_token"`
 	ActivateCode      string       `json:"activate_code"`
 	UserIp            string       `json:"user_ip"`
 	Type              string       `json:"type"`
@@ -38,6 +39,7 @@ func (q *Queries) AddSession(ctx context.Context, arg AddSessionParams) (Session
 		arg.Email,
 		arg.Expiry,
 		arg.Token,
+		arg.RefreshToken,
 		arg.ActivateCode,
 		arg.UserIp,
 		arg.Type,
@@ -64,7 +66,7 @@ func (q *Queries) AddSession(ctx context.Context, arg AddSessionParams) (Session
 const addUser = `-- name: AddUser :one
 INSERT INTO users (uuid, name, email, salt, image_url, is_draft, created_at)
               VALUES (?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
-              RETURNING id, uuid, name, email, salt, image_url, is_draft, created_at, age
+              RETURNING id, uuid, name, email, salt, image_url, is_draft, created_at
 `
 
 type AddUserParams struct {
@@ -72,7 +74,7 @@ type AddUserParams struct {
 	Name     string         `json:"name"`
 	Email    sql.NullString `json:"email"`
 	Salt     string         `json:"salt"`
-	ImageUrl interface{}    `json:"image_url"`
+	ImageUrl string         `json:"image_url"`
 	IsDraft  bool           `json:"is_draft"`
 }
 
@@ -95,7 +97,6 @@ func (q *Queries) AddUser(ctx context.Context, arg AddUserParams) (User, error) 
 		&i.ImageUrl,
 		&i.IsDraft,
 		&i.CreatedAt,
-		&i.Age,
 	)
 	return i, err
 }
@@ -110,7 +111,7 @@ func (q *Queries) DeleteUserByID(ctx context.Context, id int64) error {
 }
 
 const getAllUsers = `-- name: GetAllUsers :many
-SELECT id, uuid, name, email, salt, image_url, is_draft, created_at, age FROM users
+SELECT id, uuid, name, email, salt, image_url, is_draft, created_at FROM users
 `
 
 func (q *Queries) GetAllUsers(ctx context.Context) ([]User, error) {
@@ -131,7 +132,6 @@ func (q *Queries) GetAllUsers(ctx context.Context) ([]User, error) {
 			&i.ImageUrl,
 			&i.IsDraft,
 			&i.CreatedAt,
-			&i.Age,
 		); err != nil {
 			return nil, err
 		}
@@ -144,6 +144,31 @@ func (q *Queries) GetAllUsers(ctx context.Context) ([]User, error) {
 		return nil, err
 	}
 	return items, nil
+}
+
+const getSessionByActivateCode = `-- name: GetSessionByActivateCode :one
+SELECT id, user_id, email, expiry, token, activate_code, refresh_token, user_ip, type, post_suspend_expiry, is_expired
+FROM sessions
+WHERE activate_code = ?
+`
+
+func (q *Queries) GetSessionByActivateCode(ctx context.Context, activateCode string) (Session, error) {
+	row := q.db.QueryRowContext(ctx, getSessionByActivateCode, activateCode)
+	var i Session
+	err := row.Scan(
+		&i.ID,
+		&i.UserID,
+		&i.Email,
+		&i.Expiry,
+		&i.Token,
+		&i.ActivateCode,
+		&i.RefreshToken,
+		&i.UserIp,
+		&i.Type,
+		&i.PostSuspendExpiry,
+		&i.IsExpired,
+	)
+	return i, err
 }
 
 const getSessionByToken = `-- name: GetSessionByToken :one
@@ -172,7 +197,7 @@ func (q *Queries) GetSessionByToken(ctx context.Context, token string) (Session,
 }
 
 const getUserByEmail = `-- name: GetUserByEmail :one
-SELECT id, uuid, name, email, salt, image_url, is_draft, created_at, age from users WHERE email = ? LIMIT 1
+SELECT id, uuid, name, email, salt, image_url, is_draft, created_at from users WHERE email = ?
 `
 
 func (q *Queries) GetUserByEmail(ctx context.Context, email sql.NullString) (User, error) {
@@ -187,13 +212,12 @@ func (q *Queries) GetUserByEmail(ctx context.Context, email sql.NullString) (Use
 		&i.ImageUrl,
 		&i.IsDraft,
 		&i.CreatedAt,
-		&i.Age,
 	)
 	return i, err
 }
 
 const getUserByID = `-- name: GetUserByID :one
-SELECT id, uuid, name, email, salt, image_url, is_draft, created_at, age from users WHERE id = ? LIMIT 1
+SELECT id, uuid, name, email, salt, image_url, is_draft, created_at from users WHERE id = ?
 `
 
 func (q *Queries) GetUserByID(ctx context.Context, id int64) (User, error) {
@@ -208,7 +232,6 @@ func (q *Queries) GetUserByID(ctx context.Context, id int64) (User, error) {
 		&i.ImageUrl,
 		&i.IsDraft,
 		&i.CreatedAt,
-		&i.Age,
 	)
 	return i, err
 }
@@ -247,7 +270,7 @@ func (q *Queries) UpdatePostSuspendExpiry(ctx context.Context, arg UpdatePostSus
 
 const updateUserIsDraft = `-- name: UpdateUserIsDraft :one
 UPDATE users SET is_draft = ? WHERE id = ?
-    RETURNING id, uuid, name, email, salt, image_url, is_draft, created_at, age
+    RETURNING id, uuid, name, email, salt, image_url, is_draft, created_at
 `
 
 type UpdateUserIsDraftParams struct {
@@ -267,14 +290,13 @@ func (q *Queries) UpdateUserIsDraft(ctx context.Context, arg UpdateUserIsDraftPa
 		&i.ImageUrl,
 		&i.IsDraft,
 		&i.CreatedAt,
-		&i.Age,
 	)
 	return i, err
 }
 
 const updateUserName = `-- name: UpdateUserName :one
 UPDATE users SET name = ? WHERE id = ?
-    RETURNING id, uuid, name, email, salt, image_url, is_draft, created_at, age
+    RETURNING id, uuid, name, email, salt, image_url, is_draft, created_at
 `
 
 type UpdateUserNameParams struct {
@@ -294,7 +316,6 @@ func (q *Queries) UpdateUserName(ctx context.Context, arg UpdateUserNameParams) 
 		&i.ImageUrl,
 		&i.IsDraft,
 		&i.CreatedAt,
-		&i.Age,
 	)
 	return i, err
 }

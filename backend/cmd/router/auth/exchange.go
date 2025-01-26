@@ -1,7 +1,6 @@
 package auth_router
 
 import (
-	"database/sql"
 	"encoding/json"
 	"net/http"
 	"time"
@@ -45,35 +44,26 @@ func (r router) handleExchange(w http.ResponseWriter, req *http.Request) {
 	}
 
 	es.ExchangeCounter += 1
-	u, err := r.d.GetUserByEmail(req.Context(), sql.NullString{
-		String: es.UserEmail,
-	})
-	if err != nil {
-		logger.Error(err)
-		http.Error(w, "", http.StatusBadRequest)
-		return
-	}
+	var us data.User
 	if es.IsRegister {
-		u, err := r.d.GetUserByEmail(req.Context(), sql.NullString{
-			String: es.UserEmail,
-		})
+		u, err := r.d.GetUserByID(req.Context(), int64(es.UserID))
 		if err != nil {
 			logger.Error(err)
 			http.Error(w, "", http.StatusBadRequest)
 			return
 		}
-		_, err = r.d.UpdateUserIsDraft(req.Context(), data.UpdateUserIsDraftParams{IsDraft: false})
+		us, err = r.d.UpdateUserIsDraft(req.Context(), data.UpdateUserIsDraftParams{IsDraft: false, ID: u.ID})
 		if err != nil {
 			logger.Error(err)
 			http.Error(w, "", http.StatusBadRequest)
 			return
 		}
 		logger.Debug(es.UserName, u.ID)
-	}
-	if u.IsDraft {
+		logger.Debug(us)
 
 	}
-	s, token, err := r.auth.NewAuthSession(int(u.ID), u.Email.String, es.UserName)
+	logger.Debug(us)
+	s, token, err := r.auth.NewAuthSession(us.ID, us.Email.String, es.UserName)
 	if err != nil {
 		logger.Error(err)
 		http.Error(w, "", http.StatusBadRequest)
@@ -92,7 +82,8 @@ func (r router) handleExchange(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 	r.auth.SetCookie(w, "auth", token, time.Now().Add(time.Hour*192))
-
+	r.auth.SetCookie(w, "refresh", s.RefreshToken, time.Now().Add(time.Hour*192))
+	logger.Debug("refresh")
 	err = json.NewEncoder(w).Encode(token)
 	if err != nil {
 		logger.Error(err)

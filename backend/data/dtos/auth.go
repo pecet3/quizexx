@@ -46,13 +46,6 @@ func (r *Login) Validate(v *validator.Validate) error {
 	return nil
 }
 
-func (r Login) Send(w io.Writer) error {
-	if err := json.NewEncoder(w).Encode(&r); err != nil {
-		return err
-	}
-	return nil
-}
-
 type User struct {
 	ID        int       `json:"-"`
 	UUID      string    `json:"uuid"`
@@ -62,4 +55,11 @@ type User struct {
 	ImageUrl  string    `json:"image_url"`
 	IsDraft   bool      `json:"is_draft"`
 	CreatedAt time.Time `json:"created_at"`
+}
+
+func (u User) Send(w io.Writer) error {
+	if err := json.NewEncoder(w).Encode(&u); err != nil {
+		return err
+	}
+	return nil
 }

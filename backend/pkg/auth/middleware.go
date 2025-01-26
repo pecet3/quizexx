@@ -19,6 +19,8 @@ func (as *Auth) Authorize(next http.HandlerFunc) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 
 		var jwt string
+		var refresh string
+
 		if r.Header.Get("Authorization") != "" {
 			headerParts := strings.Split(r.Header.Get("Authorization"), " ")
 			if len(headerParts) != 2 || headerParts[0] != "Bearer" {
@@ -32,6 +34,12 @@ func (as *Auth) Authorize(next http.HandlerFunc) http.Handler {
 				http.Error(w, "Invalid authorization header format", http.StatusUnauthorized)
 				return
 			}
+			rCookie, err := r.Cookie("refresh")
+			if err != nil || cookie.Value == "" {
+				http.Error(w, "Invalid authorization header format", http.StatusUnauthorized)
+				return
+			}
+			refresh = rCookie.Value
 			jwt = cookie.Value
 		}
 
@@ -39,13 +47,13 @@ func (as *Auth) Authorize(next http.HandlerFunc) http.Handler {
 			http.Error(w, "Empty token", http.StatusUnauthorized)
 			return
 		}
-		_, err := as.JWT.ValidateJWT(jwt)
+		claims, err := as.JWT.ValidateJWT(jwt)
 		if err != nil {
 			logger.Error(err)
 			http.Error(w, "", http.StatusUnauthorized)
 			return
 		}
-
+		logger.Debug(claims)
 		var s data.Session
 		s, err = as.GetAuthSession(jwt)
 		if err != nil || s.Token == "" {
@@ -53,7 +61,7 @@ func (as *Auth) Authorize(next http.HandlerFunc) http.Handler {
 			http.Error(w, "", http.StatusUnauthorized)
 			return
 		}
-
+		logger.Debug(s)
 		if s.ActivateCode != jwt {
 			logger.WarnC("invalid jwt token. user id: ", s.UserID)
 			as.MagicLink.RemoveSession(s.Email)
@@ -61,16 +69,20 @@ func (as *Auth) Authorize(next http.HandlerFunc) http.Handler {
 			return
 		}
 		if s.Expiry.Before(time.Now()) {
-			as.MagicLink.RemoveSession(s.Email)
-			logger.Debug(s.Expiry.Before(time.Now()))
-			http.Error(w, "Your sessions is expired you need to login once again", http.StatusUnauthorized)
-			if err := as.UpdateIsExpiredSession(s.Token); err != nil {
-				logger.Error(err)
-				http.Error(w, "", http.StatusUnauthorized)
+			if refresh != s.RefreshToken {
+				as.MagicLink.RemoveSession(s.Email)
+
+				http.Error(w, "Your sessions is expired you need to login once again", http.StatusUnauthorized)
+				if err := as.UpdateIsExpiredSession(s.Token); err != nil {
+					logger.Error(err)
+					http.Error(w, "", http.StatusUnauthorized)
+					return
+				}
 				return
 			}
-			return
 		}
+		logger.Debug(s.UserID)
+
 		if r.Method == http.MethodPost {
 			if !s.PostSuspendExpiry.Time.IsZero() && !s.PostSuspendExpiry.Time.Before(time.Now()) {
 				logger.Warn("<Auth> User trying to use method POST, but they is suspended")

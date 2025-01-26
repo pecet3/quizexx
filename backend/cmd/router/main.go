@@ -6,8 +6,8 @@ import (
 
 	authRouter "github.com/pecet3/quizex/cmd/router/auth"
 	quizRouter "github.com/pecet3/quizex/cmd/router/quiz"
+	"github.com/pecet3/quizex/cmd/router/repos"
 	"github.com/pecet3/quizex/data"
-	"github.com/pecet3/quizex/data/repos"
 	"github.com/pecet3/quizex/pkg/auth"
 	"github.com/pecet3/quizex/pkg/logger"
 	"github.com/pecet3/quizex/pkg/quiz"

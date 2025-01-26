@@ -9,7 +9,7 @@ import (
 	"github.com/pecet3/quizex/pkg/logger"
 )
 
-func NewSQLite() *sql.DB {
+func NewSQLiteTest() *sql.DB {
 	db, err := sql.Open("sqlite3", "./store.db")
 	if err != nil {
 		log.Fatalf("Failed to connect database: %v", err)
@@ -38,8 +38,8 @@ func NewSQLite() *sql.DB {
 
 	return db
 }
-func NewSQLiteTest() *sql.DB {
-	db, err := sql.Open("sqlite3", "./store_test.db")
+func NewSQLite() *sql.DB {
+	db, err := sql.Open("sqlite3", "./store.db")
 	if err != nil {
 		log.Fatalf("Failed to connect database: %v", err)
 	}

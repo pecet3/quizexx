@@ -8,8 +8,10 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/google/uuid"
 	"github.com/pecet3/quizex/data"
 	"github.com/pecet3/quizex/data/entities"
+	"github.com/pecet3/quizex/pkg/logger"
 )
 
 const (
@@ -18,21 +20,25 @@ const (
 
 type AuthSessions = map[string]*entities.Session
 
-func (as *Auth) NewAuthSession(userId int, uEmail, uName string) (data.AddSessionParams, string, error) {
+func (as *Auth) NewAuthSession(uId int64, uEmail, uName string) (data.AddSessionParams, string, error) {
 	expiresAt := time.Now().Add(168 * 4 * time.Hour)
 	jwtToken, err := as.JWT.GenerateJWT(uEmail, uName)
 	if err != nil {
 		return data.AddSessionParams{}, "", err
 	}
 	ea := data.AddSessionParams{
+		Type:              "",
+		IsExpired:         sql.NullBool{Bool: false},
+		UserIp:            "",
 		Token:             jwtToken,
 		Expiry:            expiresAt,
-		UserID:            int64(userId),
+		UserID:            uId,
 		Email:             uEmail,
 		ActivateCode:      jwtToken,
 		PostSuspendExpiry: sql.NullTime{Time: time.Now().Add(SUSPEND_POST_SECONDS * time.Second)},
+		RefreshToken:      uuid.NewString(),
 	}
-
+	logger.Debug(ea, jwtToken)
 	return ea, jwtToken, nil
 }
 
@@ -77,10 +83,10 @@ func (as *Auth) GetContextUser(r *http.Request) (data.User, error) {
 	if !ok {
 		return data.User{}, errors.New("session not found in context")
 	}
+	logger.Debug(session.UserID)
 	u, err := as.d.GetUserByID(ctx, int64(session.UserID))
-
 	if err != nil {
-		return u, errors.New("not found in db")
+		return data.User{}, err
 	}
 	return u, nil
 }

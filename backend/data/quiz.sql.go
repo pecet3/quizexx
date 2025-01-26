@@ -43,7 +43,7 @@ func (q *Queries) AddGameContentRound(ctx context.Context, arg AddGameContentRou
 const addGameContents = `-- name: AddGameContents :one
 insert into game_contents (uuid, max_rounds, category, gen_content, language, difficulty, content_json, created_at)
               VALUES (?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
-              RETURNING id, uuid, max_rounds, category, gen_content, language, difficulty, content_json, user_id
+              RETURNING id, uuid, max_rounds, category, gen_content, language, difficulty, content_json, user_id, created_at
 `
 
 type AddGameContentsParams struct {
@@ -77,6 +77,7 @@ func (q *Queries) AddGameContents(ctx context.Context, arg AddGameContentsParams
 		&i.Difficulty,
 		&i.ContentJson,
 		&i.UserID,
+		&i.CreatedAt,
 	)
 	return i, err
 }
@@ -106,7 +107,7 @@ func (q *Queries) AddGameRound(ctx context.Context, arg AddGameRoundParams) (Gam
 }
 
 const getGameContentByID = `-- name: GetGameContentByID :one
-select id, uuid, max_rounds, category, gen_content, language, difficulty, content_json, user_id from game_contents where id = ?
+select id, uuid, max_rounds, category, gen_content, language, difficulty, content_json, user_id, created_at from game_contents where id = ?
 `
 
 func (q *Queries) GetGameContentByID(ctx context.Context, id int64) (GameContent, error) {
@@ -122,6 +123,7 @@ func (q *Queries) GetGameContentByID(ctx context.Context, id int64) (GameContent
 		&i.Difficulty,
 		&i.ContentJson,
 		&i.UserID,
+		&i.CreatedAt,
 	)
 	return i, err
 }

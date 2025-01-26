@@ -12,7 +12,6 @@ import (
 )
 
 func (r router) handleRegister(w http.ResponseWriter, req *http.Request) {
-	logger.Debug()
 	dto := &dtos.Register{}
 	err := json.NewDecoder(req.Body).Decode(dto)
 	if err != nil {
@@ -26,9 +25,9 @@ func (r router) handleRegister(w http.ResponseWriter, req *http.Request) {
 		http.Error(w, "", http.StatusBadRequest)
 		return
 	}
-
+	logger.Debug(dto)
 	existingUser, err := r.d.GetUserByEmail(req.Context(), sql.NullString{String: dto.Email})
-
+	var u data.User
 	if existingUser.ID != 0 || err == nil {
 		if !existingUser.IsDraft {
 			logger.Error(err)
@@ -36,13 +35,16 @@ func (r router) handleRegister(w http.ResponseWriter, req *http.Request) {
 			return
 		}
 	} else {
-		_, err = r.d.AddUser(req.Context(), data.AddUserParams{
+		u, err = r.d.AddUser(req.Context(), data.AddUserParams{
+			Salt: uuid.NewString(),
 			Uuid: uuid.NewString(),
 			Name: dto.Name,
 			Email: sql.NullString{
 				String: dto.Email,
+				Valid:  true,
 			},
-			IsDraft: true,
+			IsDraft:  true,
+			ImageUrl: "/api/img/avatar.png",
 		})
 		if err != nil {
 			logger.Error(err)
@@ -52,13 +54,12 @@ func (r router) handleRegister(w http.ResponseWriter, req *http.Request) {
 	}
 
 	logger.Debug(dto)
-	s, code := r.auth.MagicLink.NewSessionRegister(dto.Name, dto.Email)
+	s, code := r.auth.MagicLink.NewSessionRegister(int(u.ID), dto.Name, dto.Email)
 	if err = r.auth.MagicLink.AddSession(s); err != nil {
 		logger.Error(err)
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-
 	err = r.auth.MagicLink.SendEmailRegister(dto.Email, code, dto.Name)
 	if err != nil {
 		logger.Error(err)
