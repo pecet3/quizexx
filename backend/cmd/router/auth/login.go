@@ -1,6 +1,8 @@
 package auth_router
 
 import (
+	"context"
+	"database/sql"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -23,20 +25,22 @@ func (r router) handleLogin(w http.ResponseWriter, req *http.Request) {
 		http.Error(w, "", http.StatusBadRequest)
 		return
 	}
-	u, err := r.d.User.GetByEmail(r.d.Db, dto.Email)
-	if u == nil || err != nil {
+	u, err := r.d.GetUserByEmail(context.Background(), sql.NullString{
+		String: dto.Email,
+	})
+	if u.ID == 0 || err != nil {
 		logger.Error(err)
 		http.Error(w, "", http.StatusBadRequest)
 		return
 	}
-	s, code := r.auth.MagicLink.NewSessionLogin(u.ID, dto.Email)
+	s, code := r.auth.MagicLink.NewSessionLogin(int(u.ID), dto.Email)
 	if err = r.auth.MagicLink.AddSession(s); err != nil {
 		logger.Error(err)
 		http.Error(w, "", http.StatusBadRequest)
 		return
 	}
 
-	err = r.auth.MagicLink.SendEmailLogin(u.Email, code, u.Name)
+	err = r.auth.MagicLink.SendEmailLogin(u.Email.String, code, u.Name)
 	if err != nil {
 		logger.Error(err)
 		http.Error(w, "", http.StatusBadRequest)

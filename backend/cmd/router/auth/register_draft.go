@@ -11,7 +11,7 @@ import (
 	"github.com/pecet3/quizex/pkg/logger"
 )
 
-func (r router) handleRegister(w http.ResponseWriter, req *http.Request) {
+func (r router) handleRegisterDraft(w http.ResponseWriter, req *http.Request) {
 	logger.Debug()
 	dto := &dtos.Register{}
 	err := json.NewDecoder(req.Body).Decode(dto)

@@ -94,7 +94,6 @@ func (r *Room) removeClient(c *Client) {
 			delete(r.game.Players, c.user.UUID)
 		}
 	}
-	delete(r.clients, c.user.UUID)
 }
 
 func (r *Room) checkWaitRoom() error {

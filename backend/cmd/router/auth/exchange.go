@@ -1,10 +1,12 @@
 package auth_router
 
 import (
+	"database/sql"
 	"encoding/json"
 	"net/http"
 	"time"
 
+	"github.com/pecet3/quizex/data"
 	"github.com/pecet3/quizex/data/dtos"
 	"github.com/pecet3/quizex/pkg/logger"
 )
@@ -43,37 +45,41 @@ func (r router) handleExchange(w http.ResponseWriter, req *http.Request) {
 	}
 
 	es.ExchangeCounter += 1
-
+	u, err := r.d.GetUserByEmail(req.Context(), sql.NullString{
+		String: es.UserEmail,
+	})
+	if err != nil {
+		logger.Error(err)
+		http.Error(w, "", http.StatusBadRequest)
+		return
+	}
 	if es.IsRegister {
-		// create a new user
-		u, err := r.d.User.GetByEmail(r.d.Db, es.UserEmail)
+		u, err := r.d.GetUserByEmail(req.Context(), sql.NullString{
+			String: es.UserEmail,
+		})
 		if err != nil {
 			logger.Error(err)
 			http.Error(w, "", http.StatusBadRequest)
 			return
 		}
-		u.IsDraft = false
-		u.ImageUrl = "/api/img/avatar.png"
-		if err = u.Update(r.d.Db); err != nil {
+		_, err = r.d.UpdateUserIsDraft(req.Context(), data.UpdateUserIsDraftParams{IsDraft: false})
+		if err != nil {
 			logger.Error(err)
 			http.Error(w, "", http.StatusBadRequest)
 			return
 		}
-		logger.Debug(es.UserName, u)
+		logger.Debug(es.UserName, u.ID)
 	}
-	uDb, err := r.d.User.GetByEmail(r.d.Db, es.UserEmail)
+	if u.IsDraft {
+
+	}
+	s, token, err := r.auth.NewAuthSession(int(u.ID), u.Email.String, es.UserName)
 	if err != nil {
 		logger.Error(err)
 		http.Error(w, "", http.StatusBadRequest)
 		return
 	}
-	s, token, err := r.auth.NewAuthSession(uDb.ID, uDb.Email, es.UserName)
-	if err != nil {
-		logger.Error(err)
-		http.Error(w, "", http.StatusBadRequest)
-		return
-	}
-	err = r.auth.AddAuthSession(token, s)
+	_, err = r.auth.AddAuthSession(token, s)
 	if err != nil {
 		logger.Error(err)
 		http.Error(w, "", http.StatusBadRequest)

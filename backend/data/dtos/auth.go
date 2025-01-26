@@ -3,6 +3,7 @@ package dtos
 import (
 	"encoding/json"
 	"io"
+	"time"
 
 	"github.com/go-playground/validator/v10"
 )
@@ -50,4 +51,15 @@ func (r Login) Send(w io.Writer) error {
 		return err
 	}
 	return nil
+}
+
+type User struct {
+	ID        int       `json:"-"`
+	UUID      string    `json:"uuid"`
+	Name      string    `json:"name"`
+	Email     string    `json:"email"`
+	Salt      string    `json:"-"`
+	ImageUrl  string    `json:"image_url"`
+	IsDraft   bool      `json:"is_draft"`
+	CreatedAt time.Time `json:"created_at"`
 }

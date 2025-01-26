@@ -9,7 +9,6 @@ import (
 	"time"
 
 	"github.com/pecet3/quizex/data/dtos"
-	"github.com/pecet3/quizex/data/entities"
 	"github.com/pecet3/quizex/pkg/logger"
 )
 
@@ -27,7 +26,7 @@ type Game struct {
 }
 
 type Player struct {
-	user       *entities.User
+	user       *dtos.User
 	isReady    bool
 	isAnswered bool
 	answer     int
@@ -53,10 +52,10 @@ type RoundAction struct {
 }
 
 type PlayerScore struct {
-	User       *entities.User `json:"user"`
-	Points     int            `json:"points"`
-	RoundsWon  []uint         `json:"rounds_won"`
-	IsAnswered bool           `json:"is_answered"`
+	User       *dtos.User `json:"user"`
+	Points     int        `json:"points"`
+	RoundsWon  []uint     `json:"rounds_won"`
+	IsAnswered bool       `json:"is_answered"`
 }
 
 type GameContent = []RoundQuestion

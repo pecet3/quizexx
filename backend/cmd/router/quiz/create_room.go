@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/pecet3/quizex/data"
 	"github.com/pecet3/quizex/data/dtos"
-	"github.com/pecet3/quizex/data/entities"
 	"github.com/pecet3/quizex/pkg/logger"
 )
 
@@ -17,7 +17,7 @@ func (r router) handleCreateRoom(w http.ResponseWriter, req *http.Request) {
 		http.Error(w, "", http.StatusUnauthorized)
 		return
 	}
-	if isExists := r.quiz.CheckUserHasRoom(u.ID); isExists {
+	if isExists := r.quiz.CheckUserHasRoom(int(u.ID)); isExists {
 		logger.Warn(fmt.Sprintf(`user with id: %s wanted to create a room, when them room exists`, "0"))
 		http.Error(w, "", http.StatusBadRequest)
 		return
@@ -39,7 +39,7 @@ func (r router) handleCreateRoom(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	room := r.quiz.CreateRoom(dto.Name, u.ID)
+	room := r.quiz.CreateRoom(dto.Name, int(u.ID))
 	game, err := room.CreateGame(dto)
 	if err != nil {
 		logger.Error(err)
@@ -50,35 +50,33 @@ func (r router) handleCreateRoom(w http.ResponseWriter, req *http.Request) {
 
 	logger.Debug(game.Content)
 
-	gc := entities.GameContent{
-		UUID:        game.UUID,
-		MaxRounds:   dto.MaxRounds,
+	gc, err := r.d.AddGameContents(req.Context(), data.AddGameContentsParams{
+		Uuid:        game.UUID,
+		MaxRounds:   int64(dto.MaxRounds),
 		Category:    dto.GenContent,
 		GenContent:  dto.GenContent,
-		ContentJSON: game.ContentJSON,
-	}
-	gcID, err := gc.Add(r.d.Db)
+		ContentJson: game.ContentJSON,
+	})
 
 	for i, round := range game.Content {
-		gcr := entities.GameContentRound{
+		gcr, err := r.d.AddGameContentRound(req.Context(), data.AddGameContentRoundParams{
 			QuestionContent:    round.Question,
-			Round:              i + 1,
-			CorrectAnswerIndex: round.CorrectAnswer,
-			GameContentID:      gcID,
-		}
-		gcrID, err := gcr.Add(r.d.Db)
+			Round:              int64(i + 1),
+			CorrectAnswerIndex: int64(round.CorrectAnswer),
+			GameContentID:      int64(gc.ID),
+		})
 
 		for i := 0; i < 4; i++ {
 			isCorrect := false
 			if round.CorrectAnswer == i {
 				isCorrect = true
 			}
-			gca := entities.GameContentAnswer{
+
+			_, err = r.d.AddGameRound(req.Context(), data.AddGameRoundParams{
 				IsCorrect:          isCorrect,
-				GameContentRoundID: gcrID,
+				GameContentRoundID: gcr.ID,
 				Content:            round.Answers[i],
-			}
-			_, err = gca.Add(r.d.Db)
+			})
 		}
 		if err != nil {
 			logger.Error(err)

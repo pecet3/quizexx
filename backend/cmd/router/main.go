@@ -14,7 +14,7 @@ import (
 )
 
 type router struct {
-	d    *data.Data
+	d    *data.Queries
 	auth *auth.Auth
 	quiz *quiz.Manager
 }

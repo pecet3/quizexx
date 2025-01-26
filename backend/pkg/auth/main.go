@@ -8,10 +8,10 @@ import (
 type Auth struct {
 	MagicLink *magic_link.MagicLink
 	JWT       jwtServices
-	d         *data.Data
+	d         *data.Queries
 }
 
-func New(d *data.Data) *Auth {
+func New(d *data.Queries) *Auth {
 	a := &Auth{
 		MagicLink: magic_link.New(),
 		JWT:       jwtServices{},

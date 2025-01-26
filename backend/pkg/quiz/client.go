@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"github.com/gorilla/websocket"
-	"github.com/pecet3/quizex/data/entities"
+	"github.com/pecet3/quizex/data/dtos"
 	"github.com/pecet3/quizex/pkg/logger"
 )
 
@@ -15,7 +15,7 @@ var (
 )
 
 type Client struct {
-	user        *entities.User
+	user        *dtos.User
 	conn        *websocket.Conn
 	isSpectator bool
 	receive     chan []byte

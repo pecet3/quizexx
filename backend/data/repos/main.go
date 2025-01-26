@@ -11,7 +11,7 @@ import (
 
 type App struct {
 	Srv       *http.ServeMux
-	Data      *data.Data
+	Data      *data.Queries
 	Auth      *auth.Auth
 	Validator *validator.Validate
 	Quiz      *quiz.Manager

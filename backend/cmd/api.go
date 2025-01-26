@@ -22,7 +22,8 @@ func runAPI() {
 	utils.LoadEnv()
 
 	mux := http.NewServeMux()
-	data := data.NewData()
+
+	data := data.New(data.NewSQLite())
 
 	app := repos.App{
 		Srv:       mux,

@@ -9,7 +9,6 @@ import (
 	"github.com/gorilla/websocket"
 	"github.com/pecet3/quizex/data"
 	"github.com/pecet3/quizex/data/dtos"
-	"github.com/pecet3/quizex/data/entities"
 	"github.com/pecet3/quizex/pkg/external"
 	"github.com/pecet3/quizex/pkg/logger"
 )
@@ -18,10 +17,10 @@ type Manager struct {
 	mu       sync.Mutex
 	rooms    map[string]*Room
 	external *external.ExternalService
-	d        *data.Data
+	d        *data.Queries
 }
 
-func NewManager(d *data.Data) *Manager {
+func NewManager(d *data.Queries) *Manager {
 	return &Manager{
 		rooms:    make(map[string]*Room),
 		mu:       sync.Mutex{},
@@ -127,7 +126,7 @@ var (
 func checkOrigin(r *http.Request) bool {
 	return true
 }
-func (m *Manager) ServeQuiz(w http.ResponseWriter, req *http.Request, u *entities.User) {
+func (m *Manager) ServeQuiz(w http.ResponseWriter, req *http.Request, u *dtos.User) {
 	roomName := req.PathValue("name")
 	currentRoom := m.GetRoom(roomName)
 	logger.Debug("room name: ", roomName)

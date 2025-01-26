@@ -8,7 +8,7 @@ import (
 )
 
 type router struct {
-	d    *data.Data
+	d    *data.Queries
 	auth *auth.Auth
 	v    *validator.Validate
 }

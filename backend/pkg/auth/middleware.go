@@ -2,11 +2,12 @@ package auth
 
 import (
 	"context"
+	"database/sql"
 	"net/http"
 	"strings"
 	"time"
 
-	"github.com/pecet3/quizex/data/entities"
+	"github.com/pecet3/quizex/data"
 	"github.com/pecet3/quizex/pkg/logger"
 )
 
@@ -45,16 +46,16 @@ func (as *Auth) Authorize(next http.HandlerFunc) http.Handler {
 			return
 		}
 
-		var s *entities.Session
+		var s data.Session
 		s, err = as.GetAuthSession(jwt)
-		if err != nil || s == nil {
+		if err != nil || s.Token == "" {
 			logger.Warn("<Auth> Session doesn't exist")
 			http.Error(w, "", http.StatusUnauthorized)
 			return
 		}
 
 		if s.ActivateCode != jwt {
-			logger.WarnC("invalid jwt token. user id: ", s.UserId)
+			logger.WarnC("invalid jwt token. user id: ", s.UserID)
 			as.MagicLink.RemoveSession(s.Email)
 			http.Error(w, "", http.StatusUnauthorized)
 			return
@@ -71,13 +72,22 @@ func (as *Auth) Authorize(next http.HandlerFunc) http.Handler {
 			return
 		}
 		if r.Method == http.MethodPost {
-			if !s.PostSuspendExpiry.IsZero() && !s.PostSuspendExpiry.Before(time.Now()) {
+			if !s.PostSuspendExpiry.Time.IsZero() && !s.PostSuspendExpiry.Time.Before(time.Now()) {
 				logger.Warn("<Auth> User trying to use method POST, but they is suspended")
 				http.Error(w, "suspended post method", http.StatusBadRequest)
 				return
 			}
-			s.PostSuspendExpiry = time.Now().Add(10 * time.Second)
-			as.d.Session.UpdatePostSuspendExpiry(as.d.Db, s.Token, s.PostSuspendExpiry)
+
+			err := as.d.UpdatePostSuspendExpiry(
+				r.Context(),
+				data.UpdatePostSuspendExpiryParams{
+					PostSuspendExpiry: sql.NullTime{Time: time.Now().Add(10 * time.Second)}})
+
+			if err != nil {
+				http.Error(w, "", http.StatusUnauthorized)
+				return
+			}
+
 		}
 		ctx := context.WithValue(r.Context(), sessionContextKey, s)
 		next.ServeHTTP(w, r.WithContext(ctx))

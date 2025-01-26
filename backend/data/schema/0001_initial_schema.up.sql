@@ -1,3 +1,29 @@
+create table if not exists users (
+    id integer primary key autoincrement,
+    uuid text not null,
+    name text not null not null,
+    email text unique,
+    salt text not null,
+    image_url text default "/api/img/avatar.png",
+	is_draft bool not null,
+    created_at timestamp default current_timestamp
+);
+
+create table if not exists sessions (
+	id integer primary key autoincrement,
+	user_id integer not null,
+	email text not null,
+	expiry timestamp not null,
+	token text not null,
+	activate_code text not null,
+	refresh_token text not null,
+	user_ip text not null,
+	type text not null,
+	post_suspend_expiry timestamp,
+	is_expired bool default false,
+	foreign key (user_id) references users(id)
+);
+
 CREATE TABLE IF NOT EXISTS game_contents (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     uuid TEXT NOT NULL UNIQUE,
@@ -7,7 +33,9 @@ CREATE TABLE IF NOT EXISTS game_contents (
     language TEXT NOT NULL,
     difficulty TEXT NOT NULL,
     content_json TEXT NOT NULL,
+	user_id integer not null
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+	foreign key (user_id) references users(id)
 );
 
 CREATE TABLE IF NOT EXISTS game_content_rounds (
