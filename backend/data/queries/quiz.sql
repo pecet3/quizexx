@@ -7,6 +7,9 @@ insert into game_contents (uuid, user_id, max_rounds, category, gen_content, lan
 -- name: GetGameContentByID :one
 select * from game_contents where id = ?;
 
+-- name: GetGameContentByUUID :one
+select * from game_contents where uuid = ?;
+
 
 -- name: AddGameContentRound :one
 INSERT INTO game_content_rounds (round, question_content, correct_answer_index, game_content_id)
@@ -17,10 +20,16 @@ INSERT INTO game_content_rounds (round, question_content, correct_answer_index, 
 -- name: GetGameContentRoundByID :one
 select * from game_content_rounds where id = ?;
 
+-- name: GetGameContentRoundsByGameContentID :many
+SELECT * FROM game_content_rounds where game_content_id = ?;
+
 -- name: AddGameRoundAnswer :one
 INSERT INTO game_content_answers (is_correct, content, game_content_round_id)
               VALUES (?, ?, ?)
               RETURNING *;
+
+-- name: GetGameContentAnswerByRoundIDAndContent :one
+SELECT * FROM game_content_answers where game_content_round_id = ? and content = ?;
 
 
 -- name: AddGame :one

@@ -1,11 +1,13 @@
 package quiz
 
 import (
+	"context"
 	"fmt"
 	"sync"
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/pecet3/quizex/data"
 	"github.com/pecet3/quizex/data/dtos"
 	"github.com/pecet3/quizex/pkg/logger"
 )
@@ -108,7 +110,21 @@ func (r *Room) checkWaitRoom(m *Manager) error {
 			return err
 
 		}
-		r.game.State = r.game.newGameState(m.d, r.game.Content)
+		newState := r.game.newGameState(m.d, r.game.Content)
+		r.game.State = newState
+		ctx := context.Background()
+		gc, err := m.d.GetGameContentByUUID(ctx, r.game.UUID)
+		if err != nil {
+			return err
+		}
+		_, err = m.d.AddGame(ctx, data.AddGameParams{
+			RoomUuid:      r.UUID,
+			RoomName:      r.Name,
+			GameContentID: gc.ID,
+		})
+		if err != nil {
+			return err
+		}
 		r.game.IsGame = true
 		if err := r.game.sendGameState(); err != nil {
 			return err

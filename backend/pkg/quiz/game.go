@@ -171,7 +171,7 @@ func (g *Game) toggleClientIsAnswered(p *Player, action *RoundAction) {
 		p.isAnswered = true
 	}
 }
-func (g *Game) findWinners() []string {
+func (g *Game) findGameWinners() ([]string, []*Player) {
 	highestScore := 0
 	for _, c := range g.Players {
 		if highestScore < c.points {
@@ -180,13 +180,18 @@ func (g *Game) findWinners() []string {
 		}
 	}
 	winners := []string{}
-	for _, c := range g.Players {
-		if highestScore == c.points {
-			winners = append(winners, c.user.Name)
+	wp := []*Player{}
+	if highestScore <= 0 {
+		return winners, wp
+	}
+	for _, p := range g.Players {
+		if highestScore == p.points {
+			wp = append(wp, p)
+			winners = append(winners, p.user.Name)
 			continue
 		}
 	}
-	return winners
+	return winners, wp
 }
 
 func (g *Game) countPoints() bool {
@@ -236,14 +241,13 @@ func (g *Game) performRound(m *Manager, hb *time.Ticker, isTimeout bool) error {
 			logger.Error(err)
 			return err
 		}
+
+		g.updateSecLeftForAnswer(-1)
 		if !isLastRound {
 			g.State.Round++
 		}
-		g.updateSecLeftForAnswer(-1)
-
 		newState := g.newGameState(m.d, g.Content)
 		g.State = newState
-
 		time.Sleep(TFR_SHORT_DURATION)
 		err = g.Room.sendServerMessage("The correct answer is: " + strOkAnswr)
 		if err != nil {
@@ -276,7 +280,15 @@ func (g *Game) performRound(m *Manager, hb *time.Ticker, isTimeout bool) error {
 			return err
 		}
 		time.Sleep(TFR_LONG_DURATION)
-		winners := g.findWinners()
+		winners, wp := g.findGameWinners()
+		ctx := context.Background()
+		for _, p := range wp {
+			m.d.AddGameWinner(ctx, data.AddGameWinnerParams{
+				Points: int64(p.points),
+				GameID: int64(0),
+				UserID: p.user.ID,
+			})
+		}
 		winnersStr := strings.Join(winners, ", ")
 		if len(winners) == 1 && len(winners) > 0 {
 			if err := g.Room.sendServerMessage("The game wins: " + winnersStr); err != nil {

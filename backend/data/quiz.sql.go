@@ -258,12 +258,55 @@ func (q *Queries) GetGameByRoomUUID(ctx context.Context, roomUuid string) (Game,
 	return i, err
 }
 
+const getGameContentAnswerByRoundIDAndContent = `-- name: GetGameContentAnswerByRoundIDAndContent :one
+SELECT id, is_correct, content, game_content_round_id FROM game_content_answers where game_content_round_id = ? and content = ?
+`
+
+type GetGameContentAnswerByRoundIDAndContentParams struct {
+	GameContentRoundID int64  `json:"game_content_round_id"`
+	Content            string `json:"content"`
+}
+
+func (q *Queries) GetGameContentAnswerByRoundIDAndContent(ctx context.Context, arg GetGameContentAnswerByRoundIDAndContentParams) (GameContentAnswer, error) {
+	row := q.db.QueryRowContext(ctx, getGameContentAnswerByRoundIDAndContent, arg.GameContentRoundID, arg.Content)
+	var i GameContentAnswer
+	err := row.Scan(
+		&i.ID,
+		&i.IsCorrect,
+		&i.Content,
+		&i.GameContentRoundID,
+	)
+	return i, err
+}
+
 const getGameContentByID = `-- name: GetGameContentByID :one
 select id, uuid, max_rounds, category, gen_content, language, difficulty, content_json, user_id, created_at from game_contents where id = ?
 `
 
 func (q *Queries) GetGameContentByID(ctx context.Context, id int64) (GameContent, error) {
 	row := q.db.QueryRowContext(ctx, getGameContentByID, id)
+	var i GameContent
+	err := row.Scan(
+		&i.ID,
+		&i.Uuid,
+		&i.MaxRounds,
+		&i.Category,
+		&i.GenContent,
+		&i.Language,
+		&i.Difficulty,
+		&i.ContentJson,
+		&i.UserID,
+		&i.CreatedAt,
+	)
+	return i, err
+}
+
+const getGameContentByUUID = `-- name: GetGameContentByUUID :one
+select id, uuid, max_rounds, category, gen_content, language, difficulty, content_json, user_id, created_at from game_contents where uuid = ?
+`
+
+func (q *Queries) GetGameContentByUUID(ctx context.Context, uuid string) (GameContent, error) {
+	row := q.db.QueryRowContext(ctx, getGameContentByUUID, uuid)
 	var i GameContent
 	err := row.Scan(
 		&i.ID,
@@ -295,6 +338,39 @@ func (q *Queries) GetGameContentRoundByID(ctx context.Context, id int64) (GameCo
 		&i.GameContentID,
 	)
 	return i, err
+}
+
+const getGameContentRoundsByGameContentID = `-- name: GetGameContentRoundsByGameContentID :many
+SELECT id, round, question_content, correct_answer_index, game_content_id FROM game_content_rounds where game_content_id = ?
+`
+
+func (q *Queries) GetGameContentRoundsByGameContentID(ctx context.Context, gameContentID int64) ([]GameContentRound, error) {
+	rows, err := q.db.QueryContext(ctx, getGameContentRoundsByGameContentID, gameContentID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GameContentRound
+	for rows.Next() {
+		var i GameContentRound
+		if err := rows.Scan(
+			&i.ID,
+			&i.Round,
+			&i.QuestionContent,
+			&i.CorrectAnswerIndex,
+			&i.GameContentID,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
 }
 
 const getGameRoundAction = `-- name: GetGameRoundAction :one
