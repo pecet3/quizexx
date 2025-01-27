@@ -8,6 +8,7 @@ import { ProtectedPage } from "./components/Protected";
 import { Quiz } from "./pages/Quiz";
 import { useAuthContext } from "./context/authContext";
 import { useEffect } from "react";
+import { Welcome } from "./pages/Welcome";
 
 function App() {
   const { setUser, user } = useAuthContext();
@@ -30,12 +31,14 @@ function App() {
   }, []);
   return (
     <>
-      <Navbar />
       <Routes>
+        <Route path="/" element={<Welcome />} />
         <Route
-          path="/"
+          path="/dashboard"
           element={
             <ProtectedPage>
+              <Navbar />
+
               <Home />
             </ProtectedPage>
           }
@@ -44,6 +47,8 @@ function App() {
           path="/create-room"
           element={
             <ProtectedPage>
+              <Navbar />
+
               <CreateRoom />
             </ProtectedPage>
           }
@@ -52,6 +57,8 @@ function App() {
           path="/quiz/:roomName"
           element={
             <ProtectedPage>
+              <Navbar />
+
               <Quiz />
             </ProtectedPage>
           }

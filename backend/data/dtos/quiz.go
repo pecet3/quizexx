@@ -1,6 +1,9 @@
 package dtos
 
 import (
+	"encoding/json"
+	"io"
+
 	"github.com/go-playground/validator/v10"
 )
 
@@ -31,4 +34,23 @@ type Room struct {
 	MaxPlayers int    `json:"max_players"`
 	Round      int    `json:"round"`
 	MaxRounds  int    `json:"max_rounds"`
+}
+
+func (r Room) Send(w io.Writer) error {
+	if err := json.NewEncoder(w).Encode(&r); err != nil {
+		return err
+	}
+	return nil
+}
+
+type FunFact struct {
+	Topic   string `json:"topic"`
+	Content string `json:"content"`
+}
+
+func (f FunFact) Send(w io.Writer) error {
+	if err := json.NewEncoder(w).Encode(&f); err != nil {
+		return err
+	}
+	return nil
 }

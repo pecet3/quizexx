@@ -18,15 +18,18 @@ type Manager struct {
 	rooms    map[string]*Room
 	external *external.ExternalService
 	d        *data.Queries
+	Social   *Social
 }
 
 func NewManager(d *data.Queries) *Manager {
-	return &Manager{
+	m := &Manager{
 		rooms:    make(map[string]*Room),
 		mu:       sync.Mutex{},
 		external: &external.ExternalService{},
 		d:        d,
 	}
+	m.Social = NewSocial(m)
+	return m
 }
 
 func (m *Manager) newRoom(name string, creatorID int) *Room {

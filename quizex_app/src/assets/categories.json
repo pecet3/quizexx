@@ -1,0 +1,452 @@
+[
+  {
+    "category": "Science",
+    "topics": [
+      "Quantum Mechanics",
+      "Theory of Relativity",
+      "Black Holes",
+      "DNA and Genetics",
+      "Evolutionary Biology",
+      "Climate Change",
+      "Renewable Energy",
+      "Artificial Intelligence",
+      "Space Exploration",
+      "Nanotechnology"
+    ]
+  },
+  {
+    "category": "History",
+    "topics": [
+      "Ancient Civilizations",
+      "World War I",
+      "World War II",
+      "The Cold War",
+      "The Renaissance",
+      "The Industrial Revolution",
+      "The French Revolution",
+      "The American Revolution",
+      "The Roman Empire",
+      "The Middle Ages"
+    ]
+  },
+  {
+    "category": "Geography",
+    "topics": [
+      "Continents and Oceans",
+      "Mountain Ranges",
+      "Rivers of the World",
+      "Deserts",
+      "Climate Zones",
+      "Capital Cities",
+      "World Heritage Sites",
+      "Population Geography",
+      "Geopolitics",
+      "Cartography"
+    ]
+  },
+  {
+    "category": "Literature",
+    "topics": [
+      "Shakespeare's Plays",
+      "Modernist Literature",
+      "Postcolonial Literature",
+      "Greek Mythology",
+      "Epic Poetry",
+      "The Novel",
+      "Literary Criticism",
+      "Famous Authors",
+      "Literary Movements",
+      "Children's Literature"
+    ]
+  },
+  {
+    "category": "Mathematics",
+    "topics": [
+      "Algebra",
+      "Geometry",
+      "Calculus",
+      "Statistics",
+      "Probability",
+      "Number Theory",
+      "Topology",
+      "Mathematical Logic",
+      "Applied Mathematics",
+      "Cryptography"
+    ]
+  },
+  {
+    "category": "Technology",
+    "topics": [
+      "Computer Programming",
+      "Cybersecurity",
+      "Blockchain Technology",
+      "Internet of Things",
+      "Cloud Computing",
+      "Machine Learning",
+      "Data Science",
+      "Virtual Reality",
+      "Augmented Reality",
+      "Robotics"
+    ]
+  },
+  {
+    "category": "Art",
+    "topics": [
+      "Renaissance Art",
+      "Impressionism",
+      "Modern Art",
+      "Contemporary Art",
+      "Sculpture",
+      "Photography",
+      "Street Art",
+      "Digital Art",
+      "Art History",
+      "Famous Paintings"
+    ]
+  },
+  {
+    "category": "Music",
+    "topics": [
+      "Classical Music",
+      "Jazz",
+      "Rock and Roll",
+      "Hip Hop",
+      "Electronic Music",
+      "World Music",
+      "Music Theory",
+      "Famous Composers",
+      "Music Genres",
+      "Music History"
+    ]
+  },
+  {
+    "category": "Sports",
+    "topics": [
+      "Football",
+      "Basketball",
+      "Tennis",
+      "Cricket",
+      "Olympic Games",
+      "Athletics",
+      "Swimming",
+      "Golf",
+      "Winter Sports",
+      "Extreme Sports"
+    ]
+  },
+  {
+    "category": "Movies",
+    "topics": [
+      "Hollywood Classics",
+      "Independent Films",
+      "Film Noir",
+      "Science Fiction Movies",
+      "Horror Movies",
+      "Documentaries",
+      "Animation",
+      "Film Directors",
+      "Film Festivals",
+      "Movie Awards"
+    ]
+  },
+  {
+    "category": "Politics",
+    "topics": [
+      "Democracy",
+      "Authoritarianism",
+      "Political Parties",
+      "Elections",
+      "International Relations",
+      "Political Theory",
+      "Public Policy",
+      "Political Scandals",
+      "Human Rights",
+      "Global Governance"
+    ]
+  },
+  {
+    "category": "Philosophy",
+    "topics": [
+      "Ethics",
+      "Metaphysics",
+      "Epistemology",
+      "Logic",
+      "Political Philosophy",
+      "Existentialism",
+      "Stoicism",
+      "Philosophy of Mind",
+      "Ancient Philosophy",
+      "Modern Philosophy"
+    ]
+  },
+  {
+    "category": "Business",
+    "topics": [
+      "Entrepreneurship",
+      "Marketing",
+      "Finance",
+      "Management",
+      "Startups",
+      "Corporate Strategy",
+      "International Business",
+      "E-commerce",
+      "Business Ethics",
+      "Supply Chain Management"
+    ]
+  },
+  {
+    "category": "Health",
+    "topics": [
+      "Nutrition",
+      "Mental Health",
+      "Exercise and Fitness",
+      "Chronic Diseases",
+      "Public Health",
+      "Healthcare Systems",
+      "Alternative Medicine",
+      "Pandemics",
+      "Aging",
+      "Wellness"
+    ]
+  },
+  {
+    "category": "Education",
+    "topics": [
+      "Educational Psychology",
+      "Curriculum Development",
+      "Teaching Methods",
+      "E-learning",
+      "Special Education",
+      "Higher Education",
+      "Early Childhood Education",
+      "Educational Technology",
+      "Literacy",
+      "Global Education"
+    ]
+  },
+  {
+    "category": "Environment",
+    "topics": [
+      "Biodiversity",
+      "Deforestation",
+      "Pollution",
+      "Sustainable Development",
+      "Conservation",
+      "Ecosystems",
+      "Environmental Policy",
+      "Climate Science",
+      "Renewable Resources",
+      "Environmental Ethics"
+    ]
+  },
+  {
+    "category": "Food",
+    "topics": [
+      "Culinary Arts",
+      "World Cuisines",
+      "Food Science",
+      "Nutrition",
+      "Food Safety",
+      "Veganism",
+      "Baking",
+      "Food History",
+      "Food Trends",
+      "Food Industry"
+    ]
+  },
+  {
+    "category": "Travel",
+    "topics": [
+      "Adventure Travel",
+      "Cultural Tourism",
+      "Eco-Tourism",
+      "Luxury Travel",
+      "Backpacking",
+      "Travel Photography",
+      "Travel Writing",
+      "Travel Safety",
+      "Travel Technology",
+      "Famous Landmarks"
+    ]
+  },
+  {
+    "category": "Fashion",
+    "topics": [
+      "Fashion History",
+      "Fashion Design",
+      "Sustainable Fashion",
+      "Haute Couture",
+      "Street Style",
+      "Fashion Trends",
+      "Fashion Photography",
+      "Fashion Marketing",
+      "Fashion Technology",
+      "Fashion Icons"
+    ]
+  },
+  {
+    "category": "Psychology",
+    "topics": [
+      "Cognitive Psychology",
+      "Developmental Psychology",
+      "Social Psychology",
+      "Clinical Psychology",
+      "Behavioral Psychology",
+      "Neuropsychology",
+      "Positive Psychology",
+      "Psychotherapy",
+      "Psychological Disorders",
+      "Human Behavior"
+    ]
+  },
+  {
+    "category": "Religion",
+    "topics": [
+      "World Religions",
+      "Religious History",
+      "Religious Texts",
+      "Mythology",
+      "Spirituality",
+      "Religious Practices",
+      "Religious Philosophy",
+      "Religious Art",
+      "Religious Conflicts",
+      "Secularism"
+    ]
+  },
+  {
+    "category": "Economics",
+    "topics": [
+      "Microeconomics",
+      "Macroeconomics",
+      "International Economics",
+      "Development Economics",
+      "Behavioral Economics",
+      "Economic Policy",
+      "Economic History",
+      "Labor Economics",
+      "Financial Markets",
+      "Economic Theories"
+    ]
+  },
+  {
+    "category": "Law",
+    "topics": [
+      "Constitutional Law",
+      "Criminal Law",
+      "International Law",
+      "Human Rights Law",
+      "Corporate Law",
+      "Environmental Law",
+      "Intellectual Property Law",
+      "Family Law",
+      "Legal Theory",
+      "Judicial Systems"
+    ]
+  },
+  {
+    "category": "Sociology",
+    "topics": [
+      "Social Theory",
+      "Social Stratification",
+      "Race and Ethnicity",
+      "Gender Studies",
+      "Urban Sociology",
+      "Rural Sociology",
+      "Social Movements",
+      "Cultural Studies",
+      "Sociology of Religion",
+      "Sociology of Education"
+    ]
+  },
+  {
+    "category": "Anthropology",
+    "topics": [
+      "Cultural Anthropology",
+      "Physical Anthropology",
+      "Archaeology",
+      "Linguistic Anthropology",
+      "Ethnography",
+      "Anthropological Theory",
+      "Human Evolution",
+      "Primatology",
+      "Anthropology of Religion",
+      "Medical Anthropology"
+    ]
+  },
+  {
+    "category": "Astronomy",
+    "topics": [
+      "The Solar System",
+      "Stars and Galaxies",
+      "Cosmology",
+      "Exoplanets",
+      "Astrobiology",
+      "Telescopes",
+      "Space Missions",
+      "Astronomical Phenomena",
+      "The Big Bang Theory",
+      "Dark Matter"
+    ]
+  },
+  {
+    "category": "Chemistry",
+    "topics": [
+      "Organic Chemistry",
+      "Inorganic Chemistry",
+      "Physical Chemistry",
+      "Analytical Chemistry",
+      "Biochemistry",
+      "Environmental Chemistry",
+      "Materials Science",
+      "Chemical Reactions",
+      "Periodic Table",
+      "Chemical Bonding"
+    ]
+  },
+  {
+    "category": "Physics",
+    "topics": [
+      "Classical Mechanics",
+      "Electromagnetism",
+      "Thermodynamics",
+      "Optics",
+      "Nuclear Physics",
+      "Particle Physics",
+      "Astrophysics",
+      "Fluid Dynamics",
+      "Wave Theory",
+      "Quantum Physics"
+    ]
+  },
+  {
+    "category": "Biology",
+    "topics": [
+      "Cell Biology",
+      "Molecular Biology",
+      "Genetics",
+      "Ecology",
+      "Microbiology",
+      "Zoology",
+      "Botany",
+      "Marine Biology",
+      "Evolution",
+      "Biotechnology"
+    ]
+  },
+  {
+    "category": "Engineering",
+    "topics": [
+      "Civil Engineering",
+      "Mechanical Engineering",
+      "Electrical Engineering",
+      "Chemical Engineering",
+      "Aerospace Engineering",
+      "Biomedical Engineering",
+      "Environmental Engineering",
+      "Computer Engineering",
+      "Structural Engineering",
+      "Robotics Engineering"
+    ]
+  }
+]
