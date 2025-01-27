@@ -44,5 +44,5 @@ func (r router) handleQuiz(w http.ResponseWriter, req *http.Request) {
 		http.Error(w, "", http.StatusUnauthorized)
 		return
 	}
-	r.quiz.ServeQuiz(w, req, u.ToDto(r.d))
+	r.quiz.ServeQuiz(w, req, &u)
 }

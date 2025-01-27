@@ -41,13 +41,14 @@ func (q *Queries) AddGameContentRound(ctx context.Context, arg AddGameContentRou
 }
 
 const addGameContents = `-- name: AddGameContents :one
-insert into game_contents (uuid, max_rounds, category, gen_content, language, difficulty, content_json, created_at)
-              VALUES (?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
+insert into game_contents (uuid, user_id, max_rounds, category, gen_content, language, difficulty, content_json, created_at)
+              VALUES (?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
               RETURNING id, uuid, max_rounds, category, gen_content, language, difficulty, content_json, user_id, created_at
 `
 
 type AddGameContentsParams struct {
 	Uuid        string `json:"uuid"`
+	UserID      int64  `json:"user_id"`
 	MaxRounds   int64  `json:"max_rounds"`
 	Category    string `json:"category"`
 	GenContent  string `json:"gen_content"`
@@ -59,6 +60,7 @@ type AddGameContentsParams struct {
 func (q *Queries) AddGameContents(ctx context.Context, arg AddGameContentsParams) (GameContent, error) {
 	row := q.db.QueryRowContext(ctx, addGameContents,
 		arg.Uuid,
+		arg.UserID,
 		arg.MaxRounds,
 		arg.Category,
 		arg.GenContent,
@@ -82,20 +84,20 @@ func (q *Queries) AddGameContents(ctx context.Context, arg AddGameContentsParams
 	return i, err
 }
 
-const addGameRound = `-- name: AddGameRound :one
+const addGameRoundAnswer = `-- name: AddGameRoundAnswer :one
 INSERT INTO game_content_answers (is_correct, content, game_content_round_id)
               VALUES (?, ?, ?)
               RETURNING id, is_correct, content, game_content_round_id
 `
 
-type AddGameRoundParams struct {
+type AddGameRoundAnswerParams struct {
 	IsCorrect          bool   `json:"is_correct"`
 	Content            string `json:"content"`
 	GameContentRoundID int64  `json:"game_content_round_id"`
 }
 
-func (q *Queries) AddGameRound(ctx context.Context, arg AddGameRoundParams) (GameContentAnswer, error) {
-	row := q.db.QueryRowContext(ctx, addGameRound, arg.IsCorrect, arg.Content, arg.GameContentRoundID)
+func (q *Queries) AddGameRoundAnswer(ctx context.Context, arg AddGameRoundAnswerParams) (GameContentAnswer, error) {
+	row := q.db.QueryRowContext(ctx, addGameRoundAnswer, arg.IsCorrect, arg.Content, arg.GameContentRoundID)
 	var i GameContentAnswer
 	err := row.Scan(
 		&i.ID,

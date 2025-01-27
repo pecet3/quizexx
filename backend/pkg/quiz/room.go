@@ -74,29 +74,30 @@ func (r *Room) checkIfEveryoneIsReady() bool {
 func (r *Room) addClient(c *Client) {
 	r.cMu.Lock()
 	defer r.cMu.Unlock()
-	if p, ok := r.game.Players[c.user.UUID]; ok {
+	if p, ok := r.game.Players[c.user.Uuid]; ok {
 		c.player = p
 	} else {
 		c.player.user = c.user
 		if !r.game.IsGame {
-			r.game.Players[c.user.UUID] = &Player{
+			r.game.Players[c.user.Uuid] = &Player{
 				user: c.user,
 			}
 		}
 	}
-	r.clients[c.user.UUID] = c
+	r.clients[c.user.Uuid] = c
 }
 func (r *Room) removeClient(c *Client) {
 	r.cMu.Lock()
 	defer r.cMu.Unlock()
-	if _, ok := r.game.Players[c.user.UUID]; ok {
+	if _, ok := r.game.Players[c.user.Uuid]; ok {
 		if !r.game.IsGame {
-			delete(r.game.Players, c.user.UUID)
+			delete(r.game.Players, c.user.Uuid)
 		}
 	}
+	delete(r.clients, c.user.Uuid)
 }
 
-func (r *Room) checkWaitRoom() error {
+func (r *Room) checkWaitRoom(m *Manager) error {
 	if ok := r.checkIfEveryoneIsReady(); ok {
 		err := r.sendServerMessage("Have a good game!")
 		if err != nil {
@@ -107,7 +108,7 @@ func (r *Room) checkWaitRoom() error {
 			return err
 
 		}
-		r.game.State = r.game.newGameState(r.game.Content)
+		r.game.State = r.game.newGameState(m.d, r.game.Content)
 		r.game.IsGame = true
 		if err := r.game.sendGameState(); err != nil {
 			return err
@@ -205,7 +206,7 @@ func (r *Room) Run(m *Manager) {
 					continue
 				}
 			}
-			if err := r.checkWaitRoom(); err != nil {
+			if err := r.checkWaitRoom(m); err != nil {
 				logger.Error(err)
 				continue
 			}
@@ -225,13 +226,14 @@ func (r *Room) Run(m *Manager) {
 			}
 			r.sendReadyStatus()
 
-			if err := r.checkWaitRoom(); err != nil {
+			if err := r.checkWaitRoom(m); err != nil {
 				logger.Error(err)
 				continue
 			}
 
 		case action := <-r.receiveAnswer:
-			if !r.game.IsGame {
+			timeLeft := r.game.getSecLeftForAnswer()
+			if !r.game.IsGame || timeLeft <= 0 {
 				continue
 			}
 			if player, ok := r.game.Players[action.UUID]; ok {
@@ -244,7 +246,7 @@ func (r *Room) Run(m *Manager) {
 					continue
 				}
 				if isGoodAnswer := r.game.checkAnswer(player, action); isGoodAnswer {
-					r.game.State.RoundWinners = append(r.game.State.RoundWinners, player.user.UUID)
+					r.game.State.RoundWinners = append(r.game.State.RoundWinners, player.user.Uuid)
 				}
 				r.game.toggleClientIsAnswered(player, action)
 				player.lastActive = time.Now()
@@ -254,7 +256,7 @@ func (r *Room) Run(m *Manager) {
 					continue
 				}
 
-				if err := r.game.performRound(heartBeatT, false); err != nil {
+				if err := r.game.performRound(m, heartBeatT, false); err != nil {
 					logger.Error(err)
 					continue
 				}
@@ -269,7 +271,7 @@ func (r *Room) Run(m *Manager) {
 				continue
 			}
 			time.Sleep(TFR_SHORT_DURATION)
-			if err := r.game.performRound(heartBeatT, true); err != nil {
+			if err := r.game.performRound(m, heartBeatT, true); err != nil {
 				logger.Error(err)
 				continue
 			}

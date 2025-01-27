@@ -83,7 +83,6 @@ func (as *Auth) GetContextUser(r *http.Request) (data.User, error) {
 	if !ok {
 		return data.User{}, errors.New("session not found in context")
 	}
-	logger.Debug(session.UserID)
 	u, err := as.d.GetUserByID(ctx, int64(session.UserID))
 	if err != nil {
 		return data.User{}, err

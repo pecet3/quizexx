@@ -44,26 +44,24 @@ func (r router) handleExchange(w http.ResponseWriter, req *http.Request) {
 	}
 
 	es.ExchangeCounter += 1
-	var us data.User
-	if es.IsRegister {
-		u, err := r.d.GetUserByID(req.Context(), int64(es.UserID))
-		if err != nil {
-			logger.Error(err)
-			http.Error(w, "", http.StatusBadRequest)
-			return
-		}
-		us, err = r.d.UpdateUserIsDraft(req.Context(), data.UpdateUserIsDraftParams{IsDraft: false, ID: u.ID})
-		if err != nil {
-			logger.Error(err)
-			http.Error(w, "", http.StatusBadRequest)
-			return
-		}
-		logger.Debug(es.UserName, u.ID)
-		logger.Debug(us)
 
+	u, err := r.d.GetUserByID(req.Context(), int64(es.UserID))
+	if err != nil {
+		logger.Error(err)
+		http.Error(w, "", http.StatusBadRequest)
+		return
 	}
-	logger.Debug(us)
-	s, token, err := r.auth.NewAuthSession(us.ID, us.Email.String, es.UserName)
+	if es.IsRegister {
+
+		_, err = r.d.UpdateUserIsDraft(req.Context(), data.UpdateUserIsDraftParams{IsDraft: false, ID: u.ID})
+		if err != nil {
+			logger.Error(err)
+			http.Error(w, "", http.StatusBadRequest)
+			return
+		}
+	}
+	logger.Debug(u)
+	s, token, err := r.auth.NewAuthSession(u.ID, u.Email.String, es.UserName)
 	if err != nil {
 		logger.Error(err)
 		http.Error(w, "", http.StatusBadRequest)

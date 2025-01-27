@@ -126,7 +126,7 @@ var (
 func checkOrigin(r *http.Request) bool {
 	return true
 }
-func (m *Manager) ServeQuiz(w http.ResponseWriter, req *http.Request, u *dtos.User) {
+func (m *Manager) ServeQuiz(w http.ResponseWriter, req *http.Request, u *data.User) {
 	roomName := req.PathValue("name")
 	currentRoom := m.GetRoom(roomName)
 	logger.Debug("room name: ", roomName)
@@ -143,7 +143,7 @@ func (m *Manager) ServeQuiz(w http.ResponseWriter, req *http.Request, u *dtos.Us
 	}
 
 	isSpectator := false
-	if _, ok := currentRoom.game.Players[u.UUID]; !ok && currentRoom.game.IsGame {
+	if _, ok := currentRoom.game.Players[u.Uuid]; !ok && currentRoom.game.IsGame {
 		isSpectator = true
 	}
 	// to do if client exists,change only conn

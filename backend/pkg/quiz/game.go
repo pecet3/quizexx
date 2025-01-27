@@ -8,6 +8,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/pecet3/quizex/data"
 	"github.com/pecet3/quizex/data/dtos"
 	"github.com/pecet3/quizex/pkg/logger"
 )
@@ -26,7 +27,7 @@ type Game struct {
 }
 
 type Player struct {
-	user       *dtos.User
+	user       *data.User
 	isReady    bool
 	isAnswered bool
 	answer     int
@@ -112,11 +113,11 @@ func (g *Game) getGameContent(s *dtos.Settings) error {
 	return nil
 }
 
-func (g *Game) newScore() []*PlayerScore {
+func (g *Game) newScore(d *data.Queries) []*PlayerScore {
 	var score []*PlayerScore
 	for _, p := range g.Players {
 		playerScore := &PlayerScore{
-			User:      p.user,
+			User:      p.user.ToDto(d),
 			Points:    p.points,
 			RoundsWon: p.roundsWon,
 		}
@@ -126,10 +127,10 @@ func (g *Game) newScore() []*PlayerScore {
 	return score
 }
 
-func (g *Game) newGameState(content []RoundQuestion) *GameState {
+func (g *Game) newGameState(d *data.Queries, content []RoundQuestion) *GameState {
 	logger.Debug("> New Game state in room: ", g.Room.Name)
 	g.Content = content
-	score := g.newScore()
+	score := g.newScore(d)
 	return &GameState{
 		Round:           g.State.Round,
 		Question:        g.Content[g.State.Round-1].Question,
@@ -165,7 +166,7 @@ func (g *Game) checkIfIsLastRound() bool {
 
 func (g *Game) checkAnswer(p *Player, action *RoundAction) bool {
 	isGoodAnswer := false
-	if p.user.UUID == action.UUID {
+	if p.user.Uuid == action.UUID {
 		p.answer = action.Answer
 		if action.Answer == g.Content[g.State.Round-1].CorrectAnswer && !p.isAnswered {
 			isGoodAnswer = true
@@ -176,7 +177,7 @@ func (g *Game) checkAnswer(p *Player, action *RoundAction) bool {
 
 func (g *Game) toggleClientIsAnswered(p *Player, action *RoundAction) {
 	if action.Answer >= 0 && !p.isAnswered {
-		g.State.PlayersAnswered = append(g.State.PlayersAnswered, p.user.UUID)
+		g.State.PlayersAnswered = append(g.State.PlayersAnswered, p.user.Uuid)
 		p.isAnswered = true
 	}
 }
@@ -215,7 +216,7 @@ func (g *Game) countPoints() bool {
 	return isEveryoneAnsweredGood
 }
 
-func (g *Game) performRound(hb *time.Ticker, isTimeout bool) error {
+func (g *Game) performRound(m *Manager, hb *time.Ticker, isTimeout bool) error {
 	isEveryoneAnswered := g.checkIfAllPlayerAnswered()
 	isLastRound := g.checkIfIsLastRound()
 
@@ -245,7 +246,7 @@ func (g *Game) performRound(hb *time.Ticker, isTimeout bool) error {
 		if !isLastRound {
 			g.State.Round++
 		}
-		newState := g.newGameState(g.Content)
+		newState := g.newGameState(m.d, g.Content)
 		g.State = newState
 
 		time.Sleep(TFR_SHORT_DURATION)

@@ -40,8 +40,8 @@ func (r router) handleLogin(w http.ResponseWriter, req *http.Request) {
 		http.Error(w, "", http.StatusBadRequest)
 		return
 	}
-
-	err = r.auth.MagicLink.SendEmailLogin(u.Email.String, code, u.Name)
+	logger.Debug(u.Email.String)
+	err = r.auth.MagicLink.SendEmailLogin(string(u.Email.String), code, u.Name)
 	if err != nil {
 		logger.Error(err)
 		http.Error(w, "", http.StatusBadRequest)

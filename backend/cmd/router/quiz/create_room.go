@@ -56,6 +56,9 @@ func (r router) handleCreateRoom(w http.ResponseWriter, req *http.Request) {
 		Category:    dto.GenContent,
 		GenContent:  dto.GenContent,
 		ContentJson: game.ContentJSON,
+		UserID:      u.ID,
+		Language:    dto.Language,
+		Difficulty:  dto.Difficulty,
 	})
 
 	for i, round := range game.Content {
@@ -72,7 +75,7 @@ func (r router) handleCreateRoom(w http.ResponseWriter, req *http.Request) {
 				isCorrect = true
 			}
 
-			_, err = r.d.AddGameRound(req.Context(), data.AddGameRoundParams{
+			_, err = r.d.AddGameRoundAnswer(req.Context(), data.AddGameRoundAnswerParams{
 				IsCorrect:          isCorrect,
 				GameContentRoundID: gcr.ID,
 				Content:            round.Answers[i],
