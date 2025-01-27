@@ -1,13 +1,3 @@
-CREATE TABLE IF NOT EXISTS game_users (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    user_id INTEGER UNIQUE NOT NULL,
-    level INTEGER NOT NULL DEFAULT 1,
-    exp INTEGER NOT NULL DEFAULT 0,
-    games_wins INTEGER NOT NULL DEFAULT 0,
-    round_wins INTEGER NOT NULL DEFAULT 0,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE ON UPDATE CASCADE
-);
 
 
 create table if not exists users (
@@ -35,6 +25,20 @@ create table if not exists sessions (
 	is_expired bool default false,
 	foreign key (user_id) references users(id)
 );
+
+-- Q U I Z
+
+CREATE TABLE IF NOT EXISTS game_users (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER UNIQUE NOT NULL,
+    level INTEGER NOT NULL DEFAULT 1,
+    exp INTEGER NOT NULL DEFAULT 0,
+    games_wins INTEGER NOT NULL DEFAULT 0,
+    round_wins INTEGER NOT NULL DEFAULT 0,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
 
 CREATE TABLE IF NOT EXISTS game_contents (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -65,4 +69,35 @@ CREATE TABLE IF NOT EXISTS game_content_answers (
     content TEXT NOT NULL,
     game_content_round_id INTEGER NOT NULL,
     FOREIGN KEY (game_content_round_id) REFERENCES game_content_rounds(id)
+);
+
+
+CREATE TABLE IF NOT EXISTS games (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    room_uuid TEXT NOT NULL,
+    room_name TEXT NOT NULL,
+    game_content_id INTEGER NOT NULL,
+    FOREIGN KEY (game_content_id) REFERENCES game_contents(id)
+);
+
+CREATE TABLE IF NOT EXISTS game_winner (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    points INTEGER NOT NULL,
+    game_id INTEGER NOT NULL,
+    user_id integer not null,
+    created_at timestamp default current_timestamp,
+    FOREIGN KEY (game_id) REFERENCES games(id),
+	foreign key (user_id) references users(id)
+);
+
+CREATE TABLE IF NOT EXISTS game_round_action (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    answer_id INTEGER NOT NULL,
+    points INTEGER NOT NULL,
+    game_id INTEGER NOT NULL,
+    user_id integer not null,
+    created_at timestamp default current_timestamp,
+    FOREIGN KEY (game_id) REFERENCES games(id),
+	foreign key (user_id) references users(id),
+    foreign key (answer_id) references game_content_answers(id)
 );

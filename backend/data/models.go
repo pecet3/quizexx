@@ -9,6 +9,13 @@ import (
 	"time"
 )
 
+type Game struct {
+	ID            int64  `json:"id"`
+	RoomUuid      string `json:"room_uuid"`
+	RoomName      string `json:"room_name"`
+	GameContentID int64  `json:"game_content_id"`
+}
+
 type GameContent struct {
 	ID          int64        `json:"id"`
 	Uuid        string       `json:"uuid"`
@@ -37,6 +44,15 @@ type GameContentRound struct {
 	GameContentID      int64  `json:"game_content_id"`
 }
 
+type GameRoundAction struct {
+	ID        int64        `json:"id"`
+	AnswerID  int64        `json:"answer_id"`
+	Points    int64        `json:"points"`
+	GameID    int64        `json:"game_id"`
+	UserID    int64        `json:"user_id"`
+	CreatedAt sql.NullTime `json:"created_at"`
+}
+
 type GameUser struct {
 	ID        int64        `json:"id"`
 	UserID    int64        `json:"user_id"`
@@ -44,6 +60,14 @@ type GameUser struct {
 	Exp       int64        `json:"exp"`
 	GamesWins int64        `json:"games_wins"`
 	RoundWins int64        `json:"round_wins"`
+	CreatedAt sql.NullTime `json:"created_at"`
+}
+
+type GameWinner struct {
+	ID        int64        `json:"id"`
+	Points    int64        `json:"points"`
+	GameID    int64        `json:"game_id"`
+	UserID    int64        `json:"user_id"`
 	CreatedAt sql.NullTime `json:"created_at"`
 }
 

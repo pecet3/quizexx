@@ -233,7 +233,7 @@ func (r *Room) Run(m *Manager) {
 
 		case action := <-r.receiveAnswer:
 			timeLeft := r.game.getSecLeftForAnswer()
-			if !r.game.IsGame || timeLeft <= 0 {
+			if !r.game.IsGame || timeLeft <= 0 || action.Round != r.game.State.Round {
 				continue
 			}
 			if player, ok := r.game.Players[action.UUID]; ok {

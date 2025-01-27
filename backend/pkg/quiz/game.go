@@ -150,16 +150,6 @@ func (g *Game) checkIfAllPlayerAnswered() bool {
 	return false
 }
 
-func (g *Game) checkIfisLastRound() bool {
-	isEqualMaxAndCurrentRound := g.State.Round == g.Settings.MaxRounds
-	isEveryoneAnswered := g.checkIfAllPlayerAnswered()
-
-	if isEqualMaxAndCurrentRound && isEveryoneAnswered {
-		return true
-	}
-	return false
-}
-
 func (g *Game) checkIfIsLastRound() bool {
 	return g.State.Round == g.Settings.MaxRounds
 }
@@ -216,16 +206,19 @@ func (g *Game) countPoints() bool {
 	return isEveryoneAnsweredGood
 }
 
+func (g *Game) getStrOkAnswer() string {
+	indexCurrentContent := g.Content[g.State.Round-1]
+	indexOkAnswr := indexCurrentContent.CorrectAnswer
+	return indexCurrentContent.Answers[indexOkAnswr]
+}
+
 func (g *Game) performRound(m *Manager, hb *time.Ticker, isTimeout bool) error {
 	isEveryoneAnswered := g.checkIfAllPlayerAnswered()
 	isLastRound := g.checkIfIsLastRound()
 
-	indexCurrentContent := g.Content[g.State.Round-1]
-	indexOkAnswr := indexCurrentContent.CorrectAnswer
-	strOkAnswr := indexCurrentContent.Answers[indexOkAnswr]
-
 	if isEveryoneAnswered || isTimeout {
 		hb.Stop()
+		strOkAnswr := g.getStrOkAnswer()
 		var err error
 		winnersStr := strings.Join(g.State.RoundWinners, ", ")
 		logger.Debug(len(g.State.RoundWinners))
@@ -246,6 +239,8 @@ func (g *Game) performRound(m *Manager, hb *time.Ticker, isTimeout bool) error {
 		if !isLastRound {
 			g.State.Round++
 		}
+		g.updateSecLeftForAnswer(-1)
+
 		newState := g.newGameState(m.d, g.Content)
 		g.State = newState
 

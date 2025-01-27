@@ -9,6 +9,30 @@ import (
 	"context"
 )
 
+const addGame = `-- name: AddGame :one
+INSERT INTO games (room_uuid, room_name, game_content_id)
+VALUES (?, ?, ?)
+RETURNING id, room_uuid, room_name, game_content_id
+`
+
+type AddGameParams struct {
+	RoomUuid      string `json:"room_uuid"`
+	RoomName      string `json:"room_name"`
+	GameContentID int64  `json:"game_content_id"`
+}
+
+func (q *Queries) AddGame(ctx context.Context, arg AddGameParams) (Game, error) {
+	row := q.db.QueryRowContext(ctx, addGame, arg.RoomUuid, arg.RoomName, arg.GameContentID)
+	var i Game
+	err := row.Scan(
+		&i.ID,
+		&i.RoomUuid,
+		&i.RoomName,
+		&i.GameContentID,
+	)
+	return i, err
+}
+
 const addGameContentRound = `-- name: AddGameContentRound :one
 INSERT INTO game_content_rounds (round, question_content, correct_answer_index, game_content_id)
               VALUES (?, ?, ?, ?)
@@ -84,6 +108,38 @@ func (q *Queries) AddGameContents(ctx context.Context, arg AddGameContentsParams
 	return i, err
 }
 
+const addGameRoundAction = `-- name: AddGameRoundAction :one
+INSERT INTO game_round_action (answer_id, points, game_id, user_id)
+VALUES (?, ?, ?, ?)
+RETURNING id, answer_id, points, game_id, user_id, created_at
+`
+
+type AddGameRoundActionParams struct {
+	AnswerID int64 `json:"answer_id"`
+	Points   int64 `json:"points"`
+	GameID   int64 `json:"game_id"`
+	UserID   int64 `json:"user_id"`
+}
+
+func (q *Queries) AddGameRoundAction(ctx context.Context, arg AddGameRoundActionParams) (GameRoundAction, error) {
+	row := q.db.QueryRowContext(ctx, addGameRoundAction,
+		arg.AnswerID,
+		arg.Points,
+		arg.GameID,
+		arg.UserID,
+	)
+	var i GameRoundAction
+	err := row.Scan(
+		&i.ID,
+		&i.AnswerID,
+		&i.Points,
+		&i.GameID,
+		&i.UserID,
+		&i.CreatedAt,
+	)
+	return i, err
+}
+
 const addGameRoundAnswer = `-- name: AddGameRoundAnswer :one
 INSERT INTO game_content_answers (is_correct, content, game_content_round_id)
               VALUES (?, ?, ?)
@@ -104,6 +160,100 @@ func (q *Queries) AddGameRoundAnswer(ctx context.Context, arg AddGameRoundAnswer
 		&i.IsCorrect,
 		&i.Content,
 		&i.GameContentRoundID,
+	)
+	return i, err
+}
+
+const addGameUser = `-- name: AddGameUser :one
+INSERT INTO game_users (user_id, level, exp, games_wins, round_wins)
+VALUES (?, ?, ?, ?, ?)
+RETURNING id, user_id, level, exp, games_wins, round_wins, created_at
+`
+
+type AddGameUserParams struct {
+	UserID    int64 `json:"user_id"`
+	Level     int64 `json:"level"`
+	Exp       int64 `json:"exp"`
+	GamesWins int64 `json:"games_wins"`
+	RoundWins int64 `json:"round_wins"`
+}
+
+func (q *Queries) AddGameUser(ctx context.Context, arg AddGameUserParams) (GameUser, error) {
+	row := q.db.QueryRowContext(ctx, addGameUser,
+		arg.UserID,
+		arg.Level,
+		arg.Exp,
+		arg.GamesWins,
+		arg.RoundWins,
+	)
+	var i GameUser
+	err := row.Scan(
+		&i.ID,
+		&i.UserID,
+		&i.Level,
+		&i.Exp,
+		&i.GamesWins,
+		&i.RoundWins,
+		&i.CreatedAt,
+	)
+	return i, err
+}
+
+const addGameWinner = `-- name: AddGameWinner :one
+INSERT INTO game_winner (points, game_id, user_id)
+VALUES (?, ?, ?)
+RETURNING id, points, game_id, user_id, created_at
+`
+
+type AddGameWinnerParams struct {
+	Points int64 `json:"points"`
+	GameID int64 `json:"game_id"`
+	UserID int64 `json:"user_id"`
+}
+
+func (q *Queries) AddGameWinner(ctx context.Context, arg AddGameWinnerParams) (GameWinner, error) {
+	row := q.db.QueryRowContext(ctx, addGameWinner, arg.Points, arg.GameID, arg.UserID)
+	var i GameWinner
+	err := row.Scan(
+		&i.ID,
+		&i.Points,
+		&i.GameID,
+		&i.UserID,
+		&i.CreatedAt,
+	)
+	return i, err
+}
+
+const getGame = `-- name: GetGame :one
+SELECT id, room_uuid, room_name, game_content_id FROM games
+WHERE id = ?
+`
+
+func (q *Queries) GetGame(ctx context.Context, id int64) (Game, error) {
+	row := q.db.QueryRowContext(ctx, getGame, id)
+	var i Game
+	err := row.Scan(
+		&i.ID,
+		&i.RoomUuid,
+		&i.RoomName,
+		&i.GameContentID,
+	)
+	return i, err
+}
+
+const getGameByRoomUUID = `-- name: GetGameByRoomUUID :one
+SELECT id, room_uuid, room_name, game_content_id FROM games
+WHERE room_uuid = ?
+`
+
+func (q *Queries) GetGameByRoomUUID(ctx context.Context, roomUuid string) (Game, error) {
+	row := q.db.QueryRowContext(ctx, getGameByRoomUUID, roomUuid)
+	var i Game
+	err := row.Scan(
+		&i.ID,
+		&i.RoomUuid,
+		&i.RoomName,
+		&i.GameContentID,
 	)
 	return i, err
 }
@@ -143,6 +293,254 @@ func (q *Queries) GetGameContentRoundByID(ctx context.Context, id int64) (GameCo
 		&i.QuestionContent,
 		&i.CorrectAnswerIndex,
 		&i.GameContentID,
+	)
+	return i, err
+}
+
+const getGameRoundAction = `-- name: GetGameRoundAction :one
+SELECT id, answer_id, points, game_id, user_id, created_at FROM game_round_action
+WHERE id = ?
+`
+
+func (q *Queries) GetGameRoundAction(ctx context.Context, id int64) (GameRoundAction, error) {
+	row := q.db.QueryRowContext(ctx, getGameRoundAction, id)
+	var i GameRoundAction
+	err := row.Scan(
+		&i.ID,
+		&i.AnswerID,
+		&i.Points,
+		&i.GameID,
+		&i.UserID,
+		&i.CreatedAt,
+	)
+	return i, err
+}
+
+const getGameRoundActionsByUserID = `-- name: GetGameRoundActionsByUserID :many
+SELECT id, answer_id, points, game_id, user_id, created_at FROM game_round_action
+WHERE user_id = ?
+`
+
+func (q *Queries) GetGameRoundActionsByUserID(ctx context.Context, userID int64) ([]GameRoundAction, error) {
+	rows, err := q.db.QueryContext(ctx, getGameRoundActionsByUserID, userID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GameRoundAction
+	for rows.Next() {
+		var i GameRoundAction
+		if err := rows.Scan(
+			&i.ID,
+			&i.AnswerID,
+			&i.Points,
+			&i.GameID,
+			&i.UserID,
+			&i.CreatedAt,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const getGameUser = `-- name: GetGameUser :one
+SELECT id, user_id, level, exp, games_wins, round_wins, created_at FROM game_users
+WHERE id = ?
+`
+
+func (q *Queries) GetGameUser(ctx context.Context, id int64) (GameUser, error) {
+	row := q.db.QueryRowContext(ctx, getGameUser, id)
+	var i GameUser
+	err := row.Scan(
+		&i.ID,
+		&i.UserID,
+		&i.Level,
+		&i.Exp,
+		&i.GamesWins,
+		&i.RoundWins,
+		&i.CreatedAt,
+	)
+	return i, err
+}
+
+const getGameUserByUserID = `-- name: GetGameUserByUserID :one
+SELECT id, user_id, level, exp, games_wins, round_wins, created_at FROM game_users
+WHERE user_id = ?
+`
+
+func (q *Queries) GetGameUserByUserID(ctx context.Context, userID int64) (GameUser, error) {
+	row := q.db.QueryRowContext(ctx, getGameUserByUserID, userID)
+	var i GameUser
+	err := row.Scan(
+		&i.ID,
+		&i.UserID,
+		&i.Level,
+		&i.Exp,
+		&i.GamesWins,
+		&i.RoundWins,
+		&i.CreatedAt,
+	)
+	return i, err
+}
+
+const getGameWinner = `-- name: GetGameWinner :one
+SELECT id, points, game_id, user_id, created_at FROM game_winner
+WHERE id = ?
+`
+
+func (q *Queries) GetGameWinner(ctx context.Context, id int64) (GameWinner, error) {
+	row := q.db.QueryRowContext(ctx, getGameWinner, id)
+	var i GameWinner
+	err := row.Scan(
+		&i.ID,
+		&i.Points,
+		&i.GameID,
+		&i.UserID,
+		&i.CreatedAt,
+	)
+	return i, err
+}
+
+const getGameWinnersByGameID = `-- name: GetGameWinnersByGameID :many
+SELECT id, points, game_id, user_id, created_at FROM game_winner
+WHERE game_id = ?
+`
+
+func (q *Queries) GetGameWinnersByGameID(ctx context.Context, gameID int64) ([]GameWinner, error) {
+	rows, err := q.db.QueryContext(ctx, getGameWinnersByGameID, gameID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GameWinner
+	for rows.Next() {
+		var i GameWinner
+		if err := rows.Scan(
+			&i.ID,
+			&i.Points,
+			&i.GameID,
+			&i.UserID,
+			&i.CreatedAt,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const updateGame = `-- name: UpdateGame :one
+UPDATE games
+SET room_uuid = ?, room_name = ?, game_content_id = ?
+WHERE id = ?
+RETURNING id, room_uuid, room_name, game_content_id
+`
+
+type UpdateGameParams struct {
+	RoomUuid      string `json:"room_uuid"`
+	RoomName      string `json:"room_name"`
+	GameContentID int64  `json:"game_content_id"`
+	ID            int64  `json:"id"`
+}
+
+func (q *Queries) UpdateGame(ctx context.Context, arg UpdateGameParams) (Game, error) {
+	row := q.db.QueryRowContext(ctx, updateGame,
+		arg.RoomUuid,
+		arg.RoomName,
+		arg.GameContentID,
+		arg.ID,
+	)
+	var i Game
+	err := row.Scan(
+		&i.ID,
+		&i.RoomUuid,
+		&i.RoomName,
+		&i.GameContentID,
+	)
+	return i, err
+}
+
+const updateGameRoundAction = `-- name: UpdateGameRoundAction :one
+UPDATE game_round_action
+SET answer_id = ?, points = ?, game_id = ?, user_id = ?
+WHERE id = ?
+RETURNING id, answer_id, points, game_id, user_id, created_at
+`
+
+type UpdateGameRoundActionParams struct {
+	AnswerID int64 `json:"answer_id"`
+	Points   int64 `json:"points"`
+	GameID   int64 `json:"game_id"`
+	UserID   int64 `json:"user_id"`
+	ID       int64 `json:"id"`
+}
+
+func (q *Queries) UpdateGameRoundAction(ctx context.Context, arg UpdateGameRoundActionParams) (GameRoundAction, error) {
+	row := q.db.QueryRowContext(ctx, updateGameRoundAction,
+		arg.AnswerID,
+		arg.Points,
+		arg.GameID,
+		arg.UserID,
+		arg.ID,
+	)
+	var i GameRoundAction
+	err := row.Scan(
+		&i.ID,
+		&i.AnswerID,
+		&i.Points,
+		&i.GameID,
+		&i.UserID,
+		&i.CreatedAt,
+	)
+	return i, err
+}
+
+const updateGameUser = `-- name: UpdateGameUser :one
+UPDATE game_users
+SET level = ?, exp = ?, games_wins = ?, round_wins = ?
+WHERE id = ?
+RETURNING id, user_id, level, exp, games_wins, round_wins, created_at
+`
+
+type UpdateGameUserParams struct {
+	Level     int64 `json:"level"`
+	Exp       int64 `json:"exp"`
+	GamesWins int64 `json:"games_wins"`
+	RoundWins int64 `json:"round_wins"`
+	ID        int64 `json:"id"`
+}
+
+func (q *Queries) UpdateGameUser(ctx context.Context, arg UpdateGameUserParams) (GameUser, error) {
+	row := q.db.QueryRowContext(ctx, updateGameUser,
+		arg.Level,
+		arg.Exp,
+		arg.GamesWins,
+		arg.RoundWins,
+		arg.ID,
+	)
+	var i GameUser
+	err := row.Scan(
+		&i.ID,
+		&i.UserID,
+		&i.Level,
+		&i.Exp,
+		&i.GamesWins,
+		&i.RoundWins,
+		&i.CreatedAt,
 	)
 	return i, err
 }
