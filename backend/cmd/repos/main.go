@@ -8,6 +8,7 @@ import (
 	"github.com/pecet3/quizex/pkg/auth"
 	"github.com/pecet3/quizex/pkg/fetchers"
 	"github.com/pecet3/quizex/pkg/quiz"
+	"github.com/pecet3/quizex/pkg/social"
 )
 
 type App struct {
@@ -17,4 +18,5 @@ type App struct {
 	Validator *validator.Validate
 	Quiz      *quiz.Manager
 	Fetchers  fetchers.Fetchers
+	Social    *social.Social
 }

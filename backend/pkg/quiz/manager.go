@@ -11,6 +11,7 @@ import (
 	"github.com/pecet3/quizex/data/dtos"
 	"github.com/pecet3/quizex/pkg/external"
 	"github.com/pecet3/quizex/pkg/logger"
+	"github.com/pecet3/quizex/pkg/social"
 )
 
 type Manager struct {
@@ -18,17 +19,18 @@ type Manager struct {
 	rooms    map[string]*Room
 	external *external.ExternalService
 	d        *data.Queries
-	Social   *Social
+	s        *social.Social
 }
 
-func NewManager(d *data.Queries) *Manager {
+func NewManager(d *data.Queries, s *social.Social) *Manager {
 	m := &Manager{
 		rooms:    make(map[string]*Room),
 		mu:       sync.Mutex{},
 		external: &external.ExternalService{},
 		d:        d,
+		s:        s,
 	}
-	m.Social = NewSocial(m)
+
 	return m
 }
 

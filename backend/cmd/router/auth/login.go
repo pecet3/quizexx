@@ -1,7 +1,6 @@
 package auth_router
 
 import (
-	"context"
 	"database/sql"
 	"encoding/json"
 	"fmt"
@@ -25,7 +24,7 @@ func (r router) handleLogin(w http.ResponseWriter, req *http.Request) {
 		http.Error(w, "", http.StatusBadRequest)
 		return
 	}
-	u, err := r.d.GetUserByEmail(context.Background(), sql.NullString{
+	u, err := r.d.GetUserByEmail(req.Context(), sql.NullString{
 		String: dto.Email,
 		Valid:  true,
 	})

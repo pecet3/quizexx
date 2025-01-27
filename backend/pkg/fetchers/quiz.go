@@ -112,7 +112,7 @@ func (f FetcherGPT4GameContent) Fetch(ctx context.Context, i interface{}) (strin
 	apiKey := os.Getenv("GPT_KEY")
 
 	reqBody, err := json.Marshal(map[string]interface{}{
-		"model":       "gpt-4",
+		"model":       "gpt-4o-mini",
 		"messages":    []interface{}{map[string]interface{}{"role": "system", "content": prompt}},
 		"max_tokens":  1200,
 		"temperature": 0.8,

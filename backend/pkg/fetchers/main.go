@@ -12,5 +12,6 @@ func New() Fetchers {
 	f := make(Fetchers)
 	f["test_game_content"] = Test{}
 	f["gpt4omini_game_content"] = FetcherGPT4ominiGameContent{}
+	f["get_fun_fact"] = FetcherFunFact{}
 	return f
 }

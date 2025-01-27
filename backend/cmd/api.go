@@ -13,6 +13,7 @@ import (
 	"github.com/pecet3/quizex/pkg/fetchers"
 	"github.com/pecet3/quizex/pkg/logger"
 	"github.com/pecet3/quizex/pkg/quiz"
+	"github.com/pecet3/quizex/pkg/social"
 	"github.com/pecet3/quizex/pkg/utils"
 )
 
@@ -25,14 +26,16 @@ func runAPI() {
 	mux := http.NewServeMux()
 
 	data := data.New(data.NewSQLite())
-
+	fetchers := fetchers.New()
+	social := social.New(data, fetchers)
 	app := repos.App{
 		Srv:       mux,
 		Data:      data,
 		Auth:      auth.New(data),
 		Validator: validator.New(),
-		Quiz:      quiz.NewManager(data),
-		Fetchers:  fetchers.New(),
+		Quiz:      quiz.NewManager(data, social),
+		Fetchers:  fetchers,
+		Social:    social,
 	}
 
 	router.Run(app)
