@@ -9,6 +9,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/pecet3/quizex/data"
 	"github.com/pecet3/quizex/data/dtos"
+	"github.com/pecet3/quizex/pkg/fetchers"
 	"github.com/pecet3/quizex/pkg/logger"
 )
 
@@ -41,7 +42,7 @@ type Room struct {
 	createdAt time.Time
 }
 
-func (r *Room) CreateGame(settings *dtos.Settings) (*Game, error) {
+func (r *Room) CreateGame(f fetchers.Fetchable, settings *dtos.Settings) (*Game, error) {
 	logger.Info("Creating a game in room: ", r.Name)
 
 	newGame := &Game{
@@ -54,7 +55,7 @@ func (r *Room) CreateGame(settings *dtos.Settings) (*Game, error) {
 		Content:          nil,
 		SecLeftForAnswer: settings.SecForAnswer,
 	}
-	if err := newGame.getGameContent(settings); err != nil {
+	if err := newGame.getGameContent(f, settings); err != nil {
 		return nil, err
 	}
 	r.game = newGame

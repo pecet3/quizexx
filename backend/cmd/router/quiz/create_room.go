@@ -7,7 +7,9 @@ import (
 
 	"github.com/pecet3/quizex/data"
 	"github.com/pecet3/quizex/data/dtos"
+	"github.com/pecet3/quizex/pkg/fetchers"
 	"github.com/pecet3/quizex/pkg/logger"
+	"github.com/pecet3/quizex/pkg/quiz"
 )
 
 func (r router) handleCreateRoom(w http.ResponseWriter, req *http.Request) {
@@ -40,11 +42,33 @@ func (r router) handleCreateRoom(w http.ResponseWriter, req *http.Request) {
 	}
 
 	room := r.quiz.CreateRoom(dto.Name, int(u.ID))
-	game, err := room.CreateGame(dto)
-	if err != nil {
-		logger.Error(err)
-		http.Error(w, "", http.StatusInternalServerError)
-		return
+
+	var game *quiz.Game
+	if dto.Name == "test" {
+		logger.Debug(r.f)
+		fetcher, ok := r.f["test_game_content"].(fetchers.Test)
+		fetcher.Prompt = "heeej"
+
+		if !ok {
+			logger.Error(err)
+			http.Error(w, "", http.StatusInternalServerError)
+			return
+		}
+		game, err = room.CreateGame(fetcher, dto)
+		if err != nil {
+			logger.Error(err)
+			http.Error(w, "", http.StatusInternalServerError)
+			return
+		}
+	} else {
+		fetcher, _ := r.f["gpt4omini_game_content"].(fetchers.FetcherGPT4ominiGameContent)
+		game, err = room.CreateGame(fetcher, dto)
+
+		if err != nil {
+			logger.Error(err)
+			http.Error(w, "", http.StatusInternalServerError)
+			return
+		}
 	}
 	go room.Run(r.quiz)
 

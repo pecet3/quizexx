@@ -8,10 +8,10 @@ export const WaitingRoom: React.FC<{
 }> = ({ waitingState, serverMessage, onReady }) => {
   return (
     <>
-      <div className="flex flex-col justify-center items-center my-6 mt-16">
+      <div className="flex flex-col justify-center items-center my-6 mt-16 ">
         <div className="paper paper-yellow max-w-xs w-full text-lg m-auto p-4 pt-8 shadow-md gap-2 flex flex-col items-center">
           <div className="top-tape"></div>
-          <ul className="grid grid-cols-2 text-xl w-full">
+          <ul className="grid grid-cols-2 md:text-xl w-full mt-4">
             {waitingState.players.map((user, idx) => (
               <li key={idx} className="flex items-center gap-0.5">
                 {user.is_ready ? (

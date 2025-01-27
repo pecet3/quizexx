@@ -4,9 +4,9 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/pecet3/quizex/cmd/repos"
 	authRouter "github.com/pecet3/quizex/cmd/router/auth"
 	quizRouter "github.com/pecet3/quizex/cmd/router/quiz"
-	"github.com/pecet3/quizex/cmd/router/repos"
 	"github.com/pecet3/quizex/data"
 	"github.com/pecet3/quizex/pkg/auth"
 	"github.com/pecet3/quizex/pkg/logger"

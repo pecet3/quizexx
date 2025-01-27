@@ -10,6 +10,7 @@ import (
 
 	"github.com/pecet3/quizex/data"
 	"github.com/pecet3/quizex/data/dtos"
+	"github.com/pecet3/quizex/pkg/fetchers"
 	"github.com/pecet3/quizex/pkg/logger"
 )
 
@@ -79,34 +80,19 @@ func (g *Game) getSecLeftForAnswer() int {
 	return g.SecLeftForAnswer
 }
 
-func (g *Game) getGameContent(s *dtos.Settings) error {
+func (g *Game) getGameContent(f fetchers.Fetchable, s *dtos.Settings) error {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*60)
 	defer cancel()
-	options := "Options for this quiz:" +
-		" category: " + s.GenContent +
-		", diffuculty:" + s.Difficulty +
-		", content language: " + s.Language
-	prompt := "return json for quiz game with " +
-		strconv.Itoa(s.MaxRounds) + " questions." +
-		options +
-		" You have to return correct struct. This is just array of objects. Nothing more, start struct: [{ question, 4x answers, correct_answer(index)}] "
 
 	rawJSON := ""
-	var err error
-	if s.Name == "test" {
-		rawJSON, _ = fakeFetchFromGPT()
-	} else {
-		rawJSON, err = fetchFromGPT(ctx, prompt)
-	}
-	if err != nil {
-		return err
-	}
+
+	rawJSON, err := f.Fetch(ctx, s)
 
 	var content GameContent
-
 	if err = json.Unmarshal([]byte(rawJSON), &content); err != nil {
 		return err
 	}
+
 	g.Content = content
 	g.ContentJSON = rawJSON
 

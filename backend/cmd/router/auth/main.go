@@ -2,7 +2,7 @@ package auth_router
 
 import (
 	"github.com/go-playground/validator/v10"
-	"github.com/pecet3/quizex/cmd/router/repos"
+	"github.com/pecet3/quizex/cmd/repos"
 	"github.com/pecet3/quizex/data"
 	"github.com/pecet3/quizex/pkg/auth"
 )

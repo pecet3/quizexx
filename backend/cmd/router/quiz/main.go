@@ -4,9 +4,10 @@ import (
 	"net/http"
 
 	"github.com/go-playground/validator/v10"
-	"github.com/pecet3/quizex/cmd/router/repos"
+	"github.com/pecet3/quizex/cmd/repos"
 	"github.com/pecet3/quizex/data"
 	"github.com/pecet3/quizex/pkg/auth"
+	"github.com/pecet3/quizex/pkg/fetchers"
 	"github.com/pecet3/quizex/pkg/logger"
 	"github.com/pecet3/quizex/pkg/quiz"
 )
@@ -16,6 +17,7 @@ type router struct {
 	auth *auth.Auth
 	v    *validator.Validate
 	quiz *quiz.Manager
+	f    fetchers.Fetchers
 }
 
 const PREFIX = "/api/quiz"
@@ -28,6 +30,7 @@ func Run(
 		auth: app.Auth,
 		v:    app.Validator,
 		quiz: app.Quiz,
+		f:    app.Fetchers,
 	}
 
 	app.Srv.Handle(PREFIX+"/{name}", r.auth.Authorize(r.handleQuiz))

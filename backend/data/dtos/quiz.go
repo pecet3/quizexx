@@ -5,7 +5,7 @@ import (
 )
 
 type Settings struct {
-	Name         string `json:"name" validate:"required,alphanumunicode,min=3,max=32"`
+	Name         string `json:"name" validate:"required,min=3,max=32"`
 	GenContent   string `json:"gen_content" validate:"required,min=3,max=64"`
 	Difficulty   string `json:"difficulty" validate:"required,oneof=easy medium hard veryhard"`
 	MaxRounds    int    `json:"max_rounds" validate:"required,gt=1,lt=10"`
