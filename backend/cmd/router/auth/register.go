@@ -51,6 +51,19 @@ func (r router) handleRegister(w http.ResponseWriter, req *http.Request) {
 			http.Error(w, "", http.StatusBadRequest)
 			return
 		}
+		_, err = r.d.AddGameUser(req.Context(), data.AddGameUserParams{
+			UserID:     u.ID,
+			Level:      0,
+			Exp:        0,
+			GamesWins:  0,
+			RoundWins:  0,
+			Percentage: 0,
+		})
+		if err != nil {
+			logger.Error(err)
+			http.Error(w, "", http.StatusBadRequest)
+			return
+		}
 	}
 
 	logger.Debug(dto)

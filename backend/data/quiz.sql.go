@@ -165,17 +165,18 @@ func (q *Queries) AddGameRoundAnswer(ctx context.Context, arg AddGameRoundAnswer
 }
 
 const addGameUser = `-- name: AddGameUser :one
-INSERT INTO game_users (user_id, level, exp, games_wins, round_wins)
-VALUES (?, ?, ?, ?, ?)
+INSERT INTO game_users (user_id, level, exp, games_wins, round_wins, percentage)
+VALUES (?, ?, ?, ?, ?, ?)
 RETURNING id, user_id, level, exp, games_wins, round_wins, percentage, created_at
 `
 
 type AddGameUserParams struct {
-	UserID    int64   `json:"user_id"`
-	Level     int64   `json:"level"`
-	Exp       float64 `json:"exp"`
-	GamesWins int64   `json:"games_wins"`
-	RoundWins int64   `json:"round_wins"`
+	UserID     int64   `json:"user_id"`
+	Level      int64   `json:"level"`
+	Exp        float64 `json:"exp"`
+	GamesWins  int64   `json:"games_wins"`
+	RoundWins  int64   `json:"round_wins"`
+	Percentage float64 `json:"percentage"`
 }
 
 func (q *Queries) AddGameUser(ctx context.Context, arg AddGameUserParams) (GameUser, error) {
@@ -185,6 +186,7 @@ func (q *Queries) AddGameUser(ctx context.Context, arg AddGameUserParams) (GameU
 		arg.Exp,
 		arg.GamesWins,
 		arg.RoundWins,
+		arg.Percentage,
 	)
 	var i GameUser
 	err := row.Scan(

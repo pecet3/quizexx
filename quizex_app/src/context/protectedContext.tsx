@@ -23,8 +23,8 @@ export const ProtectedProvider: React.FC<{ children: ReactNode }> = ({
   const [user, setUser] = useState<User | null>(null);
   const [funFact, setFunFact] = useState<FunFact | null>(null);
   useEffect(() => {
-    console.log("aaa", funFact);
-  }, [funFact]);
+    console.log(user);
+  }, [user]);
   return (
     <ProtectedContext.Provider
       value={{

@@ -98,7 +98,7 @@ export const Auth: React.FC = () => {
       });
 
       if (response.ok) {
-        navigate("/");
+        navigate("/home");
       } else {
         const errorData = await response.json();
         alert(errorData.message || "Code verification failed");

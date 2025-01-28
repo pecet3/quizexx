@@ -19,7 +19,7 @@ export const ProtectedPage = ({ children }: { children: React.ReactNode }) => {
         }
       })();
     }
-    if (true) {
+    if (!funFact) {
       (async function () {
         try {
           const result = await fetch("/api/social/fun-facts/latest");
@@ -29,9 +29,7 @@ export const ProtectedPage = ({ children }: { children: React.ReactNode }) => {
             setFunFact(data);
             console.log(funFact);
           }
-        } catch (err: any) {
-          navigate("/auth");
-        }
+        } catch (err: any) {}
       })();
     }
   }, []);

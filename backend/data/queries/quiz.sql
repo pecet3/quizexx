@@ -84,8 +84,8 @@ SELECT * FROM game_round_actions
 WHERE user_id = ?;
 
 -- name: AddGameUser :one
-INSERT INTO game_users (user_id, level, exp, games_wins, round_wins)
-VALUES (?, ?, ?, ?, ?)
+INSERT INTO game_users (user_id, level, exp, games_wins, round_wins, percentage)
+VALUES (?, ?, ?, ?, ?, ?)
 RETURNING *;
 
 -- name: UpdateGameUser :one

@@ -109,3 +109,6 @@ CREATE TABLE IF NOT EXISTS game_round_actions (
 	foreign key (user_id) references users(id),
     foreign key (answer_id) references game_content_answers(id)
 );
+
+INSERT INTO fun_facts (topic, content)
+VALUES ('History', 'The Great Wall of China is not a single wall but a series of walls and fortifications.');

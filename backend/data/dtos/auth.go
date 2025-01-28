@@ -47,14 +47,17 @@ func (r *Login) Validate(v *validator.Validate) error {
 }
 
 type User struct {
-	ID        int       `json:"-"`
-	UUID      string    `json:"uuid"`
-	Name      string    `json:"name"`
-	Email     string    `json:"email"`
-	Salt      string    `json:"-"`
-	ImageUrl  string    `json:"image_url"`
-	IsDraft   bool      `json:"is_draft"`
-	CreatedAt time.Time `json:"created_at"`
+	ID         int       `json:"-"`
+	UUID       string    `json:"uuid"`
+	Name       string    `json:"name"`
+	Email      string    `json:"email"`
+	Salt       string    `json:"-"`
+	ImageUrl   string    `json:"image_url"`
+	IsDraft    bool      `json:"is_draft"`
+	CreatedAt  time.Time `json:"created_at"`
+	Exp        float64   `json:"exp"`
+	Level      int       `json:"level"`
+	Percentage float64   `json:"percentage"`
 }
 
 func (u User) Send(w io.Writer) error {
