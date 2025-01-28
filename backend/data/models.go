@@ -39,6 +39,7 @@ type GameContent struct {
 type GameContentAnswer struct {
 	ID                 int64  `json:"id"`
 	IsCorrect          bool   `json:"is_correct"`
+	RoundNumber        int64  `json:"round_number"`
 	Content            string `json:"content"`
 	GameContentRoundID int64  `json:"game_content_round_id"`
 }
@@ -61,14 +62,14 @@ type GameRoundAction struct {
 }
 
 type GameUser struct {
-	ID         int64        `json:"id"`
-	UserID     int64        `json:"user_id"`
-	Level      int64        `json:"level"`
-	Exp        float64      `json:"exp"`
-	GamesWins  int64        `json:"games_wins"`
-	RoundWins  int64        `json:"round_wins"`
-	Percentage float64      `json:"percentage"`
-	CreatedAt  sql.NullTime `json:"created_at"`
+	ID        int64        `json:"id"`
+	UserID    int64        `json:"user_id"`
+	Level     int64        `json:"level"`
+	Exp       float64      `json:"exp"`
+	GamesWins int64        `json:"games_wins"`
+	RoundWins int64        `json:"round_wins"`
+	Progress  float64      `json:"progress"`
+	CreatedAt sql.NullTime `json:"created_at"`
 }
 
 type GameWinner struct {

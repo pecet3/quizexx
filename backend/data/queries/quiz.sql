@@ -16,6 +16,8 @@ INSERT INTO game_content_rounds (round, question_content, correct_answer_index, 
               VALUES (?, ?, ?, ?)
               RETURNING *;
 
+-- name: GetGameContentRoundsByGameUUID :one
+select * from game_content_rounds where game_content_id = ?;
 
 -- name: GetGameContentRoundByID :one
 select * from game_content_rounds where id = ?;
@@ -24,8 +26,8 @@ select * from game_content_rounds where id = ?;
 SELECT * FROM game_content_rounds where game_content_id = ?;
 
 -- name: AddGameRoundAnswer :one
-INSERT INTO game_content_answers (is_correct, content, game_content_round_id)
-              VALUES (?, ?, ?)
+INSERT INTO game_content_answers (is_correct, content, round_number, game_content_round_id)
+              VALUES (?, ?, ?, ?)
               RETURNING *;
 
 -- name: GetGameContentAnswerByRoundIDAndContent :one
@@ -84,13 +86,13 @@ SELECT * FROM game_round_actions
 WHERE user_id = ?;
 
 -- name: AddGameUser :one
-INSERT INTO game_users (user_id, level, exp, games_wins, round_wins, percentage)
+INSERT INTO game_users (user_id, level, exp, games_wins, round_wins, progress)
 VALUES (?, ?, ?, ?, ?, ?)
 RETURNING *;
 
 -- name: UpdateGameUser :one
 UPDATE game_users
-SET level = ?, exp = ?, games_wins = ?, round_wins = ?, percentage = ?
+SET level = ?, exp = ?, games_wins = ?, round_wins = ?, progress = ?
 WHERE id = ?
 RETURNING *;
 

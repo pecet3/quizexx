@@ -16,7 +16,7 @@ func (r router) handleRegister(w http.ResponseWriter, req *http.Request) {
 	err := json.NewDecoder(req.Body).Decode(dto)
 	if err != nil {
 		logger.Error(err)
-		http.Error(w, "", http.StatusBadRequest)
+		http.Error(w, "", http.StatusInternalServerError)
 		return
 	}
 	err = dto.Validate(r.v)
@@ -25,6 +25,7 @@ func (r router) handleRegister(w http.ResponseWriter, req *http.Request) {
 		http.Error(w, "", http.StatusBadRequest)
 		return
 	}
+
 	logger.Debug(dto)
 	existingUser, err := r.d.GetUserByEmail(req.Context(), sql.NullString{String: dto.Email})
 	var u data.User
@@ -52,12 +53,12 @@ func (r router) handleRegister(w http.ResponseWriter, req *http.Request) {
 			return
 		}
 		_, err = r.d.AddGameUser(req.Context(), data.AddGameUserParams{
-			UserID:     u.ID,
-			Level:      0,
-			Exp:        0,
-			GamesWins:  0,
-			RoundWins:  0,
-			Percentage: 0,
+			UserID:    u.ID,
+			Level:     0,
+			Exp:       0.,
+			GamesWins: 0,
+			RoundWins: 0,
+			Progress:  0.,
 		})
 		if err != nil {
 			logger.Error(err)

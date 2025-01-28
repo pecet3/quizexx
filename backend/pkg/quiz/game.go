@@ -203,7 +203,7 @@ func (g *Game) getStrOkAnswer() string {
 	return indexCurrentContent.Answers[indexOkAnswr]
 }
 
-func (g *Game) performRound(m *Manager, hb *time.Ticker, isTimeout bool) error {
+func (g *Game) PerformRound(m *Manager, hb *time.Ticker, isTimeout bool) error {
 	isEveryoneAnswered := g.checkIfAllPlayerAnswered()
 	isLastRound := g.checkIfIsLastRound()
 
@@ -267,6 +267,7 @@ func (g *Game) performRound(m *Manager, hb *time.Ticker, isTimeout bool) error {
 		}
 		time.Sleep(TFR_LONG_DURATION)
 		winners, wp := g.findGameWinners()
+
 		ctx := context.Background()
 		for _, p := range wp {
 			m.d.AddGameWinner(ctx, data.AddGameWinnerParams{
@@ -275,6 +276,26 @@ func (g *Game) performRound(m *Manager, hb *time.Ticker, isTimeout bool) error {
 				UserID: p.user.ID,
 			})
 		}
+
+		// social
+		for _, p := range g.Players {
+			isWinner := false
+			for _, wpp := range wp {
+				if wpp.user.ID == p.user.ID {
+					isWinner = true
+					logger.Debug("Winner is", wpp.user.Name)
+					break
+				}
+			}
+			exp := m.s.CalculateExp(p.points, g.Settings.Difficulty, isWinner)
+			logger.Debug(exp)
+			level, percentage := m.s.CalculateLevelByExp(exp)
+			logger.Debug(percentage, level)
+			if err := m.s.IncrementUserRecordsAfterFinishQuiz(p.user.ID, level, isWinner, exp, percentage); err != nil {
+				return err
+			}
+		}
+
 		winnersStr := strings.Join(winners, ", ")
 		if len(winners) == 1 && len(winners) > 0 {
 			if err := g.Room.sendServerMessage("The game wins: " + winnersStr); err != nil {

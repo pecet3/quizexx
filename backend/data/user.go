@@ -13,14 +13,15 @@ func (u User) ToDto(d *Queries) *dtos.User {
 		logger.Error(err)
 		return nil
 	}
+	logger.Debug(ug)
 	return &dtos.User{
-		Name:       u.Name,
-		UUID:       u.Uuid,
-		Email:      u.Email.String,
-		CreatedAt:  u.CreatedAt.Time,
-		ImageUrl:   u.ImageUrl,
-		Percentage: ug.Percentage,
-		Level:      int(ug.Level),
-		Exp:        ug.Exp,
+		Name:      u.Name,
+		UUID:      u.Uuid,
+		Email:     u.Email.String,
+		CreatedAt: u.CreatedAt.Time,
+		ImageUrl:  u.ImageUrl,
+		Progress:  ug.Progress,
+		Level:     int(ug.Level),
+		Exp:       ug.Exp,
 	}
 }

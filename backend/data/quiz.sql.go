@@ -141,23 +141,30 @@ func (q *Queries) AddGameRoundAction(ctx context.Context, arg AddGameRoundAction
 }
 
 const addGameRoundAnswer = `-- name: AddGameRoundAnswer :one
-INSERT INTO game_content_answers (is_correct, content, game_content_round_id)
-              VALUES (?, ?, ?)
-              RETURNING id, is_correct, content, game_content_round_id
+INSERT INTO game_content_answers (is_correct, content, round_number, game_content_round_id)
+              VALUES (?, ?, ?, ?)
+              RETURNING id, is_correct, round_number, content, game_content_round_id
 `
 
 type AddGameRoundAnswerParams struct {
 	IsCorrect          bool   `json:"is_correct"`
 	Content            string `json:"content"`
+	RoundNumber        int64  `json:"round_number"`
 	GameContentRoundID int64  `json:"game_content_round_id"`
 }
 
 func (q *Queries) AddGameRoundAnswer(ctx context.Context, arg AddGameRoundAnswerParams) (GameContentAnswer, error) {
-	row := q.db.QueryRowContext(ctx, addGameRoundAnswer, arg.IsCorrect, arg.Content, arg.GameContentRoundID)
+	row := q.db.QueryRowContext(ctx, addGameRoundAnswer,
+		arg.IsCorrect,
+		arg.Content,
+		arg.RoundNumber,
+		arg.GameContentRoundID,
+	)
 	var i GameContentAnswer
 	err := row.Scan(
 		&i.ID,
 		&i.IsCorrect,
+		&i.RoundNumber,
 		&i.Content,
 		&i.GameContentRoundID,
 	)
@@ -165,18 +172,18 @@ func (q *Queries) AddGameRoundAnswer(ctx context.Context, arg AddGameRoundAnswer
 }
 
 const addGameUser = `-- name: AddGameUser :one
-INSERT INTO game_users (user_id, level, exp, games_wins, round_wins, percentage)
+INSERT INTO game_users (user_id, level, exp, games_wins, round_wins, progress)
 VALUES (?, ?, ?, ?, ?, ?)
-RETURNING id, user_id, level, exp, games_wins, round_wins, percentage, created_at
+RETURNING id, user_id, level, exp, games_wins, round_wins, progress, created_at
 `
 
 type AddGameUserParams struct {
-	UserID     int64   `json:"user_id"`
-	Level      int64   `json:"level"`
-	Exp        float64 `json:"exp"`
-	GamesWins  int64   `json:"games_wins"`
-	RoundWins  int64   `json:"round_wins"`
-	Percentage float64 `json:"percentage"`
+	UserID    int64   `json:"user_id"`
+	Level     int64   `json:"level"`
+	Exp       float64 `json:"exp"`
+	GamesWins int64   `json:"games_wins"`
+	RoundWins int64   `json:"round_wins"`
+	Progress  float64 `json:"progress"`
 }
 
 func (q *Queries) AddGameUser(ctx context.Context, arg AddGameUserParams) (GameUser, error) {
@@ -186,7 +193,7 @@ func (q *Queries) AddGameUser(ctx context.Context, arg AddGameUserParams) (GameU
 		arg.Exp,
 		arg.GamesWins,
 		arg.RoundWins,
-		arg.Percentage,
+		arg.Progress,
 	)
 	var i GameUser
 	err := row.Scan(
@@ -196,7 +203,7 @@ func (q *Queries) AddGameUser(ctx context.Context, arg AddGameUserParams) (GameU
 		&i.Exp,
 		&i.GamesWins,
 		&i.RoundWins,
-		&i.Percentage,
+		&i.Progress,
 		&i.CreatedAt,
 	)
 	return i, err
@@ -262,7 +269,7 @@ func (q *Queries) GetGameByRoomUUID(ctx context.Context, roomUuid string) (Game,
 }
 
 const getGameContentAnswerByRoundIDAndContent = `-- name: GetGameContentAnswerByRoundIDAndContent :one
-SELECT id, is_correct, content, game_content_round_id FROM game_content_answers where game_content_round_id = ? and content = ?
+SELECT id, is_correct, round_number, content, game_content_round_id FROM game_content_answers where game_content_round_id = ? and content = ?
 `
 
 type GetGameContentAnswerByRoundIDAndContentParams struct {
@@ -276,6 +283,7 @@ func (q *Queries) GetGameContentAnswerByRoundIDAndContent(ctx context.Context, a
 	err := row.Scan(
 		&i.ID,
 		&i.IsCorrect,
+		&i.RoundNumber,
 		&i.Content,
 		&i.GameContentRoundID,
 	)
@@ -376,6 +384,23 @@ func (q *Queries) GetGameContentRoundsByGameContentID(ctx context.Context, gameC
 	return items, nil
 }
 
+const getGameContentRoundsByGameUUID = `-- name: GetGameContentRoundsByGameUUID :one
+select id, round, question_content, correct_answer_index, game_content_id from game_content_rounds where game_content_id = ?
+`
+
+func (q *Queries) GetGameContentRoundsByGameUUID(ctx context.Context, gameContentID int64) (GameContentRound, error) {
+	row := q.db.QueryRowContext(ctx, getGameContentRoundsByGameUUID, gameContentID)
+	var i GameContentRound
+	err := row.Scan(
+		&i.ID,
+		&i.Round,
+		&i.QuestionContent,
+		&i.CorrectAnswerIndex,
+		&i.GameContentID,
+	)
+	return i, err
+}
+
 const getGameRoundAction = `-- name: GetGameRoundAction :one
 SELECT id, answer_id, points, game_id, user_id, created_at FROM game_round_actions
 WHERE id = ?
@@ -431,7 +456,7 @@ func (q *Queries) GetGameRoundActionsByUserID(ctx context.Context, userID int64)
 }
 
 const getGameUser = `-- name: GetGameUser :one
-SELECT id, user_id, level, exp, games_wins, round_wins, percentage, created_at FROM game_users
+SELECT id, user_id, level, exp, games_wins, round_wins, progress, created_at FROM game_users
 WHERE id = ?
 `
 
@@ -445,14 +470,14 @@ func (q *Queries) GetGameUser(ctx context.Context, id int64) (GameUser, error) {
 		&i.Exp,
 		&i.GamesWins,
 		&i.RoundWins,
-		&i.Percentage,
+		&i.Progress,
 		&i.CreatedAt,
 	)
 	return i, err
 }
 
 const getGameUserByUserID = `-- name: GetGameUserByUserID :one
-SELECT id, user_id, level, exp, games_wins, round_wins, percentage, created_at FROM game_users
+SELECT id, user_id, level, exp, games_wins, round_wins, progress, created_at FROM game_users
 WHERE user_id = ?
 `
 
@@ -466,7 +491,7 @@ func (q *Queries) GetGameUserByUserID(ctx context.Context, userID int64) (GameUs
 		&i.Exp,
 		&i.GamesWins,
 		&i.RoundWins,
-		&i.Percentage,
+		&i.Progress,
 		&i.CreatedAt,
 	)
 	return i, err
@@ -592,18 +617,18 @@ func (q *Queries) UpdateGameRoundAction(ctx context.Context, arg UpdateGameRound
 
 const updateGameUser = `-- name: UpdateGameUser :one
 UPDATE game_users
-SET level = ?, exp = ?, games_wins = ?, round_wins = ?, percentage = ?
+SET level = ?, exp = ?, games_wins = ?, round_wins = ?, progress = ?
 WHERE id = ?
-RETURNING id, user_id, level, exp, games_wins, round_wins, percentage, created_at
+RETURNING id, user_id, level, exp, games_wins, round_wins, progress, created_at
 `
 
 type UpdateGameUserParams struct {
-	Level      int64   `json:"level"`
-	Exp        float64 `json:"exp"`
-	GamesWins  int64   `json:"games_wins"`
-	RoundWins  int64   `json:"round_wins"`
-	Percentage float64 `json:"percentage"`
-	ID         int64   `json:"id"`
+	Level     int64   `json:"level"`
+	Exp       float64 `json:"exp"`
+	GamesWins int64   `json:"games_wins"`
+	RoundWins int64   `json:"round_wins"`
+	Progress  float64 `json:"progress"`
+	ID        int64   `json:"id"`
 }
 
 func (q *Queries) UpdateGameUser(ctx context.Context, arg UpdateGameUserParams) (GameUser, error) {
@@ -612,7 +637,7 @@ func (q *Queries) UpdateGameUser(ctx context.Context, arg UpdateGameUserParams) 
 		arg.Exp,
 		arg.GamesWins,
 		arg.RoundWins,
-		arg.Percentage,
+		arg.Progress,
 		arg.ID,
 	)
 	var i GameUser
@@ -623,7 +648,7 @@ func (q *Queries) UpdateGameUser(ctx context.Context, arg UpdateGameUserParams) 
 		&i.Exp,
 		&i.GamesWins,
 		&i.RoundWins,
-		&i.Percentage,
+		&i.Progress,
 		&i.CreatedAt,
 	)
 	return i, err

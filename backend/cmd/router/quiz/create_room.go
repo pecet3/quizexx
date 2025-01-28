@@ -70,7 +70,6 @@ func (r router) handleCreateRoom(w http.ResponseWriter, req *http.Request) {
 			return
 		}
 	}
-	go room.Run(r.quiz)
 
 	logger.Debug(game.Content)
 
@@ -84,15 +83,16 @@ func (r router) handleCreateRoom(w http.ResponseWriter, req *http.Request) {
 		Language:    dto.Language,
 		Difficulty:  dto.Difficulty,
 	})
+	var gcrs []*data.GameContentRound
 
-	for i, round := range game.Content {
+	for ir, round := range game.Content {
 		gcr, err := r.d.AddGameContentRound(req.Context(), data.AddGameContentRoundParams{
 			QuestionContent:    round.Question,
-			Round:              int64(i + 1),
+			Round:              int64(ir + 1),
 			CorrectAnswerIndex: int64(round.CorrectAnswer),
 			GameContentID:      int64(gc.ID),
 		})
-
+		gcrs = append(gcrs, &gcr)
 		for i := 0; i < 4; i++ {
 			isCorrect := false
 			if round.CorrectAnswer == i {
@@ -103,6 +103,7 @@ func (r router) handleCreateRoom(w http.ResponseWriter, req *http.Request) {
 				IsCorrect:          isCorrect,
 				GameContentRoundID: gcr.ID,
 				Content:            round.Answers[i],
+				RoundNumber:        int64(ir + 1),
 			})
 		}
 		if err != nil {
@@ -111,6 +112,9 @@ func (r router) handleCreateRoom(w http.ResponseWriter, req *http.Request) {
 			return
 		}
 	}
+	room.SetDbStructs(&gc, gcrs)
+	go room.Run(r.quiz)
+
 	if err != nil {
 		logger.Error(err)
 		http.Error(w, "", http.StatusInternalServerError)

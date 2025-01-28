@@ -1,12 +1,14 @@
 interface User {
-  uuid: string; 
-  name: string; 
-  email: string; 
+  created_at: time;
+  email: string;
+  exp: number;
   image_url: string;
   is_draft: boolean;
-  createdAt: Date; 
+  level: number;
+  name: string;
+  progress: number;
+  uuid: string;
 }
-
 
 type Room = {
   uuid: string;

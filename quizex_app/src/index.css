@@ -23,6 +23,10 @@
 body {
 }
 
+
+.bg-gradient{
+  background: linear-gradient(to bottom, #d3d2d2, #ffffff);
+}
 .bg-pattern {
   background-color: #e0e0e0;
   background-image: linear-gradient(#a7aae7 1px, transparent 1px),

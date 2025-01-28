@@ -6,10 +6,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/google/uuid"
 	"github.com/pecet3/quizex/data"
-	"github.com/pecet3/quizex/data/dtos"
-	"github.com/pecet3/quizex/pkg/fetchers"
 	"github.com/pecet3/quizex/pkg/logger"
 )
 
@@ -40,64 +37,9 @@ type Room struct {
 	game      *Game
 	creatorID int
 	createdAt time.Time
-}
 
-func (r *Room) CreateGame(f fetchers.Fetchable, settings *dtos.Settings) (*Game, error) {
-	logger.Info("Creating a game in room: ", r.Name)
-
-	newGame := &Game{
-		UUID:             uuid.NewString(),
-		Room:             r,
-		State:            &GameState{Round: 1},
-		IsGame:           false,
-		Players:          make(map[UUID]*Player),
-		Settings:         settings,
-		Content:          nil,
-		SecLeftForAnswer: settings.SecForAnswer,
-	}
-	if err := newGame.getGameContent(f, settings); err != nil {
-		return nil, err
-	}
-	r.game = newGame
-	return newGame, nil
-}
-
-func (r *Room) checkIfEveryoneIsReady() bool {
-	if len(r.clients) <= 0 {
-		return false
-	}
-	for _, c := range r.clients {
-		if !c.player.isReady {
-			return false
-		}
-	}
-	return true
-}
-
-func (r *Room) addClient(c *Client) {
-	r.cMu.Lock()
-	defer r.cMu.Unlock()
-	if p, ok := r.game.Players[c.user.Uuid]; ok {
-		c.player = p
-	} else {
-		c.player.user = c.user
-		if !r.game.IsGame {
-			r.game.Players[c.user.Uuid] = &Player{
-				user: c.user,
-			}
-		}
-	}
-	r.clients[c.user.Uuid] = c
-}
-func (r *Room) removeClient(c *Client) {
-	r.cMu.Lock()
-	defer r.cMu.Unlock()
-	if _, ok := r.game.Players[c.user.Uuid]; ok {
-		if !r.game.IsGame {
-			delete(r.game.Players, c.user.Uuid)
-		}
-	}
-	delete(r.clients, c.user.Uuid)
+	gcDb   *data.GameContent
+	gcrsDb []*data.GameContentRound
 }
 
 func (r *Room) checkWaitRoom(m *Manager) error {
@@ -140,6 +82,10 @@ func (r *Room) Run(m *Manager) {
 	nobodyCheckingT := time.NewTicker(NOBODYCHECKING_DURATION)
 	heartBeatT := time.NewTicker(HEARTBEAT_DURATION)
 
+	logger.Debug(r.gcDb)
+	logger.Debug(r.gcrsDb)
+	logger.Debug(r.gcrsDb[0].Round)
+
 	defer func() {
 		nobodyCheckingT.Stop()
 		heartBeatT.Stop()
@@ -157,7 +103,6 @@ func (r *Room) Run(m *Manager) {
 					continue
 				}
 				counter := r.game.getSecLeftForAnswer()
-				// to fix
 				r.game.updateSecLeftForAnswer(counter - 1)
 				if counter >= 0 {
 					r.sendTimeForAnswer(counter)
@@ -273,7 +218,7 @@ func (r *Room) Run(m *Manager) {
 					continue
 				}
 
-				if err := r.game.performRound(m, heartBeatT, false); err != nil {
+				if err := r.game.PerformRound(m, heartBeatT, false); err != nil {
 					logger.Error(err)
 					continue
 				}
@@ -288,7 +233,7 @@ func (r *Room) Run(m *Manager) {
 				continue
 			}
 			time.Sleep(TFR_SHORT_DURATION)
-			if err := r.game.performRound(m, heartBeatT, true); err != nil {
+			if err := r.game.PerformRound(m, heartBeatT, true); err != nil {
 				logger.Error(err)
 				continue
 			}

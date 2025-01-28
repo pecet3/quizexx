@@ -42,7 +42,7 @@ CREATE TABLE IF NOT EXISTS game_users (
     exp FLOAT NOT NULL DEFAULT 0,
     games_wins INTEGER NOT NULL DEFAULT 0,
     round_wins INTEGER NOT NULL DEFAULT 0,
-    percentage FLOAT NOT NULL,
+    progress FLOAT NOT NULL DEFAULT 0,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE ON UPDATE CASCADE
 );
@@ -74,6 +74,7 @@ CREATE TABLE IF NOT EXISTS game_content_rounds (
 CREATE TABLE IF NOT EXISTS game_content_answers (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     is_correct BOOLEAN NOT NULL,
+    round_number INTEGER NOT NULL,
     content TEXT NOT NULL,
     game_content_round_id INTEGER NOT NULL,
     FOREIGN KEY (game_content_round_id) REFERENCES game_content_rounds(id)

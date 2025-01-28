@@ -5,9 +5,10 @@ import (
 	"math"
 
 	"github.com/pecet3/quizex/data"
+	"github.com/pecet3/quizex/pkg/logger"
 )
 
-func (s *Social) CalculateLevelByExp(exp float64) (level int, percentage float64) {
+func (s *Social) CalculateLevelByExp(exp float64) (level int, progress float64) {
 	baseExp := 200.0 // Experience required for level 1
 	currentExp := exp
 	level = 1
@@ -30,17 +31,17 @@ func (s *Social) CalculateLevelByExp(exp float64) (level int, percentage float64
 			currentExp -= expNeeded
 			level++
 		} else {
-			// Calculate the percentage progress for the current level
-			percentage = (currentExp / expNeeded) * 100
+			// Calculate the progress progress for the current level
+			progress = (currentExp / expNeeded) * 100
 			break
 		}
 	}
 
-	return level, percentage
+	return level, progress
 }
 func (s *Social) CalculateExp(total int, difficulty string, isWinner bool) (exp float64) {
 	// Base experience for easy difficulty
-	baseExp := 100.0
+	baseExp := 1.
 
 	// Difficulty multipliers
 	var multiplier float64
@@ -68,7 +69,7 @@ func (s *Social) CalculateExp(total int, difficulty string, isWinner bool) (exp 
 	return exp
 }
 
-func (s *Social) IncrementUserRecordsAfterFinishQuiz(uID int64, level int, isWin bool, exp, percentage float64) error {
+func (s *Social) IncrementUserRecordsAfterFinishQuiz(uID int64, level int, isWin bool, exp, progress float64) error {
 	ctx := context.Background()
 	gm, err := s.d.GetGameUserByUserID(ctx, uID)
 	if err != nil {
@@ -78,12 +79,14 @@ func (s *Social) IncrementUserRecordsAfterFinishQuiz(uID int64, level int, isWin
 	if isWin {
 		gw = +1
 	}
-	s.d.UpdateGameUser(ctx, data.UpdateGameUserParams{
+	gu, _ := s.d.UpdateGameUser(ctx, data.UpdateGameUserParams{
 		Level:     int64(level),
 		Exp:       float64(exp),
 		GamesWins: gw,
 		RoundWins: 0,
 		ID:        gm.ID,
+		Progress:  progress,
 	})
+	logger.Debug(gu)
 	return nil
 }
