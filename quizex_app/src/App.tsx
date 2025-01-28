@@ -6,21 +6,20 @@ import { Auth } from "./pages/Auth";
 import { CreateRoom } from "./pages/CreateRoom";
 import { ProtectedPage } from "./components/Protected";
 import { Quiz } from "./pages/Quiz";
-import { useAuthContext } from "./context/authContext";
+import { useProtectedContext } from "./context/protectedContext";
 import { useEffect } from "react";
 import { Welcome } from "./pages/Welcome";
 
 function App() {
-  const { setUser, user } = useAuthContext();
-
+  const { user, setUser, funFact, setFunFact } = useProtectedContext();
   const navigate = useNavigate();
   useEffect(() => {
     if (!user) {
       (async function () {
         try {
           const result = await fetch("/api/auth/ping");
-          if (result.status === 200) {
-            const data = await result.json();
+          const data = await result.json();
+          if (result.ok) {
             setUser(data);
           }
         } catch (err: any) {
@@ -29,12 +28,13 @@ function App() {
       })();
     }
   }, []);
+
   return (
     <>
       <Routes>
         <Route path="/" element={<Welcome />} />
         <Route
-          path="/dashboard"
+          path="/home"
           element={
             <ProtectedPage>
               <Navbar />

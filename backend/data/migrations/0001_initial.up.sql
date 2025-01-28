@@ -1,5 +1,3 @@
-
-
 create table if not exists users (
     id integer primary key autoincrement,
     uuid text not null,
@@ -26,15 +24,25 @@ create table if not exists sessions (
 	foreign key (user_id) references users(id)
 );
 
+-- S O C I A L
+
+CREATE TABLE IF NOT EXISTS fun_facts(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    topic text not null,
+    content text not null,
+    created_at timestamp default current_timestamp
+);
+
 -- Q U I Z
 
 CREATE TABLE IF NOT EXISTS game_users (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     user_id INTEGER UNIQUE NOT NULL,
     level INTEGER NOT NULL DEFAULT 1,
-    exp INTEGER NOT NULL DEFAULT 0,
+    exp FLOAT NOT NULL DEFAULT 0,
     games_wins INTEGER NOT NULL DEFAULT 0,
     round_wins INTEGER NOT NULL DEFAULT 0,
+    percentage FLOAT NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE ON UPDATE CASCADE
 );
@@ -80,7 +88,7 @@ CREATE TABLE IF NOT EXISTS games (
     FOREIGN KEY (game_content_id) REFERENCES game_contents(id)
 );
 
-CREATE TABLE IF NOT EXISTS game_winner (
+CREATE TABLE IF NOT EXISTS game_winners (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     points INTEGER NOT NULL,
     game_id INTEGER NOT NULL,
@@ -90,7 +98,7 @@ CREATE TABLE IF NOT EXISTS game_winner (
 	foreign key (user_id) references users(id)
 );
 
-CREATE TABLE IF NOT EXISTS game_round_action (
+CREATE TABLE IF NOT EXISTS game_round_actions (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     answer_id INTEGER NOT NULL,
     points INTEGER NOT NULL,

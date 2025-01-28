@@ -21,3 +21,8 @@ type Rooms = {
   rooms: Room[];
 };
 
+
+type FunFact = {
+  topic: string;
+  content: string;
+}

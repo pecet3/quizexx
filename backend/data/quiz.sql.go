@@ -109,7 +109,7 @@ func (q *Queries) AddGameContents(ctx context.Context, arg AddGameContentsParams
 }
 
 const addGameRoundAction = `-- name: AddGameRoundAction :one
-INSERT INTO game_round_action (answer_id, points, game_id, user_id)
+INSERT INTO game_round_actions (answer_id, points, game_id, user_id)
 VALUES (?, ?, ?, ?)
 RETURNING id, answer_id, points, game_id, user_id, created_at
 `
@@ -167,15 +167,15 @@ func (q *Queries) AddGameRoundAnswer(ctx context.Context, arg AddGameRoundAnswer
 const addGameUser = `-- name: AddGameUser :one
 INSERT INTO game_users (user_id, level, exp, games_wins, round_wins)
 VALUES (?, ?, ?, ?, ?)
-RETURNING id, user_id, level, exp, games_wins, round_wins, created_at
+RETURNING id, user_id, level, exp, games_wins, round_wins, percentage, created_at
 `
 
 type AddGameUserParams struct {
-	UserID    int64 `json:"user_id"`
-	Level     int64 `json:"level"`
-	Exp       int64 `json:"exp"`
-	GamesWins int64 `json:"games_wins"`
-	RoundWins int64 `json:"round_wins"`
+	UserID    int64   `json:"user_id"`
+	Level     int64   `json:"level"`
+	Exp       float64 `json:"exp"`
+	GamesWins int64   `json:"games_wins"`
+	RoundWins int64   `json:"round_wins"`
 }
 
 func (q *Queries) AddGameUser(ctx context.Context, arg AddGameUserParams) (GameUser, error) {
@@ -194,13 +194,14 @@ func (q *Queries) AddGameUser(ctx context.Context, arg AddGameUserParams) (GameU
 		&i.Exp,
 		&i.GamesWins,
 		&i.RoundWins,
+		&i.Percentage,
 		&i.CreatedAt,
 	)
 	return i, err
 }
 
 const addGameWinner = `-- name: AddGameWinner :one
-INSERT INTO game_winner (points, game_id, user_id)
+INSERT INTO game_winners (points, game_id, user_id)
 VALUES (?, ?, ?)
 RETURNING id, points, game_id, user_id, created_at
 `
@@ -374,7 +375,7 @@ func (q *Queries) GetGameContentRoundsByGameContentID(ctx context.Context, gameC
 }
 
 const getGameRoundAction = `-- name: GetGameRoundAction :one
-SELECT id, answer_id, points, game_id, user_id, created_at FROM game_round_action
+SELECT id, answer_id, points, game_id, user_id, created_at FROM game_round_actions
 WHERE id = ?
 `
 
@@ -393,7 +394,7 @@ func (q *Queries) GetGameRoundAction(ctx context.Context, id int64) (GameRoundAc
 }
 
 const getGameRoundActionsByUserID = `-- name: GetGameRoundActionsByUserID :many
-SELECT id, answer_id, points, game_id, user_id, created_at FROM game_round_action
+SELECT id, answer_id, points, game_id, user_id, created_at FROM game_round_actions
 WHERE user_id = ?
 `
 
@@ -428,7 +429,7 @@ func (q *Queries) GetGameRoundActionsByUserID(ctx context.Context, userID int64)
 }
 
 const getGameUser = `-- name: GetGameUser :one
-SELECT id, user_id, level, exp, games_wins, round_wins, created_at FROM game_users
+SELECT id, user_id, level, exp, games_wins, round_wins, percentage, created_at FROM game_users
 WHERE id = ?
 `
 
@@ -442,13 +443,14 @@ func (q *Queries) GetGameUser(ctx context.Context, id int64) (GameUser, error) {
 		&i.Exp,
 		&i.GamesWins,
 		&i.RoundWins,
+		&i.Percentage,
 		&i.CreatedAt,
 	)
 	return i, err
 }
 
 const getGameUserByUserID = `-- name: GetGameUserByUserID :one
-SELECT id, user_id, level, exp, games_wins, round_wins, created_at FROM game_users
+SELECT id, user_id, level, exp, games_wins, round_wins, percentage, created_at FROM game_users
 WHERE user_id = ?
 `
 
@@ -462,13 +464,14 @@ func (q *Queries) GetGameUserByUserID(ctx context.Context, userID int64) (GameUs
 		&i.Exp,
 		&i.GamesWins,
 		&i.RoundWins,
+		&i.Percentage,
 		&i.CreatedAt,
 	)
 	return i, err
 }
 
 const getGameWinner = `-- name: GetGameWinner :one
-SELECT id, points, game_id, user_id, created_at FROM game_winner
+SELECT id, points, game_id, user_id, created_at FROM game_winners
 WHERE id = ?
 `
 
@@ -486,7 +489,7 @@ func (q *Queries) GetGameWinner(ctx context.Context, id int64) (GameWinner, erro
 }
 
 const getGameWinnersByGameID = `-- name: GetGameWinnersByGameID :many
-SELECT id, points, game_id, user_id, created_at FROM game_winner
+SELECT id, points, game_id, user_id, created_at FROM game_winners
 WHERE game_id = ?
 `
 
@@ -551,7 +554,7 @@ func (q *Queries) UpdateGame(ctx context.Context, arg UpdateGameParams) (Game, e
 }
 
 const updateGameRoundAction = `-- name: UpdateGameRoundAction :one
-UPDATE game_round_action
+UPDATE game_round_actions
 SET answer_id = ?, points = ?, game_id = ?, user_id = ?
 WHERE id = ?
 RETURNING id, answer_id, points, game_id, user_id, created_at
@@ -587,17 +590,18 @@ func (q *Queries) UpdateGameRoundAction(ctx context.Context, arg UpdateGameRound
 
 const updateGameUser = `-- name: UpdateGameUser :one
 UPDATE game_users
-SET level = ?, exp = ?, games_wins = ?, round_wins = ?
+SET level = ?, exp = ?, games_wins = ?, round_wins = ?, percentage = ?
 WHERE id = ?
-RETURNING id, user_id, level, exp, games_wins, round_wins, created_at
+RETURNING id, user_id, level, exp, games_wins, round_wins, percentage, created_at
 `
 
 type UpdateGameUserParams struct {
-	Level     int64 `json:"level"`
-	Exp       int64 `json:"exp"`
-	GamesWins int64 `json:"games_wins"`
-	RoundWins int64 `json:"round_wins"`
-	ID        int64 `json:"id"`
+	Level      int64   `json:"level"`
+	Exp        float64 `json:"exp"`
+	GamesWins  int64   `json:"games_wins"`
+	RoundWins  int64   `json:"round_wins"`
+	Percentage float64 `json:"percentage"`
+	ID         int64   `json:"id"`
 }
 
 func (q *Queries) UpdateGameUser(ctx context.Context, arg UpdateGameUserParams) (GameUser, error) {
@@ -606,6 +610,7 @@ func (q *Queries) UpdateGameUser(ctx context.Context, arg UpdateGameUserParams) 
 		arg.Exp,
 		arg.GamesWins,
 		arg.RoundWins,
+		arg.Percentage,
 		arg.ID,
 	)
 	var i GameUser
@@ -616,6 +621,7 @@ func (q *Queries) UpdateGameUser(ctx context.Context, arg UpdateGameUserParams) 
 		&i.Exp,
 		&i.GamesWins,
 		&i.RoundWins,
+		&i.Percentage,
 		&i.CreatedAt,
 	)
 	return i, err

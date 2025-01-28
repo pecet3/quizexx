@@ -21,7 +21,7 @@ func (f FetcherFunFact) Fetch(ctx context.Context, i interface{}) (string, error
 		return "", errors.New("wrong prompt interface")
 
 	}
-	prompt := `return a fun fact about this topic in couple sentences. Topic is: ` + s
+	prompt := `return a fun fact about this topic in maximum four sentences. Topic is: ` + s
 	if err := godotenv.Load(".env"); err != nil {
 		logger.Error(err)
 		return "", err
@@ -61,7 +61,5 @@ func (f FetcherFunFact) Fetch(ctx context.Context, i interface{}) (string, error
 	}
 
 	content := data["choices"].([]interface{})[0].(map[string]interface{})["message"].(map[string]interface{})["content"].(string)
-
-	logger.Debug(content)
 	return content, nil
 }

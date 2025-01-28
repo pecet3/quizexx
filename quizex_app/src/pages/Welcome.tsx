@@ -2,6 +2,7 @@ import { TypeAnimation } from "react-type-animation";
 import { motion } from "framer-motion";
 import { FaQuestion } from "react-icons/fa";
 import { FaRegCirclePlay } from "react-icons/fa6";
+import { Link } from "react-router-dom";
 export const Welcome = () => {
   return (
     <main>
@@ -56,10 +57,12 @@ export const Welcome = () => {
                 },
               }}
               className="flex mt-12 rounded-xl text-white py-2 px-4 text-4xl font-ibm-plex tracking-tight
-                items-center  border-gray-300 border-4  duration-300 gap-3
+                items-center  border-white border-4  duration-300 gap-3 shadow-gray-400
                  bg-teal-600 m-auto shadow-lg hover:shadow-slate-900"
             >
-              <FaRegCirclePlay size={32} /> Play
+              <Link to={"/home"} className=" flex items-center gap-2">
+                <FaRegCirclePlay size={32} /> Play
+              </Link>
             </motion.button>
           </motion.div>
         </div>

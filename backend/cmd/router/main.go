@@ -7,6 +7,7 @@ import (
 	"github.com/pecet3/quizex/cmd/repos"
 	authRouter "github.com/pecet3/quizex/cmd/router/auth"
 	quizRouter "github.com/pecet3/quizex/cmd/router/quiz"
+	socialRouter "github.com/pecet3/quizex/cmd/router/social"
 	"github.com/pecet3/quizex/data"
 	"github.com/pecet3/quizex/pkg/auth"
 	"github.com/pecet3/quizex/pkg/logger"
@@ -32,6 +33,7 @@ func Run(
 	}
 	authRouter.Run(app)
 	quizRouter.Run(app)
+	socialRouter.Run(app)
 
 	app.Srv.Handle(PREFIX+"/hello", r.auth.Authorize(r.hello))
 	app.Srv.Handle("/", http.FileServer(http.Dir("view")))

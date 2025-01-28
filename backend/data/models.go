@@ -9,6 +9,13 @@ import (
 	"time"
 )
 
+type FunFact struct {
+	ID        int64        `json:"id"`
+	Topic     string       `json:"topic"`
+	Content   string       `json:"content"`
+	CreatedAt sql.NullTime `json:"created_at"`
+}
+
 type Game struct {
 	ID            int64  `json:"id"`
 	RoomUuid      string `json:"room_uuid"`
@@ -54,13 +61,14 @@ type GameRoundAction struct {
 }
 
 type GameUser struct {
-	ID        int64        `json:"id"`
-	UserID    int64        `json:"user_id"`
-	Level     int64        `json:"level"`
-	Exp       int64        `json:"exp"`
-	GamesWins int64        `json:"games_wins"`
-	RoundWins int64        `json:"round_wins"`
-	CreatedAt sql.NullTime `json:"created_at"`
+	ID         int64        `json:"id"`
+	UserID     int64        `json:"user_id"`
+	Level      int64        `json:"level"`
+	Exp        float64      `json:"exp"`
+	GamesWins  int64        `json:"games_wins"`
+	RoundWins  int64        `json:"round_wins"`
+	Percentage float64      `json:"percentage"`
+	CreatedAt  sql.NullTime `json:"created_at"`
 }
 
 type GameWinner struct {

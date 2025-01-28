@@ -4,10 +4,10 @@ import App from "./App.tsx";
 import "./index.css";
 import { BrowserRouter } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
-import { AuthProvider } from "./context/authContext.tsx";
+import { ProtectedProvider } from "./context/protectedContext.tsx";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
-  <AuthProvider>
+  <ProtectedProvider>
     <Toaster
       position="bottom-center"
       toastOptions={{
@@ -21,5 +21,5 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
     <BrowserRouter>
       <App />
     </BrowserRouter>
-  </AuthProvider>
+  </ProtectedProvider>
 );

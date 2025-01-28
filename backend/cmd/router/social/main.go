@@ -1,4 +1,4 @@
-package quiz_router
+package social_router
 
 import (
 	"net/http"
@@ -10,6 +10,7 @@ import (
 	"github.com/pecet3/quizex/pkg/fetchers"
 	"github.com/pecet3/quizex/pkg/logger"
 	"github.com/pecet3/quizex/pkg/quiz"
+	"github.com/pecet3/quizex/pkg/social"
 )
 
 type router struct {
@@ -18,9 +19,10 @@ type router struct {
 	v    *validator.Validate
 	quiz *quiz.Manager
 	f    fetchers.Fetchers
+	s    *social.Social
 }
 
-const PREFIX = "/api/quiz"
+const PREFIX = "/api/social"
 
 func Run(
 	app repos.App,
@@ -31,20 +33,24 @@ func Run(
 		v:    app.Validator,
 		quiz: app.Quiz,
 		f:    app.Fetchers,
+		s:    app.Social,
 	}
-
-	app.Srv.Handle(PREFIX+"/rooms/{name}", r.auth.Authorize(r.handleQuiz))
-
-	app.Srv.Handle("POST "+PREFIX+"/rooms", r.auth.Authorize(r.handleCreateRoom))
-	app.Srv.Handle("GET "+PREFIX+"/rooms", r.auth.Authorize(r.handleGetRooms))
+	lvl, prc := r.s.CalculateLevelByExp(30000)
+	logger.Debug(lvl, prc)
+	app.Srv.HandleFunc("GET "+PREFIX+"/fun-facts/latest", r.handleFunFact)
 }
 
-func (r router) handleQuiz(w http.ResponseWriter, req *http.Request) {
-	u, err := r.auth.GetContextUser(req)
+func (r router) handleFunFact(w http.ResponseWriter, req *http.Request) {
+	ff, err := r.d.GetCurrentFunFact(req.Context())
 	if err != nil {
+		http.Error(w, "", http.StatusInternalServerError)
 		logger.Error(err)
-		http.Error(w, "", http.StatusUnauthorized)
 		return
 	}
-	r.quiz.ServeQuiz(w, req, &u)
+	dto := ff.ToDTO(r.d)
+	if err := dto.Send(w); err != nil {
+		http.Error(w, "", http.StatusInternalServerError)
+		logger.Error(err)
+		return
+	}
 }

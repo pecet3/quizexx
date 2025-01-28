@@ -1,14 +1,15 @@
 import { Link } from "react-router-dom";
-import { useAuthContext } from "../context/authContext";
+import { useProtectedContext } from "../context/protectedContext";
 import { Logo } from "./Logo";
 
 export const Navbar = () => {
-  const { user } = useAuthContext();
+  const { user } = useProtectedContext();
   return (
     <>
       {user ? (
         <nav className="flex justify-between items-center w-full px-4 pt-1">
           <Logo />
+
           <div className="justify-end flex-1 flex">
             <div className="text-right">
               <p> Hello {user.name} </p>[

@@ -1,9 +1,7 @@
 package social
 
 import (
-	"context"
 	"sync"
-	"time"
 
 	"github.com/pecet3/quizex/data"
 	"github.com/pecet3/quizex/data/dtos"
@@ -27,28 +25,4 @@ func New(d *data.Queries, f fetchers.Fetchers) *Social {
 	}
 
 	return s
-}
-
-func (s *Social) GetFunFactLoop(f fetchers.Fetchable) {
-	i := 0
-	for {
-		topic := s.topics[i]
-		content, err := f.Fetch(context.Background(), topic)
-		if err != nil {
-			continue
-		}
-		s.funFactMu.Lock()
-		s.FunFact = &dtos.FunFact{
-			Topic:   topic,
-			Content: content,
-		}
-		//
-		if i == 280 {
-			i = 0
-		} else {
-			i++
-		}
-		s.funFactMu.Unlock()
-		time.Sleep(time.Hour * 24)
-	}
 }

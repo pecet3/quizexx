@@ -4,7 +4,7 @@ import { WaitingRoom } from "../components/quiz/WaitingRoom";
 import { Dashboard } from "../components/quiz/Dashboard";
 import { Chat } from "../components/quiz/Chat";
 import { Error } from "../components/Error";
-import { useAuthContext } from "../context/authContext";
+import { useProtectedContext } from "../context/protectedContext";
 
 export type Player = {
   name: string;
@@ -110,7 +110,7 @@ const defaultWaitingState: WaitingState = {
   players: [],
 };
 export const Quiz = () => {
-  const { user } = useAuthContext();
+  const { user } = useProtectedContext();
   const { roomName } = useParams<{ roomName: string }>();
   const [ws, setWs] = useState<null | WebSocket>(null);
   const [isWaiting, setIsWaiting] = useState(true);
@@ -180,6 +180,7 @@ export const Quiz = () => {
         setGameState(event.payload);
         break;
       case "update_players":
+        console.log();
         break;
       case "server_message":
         setServerMessage(event.payload.message);
@@ -217,7 +218,7 @@ export const Quiz = () => {
     console.log("settings", settings);
   }, [gameState, settings]);
   useEffect(() => {
-    const ws = new WebSocket(`ws://localhost:9090/api/quiz/${roomName}`);
+    const ws = new WebSocket(`ws://localhost:9090/api/quiz/rooms/${roomName}`);
     setWs(ws);
     ws.onopen = () => {
       console.log("connected with websockets!");
