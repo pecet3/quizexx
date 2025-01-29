@@ -49,3 +49,48 @@ func (q *Queries) GetCurrentFunFact(ctx context.Context) (FunFact, error) {
 	)
 	return i, err
 }
+
+const getUsersSortedByLevel = `-- name: GetUsersSortedByLevel :many
+SELECT u.id, u.uuid, u.name, u.email, u.salt, u.image_url, u.is_draft, u.created_at
+FROM users u
+JOIN game_users gu ON u.id = gu.user_id
+ORDER BY gu.level DESC
+LIMIT ? OFFSET ?
+`
+
+type GetUsersSortedByLevelParams struct {
+	Limit  int64 `json:"limit"`
+	Offset int64 `json:"offset"`
+}
+
+func (q *Queries) GetUsersSortedByLevel(ctx context.Context, arg GetUsersSortedByLevelParams) ([]User, error) {
+	rows, err := q.db.QueryContext(ctx, getUsersSortedByLevel, arg.Limit, arg.Offset)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []User
+	for rows.Next() {
+		var i User
+		if err := rows.Scan(
+			&i.ID,
+			&i.Uuid,
+			&i.Name,
+			&i.Email,
+			&i.Salt,
+			&i.ImageUrl,
+			&i.IsDraft,
+			&i.CreatedAt,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}

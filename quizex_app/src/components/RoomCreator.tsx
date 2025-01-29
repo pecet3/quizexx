@@ -1,5 +1,5 @@
 import React from "react";
-import { PaperWrapper } from "./PaperWrapper";
+import { PaperWrapper } from "./Wrappers";
 
 export const RoomCreator: React.FC<{
   onSubmit: (event: any) => void;

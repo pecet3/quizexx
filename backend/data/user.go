@@ -13,7 +13,6 @@ func (u User) ToDto(d *Queries) *dtos.User {
 		logger.Error(err)
 		return nil
 	}
-	logger.Debug(ug)
 	return &dtos.User{
 		Name:      u.Name,
 		UUID:      u.Uuid,

@@ -94,7 +94,7 @@ const defaultGameState: GameState = {
         uuid: "",
         exp: 0,
         level: 0,
-        percentage: 0,
+        progress: 0,
       },
     },
   ],

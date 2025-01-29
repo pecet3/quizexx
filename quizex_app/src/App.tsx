@@ -11,24 +11,6 @@ import { useEffect } from "react";
 import { Welcome } from "./pages/Welcome";
 
 function App() {
-  const { user, setUser, funFact, setFunFact } = useProtectedContext();
-  const navigate = useNavigate();
-  useEffect(() => {
-    if (!user) {
-      (async function () {
-        try {
-          const result = await fetch("/api/auth/ping");
-          const data = await result.json();
-          if (result.ok) {
-            setUser(data);
-          }
-        } catch (err: any) {
-          navigate("/auth");
-        }
-      })();
-    }
-  }, []);
-
   return (
     <>
       <Routes>
@@ -38,7 +20,6 @@ function App() {
           element={
             <ProtectedPage>
               <Navbar />
-
               <Home />
             </ProtectedPage>
           }

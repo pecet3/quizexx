@@ -3,7 +3,8 @@ import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 export const ProtectedPage = ({ children }: { children: React.ReactNode }) => {
-  const { user, setUser, funFact, setFunFact } = useProtectedContext();
+  const { user, setUser, funFact, setFunFact, topUsers, setTopUsers } =
+    useProtectedContext();
   const navigate = useNavigate();
   useEffect(() => {
     if (!user) {
@@ -25,11 +26,25 @@ export const ProtectedPage = ({ children }: { children: React.ReactNode }) => {
           const result = await fetch("/api/social/fun-facts/latest");
           const data = await result.json();
           if (result.ok) {
-            console.log(data);
             setFunFact(data);
-            console.log(funFact);
           }
-        } catch (err: any) {}
+        } catch (err: any) {
+          navigate("/auth");
+        }
+      })();
+    }
+    if (!topUsers) {
+      (async function () {
+        try {
+          const result = await fetch("/api/social/users");
+          const data = await result.json();
+          console.log(111, data);
+          if (result.ok) {
+            setTopUsers(data);
+          }
+        } catch (err: any) {
+          navigate("/auth");
+        }
       })();
     }
   }, []);

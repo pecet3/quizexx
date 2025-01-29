@@ -1,7 +1,7 @@
 import React, { useState, FormEvent } from "react";
 
 import { GameState, Settings } from "../../pages/Quiz";
-import { LittlePaperWrapper } from "../PaperWrapper";
+import { LittlePaperWrapper } from "../Wrappers";
 import { RxLapTimer } from "react-icons/rx";
 import { IoCheckmark } from "react-icons/io5";
 export const Dashboard: React.FC<{

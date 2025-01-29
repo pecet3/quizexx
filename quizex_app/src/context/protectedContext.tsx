@@ -11,6 +11,8 @@ type ProtectedContextType = {
   setUser: React.Dispatch<React.SetStateAction<User | null>>;
   funFact: FunFact | null;
   setFunFact: React.Dispatch<React.SetStateAction<FunFact | null>>;
+  topUsers: User[] | null;
+  setTopUsers: React.Dispatch<React.SetStateAction<User[] | null>>;
 };
 
 const ProtectedContext = createContext<ProtectedContextType | undefined>(
@@ -22,6 +24,7 @@ export const ProtectedProvider: React.FC<{ children: ReactNode }> = ({
 }) => {
   const [user, setUser] = useState<User | null>(null);
   const [funFact, setFunFact] = useState<FunFact | null>(null);
+  const [topUsers, setTopUsers] = useState<User[] | null>(null);
   useEffect(() => {
     console.log(user);
   }, [user]);
@@ -32,6 +35,8 @@ export const ProtectedProvider: React.FC<{ children: ReactNode }> = ({
         setUser,
         funFact,
         setFunFact,
+        topUsers,
+        setTopUsers,
       }}
     >
       {children}

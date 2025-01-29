@@ -25,3 +25,16 @@ export const LittlePaperWrapper = ({
     </div>
   );
 };
+export const PatternWrapper = ({ children }: { children: React.ReactNode }) => {
+  return (
+    <div
+      className="paper
+     w-full md:max-w-lg max-w-sm"
+    >
+      <div className="tape-section"></div>
+
+      {children}
+      <div className="tape-section"></div>
+    </div>
+  );
+};
