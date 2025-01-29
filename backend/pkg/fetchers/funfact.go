@@ -15,13 +15,13 @@ import (
 type FetcherFunFact struct {
 }
 
-func (f FetcherFunFact) Fetch(ctx context.Context, i interface{}) (string, error) {
+func (f FetcherFunFact) Fetch(ctx context.Context, i interface{}) (interface{}, error) {
 	s, ok := i.(string)
 	if !ok {
 		return "", errors.New("wrong prompt interface")
 
 	}
-	prompt := `return a fun fact about this topic in maximum 2 sentences. Topic is: ` + s
+	prompt := `Return a fun fact about this topic in maximum 3 sentences. Topic is: ` + s
 	if err := godotenv.Load(".env"); err != nil {
 		logger.Error(err)
 		return "", err

@@ -25,7 +25,7 @@ type FetcherGPT4ominiGameContent struct {
 	Prompt string
 }
 
-func (f FetcherGPT4ominiGameContent) Fetch(ctx context.Context, i interface{}) (string, error) {
+func (f FetcherGPT4ominiGameContent) Fetch(ctx context.Context, i interface{}) (interface{}, error) {
 	s, ok := i.(*dtos.Settings)
 	if !ok {
 		return "", errors.New("wrong prompt interface")
@@ -153,7 +153,7 @@ type Test struct {
 	Prompt string
 }
 
-func (f Test) Fetch(ctx context.Context, in interface{}) (string, error) {
+func (f Test) Fetch(ctx context.Context, in interface{}) (interface{}, error) {
 	s, _ := in.(string)
 	logger.Debug(s, f.Prompt)
 	return testContent, nil

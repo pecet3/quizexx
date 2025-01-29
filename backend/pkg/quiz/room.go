@@ -236,9 +236,13 @@ func (r *Room) Run(m *Manager) {
 				if err != nil {
 					logger.Error(err)
 				}
+				earnedPoints := 0
+				if isGoodAnswer {
+					earnedPoints = 10
+				}
 				gr, err := m.d.AddGameRoundAction(context.Background(), data.AddGameRoundActionParams{
 					AnswerID:           answer.ID,
-					Points:             10,
+					Points:             int64(earnedPoints),
 					GameID:             r.gDb.ID,
 					UserID:             player.user.ID,
 					AnswerIndex:        answer.IndexInArr,

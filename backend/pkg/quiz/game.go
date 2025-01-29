@@ -84,10 +84,11 @@ func (g *Game) getGameContent(f fetchers.Fetchable, s *dtos.Settings) error {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*60)
 	defer cancel()
 
-	rawJSON := ""
-
-	rawJSON, err := f.Fetch(ctx, s)
-
+	str, err := f.Fetch(ctx, s)
+	rawJSON := str.(string)
+	if err != nil {
+		return err
+	}
 	var content GameContent
 	if err = json.Unmarshal([]byte(rawJSON), &content); err != nil {
 		return err
@@ -185,15 +186,7 @@ func (g *Game) countPoints(m *Manager) bool {
 	if len(g.State.RoundWinners) == len(g.Players) {
 		for _, p := range g.Players {
 			p.points += 5
-			gcr, err := m.d.GetGameContentAnswerByRoundIDAndIndex(context.Background(), data.GetGameContentAnswerByRoundIDAndIndexParams{
-				GameContentRoundID: g.Room.getDbGameConontentRoundID(),
-				IndexInArr:         int64(g.Content[g.State.Round-1].CorrectAnswer),
-			})
-			if err != nil {
-				logger.Error(err)
-				continue
-			}
-			logger.Debug("gcr", gcr)
+
 			ra, err := m.d.GetGameRoundActionsByUserIDRoundIDGameID(context.Background(), data.GetGameRoundActionsByUserIDRoundIDGameIDParams{
 				UserID:             p.user.ID,
 				GameContentRoundID: g.Room.getDbGameConontentRoundID(),

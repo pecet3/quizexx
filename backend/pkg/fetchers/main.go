@@ -3,7 +3,7 @@ package fetchers
 import "context"
 
 type Fetchable interface {
-	Fetch(ctx context.Context, i interface{}) (string, error)
+	Fetch(ctx context.Context, i interface{}) (interface{}, error)
 }
 
 type Fetchers map[string]Fetchable

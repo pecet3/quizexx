@@ -21,7 +21,8 @@ func (s *Social) GetFunFactLoop(f fetchers.Fetchable) {
 			i++
 			continue
 		}
-		content, err := f.Fetch(context.Background(), topic)
+		str, err := f.Fetch(context.Background(), topic)
+		content := str.(string)
 		if err != nil {
 			continue
 		}
