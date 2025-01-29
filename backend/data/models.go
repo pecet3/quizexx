@@ -17,10 +17,11 @@ type FunFact struct {
 }
 
 type Game struct {
-	ID            int64  `json:"id"`
-	RoomUuid      string `json:"room_uuid"`
-	RoomName      string `json:"room_name"`
-	GameContentID int64  `json:"game_content_id"`
+	ID            int64        `json:"id"`
+	RoomUuid      string       `json:"room_uuid"`
+	RoomName      string       `json:"room_name"`
+	GameContentID int64        `json:"game_content_id"`
+	CreatedAt     sql.NullTime `json:"created_at"`
 }
 
 type GameContent struct {
@@ -41,6 +42,7 @@ type GameContentAnswer struct {
 	IsCorrect          bool   `json:"is_correct"`
 	RoundNumber        int64  `json:"round_number"`
 	Content            string `json:"content"`
+	IndexInArr         int64  `json:"index_in_arr"`
 	GameContentRoundID int64  `json:"game_content_round_id"`
 }
 
@@ -53,12 +55,15 @@ type GameContentRound struct {
 }
 
 type GameRoundAction struct {
-	ID        int64        `json:"id"`
-	AnswerID  int64        `json:"answer_id"`
-	Points    int64        `json:"points"`
-	GameID    int64        `json:"game_id"`
-	UserID    int64        `json:"user_id"`
-	CreatedAt sql.NullTime `json:"created_at"`
+	ID                 int64        `json:"id"`
+	GameContentRoundID int64        `json:"game_content_round_id"`
+	AnswerID           int64        `json:"answer_id"`
+	AnswerIndex        int64        `json:"answer_index"`
+	IsGoodAnswer       bool         `json:"is_good_answer"`
+	Points             int64        `json:"points"`
+	GameID             int64        `json:"game_id"`
+	UserID             int64        `json:"user_id"`
+	CreatedAt          sql.NullTime `json:"created_at"`
 }
 
 type GameUser struct {

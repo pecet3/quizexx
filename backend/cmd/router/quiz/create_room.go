@@ -104,6 +104,7 @@ func (r router) handleCreateRoom(w http.ResponseWriter, req *http.Request) {
 				GameContentRoundID: gcr.ID,
 				Content:            round.Answers[i],
 				RoundNumber:        int64(ir + 1),
+				IndexInArr:         int64(i),
 			})
 		}
 		if err != nil {

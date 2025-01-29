@@ -76,6 +76,7 @@ CREATE TABLE IF NOT EXISTS game_content_answers (
     is_correct BOOLEAN NOT NULL,
     round_number INTEGER NOT NULL,
     content TEXT NOT NULL,
+    index_in_arr INTEGER NOT NULL,
     game_content_round_id INTEGER NOT NULL,
     FOREIGN KEY (game_content_round_id) REFERENCES game_content_rounds(id)
 );
@@ -86,6 +87,7 @@ CREATE TABLE IF NOT EXISTS games (
     room_uuid TEXT NOT NULL,
     room_name TEXT NOT NULL,
     game_content_id INTEGER NOT NULL,
+    created_at timestamp default current_timestamp,
     FOREIGN KEY (game_content_id) REFERENCES game_contents(id)
 );
 
@@ -101,7 +103,10 @@ CREATE TABLE IF NOT EXISTS game_winners (
 
 CREATE TABLE IF NOT EXISTS game_round_actions (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
+    game_content_round_id integer not null,
     answer_id INTEGER NOT NULL,
+    answer_index INTEGER NOT NULL,
+    is_good_answer boolean not null,
     points INTEGER NOT NULL,
     game_id INTEGER NOT NULL,
     user_id integer not null,
@@ -110,6 +115,7 @@ CREATE TABLE IF NOT EXISTS game_round_actions (
 	foreign key (user_id) references users(id),
     foreign key (answer_id) references game_content_answers(id)
 );
+
 
 INSERT INTO fun_facts (topic, content)
 VALUES ('History', 'The Great Wall of China is not a single wall but a series of walls and fortifications.');

@@ -12,7 +12,7 @@ import (
 const addGame = `-- name: AddGame :one
 INSERT INTO games (room_uuid, room_name, game_content_id)
 VALUES (?, ?, ?)
-RETURNING id, room_uuid, room_name, game_content_id
+RETURNING id, room_uuid, room_name, game_content_id, created_at
 `
 
 type AddGameParams struct {
@@ -29,6 +29,7 @@ func (q *Queries) AddGame(ctx context.Context, arg AddGameParams) (Game, error) 
 		&i.RoomUuid,
 		&i.RoomName,
 		&i.GameContentID,
+		&i.CreatedAt,
 	)
 	return i, err
 }
@@ -109,21 +110,27 @@ func (q *Queries) AddGameContents(ctx context.Context, arg AddGameContentsParams
 }
 
 const addGameRoundAction = `-- name: AddGameRoundAction :one
-INSERT INTO game_round_actions (answer_id, points, game_id, user_id)
-VALUES (?, ?, ?, ?)
-RETURNING id, answer_id, points, game_id, user_id, created_at
+INSERT INTO game_round_actions (answer_id, game_content_round_id, answer_index, is_good_answer, points, game_id, user_id)
+VALUES (?, ?, ?, ?, ?, ?, ?)
+RETURNING id, game_content_round_id, answer_id, answer_index, is_good_answer, points, game_id, user_id, created_at
 `
 
 type AddGameRoundActionParams struct {
-	AnswerID int64 `json:"answer_id"`
-	Points   int64 `json:"points"`
-	GameID   int64 `json:"game_id"`
-	UserID   int64 `json:"user_id"`
+	AnswerID           int64 `json:"answer_id"`
+	GameContentRoundID int64 `json:"game_content_round_id"`
+	AnswerIndex        int64 `json:"answer_index"`
+	IsGoodAnswer       bool  `json:"is_good_answer"`
+	Points             int64 `json:"points"`
+	GameID             int64 `json:"game_id"`
+	UserID             int64 `json:"user_id"`
 }
 
 func (q *Queries) AddGameRoundAction(ctx context.Context, arg AddGameRoundActionParams) (GameRoundAction, error) {
 	row := q.db.QueryRowContext(ctx, addGameRoundAction,
 		arg.AnswerID,
+		arg.GameContentRoundID,
+		arg.AnswerIndex,
+		arg.IsGoodAnswer,
 		arg.Points,
 		arg.GameID,
 		arg.UserID,
@@ -131,7 +138,10 @@ func (q *Queries) AddGameRoundAction(ctx context.Context, arg AddGameRoundAction
 	var i GameRoundAction
 	err := row.Scan(
 		&i.ID,
+		&i.GameContentRoundID,
 		&i.AnswerID,
+		&i.AnswerIndex,
+		&i.IsGoodAnswer,
 		&i.Points,
 		&i.GameID,
 		&i.UserID,
@@ -141,9 +151,9 @@ func (q *Queries) AddGameRoundAction(ctx context.Context, arg AddGameRoundAction
 }
 
 const addGameRoundAnswer = `-- name: AddGameRoundAnswer :one
-INSERT INTO game_content_answers (is_correct, content, round_number, game_content_round_id)
-              VALUES (?, ?, ?, ?)
-              RETURNING id, is_correct, round_number, content, game_content_round_id
+INSERT INTO game_content_answers (is_correct, content, round_number, game_content_round_id, index_in_arr)
+              VALUES (?, ?, ?, ?, ?)
+              RETURNING id, is_correct, round_number, content, index_in_arr, game_content_round_id
 `
 
 type AddGameRoundAnswerParams struct {
@@ -151,6 +161,7 @@ type AddGameRoundAnswerParams struct {
 	Content            string `json:"content"`
 	RoundNumber        int64  `json:"round_number"`
 	GameContentRoundID int64  `json:"game_content_round_id"`
+	IndexInArr         int64  `json:"index_in_arr"`
 }
 
 func (q *Queries) AddGameRoundAnswer(ctx context.Context, arg AddGameRoundAnswerParams) (GameContentAnswer, error) {
@@ -159,6 +170,7 @@ func (q *Queries) AddGameRoundAnswer(ctx context.Context, arg AddGameRoundAnswer
 		arg.Content,
 		arg.RoundNumber,
 		arg.GameContentRoundID,
+		arg.IndexInArr,
 	)
 	var i GameContentAnswer
 	err := row.Scan(
@@ -166,6 +178,7 @@ func (q *Queries) AddGameRoundAnswer(ctx context.Context, arg AddGameRoundAnswer
 		&i.IsCorrect,
 		&i.RoundNumber,
 		&i.Content,
+		&i.IndexInArr,
 		&i.GameContentRoundID,
 	)
 	return i, err
@@ -235,7 +248,7 @@ func (q *Queries) AddGameWinner(ctx context.Context, arg AddGameWinnerParams) (G
 }
 
 const getGame = `-- name: GetGame :one
-SELECT id, room_uuid, room_name, game_content_id FROM games
+SELECT id, room_uuid, room_name, game_content_id, created_at FROM games
 WHERE id = ?
 `
 
@@ -247,12 +260,13 @@ func (q *Queries) GetGame(ctx context.Context, id int64) (Game, error) {
 		&i.RoomUuid,
 		&i.RoomName,
 		&i.GameContentID,
+		&i.CreatedAt,
 	)
 	return i, err
 }
 
 const getGameByRoomUUID = `-- name: GetGameByRoomUUID :one
-SELECT id, room_uuid, room_name, game_content_id FROM games
+SELECT id, room_uuid, room_name, game_content_id, created_at FROM games
 WHERE room_uuid = ?
 `
 
@@ -264,27 +278,29 @@ func (q *Queries) GetGameByRoomUUID(ctx context.Context, roomUuid string) (Game,
 		&i.RoomUuid,
 		&i.RoomName,
 		&i.GameContentID,
+		&i.CreatedAt,
 	)
 	return i, err
 }
 
-const getGameContentAnswerByRoundIDAndContent = `-- name: GetGameContentAnswerByRoundIDAndContent :one
-SELECT id, is_correct, round_number, content, game_content_round_id FROM game_content_answers where game_content_round_id = ? and content = ?
+const getGameContentAnswerByRoundIDAndIndex = `-- name: GetGameContentAnswerByRoundIDAndIndex :one
+SELECT id, is_correct, round_number, content, index_in_arr, game_content_round_id FROM game_content_answers where game_content_round_id = ? and index_in_arr = ?
 `
 
-type GetGameContentAnswerByRoundIDAndContentParams struct {
-	GameContentRoundID int64  `json:"game_content_round_id"`
-	Content            string `json:"content"`
+type GetGameContentAnswerByRoundIDAndIndexParams struct {
+	GameContentRoundID int64 `json:"game_content_round_id"`
+	IndexInArr         int64 `json:"index_in_arr"`
 }
 
-func (q *Queries) GetGameContentAnswerByRoundIDAndContent(ctx context.Context, arg GetGameContentAnswerByRoundIDAndContentParams) (GameContentAnswer, error) {
-	row := q.db.QueryRowContext(ctx, getGameContentAnswerByRoundIDAndContent, arg.GameContentRoundID, arg.Content)
+func (q *Queries) GetGameContentAnswerByRoundIDAndIndex(ctx context.Context, arg GetGameContentAnswerByRoundIDAndIndexParams) (GameContentAnswer, error) {
+	row := q.db.QueryRowContext(ctx, getGameContentAnswerByRoundIDAndIndex, arg.GameContentRoundID, arg.IndexInArr)
 	var i GameContentAnswer
 	err := row.Scan(
 		&i.ID,
 		&i.IsCorrect,
 		&i.RoundNumber,
 		&i.Content,
+		&i.IndexInArr,
 		&i.GameContentRoundID,
 	)
 	return i, err
@@ -402,7 +418,7 @@ func (q *Queries) GetGameContentRoundsByGameUUID(ctx context.Context, gameConten
 }
 
 const getGameRoundAction = `-- name: GetGameRoundAction :one
-SELECT id, answer_id, points, game_id, user_id, created_at FROM game_round_actions
+SELECT id, game_content_round_id, answer_id, answer_index, is_good_answer, points, game_id, user_id, created_at FROM game_round_actions
 WHERE id = ?
 `
 
@@ -411,7 +427,10 @@ func (q *Queries) GetGameRoundAction(ctx context.Context, id int64) (GameRoundAc
 	var i GameRoundAction
 	err := row.Scan(
 		&i.ID,
+		&i.GameContentRoundID,
 		&i.AnswerID,
+		&i.AnswerIndex,
+		&i.IsGoodAnswer,
 		&i.Points,
 		&i.GameID,
 		&i.UserID,
@@ -420,39 +439,32 @@ func (q *Queries) GetGameRoundAction(ctx context.Context, id int64) (GameRoundAc
 	return i, err
 }
 
-const getGameRoundActionsByUserID = `-- name: GetGameRoundActionsByUserID :many
-SELECT id, answer_id, points, game_id, user_id, created_at FROM game_round_actions
-WHERE user_id = ?
+const getGameRoundActionsByUserIDRoundIDGameID = `-- name: GetGameRoundActionsByUserIDRoundIDGameID :one
+SELECT id, game_content_round_id, answer_id, answer_index, is_good_answer, points, game_id, user_id, created_at FROM game_round_actions
+WHERE user_id = ? and game_content_round_id = ? and game_id = ?
 `
 
-func (q *Queries) GetGameRoundActionsByUserID(ctx context.Context, userID int64) ([]GameRoundAction, error) {
-	rows, err := q.db.QueryContext(ctx, getGameRoundActionsByUserID, userID)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-	var items []GameRoundAction
-	for rows.Next() {
-		var i GameRoundAction
-		if err := rows.Scan(
-			&i.ID,
-			&i.AnswerID,
-			&i.Points,
-			&i.GameID,
-			&i.UserID,
-			&i.CreatedAt,
-		); err != nil {
-			return nil, err
-		}
-		items = append(items, i)
-	}
-	if err := rows.Close(); err != nil {
-		return nil, err
-	}
-	if err := rows.Err(); err != nil {
-		return nil, err
-	}
-	return items, nil
+type GetGameRoundActionsByUserIDRoundIDGameIDParams struct {
+	UserID             int64 `json:"user_id"`
+	GameContentRoundID int64 `json:"game_content_round_id"`
+	GameID             int64 `json:"game_id"`
+}
+
+func (q *Queries) GetGameRoundActionsByUserIDRoundIDGameID(ctx context.Context, arg GetGameRoundActionsByUserIDRoundIDGameIDParams) (GameRoundAction, error) {
+	row := q.db.QueryRowContext(ctx, getGameRoundActionsByUserIDRoundIDGameID, arg.UserID, arg.GameContentRoundID, arg.GameID)
+	var i GameRoundAction
+	err := row.Scan(
+		&i.ID,
+		&i.GameContentRoundID,
+		&i.AnswerID,
+		&i.AnswerIndex,
+		&i.IsGoodAnswer,
+		&i.Points,
+		&i.GameID,
+		&i.UserID,
+		&i.CreatedAt,
+	)
+	return i, err
 }
 
 const getGameUser = `-- name: GetGameUser :one
@@ -553,7 +565,7 @@ const updateGame = `-- name: UpdateGame :one
 UPDATE games
 SET room_uuid = ?, room_name = ?, game_content_id = ?
 WHERE id = ?
-RETURNING id, room_uuid, room_name, game_content_id
+RETURNING id, room_uuid, room_name, game_content_id, created_at
 `
 
 type UpdateGameParams struct {
@@ -576,6 +588,7 @@ func (q *Queries) UpdateGame(ctx context.Context, arg UpdateGameParams) (Game, e
 		&i.RoomUuid,
 		&i.RoomName,
 		&i.GameContentID,
+		&i.CreatedAt,
 	)
 	return i, err
 }
@@ -584,7 +597,7 @@ const updateGameRoundAction = `-- name: UpdateGameRoundAction :one
 UPDATE game_round_actions
 SET answer_id = ?, points = ?, game_id = ?, user_id = ?
 WHERE id = ?
-RETURNING id, answer_id, points, game_id, user_id, created_at
+RETURNING id, game_content_round_id, answer_id, answer_index, is_good_answer, points, game_id, user_id, created_at
 `
 
 type UpdateGameRoundActionParams struct {
@@ -606,7 +619,10 @@ func (q *Queries) UpdateGameRoundAction(ctx context.Context, arg UpdateGameRound
 	var i GameRoundAction
 	err := row.Scan(
 		&i.ID,
+		&i.GameContentRoundID,
 		&i.AnswerID,
+		&i.AnswerIndex,
+		&i.IsGoodAnswer,
 		&i.Points,
 		&i.GameID,
 		&i.UserID,
@@ -649,6 +665,37 @@ func (q *Queries) UpdateGameUser(ctx context.Context, arg UpdateGameUserParams) 
 		&i.GamesWins,
 		&i.RoundWins,
 		&i.Progress,
+		&i.CreatedAt,
+	)
+	return i, err
+}
+
+const updatePointsRoundAction = `-- name: UpdatePointsRoundAction :one
+UPDATE game_round_actions
+SET points = ?
+WHERE game_id = ? and
+game_content_round_id = ?
+RETURNING id, game_content_round_id, answer_id, answer_index, is_good_answer, points, game_id, user_id, created_at
+`
+
+type UpdatePointsRoundActionParams struct {
+	Points             int64 `json:"points"`
+	GameID             int64 `json:"game_id"`
+	GameContentRoundID int64 `json:"game_content_round_id"`
+}
+
+func (q *Queries) UpdatePointsRoundAction(ctx context.Context, arg UpdatePointsRoundActionParams) (GameRoundAction, error) {
+	row := q.db.QueryRowContext(ctx, updatePointsRoundAction, arg.Points, arg.GameID, arg.GameContentRoundID)
+	var i GameRoundAction
+	err := row.Scan(
+		&i.ID,
+		&i.GameContentRoundID,
+		&i.AnswerID,
+		&i.AnswerIndex,
+		&i.IsGoodAnswer,
+		&i.Points,
+		&i.GameID,
+		&i.UserID,
 		&i.CreatedAt,
 	)
 	return i, err

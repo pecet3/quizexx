@@ -69,3 +69,7 @@ func (r *Room) removeClient(c *Client) {
 	}
 	delete(r.clients, c.user.Uuid)
 }
+
+func (r *Room) getDbGameConontentRoundID() int64 {
+	return r.gcrsDb[r.game.State.Round-1].ID
+}

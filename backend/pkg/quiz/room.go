@@ -40,6 +40,7 @@ type Room struct {
 
 	gcDb   *data.GameContent
 	gcrsDb []*data.GameContentRound
+	gDb    *data.Game
 }
 
 func (r *Room) checkWaitRoom(m *Manager) error {
@@ -78,6 +79,17 @@ func (r *Room) checkWaitRoom(m *Manager) error {
 
 func (r *Room) Run(m *Manager) {
 	logger.Info(fmt.Sprintf(`Created a room: %s. creator user id: %d`, r.UUID, r.creatorID))
+
+	gDb, err := m.d.AddGame(context.Background(), data.AddGameParams{
+		RoomUuid:      r.UUID,
+		RoomName:      r.Name,
+		GameContentID: r.gcDb.ID,
+	})
+	if err != nil {
+		logger.Error(err)
+		return
+	}
+	r.gDb = &gDb
 
 	nobodyCheckingT := time.NewTicker(NOBODYCHECKING_DURATION)
 	heartBeatT := time.NewTicker(HEARTBEAT_DURATION)
@@ -207,7 +219,8 @@ func (r *Room) Run(m *Manager) {
 				} else {
 					continue
 				}
-				if isGoodAnswer := r.game.checkAnswer(player, action); isGoodAnswer {
+				isGoodAnswer := r.game.checkAnswer(player, action)
+				if isGoodAnswer {
 					r.game.State.RoundWinners = append(r.game.State.RoundWinners, player.user.Uuid)
 				}
 				r.game.toggleClientIsAnswered(player, action)
@@ -215,12 +228,29 @@ func (r *Room) Run(m *Manager) {
 				r.game.State.Actions = append(r.game.State.Actions, action)
 				if err := r.game.sendPlayersAnswered(); err != nil {
 					logger.Error(err)
-					continue
 				}
-
+				answer, err := m.d.GetGameContentAnswerByRoundIDAndIndex(context.Background(), data.GetGameContentAnswerByRoundIDAndIndexParams{
+					GameContentRoundID: r.getDbGameConontentRoundID(),
+					IndexInArr:         int64(action.Answer),
+				})
+				if err != nil {
+					logger.Error(err)
+				}
+				gr, err := m.d.AddGameRoundAction(context.Background(), data.AddGameRoundActionParams{
+					AnswerID:           answer.ID,
+					Points:             10,
+					GameID:             r.gDb.ID,
+					UserID:             player.user.ID,
+					AnswerIndex:        answer.IndexInArr,
+					IsGoodAnswer:       isGoodAnswer,
+					GameContentRoundID: answer.GameContentRoundID,
+				})
+				logger.Debug(gr, answer)
+				if err != nil {
+					logger.Error(err)
+				}
 				if err := r.game.PerformRound(m, heartBeatT, false); err != nil {
 					logger.Error(err)
-					continue
 				}
 			}
 

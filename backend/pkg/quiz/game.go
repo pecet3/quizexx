@@ -180,11 +180,38 @@ func (g *Game) findGameWinners() ([]string, []*Player) {
 	return winners, wp
 }
 
-func (g *Game) countPoints() bool {
+func (g *Game) countPoints(m *Manager) bool {
 	isEveryoneAnsweredGood := false
 	if len(g.State.RoundWinners) == len(g.Players) {
 		for _, p := range g.Players {
 			p.points += 5
+			gcr, err := m.d.GetGameContentAnswerByRoundIDAndIndex(context.Background(), data.GetGameContentAnswerByRoundIDAndIndexParams{
+				GameContentRoundID: g.Room.getDbGameConontentRoundID(),
+				IndexInArr:         int64(g.Content[g.State.Round-1].CorrectAnswer),
+			})
+			if err != nil {
+				logger.Error(err)
+				continue
+			}
+			logger.Debug("gcr", gcr)
+			ra, err := m.d.GetGameRoundActionsByUserIDRoundIDGameID(context.Background(), data.GetGameRoundActionsByUserIDRoundIDGameIDParams{
+				UserID:             p.user.ID,
+				GameContentRoundID: g.Room.getDbGameConontentRoundID(),
+				GameID:             g.Room.gDb.ID,
+			})
+			if err != nil {
+				logger.Error(err)
+				continue
+			}
+			_, err = m.d.UpdatePointsRoundAction(context.Background(), data.UpdatePointsRoundActionParams{
+				Points:             ra.Points / 2,
+				GameID:             g.Room.gcDb.ID,
+				GameContentRoundID: g.Room.getDbGameConontentRoundID(),
+			})
+			if err != nil {
+				logger.Error(err)
+				continue
+			}
 		}
 		isEveryoneAnsweredGood = true
 		return isEveryoneAnsweredGood
@@ -214,7 +241,7 @@ func (g *Game) PerformRound(m *Manager, hb *time.Ticker, isTimeout bool) error {
 		winnersStr := strings.Join(g.State.RoundWinners, ", ")
 		logger.Debug(len(g.State.RoundWinners))
 		logger.Debug(g.State.RoundWinners)
-		if isEveryoneAnsweredGood := g.countPoints(); isEveryoneAnsweredGood {
+		if isEveryoneAnsweredGood := g.countPoints(m); isEveryoneAnsweredGood {
 			err = g.Room.sendServerMessage("This round win everyone!")
 		} else if len(g.State.RoundWinners) == 0 {
 			err = g.Room.sendServerMessage("No one wins this round")
@@ -259,7 +286,7 @@ func (g *Game) PerformRound(m *Manager, hb *time.Ticker, isTimeout bool) error {
 
 	}
 	if isLastRound && isEveryoneAnswered || isLastRound && isTimeout {
-		g.countPoints()
+		g.countPoints(m)
 		g.sendGameState()
 		if err := g.Room.sendServerMessage("It's finish the game"); err != nil {
 			logger.Error("finish game err", err)
@@ -277,16 +304,24 @@ func (g *Game) PerformRound(m *Manager, hb *time.Ticker, isTimeout bool) error {
 			})
 		}
 
-		// social
 		for _, p := range g.Players {
 			isWinner := false
 			for _, wpp := range wp {
 				if wpp.user.ID == p.user.ID {
 					isWinner = true
+					if _, err := m.d.AddGameWinner(context.Background(), data.AddGameWinnerParams{
+						Points: int64(wpp.points),
+						GameID: g.Room.gcDb.ID,
+						UserID: wpp.user.ID,
+					}); err != nil {
+						logger.Error(err)
+						continue
+					}
 					logger.Debug("Winner is", wpp.user.Name)
 					break
 				}
 			}
+			// social
 			exp := m.s.CalculateExp(p.points, g.Settings.Difficulty, isWinner)
 			logger.Debug(exp)
 			level, percentage := m.s.CalculateLevelByExp(exp)
