@@ -7,7 +7,7 @@ interface TopUsersListProps {
 export const TopUsersList: React.FC<TopUsersListProps> = ({ users }) => {
   return (
     <div className=" bg-pattern shadow-lg w-full h-full p-10">
-      <h2 className="text-xl font-bold mb-4">Top Users</h2>
+      <h2 className="text-xl font-bold mb-4 text-center">Top Users</h2>
       <ul>
         {users.map((user) => (
           <li
@@ -21,9 +21,9 @@ export const TopUsersList: React.FC<TopUsersListProps> = ({ users }) => {
             />
             <div>
               <p className="font-medium">{user.name}</p>
-              <p className="text-sm text-gray-500">Level: {user.level}</p>
             </div>
             <span className="ml-auto text-sm font-semibold text-blue-500">
+              <p className="text-sm text-gray-500">Level: {user.level}</p>
               Exp: {user.exp}
             </span>
           </li>
