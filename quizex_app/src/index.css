@@ -71,7 +71,12 @@ body {
   --shadow-size: 3px;
   --transparent: rgba(213, 224, 249, 0);
 }
-
+.paper-blue {
+  --paper-color: #99ebfa;
+  --paper-dark: #69ffff;
+  --shadow-size: 3px;
+  --transparent: rgba(213, 224, 249, 0);
+}
 .paper {
   position: relative;
   background: linear-gradient(

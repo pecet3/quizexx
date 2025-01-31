@@ -29,8 +29,8 @@ export const RoomsList = () => {
   }, []);
 
   return (
-    <div className="text-base flex flex-col py-8 px-6 max-w-2xl w-full h-[32rem] overflow-y-scroll">
-      <div className="flex justify-between mb-6">
+    <div className="text-base gap-2 flex flex-col py-8 px-6 max-w-2xl w-full h-[40rem] overflow-y-scroll">
+      <div className="flex justify-between mb-2 gap-">
         <button
           onClick={fetchRooms}
           className="btn text-xs bg-blue-300 my-4 self-start"

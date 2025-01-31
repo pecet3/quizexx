@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import { WaitingRoom } from "../components/quiz/WaitingRoom";
 import { Dashboard } from "../components/quiz/Dashboard";
 import { Chat } from "../components/quiz/Chat";
-import { Error } from "../components/Error";
+import { Error, ErrorSomethingWentWrong } from "../components/Error";
 import { useProtectedContext } from "../context/protectedContext";
 
 export type Player = {
@@ -252,7 +252,7 @@ export const Quiz = () => {
   return (
     <div className="p-2 bg-opacity-70 text-center m-auto">
       {err != "" ? (
-        <Error err={err} />
+        <ErrorSomethingWentWrong />
       ) : (
         <>
           {isWaiting ? (
