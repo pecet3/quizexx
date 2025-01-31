@@ -28,7 +28,7 @@ export const LittlePaperWrapper = ({
 export const PatternWrapper = ({ children }: { children: React.ReactNode }) => {
   return (
     <div
-      className="paper
+      className="paper m-0
      w-full md:max-w-lg max-w-sm"
     >
       <div className="tape-section"></div>

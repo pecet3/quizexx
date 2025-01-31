@@ -13,18 +13,21 @@ export const Home = () => {
         <PaperWrapper>
           <RoomsList />
         </PaperWrapper>
+        <div className="">
+          <UserProfileCard user={user!} />
+        </div>
+      </section>
+      <section className="self-center md:self-end p-8 flex flex-col lg:flex-row justify-center w-full gap-8 items-center">
+        <div className="max-w-md self-center m-auto">
+          <p className="italic">{funFact?.content}</p>{" "}
+          <span className="flex justify-end gap-2">
+            Fun fact about:
+            <p className="text-right font-bold"> {funFact?.topic}</p>
+          </span>
+        </div>
         <PatternWrapper>
           <TopUsersList users={topUsers!} />
         </PatternWrapper>
-      </section>
-      <section className="self-center md:self-end p-8 flex flex-col lg:flex-row justify-between w-full gap-12 items-center">
-        <div className="flex-1 flex justify-center">
-          <UserProfileCard user={user!} />
-        </div>
-        <div className="max-w-md">
-          <p className="italic">{funFact?.content}</p>{" "}
-          <p className="text-right">{funFact?.topic}</p>
-        </div>
       </section>
     </main>
   );
