@@ -10,17 +10,17 @@ export const Home = () => {
   console.log(funFact);
   return (
     <main className="flex pt-24 flex-col w-full m-auto justify-center">
-      <section className="self-center md:self-end p-8 flex flex-col lg:flex-row justify-center w-full gap-12 items-center">
+      <section className="self-center md:self-end p-8 flex flex-col lg:flex-row justify-center w-full gap-16 items-center">
         <PaperWrapper>
           <RoomsList />
         </PaperWrapper>
-        <div className="flex flex-col gap-8">
+        <div className="flex flex-col gap-8 items-center">
           <RoomJoiner />
           <UserProfileCard user={user!} />
         </div>
       </section>
-      <section className="self-center md:self-end p-8 flex flex-col lg:flex-row justify-center w-full gap-8 items-center">
-        <div className="max-w-md self-center m-auto">
+      <section className="self-center md:self-end p-8 flex flex-col lg:flex-row justify-center w-full gap-16 items-center">
+        <div className="max-w-md self-center">
           <p className="italic sm:text-lg">{funFact?.content}</p>{" "}
           <span className="text-sm sm:text-base flex justify-end gap-2">
             Fun fact about:

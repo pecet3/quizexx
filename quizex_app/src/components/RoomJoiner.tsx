@@ -7,7 +7,7 @@ export const RoomJoiner = () => {
   const navigate = useNavigate();
   return (
     <LittlePaperWrapper>
-      <p className="text-base text-center">Enter the room via name</p>
+      <p className="text-base text-center">Enter a room via name</p>
       <div className="flex items-center">
         <input
           className="rounded-sm text-sm mr-2 bg-white p-1"

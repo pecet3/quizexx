@@ -90,7 +90,7 @@ body {
   align-items: center;
   justify-content: center;
   font-size: 2rem;
-  margin: auto;
+  margin: 0;
 }
 
 .tape-section {

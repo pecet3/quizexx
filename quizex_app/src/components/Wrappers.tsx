@@ -1,7 +1,7 @@
 export const PaperWrapper = ({ children }: { children: React.ReactNode }) => {
   return (
     <div
-      className="paper paper-yellow 
+      className="paper paper-yellow  
      shadow-lg shadow-gray-100 w-full md:max-w-lg max-w-sm"
     >
       <div className="tape-section"></div>
@@ -18,7 +18,7 @@ export const LittlePaperWrapper = ({
   return (
     <div
       className="paper paper-yellow 
-     shadow-lg shadow-gray-100 "
+     shadow-lg shadow-gray-100 max-w-xs"
     >
       <div className="top-tape"></div>
       <div className="pt-10 p-2"> {children}</div>
@@ -33,7 +33,7 @@ export const LittlePaperBlueWrapper = ({
 }) => {
   return (
     <div
-      className="paper paper-blue
+      className="paper paper-blue 
      shadow-lg shadow-gray-100 "
     >
       <div className="top-tape"></div>
