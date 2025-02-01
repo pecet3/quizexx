@@ -10,15 +10,12 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/pecet3/quizex/data"
-	"github.com/pecet3/quizex/data/entities"
 	"github.com/pecet3/quizex/pkg/logger"
 )
 
 const (
 	SUSPEND_POST_SECONDS = 10
 )
-
-type AuthSessions = map[string]*entities.Session
 
 func (as *Auth) NewAuthSession(uId int64, uEmail, uName string) (data.AddSessionParams, string, error) {
 	expiresAt := time.Now().Add(168 * 4 * time.Hour)
