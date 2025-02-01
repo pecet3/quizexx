@@ -50,21 +50,21 @@ func (q *Queries) GetCurrentFunFact(ctx context.Context) (FunFact, error) {
 	return i, err
 }
 
-const getUsersSortedByLevel = `-- name: GetUsersSortedByLevel :many
+const getUsersSortedByExp = `-- name: GetUsersSortedByExp :many
 SELECT u.id, u.uuid, u.name, u.email, u.salt, u.image_url, u.is_draft, u.created_at
 FROM users u
 JOIN game_users gu ON u.id = gu.user_id
-ORDER BY gu.level DESC
+ORDER BY gu.exp  DESC
 LIMIT ? OFFSET ?
 `
 
-type GetUsersSortedByLevelParams struct {
+type GetUsersSortedByExpParams struct {
 	Limit  int64 `json:"limit"`
 	Offset int64 `json:"offset"`
 }
 
-func (q *Queries) GetUsersSortedByLevel(ctx context.Context, arg GetUsersSortedByLevelParams) ([]User, error) {
-	rows, err := q.db.QueryContext(ctx, getUsersSortedByLevel, arg.Limit, arg.Offset)
+func (q *Queries) GetUsersSortedByExp(ctx context.Context, arg GetUsersSortedByExpParams) ([]User, error) {
+	rows, err := q.db.QueryContext(ctx, getUsersSortedByExp, arg.Limit, arg.Offset)
 	if err != nil {
 		return nil, err
 	}

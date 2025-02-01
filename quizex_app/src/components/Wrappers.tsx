@@ -2,7 +2,7 @@ export const PaperWrapper = ({ children }: { children: React.ReactNode }) => {
   return (
     <div
       className="paper paper-yellow  
-     shadow-lg shadow-gray-100 w-full md:max-w-lg max-w-sm"
+     shadow-lg shadow-gray-100 w-full sm:max-w-lg max-w-md"
     >
       <div className="tape-section"></div>
       {children}
@@ -45,7 +45,7 @@ export const PatternWrapper = ({ children }: { children: React.ReactNode }) => {
   return (
     <div
       className="paper m-0
-     w-full md:max-w-lg max-w-sm"
+     w-full  sm:max-w-lg max-w-md"
     >
       <div className="tape-section"></div>
 

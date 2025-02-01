@@ -2,7 +2,7 @@ import React from "react";
 
 const UserProfileCard: React.FC<{ user: User }> = ({ user }) => {
   return (
-    <div className="max-w-md mx-auto bg-gradient rounded-xl shadow-md overflow-hidden md:max-w-2xl">
+    <div className="hidden sm:block max-w-md mx-auto bg-gradient rounded-xl shadow-md overflow-hidden md:max-w-2xl">
       <div className="flex relative">
         <div className="md:flex-shrink-0">
           <img

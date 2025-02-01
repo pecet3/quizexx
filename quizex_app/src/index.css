@@ -23,6 +23,13 @@
 body {
 }
 
+@font-face {
+  font-family: 'Kalam';
+  src: url('Kalam-Regular.ttf') format('truetype');
+}
+.font-handwritten{
+  font-family: 'Kalam', sans-serif;
+}
 
 .bg-gradient{
   background: linear-gradient(to bottom, #d3d2d2, #ffffff);

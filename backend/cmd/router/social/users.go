@@ -12,7 +12,7 @@ import (
 func (r router) handleGetTop50Users(w http.ResponseWriter, req *http.Request) {
 	var dto []*dtos.User
 
-	users, err := r.d.GetUsersSortedByLevel(req.Context(), data.GetUsersSortedByLevelParams{
+	users, err := r.d.GetUsersSortedByExp(req.Context(), data.GetUsersSortedByExpParams{
 		Limit:  50,
 		Offset: 0,
 	})

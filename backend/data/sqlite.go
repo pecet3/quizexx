@@ -3,9 +3,8 @@ package data
 import (
 	"database/sql"
 	"log"
-	"strings"
 
-	"github.com/pecet3/quizex/pkg/logger"
+	_ "github.com/mattn/go-sqlite3"
 )
 
 func NewSQLite() *sql.DB {
@@ -20,20 +19,4 @@ func NewSQLite() *sql.DB {
 	}
 
 	return db
-}
-
-func prepare(db *sql.DB, table string) error {
-	s, err := db.Prepare(table)
-	if err != nil {
-		return err
-	}
-	_, err = s.Exec()
-	if err != nil {
-		return err
-	}
-
-	endIndex := strings.Index(table, "(")
-	logger.InfoC(table[1:endIndex])
-
-	return nil
 }

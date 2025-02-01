@@ -45,7 +45,7 @@ func (r router) handleRegister(w http.ResponseWriter, req *http.Request) {
 				Valid:  true,
 			},
 			IsDraft:  true,
-			ImageUrl: "/api/img/avatar.png",
+			ImageUrl: "/api/images/avatar.png",
 		})
 		if err != nil {
 			logger.Error(err)

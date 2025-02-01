@@ -9,28 +9,26 @@ export const Home = () => {
   const { funFact, user, topUsers } = useProtectedContext();
   console.log(funFact);
   return (
-    <main className="flex pt-24 flex-col w-full m-auto justify-center">
-      <section className="self-center md:self-end p-8 flex flex-col lg:flex-row justify-center w-full gap-16 items-center">
-        <PaperWrapper>
-          <RoomsList />
-        </PaperWrapper>
-        <div className="flex flex-col gap-8 items-center">
-          <RoomJoiner />
-          <UserProfileCard user={user!} />
-        </div>
-      </section>
-      <section className="self-center md:self-end p-8 flex flex-col lg:flex-row justify-center w-full gap-16 items-center">
-        <div className="max-w-md self-center">
-          <p className="italic sm:text-lg">{funFact?.content}</p>{" "}
-          <span className="text-sm sm:text-base flex justify-end gap-2">
-            Fun fact about:
-            <p className="text-right font-bold"> {funFact?.topic}</p>
-          </span>
-        </div>
-        <PatternWrapper>
-          <TopUsersList users={topUsers!} />
-        </PatternWrapper>
-      </section>
+    <main className="grid grid-cols-1 lg:grid-cols-2 p-1 pt-10 px-2 xl:px-40 justify-items-center gap-16 lg:gap-4  w-full m-auto justify-center">
+      <PaperWrapper>
+        <RoomsList />
+      </PaperWrapper>
+      <div className="flex flex-col gap-8 items-center self-center">
+        <RoomJoiner />
+        <UserProfileCard user={user!} />
+      </div>
+      <div className="max-w-md self-center ">
+        <p className="italic text-lg sm:text-xl font-handwritten">
+          {funFact?.content}
+        </p>{" "}
+        <span className="text-sm sm:text-base flex justify-end gap-2">
+          Fun fact about:
+          <p className="text-right font-bold"> {funFact?.topic}</p>
+        </span>
+      </div>
+      <PatternWrapper>
+        <TopUsersList users={topUsers!} />
+      </PatternWrapper>
     </main>
   );
 };

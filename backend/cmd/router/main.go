@@ -39,7 +39,7 @@ func Run(
 	app.Srv.Handle("/", http.FileServer(http.Dir("view")))
 	app.Srv.Handle(PREFIX+"/", http.FileServer(http.Dir("img")))
 
-	app.Srv.Handle(PREFIX+"/img/{fname}", r.auth.Authorize(r.handleImages))
+	app.Srv.Handle(PREFIX+"/images/{fname}", r.auth.Authorize(r.handleImages))
 
 }
 func (r router) hello(w http.ResponseWriter, req *http.Request) {
