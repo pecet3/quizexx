@@ -7,7 +7,7 @@ export const RoomJoiner = () => {
   const navigate = useNavigate();
   return (
     <LittlePaperWrapper>
-      <p className="text-base text-center">Enter a room via name</p>
+      <p className="text-base text-center">Enter a room by name</p>
       <div className="flex items-center">
         <input
           className="rounded-sm text-sm mr-2 bg-white p-1"
@@ -16,7 +16,7 @@ export const RoomJoiner = () => {
           onChange={(e) => setRoomName(e.currentTarget.value)}
         ></input>
         <button
-          className="btn bg-teal-400 text-xs"
+          className="btn bg-teal-300 text-xs"
           onClick={() => navigate(`/quiz/${roomName}`)}
         >
           Join

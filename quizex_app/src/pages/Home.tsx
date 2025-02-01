@@ -17,8 +17,8 @@ export const Home = () => {
         <RoomJoiner />
         <UserProfileCard user={user!} />
       </div>
-      <div className="max-w-md self-center ">
-        <p className="italic text-lg sm:text-xl font-handwritten">
+      <div className="self-center ">
+        <p className="italic text-xl sm:text-2xl font-handwritten">
           {funFact?.content}
         </p>{" "}
         <span className="text-sm sm:text-base flex justify-end gap-2">
