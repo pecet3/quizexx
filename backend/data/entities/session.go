@@ -70,7 +70,7 @@ func (s Session) GetByToken(db *sql.DB, token string) (*Session, error) {
 	)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			return nil, nil // Session not found, but it's not an error
+			return nil, nil
 		}
 		return nil, fmt.Errorf("error querying session: %w", err)
 	}
